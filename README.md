@@ -1,2 +1,2 @@
 # isxDocs
-Reference documentation for isxGames extensions for InnerSpace
+Reference documentation for isxGames InnerSpace extensions
