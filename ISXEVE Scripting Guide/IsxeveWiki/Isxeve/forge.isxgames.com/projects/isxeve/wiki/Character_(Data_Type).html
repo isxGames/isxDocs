@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Mirrored from forge.isxgames.com/projects/isxeve/wiki/Character_(Data_Type) by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 16 Sep 2025 16:23:37 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=utf-8" /><!-- /Added by HTTrack -->
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<title>Character (Data Type) - ISXEVE - isxGames Forge</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Redmine" />
+<meta name="keywords" content="issue,bug,tracker" />
+<meta name="csrf-param" content="authenticity_token" />
+<meta name="csrf-token" content="vVtJwqz2+OP2rFfMNeLlXXk2mmbb85WVvrM8gB0p6se2eRaqAyY34QO2mgg2IiUAYNT5azKi4p4+Qa6afUIW1Q==" />
+<link rel='shortcut icon' href='https://forge.isxgames.com/themes/PurpleMine2/favicon/favicon.ico?1595053228' />
+<link rel="stylesheet" media="all" href="https://forge.isxgames.com/stylesheets/jquery/jquery-ui-1.11.0.css?1586192448" />
+<link rel="stylesheet" media="all" href="https://forge.isxgames.com/stylesheets/tribute-3.7.3.css?1586192449" />
+<link rel="stylesheet" media="all" href="https://forge.isxgames.com/themes/PurpleMine2/stylesheets/application.css?1595057985" />
+<link rel="stylesheet" media="all" href="https://forge.isxgames.com/stylesheets/responsive.css?1586192449" />
+
+<script src="https://forge.isxgames.com/javascripts/jquery-2.2.4-ui-1.11.0-ujs-5.2.3.js?1586192448"></script>
+<script src="https://forge.isxgames.com/javascripts/tribute-3.7.3.min.js?1586192448"></script>
+<script src="https://forge.isxgames.com/javascripts/application.js?1586192448"></script>
+<script src="https://forge.isxgames.com/javascripts/responsive.js?1586192449"></script>
+<script>
+//<![CDATA[
+$(window).on('load', function(){ warnLeavingUnsaved('The current page contains unsaved text that will be lost if you leave this page.'); });
+//]]>
+</script>
+<script src="https://forge.isxgames.com/themes/PurpleMine2/javascripts/theme.js?1595057985"></script>
+<link rel="stylesheet" media="screen" href="https://forge.isxgames.com/plugin_assets/redmine_knowledgebase/stylesheets/knowledgebase.css?1594934434" />
+<!-- page specific tags -->
+
+</head>
+<body class="theme-Purplemine2 project-isxeve has-main-menu controller-wiki action-show avatars-on">
+
+<div id="wrapper">
+
+<div class="flyout-menu js-flyout-menu">
+
+
+        <div class="flyout-menu__search">
+            <form action="https://forge.isxgames.com/projects/isxeve/search" accept-charset="UTF-8" name="form-0692924c" method="get"><input name="utf8" type="hidden" value="&#x2713;" />
+            <input type="hidden" name="wiki_pages" value="1" />
+            <label class="search-magnifier search-magnifier--flyout" for="flyout-search">&#9906;</label>
+            <input type="text" name="q" id="flyout-search" class="small js-search-input" placeholder="Search" />
+</form>        </div>
+
+
+        <h3>Project</h3>
+        <span class="js-project-menu"></span>
+
+    <h3>General</h3>
+    <span class="js-general-menu"></span>
+
+    <span class="js-sidebar flyout-menu__sidebar"></span>
+
+    <h3>Profile</h3>
+    <span class="js-profile-menu"></span>
+
+</div>
+
+<div id="wrapper2">
+<div id="wrapper3">
+<div id="top-menu">
+    <div id="account">
+        <ul><li><a class="login" href="https://forge.isxgames.com/login">Sign in</a></li></ul>    </div>
+    
+    <ul><li><a class="home" href="https://forge.isxgames.com/">Home</a></li><li><a class="projects" href="https://forge.isxgames.com/projects">Projects</a></li><li><a class="help" href="https://www.redmine.org/guide">Help</a></li></ul></div>
+
+<div id="header">
+
+    <a href="#" class="mobile-toggle-button js-flyout-menu-toggle-button"></a>
+
+    <div id="quick-search">
+        <form action="https://forge.isxgames.com/projects/isxeve/search" accept-charset="UTF-8" name="form-9dc955ed" method="get"><input name="utf8" type="hidden" value="&#x2713;" />
+        <input type="hidden" name="scope" />
+        <input type="hidden" name="wiki_pages" value="1" />
+        <label for='q'>
+          <a accesskey="4" href="https://forge.isxgames.com/projects/isxeve/search">Search</a>:
+        </label>
+        <input type="text" name="q" id="q" size="20" class="small" accesskey="f" data-auto-complete="true" data-issues-url="/issues/auto_complete?q=" />
+</form>        <div id="project-jump" class="drdn"><span class="drdn-trigger">ISXEVE</span><div class="drdn-content"><div class="quick-search"><input type="text" name="q" id="projects-quick-search" value="" class="autocomplete" data-automcomplete-url="/projects/autocomplete.js?jump=wiki" autocomplete="off" /></div><div class="drdn-items projects selection"></div><div class="drdn-items all-projects selection"><a href="https://forge.isxgames.com/projects?jump=wiki">All Projects</a></div></div></div>
+    </div>
+
+    <h1><span class="breadcrumbs"><a class="root" href="https://forge.isxgames.com/projects/eve-online?jump=wiki">EVE Online</a><span class="separator"> &raquo; </span></span><span class="current-project">ISXEVE</span></h1>
+
+    <div id="main-menu" class="tabs">
+        <ul><li><a class="overview" href="https://forge.isxgames.com/projects/isxeve">Overview</a></li><li><a class="activity" href="https://forge.isxgames.com/projects/isxeve/activity">Activity</a></li><li><a class="articles" href="https://forge.isxgames.com/projects/isxeve/knowledgebase/articles">Knowledgebase</a></li><li><a class="issues" href="https://forge.isxgames.com/projects/isxeve/issues">Issues</a></li><li><a class="wiki selected" href="../wiki.html">Wiki</a></li></ul>
+        <div class="tabs-buttons" style="display:none;">
+            <button class="tab-left" onclick="moveTabLeft(this); return false;"></button>
+            <button class="tab-right" onclick="moveTabRight(this); return false;"></button>
+        </div>
+    </div>
+</div>
+
+<div id="main" class="">
+    <div id="sidebar">
+          
+<h3>Wiki</h3>
+<ul>
+  <li><a href="../wiki.html">Start page</a></li>
+  <li><a href="index.html">Index by title</a></li>
+  <li><a href="date_index.html">Index by date</a></li>
+</ul>
+
+
+
+
+        
+    </div>
+
+    <div id="content">
+        
+        <div class="contextual">
+
+  
+  
+
+  </div>
+
+
+
+
+<div class="wiki wiki-page">
+  <a name="Character-Data-Type"></a>
+<h2 ><span style="color:#800000;">Character (Data Type)</span><a href="#Character-Data-Type" class="wiki-anchor">&para;</a></h2>
+
+<ul class="toc right"><li><strong>Table of contents</strong></li><li><a href="#Character-Data-Type">Character (Data Type)</a></li><li><a href="#Description">Description</a></li><li><a href="#Members">Members</a></li><li><a href="#Methods">Methods</a></li><li><a href="#Examples">Examples</a></li></ul>
+
+
+<a name="Description"></a>
+<h2 >Description<a href="#Description" class="wiki-anchor">&para;</a></h2>
+<p>This Data Type includes all of the data available to <strong>ISXEVE</strong> that is specific to your own character.</p>
+
+
+<a name="Members"></a>
+<h2 >Members<a href="#Members" class="wiki-anchor">&para;</a></h2>
+<ul>
+<li><a class="wiki-page" href="Entity_(Data_Type).html">entity</a> <code>ToEntity</code>
+</li>
+<li><a class="wiki-page" href="Pilot_(Data_Type).html">pilot</a> <code>ToPilot</code>
+</li>
+<li><a class="wiki-page" href="Ship_(Data_Type).html">ship</a> <code>Ship</code> (use <a class="wiki-page" href="MyShip_(Top-Level_Object).html">MyShip</a> instead for performance reasons)</li>
+<li><a class="wiki-page" href="Standing_(Data_Type).html">standing</a> <code>StandingTo&lt;MW_SINGLEBRACKET&gt;ToCharID#,ToCorpID#,ToAllianceID#&lt;/MW_SINGLEBRACKET&gt;</code>
+<ul>
+<li>Your current standing towards any CharID, CorporationID, or AllianceID. All 3 IDs are required. 0 or -1 are valid arguments for those without corporation or alliance.</li>
+</ul>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:bool">bool</a> <code>AutoPilotOn</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:bool">bool</a> <code>InSpace</code>
+</li>
+<li><a class="wiki-page" href="Fleet_(Data_Type).html">fleet</a> <code>Fleet</code>
+</li>
+<li><a class="wiki-page" href="Fleetmember_(Data_Type).html">fleetmember</a> <code>ToFleetMember</code>
+</li>
+</ul>
+<ul>
+<li>
+<strong>Self/Corporation/Location</strong>
+<ul>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:string">string</a> <code>Name</code>
+</li>
+<li><a class="wiki-page" href="Corporation_(Data_Type).html">corporation</a> <code>Corp</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:string">string</a> <code>Alliance</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:int">int</a> <code>AllianceID</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:string">string</a> <code>AllianceTicker</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:int">int</a> <code>RegionID</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:int">int</a> <code>ConstellationID</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:int">int</a> <code>SolarSystemID</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:int64">int64</a> <code>ShipID</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:int64">int64</a> <code>CharID</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:int64">int64</a> <code>ID</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:bool">bool</a> <code>InStation</code>
+<ul>
+<li>This does not change state until you are fully completed transitioning; for example, if you are undocking, it is TRUE until you actually arrive in space.</li>
+</ul>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:int">int</a> <code>StationID</code>
+<ul>
+<li>If this is NULL, you're not in station</li>
+</ul>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>Intelligence</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>Perception</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>Charisma</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>Willpower</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>Memory</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:int">int</a> <code>MaxLockedTargets</code>
+<ul>
+<li>See also the 'MaxLockedTargets' member of the ship datatype for the ship restriction on locked targets</li>
+</ul>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>MiningDroneAmountBonus</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>MaxActiveDrones</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>DroneControlDistance</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>MaxJumpClones</code>
+</li>
+</ul>
+</li>
+<li><a class="wiki-page" href="Station_(Data_Type).html">station</a> <code>Station</code>
+</li>
+</ul>
+<ul>
+<li>
+<strong>Skills</strong>
+<ul>
+<li><a class="wiki-page" href="Skill_(Data_Type).html">skill</a> <code>Skill&lt;MW_SINGLEBRACKET&gt;#&lt;/MW_SINGLEBRACKET&gt;</code>
+<ul>
+<li><ol>
+<li>is between 1 and ${Me.GetSkills}</li>
+</ol></li>
+</ul>
+</li>
+<li><a class="wiki-page" href="Skill_(Data_Type).html">skill</a> <code>Skill&lt;MW_SINGLEBRACKET&gt;name&lt;/MW_SINGLEBRACKET&gt;</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:float64">float64</a> <code>SkillPoints</code>
+<ul>
+<li>Your total number of skill points so far</li>
+</ul>
+</li>
+<li><a class="wiki-page" href="Skill_(Data_Type).html">skill</a> <code>SkillCurrentlyTraining</code>
+</li>
+</ul>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:float64">float64</a> <code>SkillQueueLength</code>
+<ul>
+<li>Note: The return value from this datatype member does not correlate, in any way, with the way that humans typically tell time. However, it is useful in the following contexts:</li>
+</ul>
+</li>
+</ul>
+
+
+<dd>
+
+<dd>1. If it's &gt;0, then you are still training. If it's 0 or NULL, then you're not training. Etc...
+</dd>
+<dd>2. echo "My training queue will end at {$EVETime[${Math.Calc64[${Me.SkillQueueLength}+${EVETime.AsInt64}]}]}"
+</dd>
+
+</dd>
+
+<ul>
+<li>
+<strong>Target Related - Targeting &amp; Targets</strong>
+<ul>
+<li><a class="wiki-page" href="Entity_(Data_Type).html">entity</a> <code>ActiveTarget</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:int">int</a> <code>TargetCount</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:int">int</a> <code>TargetingCount</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:int">int</a> <code>TargetedByCount</code>
+</li>
+</ul>
+</li>
+</ul>
+
+
+<a name="Methods"></a>
+<h2 >Methods<a href="#Methods" class="wiki-anchor">&para;</a></h2>
+<ul>
+<li>
+<code>SetVelocity&lt;MW_SINGLEBRACKET&gt;#&lt;/MW_SINGLEBRACKET&gt;</code>
+<ul>
+<li>Argument is a PERCENTAGE of your max velocity.</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>
+<code>SetCorpStanding&lt;MW_SINGLEBRACKET&gt;#,#,Reason&lt;/MW_SINGLEBRACKET&gt;</code>
+<ul>
+<li>The first argument is the "CorporationID" of the Corp, the second is the new "Standing", and then the "Reason"</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>
+<code>SetPilotStanding&lt;MW_SINGLEBRACKET&gt;#,#,Reason&lt;/MW_SINGLEBRACKET&gt;</code>
+<ul>
+<li>The first argument is the "CharID" of the Pilot, the second is the new "Standing", and then the "Reason"</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><code>Undock</code></li>
+</ul>
+<ul>
+<li><code>GetAttackers&lt;MW_SINGLEBRACKET&gt;index:attacker&lt;/MW_SINGLEBRACKET&gt;</code></li>
+</ul>
+<ul>
+<li><code>GetAttackers&lt;MW_SINGLEBRACKET&gt;index:entity&lt;/MW_SINGLEBRACKET&gt;</code></li>
+</ul>
+<ul>
+<li><code>GetJammers&lt;MW_SINGLEBRACKET&gt;index:jammer&lt;/MW_SINGLEBRACKET&gt;</code></li>
+</ul>
+<ul>
+<li><code>GetTargets&lt;MW_SINGLEBRACKET&gt;&lt;index:entity&gt;&lt;/MW_SINGLEBRACKET&gt;</code></li>
+</ul>
+<ul>
+<li><code>GetTargetedBy&lt;MW_SINGLEBRACKET&gt;&lt;index:entity&gt;&lt;/MW_SINGLEBRACKET&gt;</code></li>
+</ul>
+<ul>
+<li><code>GetTargeting&lt;MW_SINGLEBRACKET&gt;&lt;index:entity&gt;&lt;/MW_SINGLEBRACKET&gt;</code></li>
+</ul>
+<ul>
+<li><code>GetSkills&lt;MW_SINGLEBRACKET&gt;&lt;index:skill&gt;&lt;/MW_SINGLEBRACKET&gt;</code></li>
+</ul>
+<ul>
+<li><code>GetActiveDroneIDs&lt;MW_SINGLEBRACKET&gt;&lt;index:int64&gt;&lt;/MW_SINGLEBRACKET&gt;</code></li>
+</ul>
+<ul>
+<li><code>GetActiveDrones&lt;MW_SINGLEBRACKET&gt;&lt;index:activedrone&gt;&lt;/MW_SINGLEBRACKET&gt;</code></li>
+</ul>
+<ul>
+<li><code>GetSkillQueue&lt;MW_SINGLEBRACKET&gt;&lt;index:queuedskill&gt;&lt;/MW_SINGLEBRACKET&gt;</code></li>
+</ul>
+<ul>
+<li>
+<code>GetAssets&lt;MW_SINGLEBRACKET&gt;&lt;index:item&gt;&lt;/MW_SINGLEBRACKET&gt;</code>
+<ul>
+<li>Retrieves all items that are in your assets window</li>
+</ul>
+</li>
+<li>
+<code>GetAssets&lt;MW_SINGLEBRACKET&gt;&lt;index:item&gt;,#&lt;/MW_SINGLEBRACKET&gt;</code>
+<ul>
+<li>Retrieves all items that match the StationID# given</li>
+</ul>
+</li>
+<li>
+<code>GetStationsWithAssets&lt;MW_SINGLEBRACKET&gt;&lt;index:int64&gt;&lt;/MW_SINGLEBRACKET&gt;</code>
+<ul>
+<li>Retrieves a list of StationID#s where you currently have assets.</li>
+</ul>
+</li>
+</ul>
+<p><code>"GetAssets" will NOT include items that are in the same station you are currently residing (if applicable).  However,</code><br><code>"GetStationsWithAssets" and "NumAssetsAtStation" WILL contain information about your current station.</code></p>
+<ul>
+<li><code>GetCorpHangarItems&lt;MW_SINGLEBRACKET&gt;&lt;index:entity&gt;&lt;/MW_SINGLEBRACKET&gt;</code></li>
+<li><code>GetCorpHangarShips&lt;MW_SINGLEBRACKET&gt;&lt;index:entity&gt;&lt;/MW_SINGLEBRACKET&gt;</code></li>
+<li><code>GetHangarItems&lt;MW_SINGLEBRACKET&gt;&lt;index:entity&gt;&lt;/MW_SINGLEBRACKET&gt;</code></li>
+<li><code>GetHangarShips&lt;MW_SINGLEBRACKET&gt;&lt;index:entity&gt;&lt;/MW_SINGLEBRACKET&gt;</code></li>
+</ul>
+<ul>
+<li>
+<strong>Market Methods</strong>
+<ul>
+<li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><ul>
+<li>
+<code>UpdateMyOrders</code>
+<ul>
+<li>This method should be called before any calling of "GetMyOrders" or "DoGetMyOrders".</li>
+</ul>
+</li>
+</ul></li>
+</ul>
+
+
+<dd>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:bool">bool</a> <code>GetMyOrders&lt;MW_SINGLEBRACKET&gt;&lt;index:myorder&gt;&lt;/MW_SINGLEBRACKET&gt;</code>
+
+
+<dd>Retrieves all "My Orders"
+</dd>
+
+</dd>
+<dd>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:bool">bool</a> <code>GetMyOrders&lt;MW_SINGLEBRACKET&gt;&lt;index:myorder&gt;,#&lt;/MW_SINGLEBRACKET&gt;</code>
+
+
+<dd>Retrieves all "My Orders" for the given TypeID#
+</dd>
+
+</dd>
+<dd>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:bool">bool</a> <code>GetMyOrders&lt;MW_SINGLEBRACKET&gt;&lt;index:myorder&gt;,"Buy"&lt;/MW_SINGLEBRACKET&gt;</code>
+
+
+<dd>Retrieves all *buy* "My Orders"
+</dd>
+
+</dd>
+<dd>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:bool">bool</a> <code>GetMyOrders&lt;MW_SINGLEBRACKET&gt;&lt;index:myorder&gt;,"Buy",#&lt;/MW_SINGLEBRACKET&gt;</code>
+
+
+<dd>Retrieves all *buy* "My Orders" for the given TypeID#
+</dd>
+
+</dd>
+<dd>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:bool">bool</a> <code>GetMyOrders&lt;MW_SINGLEBRACKET&gt;&lt;index:myorder&gt;,"Sell"&lt;/MW_SINGLEBRACKET&gt;</code>
+
+
+<dd>Retrieves all *sell* "My Orders"
+</dd>
+
+</dd>
+<dd>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:bool">bool</a> <code>GetMyOrders&lt;MW_SINGLEBRACKET&gt;&lt;index:myorder&gt;,"Sell",#&lt;/MW_SINGLEBRACKET&gt;</code>
+
+
+<dd>Retrieves all *sell* "My Orders" for the given TypeID#
+</dd>
+
+</dd>
+
+<p><code>                NOTE: GetMyOrders returns NULL while the orders are being retrieved, call in a loop with a delay between calls.</code><br><code>                Example:</code></p>
+<p><code>                Me:UpdateMyOrders</code><br><code>                while !${Me:GetMyOrders</code>[<code>OrderIndex</code>]<code>}</code><br><code>                {</code><br><code>                       wait 10</code><br><code>                }</code><br><code>                echo Found ${OrderIndex.Used} orders</code></p>
+
+
+<a name="Examples"></a>
+<h2 >Examples<a href="#Examples" class="wiki-anchor">&para;</a></h2>
+
+
+<dd>GetTargeting
+</dd>
+
+<p><code>                variable index:entity EntitiesTargetingMe</code><br><code>                echo ${Me.GetTargeting</code>[<code>EntitiesTargetingMe</code>]<code>} entities are targeting me</code></p>
+
+
+<dd>Returning Your Name / ID / Station
+</dd>
+
+<p><code>                echo ${Me.StationID} ${Me.CharID} ${Me.Name}</code></p>
+
+
+</div>
+
+
+<fieldset class="collapsible collapsed hide-when-print">
+  <legend onclick="toggleFieldset(this);" class="icon icon-collapsed">Files (0)</legend>
+  <div style="display: none;">
+
+  
+
+</div>
+</fieldset>
+
+<p class="wiki-update-info">
+</p>
+
+
+
+
+
+        
+        <div style="clear:both;"></div>
+    </div>
+</div>
+<div id="footer">
+    Powered by <a href="https://www.redmine.org/">Redmine</a> &copy; 2006-2020 Jean-Philippe Lang
+</div>
+</div>
+
+<div id="ajax-indicator" style="display:none;"><span>Loading...</span></div>
+<div id="ajax-modal" style="display:none;"></div>
+
+</div>
+</div>
+
+</body>
+
+<!-- Mirrored from forge.isxgames.com/projects/isxeve/wiki/Character_(Data_Type) by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 16 Sep 2025 16:23:37 GMT -->
+</html>

@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html class="client-nojs" lang="en" dir="ltr">
+
+<!-- Mirrored from www.lavishsoft.com/wiki/index.php/LavishScript:Preprocessor by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 16 Sep 2025 16:30:22 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=UTF-8" /><!-- /Added by HTTrack -->
+<head>
+<meta charset="UTF-8"/>
+<title>LavishScript:Preprocessor - Lavish Software Wiki</title>
+<script>document.documentElement.className = document.documentElement.className.replace( /(^|\s)client-nojs(\s|$)/, "$1client-js$2" );</script>
+<script>(window.RLQ=window.RLQ||[]).push(function(){mw.config.set({"wgCanonicalNamespace":"","wgCanonicalSpecialPageName":false,"wgNamespaceNumber":0,"wgPageName":"LavishScript:Preprocessor","wgTitle":"LavishScript:Preprocessor","wgCurRevisionId":4541,"wgRevisionId":4541,"wgArticleId":1194,"wgIsArticle":true,"wgIsRedirect":false,"wgAction":"view","wgUserName":null,"wgUserGroups":["*"],"wgCategories":["LavishScript"],"wgBreakFrames":false,"wgPageContentLanguage":"en","wgPageContentModel":"wikitext","wgSeparatorTransformTable":["",""],"wgDigitTransformTable":["",""],"wgDefaultDateFormat":"dmy","wgMonthNames":["","January","February","March","April","May","June","July","August","September","October","November","December"],"wgMonthNamesShort":["","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],"wgRelevantPageName":"LavishScript:Preprocessor","wgRelevantArticleId":1194,"wgRequestId":"7e685b0bdb5e9d5bdcf75c84","wgCSPNonce":false,"wgIsProbablyEditable":false,"wgRelevantPageIsProbablyEditable":false,"wgRestrictionEdit":[],"wgRestrictionMove":[]});mw.loader.state({"site.styles":"ready","noscript":"ready","user.styles":"ready","user":"ready","user.options":"ready","user.tokens":"loading","mediawiki.legacy.shared":"ready","mediawiki.legacy.commonPrint":"ready","mediawiki.toc.styles":"ready","mediawiki.skinning.interface":"ready","skins.vector.styles":"ready"});mw.loader.implement("user.tokens@0tffind",function($,jQuery,require,module){/*@nomin*/mw.user.tokens.set({"editToken":"+\\","patrolToken":"+\\","watchToken":"+\\","csrfToken":"+\\"});
+});RLPAGEMODULES=["site","mediawiki.page.startup","mediawiki.page.ready","mediawiki.toc","mediawiki.searchSuggest","skins.vector.js"];mw.loader.load(RLPAGEMODULES);});</script>
+<link rel="stylesheet" href="https://www.lavishsoft.com/wiki/load.php?lang=en&amp;modules=mediawiki.legacy.commonPrint%2Cshared%7Cmediawiki.skinning.interface%7Cmediawiki.toc.styles%7Cskins.vector.styles&amp;only=styles&amp;skin=vector"/>
+<script async="" src="https://www.lavishsoft.com/wiki/load.php?lang=en&amp;modules=startup&amp;only=scripts&amp;skin=vector"></script>
+<meta name="ResourceLoaderDynamicStyles" content=""/>
+<meta name="generator" content="MediaWiki 1.33.0"/>
+<link rel="shortcut icon" href="https://www.lavishsoft.com/favicon.ico"/>
+<link rel="search" type="application/opensearchdescription+xml" href="https://www.lavishsoft.com/wiki/opensearch_desc.php" title="Lavish Software Wiki (en)"/>
+<link rel="EditURI" type="application/rsd+xml" href="https://www.lavishsoft.com/wiki/api.php?action=rsd"/>
+<link rel="alternate" type="application/atom+xml" title="Lavish Software Wiki Atom feed" href="https://www.lavishsoft.com/wiki/index.php?title=Special:RecentChanges&amp;feed=atom"/>
+<!--[if lt IE 9]><script src="/wiki/load.php?lang=en&amp;modules=html5shiv&amp;only=scripts&amp;skin=vector&amp;sync=1"></script><![endif]-->
+</head>
+<body class="mediawiki ltr sitedir-ltr mw-hide-empty-elt ns-0 ns-subject page-LavishScript_Preprocessor rootpage-LavishScript_Preprocessor skin-vector action-view">
+<div id="mw-page-base" class="noprint"></div>
+<div id="mw-head-base" class="noprint"></div>
+<div id="content" class="mw-body" role="main">
+	<a id="top"></a>
+	
+	<div class="mw-indicators mw-body-content">
+</div>
+
+	<h1 id="firstHeading" class="firstHeading" lang="en">LavishScript:Preprocessor</h1>
+	
+	<div id="bodyContent" class="mw-body-content">
+		<div id="siteSub" class="noprint">From Lavish Software Wiki</div>
+		<div id="contentSub"></div>
+		
+		
+		
+		<div id="jump-to-nav"></div>
+		<a class="mw-jump-link" href="#mw-head">Jump to navigation</a>
+		<a class="mw-jump-link" href="#p-search">Jump to search</a>
+		<div id="mw-content-text" lang="en" dir="ltr" class="mw-content-ltr"><div class="mw-parser-output"><div id="toc" class="toc"><input type="checkbox" role="button" id="toctogglecheckbox" class="toctogglecheckbox" style="display:none" /><div class="toctitle" lang="en" dir="ltr"><h2>Contents</h2><span class="toctogglespan"><label class="toctogglelabel" for="toctogglecheckbox"></label></span></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#Overview"><span class="tocnumber">1</span> <span class="toctext">Overview</span></a></li>
+<li class="toclevel-1 tocsection-2"><a href="#Defines"><span class="tocnumber">2</span> <span class="toctext">Defines</span></a>
+<ul>
+<li class="toclevel-2 tocsection-3"><a href="#Define_Directives"><span class="tocnumber">2.1</span> <span class="toctext">Define Directives</span></a></li>
+<li class="toclevel-2 tocsection-4"><a href="#Built-in_Defines"><span class="tocnumber">2.2</span> <span class="toctext">Built-in Defines</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-5"><a href="#Macros"><span class="tocnumber">3</span> <span class="toctext">Macros</span></a>
+<ul>
+<li class="toclevel-2 tocsection-6"><a href="#Creating_Macros"><span class="tocnumber">3.1</span> <span class="toctext">Creating Macros</span></a></li>
+<li class="toclevel-2 tocsection-7"><a href="#Using_Macros"><span class="tocnumber">3.2</span> <span class="toctext">Using Macros</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-8"><a href="#Branches"><span class="tocnumber">4</span> <span class="toctext">Branches</span></a>
+<ul>
+<li class="toclevel-2 tocsection-9"><a href="#.23if"><span class="tocnumber">4.1</span> <span class="toctext">#if</span></a></li>
+<li class="toclevel-2 tocsection-10"><a href="#.23ifdef"><span class="tocnumber">4.2</span> <span class="toctext">#ifdef</span></a></li>
+<li class="toclevel-2 tocsection-11"><a href="#.23ifndef"><span class="tocnumber">4.3</span> <span class="toctext">#ifndef</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-12"><a href="#Using_Multiple_Script_Files"><span class="tocnumber">5</span> <span class="toctext">Using Multiple Script Files</span></a></li>
+<li class="toclevel-1 tocsection-13"><a href="#Displaying_Text"><span class="tocnumber">6</span> <span class="toctext">Displaying Text</span></a></li>
+</ul>
+</div>
+
+<h2><span class="mw-headline" id="Overview">Overview</span></h2>
+<p>The <tt>preprocessor</tt> is what initially reads script files from disk.  As they are read, the preprocessor may handle commands directed to it, called <tt>directives</tt>.  Preprocessor directives begin with # and must be at the beginning of the line.  The preprocessor will also perform simple text replacements and <tt>macros</tt>.
+</p><p>In standard preprocessing, <tt>defines</tt> are generally synonymous with <tt>macros</tt>.  LavishScript separates the two for different uses.
+</p>
+<h2><span class="mw-headline" id="Defines">Defines</span></h2>
+<p>In LavishScript, a <tt>define</tt> is like an alias.  A name gets replaced by another word or phrase.  Names may consist of alphanumeric characters as well as underscores, so long as they do not begin with a number, and are case sensitive.  Replacements may be anything at all, including nothing.
+</p>
+<dl><dt>Valid Names</dt></dl>
+<ul><li>Test</li>
+<li>X</li>
+<li>Four4</li>
+<li>_LAVISHSCRIPT_</li></ul>
+<dl><dt>Invalid Names</dt></dl>
+<ul><li>1</li>
+<li>4Four</li>
+<li>Man@</li>
+<li>*Play</li></ul>
+<h3><span class="mw-headline" id="Define_Directives">Define Directives</span></h3>
+<ul><li>#define &lt;Name&gt; &lt;Replacement&gt;</li></ul>
+<dl><dd>All occurences of &lt;Name&gt; from this point on will be replaced with &lt;Replacement&gt;</dd></dl>
+<ul><li>#undef &lt;Name&gt;</li></ul>
+<dl><dd>Occurences of &lt;Name&gt; will no longer be replaced from this point on</dd></dl>
+<h3><span class="mw-headline" id="Built-in_Defines">Built-in Defines</span></h3>
+<dl><dt>Individual applications (such as Inner Space and Fury) may add their own built-in defines.  The following are built into LavishScript itself</dt></dl>
+<ul><li>_FILE_</li></ul>
+<dl><dd>The full filename of the current source file</dd></dl>
+<ul><li>_LINE_</li></ul>
+<dl><dd>The current line number, of the current source file</dd></dl>
+<ul><li>_LAVISHSCRIPT_</li></ul>
+<dl><dd>LavishScript version number, such as 1.08</dd></dl>
+<h2><span class="mw-headline" id="Macros">Macros</span></h2>
+<p>In LavishScript, a <tt>macro</tt> is like a mini-function.  Macros use parameters, which are then treated as <tt>defines</tt> within the macro when used later.
+</p>
+<h3><span class="mw-headline" id="Creating_Macros">Creating Macros</span></h3>
+<pre>#macro &lt;Name&gt;([Parameters])
+  [statements...]
+#endmac
+</pre>
+<p>Parameters themselves are not required, but the parentheses are.  Each parameter should be a Name, and separated by commas.
+</p><p>Macros may later be removed with
+</p>
+<pre>#unmac &lt;Name&gt;
+</pre>
+<h3><span class="mw-headline" id="Using_Macros">Using Macros</span></h3>
+<p>Macros can be used anywhere on any line in the script which is not a preprocessor directive.  Macros are used by including the name, parentheses, and any replacements, like so:
+</p>
+<pre>#macro XOR(a,b)
+  ${Math.Calc[a^b]}
+#endmac
+
+echo XOR(1,2)
+</pre>
+<p>The above after preprocessing would be whittled down to:
+</p>
+<pre>echo ${Math.Calc[1^2]}
+</pre>
+<p>Some macros may be several lines in length, so it is important to know how the macro is meant to be used.  Macros that use only a single line, such as the above, will simply be inserted in the original line.
+</p>
+<h2><span class="mw-headline" id="Branches">Branches</span></h2>
+<p>The LavishScript preprocessor supports standard preprocessor branching directives, including #if, #ifndef and #ifdef.  #else, and #elif may be used in conjunction with the initial branching directives, and all must eventually end with #endif.
+</p>
+<h3><span id="#if"></span><span class="mw-headline" id=".23if">#if</span></h3>
+<p>#if is used much like the <a href="https://www.lavishsoft.com/wiki/index.php/Command:If" class="mw-redirect" title="Command:If">If command</a>, but as preprocessor directives are <b>not</b> commands, the arguments given to #if should <b>not</b> be quoted.  #if will conditionally process portions of the file, allowing some to remain unused by the script.
+</p>
+<pre>#if 0
+ this works a lot like
+ a "block comment".
+ none of these lines
+ will make it into the script
+#endif
+</pre>
+<p>#else may be used to process a consecutive portion of the file, if the first part was not processed.
+</p>
+<pre>#if 0
+ this will not be processed!
+#else
+ echo this will be processed!
+#endif
+</pre>
+<p>#if will process any <a href="LavishScript_Mathematical_Formulae.html" title="LavishScript:Mathematical Formulae">Mathematical Formulae</a> given, like so:
+</p>
+<pre>#if 12+24==36
+ #echo 12+24 is in fact 36
+#else
+ #echo 12+24 is not 36
+#endif
+</pre>
+<p>#if also processes defines, which may also be used in formula:
+</p>
+<pre>#if _LAVISHSCRIPT_&lt;1.08
+ #error Requires LavishScript 1.08 or later. _LAVISHSCRIPT_ is not sufficient
+#endif
+</pre>
+<p>#elif may be used as an "else if" -- if the above case did not match, this will be checked just like an if.
+</p>
+<pre>#if _LAVISHSCRIPT_&lt;1.08
+ #error Requires LavishScript 1.08 or later. _LAVISHSCRIPT_ is not sufficient
+#elif _LAVISHSCRIPT_==1.10
+ #error LavishScript 1.10 is incompatible with this script.
+#endif
+</pre>
+<h3><span id="#ifdef"></span><span class="mw-headline" id=".23ifdef">#ifdef</span></h3>
+<p>#ifdef simply determines whether a Name is defined, and otherwise works just like #if (but does not support #elif).
+</p>
+<pre>#ifdef _LAVISHSCRIPT_
+ #echo _LAVISHSCRIPT_ is defined (first part gets replaced!)
+#else
+ #echo _LAVISHSCRIPT_ is undefined
+#endif
+</pre>
+<h3><span id="#ifndef"></span><span class="mw-headline" id=".23ifndef">#ifndef</span></h3>
+<p>#ifndef is the complement to #ifdef.  It executes the first portion if the Name is undefined.
+</p>
+<pre>#ifndef _LAVISHSCRIPT_
+ #echo _LAVISHSCRIPT_ is undefined
+#endif
+</pre>
+<h2><span class="mw-headline" id="Using_Multiple_Script_Files">Using Multiple Script Files</span></h2>
+<p>#include is used to insert entire source files into the current position.  The filename must be given as an argument to #include, enclosed in double quotes.
+</p>
+<pre>#include "MyFile"
+</pre>
+<p>#includeoptional works like #include, but will not produce an error if the file does not exist
+</p>
+<pre>#includeoptional "MyFile"
+</pre>
+<h2><span class="mw-headline" id="Displaying_Text">Displaying Text</span></h2>
+<p>#echo can be used to display some text (generally to a console, though there is no native LavishScript console -- they are provided by the applications) at the time of preprocessing.
+</p>
+<pre>#echo MyScript version 12
+</pre>
+<p>#error can be used to display some text, and then prevent any further preprocessing or execution of the script.  This would usually be used in some sort of branch.  #error will display the current source file and line number before the error message.
+</p>
+<pre>#error Error!
+</pre>
+<!-- 
+NewPP limit report
+Cached time: 20250915185526
+Cache expiry: 86400
+Dynamic content: false
+CPU time usage: 0.020 seconds
+Real time usage: 0.020 seconds
+Preprocessor visited node count: 155/1000000
+Preprocessor generated node count: 316/1000000
+Post‐expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+Highest expansion depth: 2/40
+Expensive parser function count: 0/100
+Unstrip recursion depth: 0/20
+Unstrip post‐expand size: 69/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00%    0.000      1 -total
+-->
+
+<!-- Saved in parser cache with key lax-wiki_:pcache:idhash:1194-0!canonical and timestamp 20250915185526 and revision id 4541
+ -->
+</div></div>
+		
+		<div class="printfooter">Retrieved from "<a dir="ltr" href="https://www.lavishsoft.com/wiki/index.php?title=LavishScript:Preprocessor&amp;oldid=4541">https://www.lavishsoft.com/wiki/index.php?title=LavishScript:Preprocessor&amp;oldid=4541</a>"</div>
+		
+		<div id="catlinks" class="catlinks" data-mw="interface"><div id="mw-normal-catlinks" class="mw-normal-catlinks"><a href="https://www.lavishsoft.com/wiki/index.php/Special:Categories" title="Special:Categories">Category</a>: <ul><li><a href="https://www.lavishsoft.com/wiki/index.php/Category:LavishScript" title="Category:LavishScript">LavishScript</a></li></ul></div></div>
+		
+		<div class="visualClear"></div>
+		
+	</div>
+</div>
+
+		<div id="mw-navigation">
+			<h2>Navigation menu</h2>
+			<div id="mw-head">
+									<div id="p-personal" role="navigation" aria-labelledby="p-personal-label">
+						<h3 id="p-personal-label">Personal tools</h3>
+						<ul>
+							<li id="pt-login"><a href="https://www.lavishsoft.com/forum-x/ucp.php?mode=login&amp;redirect=https%3A%2F%2Fwww.lavishsoft.com%2Fwiki%2Findex.php%2FLavishScript%3APreprocessor" title="You are encouraged to log in; however, it is not mandatory [o]" accesskey="o">Log in</a></li>						</ul>
+					</div>
+									<div id="left-navigation">
+										<div id="p-namespaces" role="navigation" class="vectorTabs" aria-labelledby="p-namespaces-label">
+						<h3 id="p-namespaces-label">Namespaces</h3>
+						<ul>
+							<li id="ca-nstab-main" class="selected"><span><a href="LavishScript_Preprocessor.html" title="View the content page [c]" accesskey="c">Article</a></span></li><li id="ca-talk" class="new"><span><a href="https://www.lavishsoft.com/wiki/index.php?title=Talk:LavishScript:Preprocessor&amp;action=edit&amp;redlink=1" rel="discussion" title="Discussion about the content page (page does not exist) [t]" accesskey="t">Discussion</a></span></li>						</ul>
+					</div>
+										<div id="p-variants" role="navigation" class="vectorMenu emptyPortlet" aria-labelledby="p-variants-label">
+												<input type="checkbox" class="vectorMenuCheckbox" aria-labelledby="p-variants-label" />
+						<h3 id="p-variants-label">
+							<span>Variants</span>
+						</h3>
+						<ul class="menu">
+													</ul>
+					</div>
+									</div>
+				<div id="right-navigation">
+										<div id="p-views" role="navigation" class="vectorTabs" aria-labelledby="p-views-label">
+						<h3 id="p-views-label">Views</h3>
+						<ul>
+							<li id="ca-view" class="collapsible selected"><span><a href="LavishScript_Preprocessor.html">Read</a></span></li><li id="ca-viewsource" class="collapsible"><span><a href="https://www.lavishsoft.com/wiki/index.php?title=LavishScript:Preprocessor&amp;action=edit" title="This page is protected.&#10;You can view its source [e]" accesskey="e">View source</a></span></li><li id="ca-history" class="collapsible"><span><a href="https://www.lavishsoft.com/wiki/index.php?title=LavishScript:Preprocessor&amp;action=history" title="Past revisions of this page [h]" accesskey="h">View history</a></span></li>						</ul>
+					</div>
+										<div id="p-cactions" role="navigation" class="vectorMenu emptyPortlet" aria-labelledby="p-cactions-label">
+						<input type="checkbox" class="vectorMenuCheckbox" aria-labelledby="p-cactions-label" />
+						<h3 id="p-cactions-label"><span>More</span></h3>
+						<ul class="menu">
+													</ul>
+					</div>
+										<div id="p-search" role="search">
+						<h3>
+							<label for="searchInput">Search</label>
+						</h3>
+						<form action="https://www.lavishsoft.com/wiki/index.php" id="searchform">
+							<div id="simpleSearch">
+								<input type="search" name="search" placeholder="Search Lavish Software Wiki" title="Search Lavish Software Wiki [f]" accesskey="f" id="searchInput"/><input type="hidden" value="Special:Search" name="title"/><input type="submit" name="fulltext" value="Search" title="Search the pages for this text" id="mw-searchButton" class="searchButton mw-fallbackSearchButton"/><input type="submit" name="go" value="Go" title="Go to a page with this exact name if it exists" id="searchButton" class="searchButton"/>							</div>
+						</form>
+					</div>
+									</div>
+			</div>
+			<div id="mw-panel">
+				<div id="p-logo" role="banner"><a class="mw-wiki-logo" href="https://www.lavishsoft.com/wiki/index.php/Main_Page" title="Visit the main page"></a></div>
+						<div class="portal" role="navigation" id="p-navigation" aria-labelledby="p-navigation-label">
+			<h3 id="p-navigation-label">Navigation</h3>
+			<div class="body">
+								<ul>
+					<li id="n-mainpage-description"><a href="https://www.lavishsoft.com/wiki/index.php/Main_Page" title="Visit the main page [z]" accesskey="z">Main page</a></li><li id="n-LavishScript"><a href="https://www.lavishsoft.com/wiki/index.php/LavishScript">LavishScript</a></li><li id="n-LavishGUI"><a href="https://www.lavishsoft.com/wiki/index.php/LavishGUI">LavishGUI</a></li><li id="n-LavishGUI-2"><a href="https://www.lavishsoft.com/wiki/index.php/LavishGUI_2">LavishGUI 2</a></li><li id="n-recentchanges"><a href="https://www.lavishsoft.com/wiki/index.php/Special:RecentChanges" title="A list of recent changes in the wiki [r]" accesskey="r">Recent changes</a></li><li id="n-randompage"><a href="https://www.lavishsoft.com/wiki/index.php/Special:Random" title="Load a random page [x]" accesskey="x">Random page</a></li><li id="n-help"><a href="https://www.lavishsoft.com/wiki/index.php/Help:Contents" title="The place to find out">Help</a></li>				</ul>
+							</div>
+		</div>
+			<div class="portal" role="navigation" id="p-tb" aria-labelledby="p-tb-label">
+			<h3 id="p-tb-label">Toolbox</h3>
+			<div class="body">
+								<ul>
+					<li id="t-whatlinkshere"><a href="https://www.lavishsoft.com/wiki/index.php/Special:WhatLinksHere/LavishScript:Preprocessor" title="A list of all wiki pages that link here [j]" accesskey="j">What links here</a></li><li id="t-recentchangeslinked"><a href="https://www.lavishsoft.com/wiki/index.php/Special:RecentChangesLinked/LavishScript:Preprocessor" rel="nofollow" title="Recent changes in pages linked from this page [k]" accesskey="k">Related changes</a></li><li id="t-specialpages"><a href="https://www.lavishsoft.com/wiki/index.php/Special:SpecialPages" title="A list of all special pages [q]" accesskey="q">Special pages</a></li><li id="t-print"><a href="https://www.lavishsoft.com/wiki/index.php?title=LavishScript:Preprocessor&amp;printable=yes" rel="alternate" title="Printable version of this page [p]" accesskey="p">Printable version</a></li><li id="t-permalink"><a href="https://www.lavishsoft.com/wiki/index.php?title=LavishScript:Preprocessor&amp;oldid=4541" title="Permanent link to this revision of the page">Permanent link</a></li><li id="t-info"><a href="https://www.lavishsoft.com/wiki/index.php?title=LavishScript:Preprocessor&amp;action=info" title="More information about this page">Page information</a></li>				</ul>
+							</div>
+		</div>
+				</div>
+		</div>
+				<div id="footer" role="contentinfo">
+						<ul id="footer-info">
+								<li id="footer-info-lastmod"> This page was last edited on 22 July 2005, at 21:18.</li>
+							</ul>
+						<ul id="footer-places">
+								<li id="footer-places-privacy"><a href="https://www.lavishsoft.com/wiki/index.php/Lavish_Software_Wiki:Privacy_policy" title="Lavish Software Wiki:Privacy policy">Privacy policy</a></li>
+								<li id="footer-places-about"><a href="https://www.lavishsoft.com/wiki/index.php/Lavish_Software_Wiki:About" title="Lavish Software Wiki:About">About Lavish Software Wiki</a></li>
+								<li id="footer-places-disclaimer"><a href="https://www.lavishsoft.com/wiki/index.php/Lavish_Software_Wiki:General_disclaimer" title="Lavish Software Wiki:General disclaimer">Disclaimers</a></li>
+							</ul>
+										<ul id="footer-icons" class="noprint">
+										<li id="footer-poweredbyico">
+						<a href="http://www.mediawiki.org/"><img src="https://www.lavishsoft.com/wiki/resources/assets/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" srcset="/wiki/resources/assets/poweredby_mediawiki_132x47.png 1.5x, /wiki/resources/assets/poweredby_mediawiki_176x62.png 2x" width="88" height="31"/></a>					</li>
+									</ul>
+						<div style="clear: both;"></div>
+		</div>
+		
+
+<script>(window.RLQ=window.RLQ||[]).push(function(){mw.config.set({"wgPageParseReport":{"limitreport":{"cputime":"0.020","walltime":"0.020","ppvisitednodes":{"value":155,"limit":1000000},"ppgeneratednodes":{"value":316,"limit":1000000},"postexpandincludesize":{"value":0,"limit":2097152},"templateargumentsize":{"value":0,"limit":2097152},"expansiondepth":{"value":2,"limit":40},"expensivefunctioncount":{"value":0,"limit":100},"unstrip-depth":{"value":0,"limit":20},"unstrip-size":{"value":69,"limit":5000000},"timingprofile":["100.00%    0.000      1 -total"]},"cachereport":{"timestamp":"20250915185526","ttl":86400,"transientcontent":false}}});mw.config.set({"wgBackendResponseTime":845});});</script>
+</body>
+
+<!-- Mirrored from www.lavishsoft.com/wiki/index.php/LavishScript:Preprocessor by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 16 Sep 2025 16:30:22 GMT -->
+</html>

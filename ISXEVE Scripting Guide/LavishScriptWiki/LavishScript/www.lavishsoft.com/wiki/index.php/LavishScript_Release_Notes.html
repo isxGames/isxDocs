@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html class="client-nojs" lang="en" dir="ltr">
+
+<!-- Mirrored from www.lavishsoft.com/wiki/index.php/LavishScript:Release_Notes by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 16 Sep 2025 16:30:22 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=UTF-8" /><!-- /Added by HTTrack -->
+<head>
+<meta charset="UTF-8"/>
+<title>LavishScript:Release Notes - Lavish Software Wiki</title>
+<script>document.documentElement.className = document.documentElement.className.replace( /(^|\s)client-nojs(\s|$)/, "$1client-js$2" );</script>
+<script>(window.RLQ=window.RLQ||[]).push(function(){mw.config.set({"wgCanonicalNamespace":"","wgCanonicalSpecialPageName":false,"wgNamespaceNumber":0,"wgPageName":"LavishScript:Release_Notes","wgTitle":"LavishScript:Release Notes","wgCurRevisionId":6284,"wgRevisionId":6284,"wgArticleId":1259,"wgIsArticle":true,"wgIsRedirect":false,"wgAction":"view","wgUserName":null,"wgUserGroups":["*"],"wgCategories":["LavishScript"],"wgBreakFrames":false,"wgPageContentLanguage":"en","wgPageContentModel":"wikitext","wgSeparatorTransformTable":["",""],"wgDigitTransformTable":["",""],"wgDefaultDateFormat":"dmy","wgMonthNames":["","January","February","March","April","May","June","July","August","September","October","November","December"],"wgMonthNamesShort":["","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],"wgRelevantPageName":"LavishScript:Release_Notes","wgRelevantArticleId":1259,"wgRequestId":"7f20ad0f01adb24847db3369","wgCSPNonce":false,"wgIsProbablyEditable":false,"wgRelevantPageIsProbablyEditable":false,"wgRestrictionEdit":[],"wgRestrictionMove":[]});mw.loader.state({"site.styles":"ready","noscript":"ready","user.styles":"ready","user":"ready","user.options":"ready","user.tokens":"loading","mediawiki.legacy.shared":"ready","mediawiki.legacy.commonPrint":"ready","mediawiki.skinning.interface":"ready","skins.vector.styles":"ready"});mw.loader.implement("user.tokens@0tffind",function($,jQuery,require,module){/*@nomin*/mw.user.tokens.set({"editToken":"+\\","patrolToken":"+\\","watchToken":"+\\","csrfToken":"+\\"});
+});RLPAGEMODULES=["site","mediawiki.page.startup","mediawiki.page.ready","mediawiki.searchSuggest","skins.vector.js"];mw.loader.load(RLPAGEMODULES);});</script>
+<link rel="stylesheet" href="https://www.lavishsoft.com/wiki/load.php?lang=en&amp;modules=mediawiki.legacy.commonPrint%2Cshared%7Cmediawiki.skinning.interface%7Cskins.vector.styles&amp;only=styles&amp;skin=vector"/>
+<script async="" src="https://www.lavishsoft.com/wiki/load.php?lang=en&amp;modules=startup&amp;only=scripts&amp;skin=vector"></script>
+<meta name="ResourceLoaderDynamicStyles" content=""/>
+<meta name="generator" content="MediaWiki 1.33.0"/>
+<link rel="shortcut icon" href="https://www.lavishsoft.com/favicon.ico"/>
+<link rel="search" type="application/opensearchdescription+xml" href="https://www.lavishsoft.com/wiki/opensearch_desc.php" title="Lavish Software Wiki (en)"/>
+<link rel="EditURI" type="application/rsd+xml" href="https://www.lavishsoft.com/wiki/api.php?action=rsd"/>
+<link rel="alternate" type="application/atom+xml" title="Lavish Software Wiki Atom feed" href="https://www.lavishsoft.com/wiki/index.php?title=Special:RecentChanges&amp;feed=atom"/>
+<!--[if lt IE 9]><script src="/wiki/load.php?lang=en&amp;modules=html5shiv&amp;only=scripts&amp;skin=vector&amp;sync=1"></script><![endif]-->
+</head>
+<body class="mediawiki ltr sitedir-ltr mw-hide-empty-elt ns-0 ns-subject page-LavishScript_Release_Notes rootpage-LavishScript_Release_Notes skin-vector action-view">
+<div id="mw-page-base" class="noprint"></div>
+<div id="mw-head-base" class="noprint"></div>
+<div id="content" class="mw-body" role="main">
+	<a id="top"></a>
+	
+	<div class="mw-indicators mw-body-content">
+</div>
+
+	<h1 id="firstHeading" class="firstHeading" lang="en">LavishScript:Release Notes</h1>
+	
+	<div id="bodyContent" class="mw-body-content">
+		<div id="siteSub" class="noprint">From Lavish Software Wiki</div>
+		<div id="contentSub"></div>
+		
+		
+		
+		<div id="jump-to-nav"></div>
+		<a class="mw-jump-link" href="#mw-head">Jump to navigation</a>
+		<a class="mw-jump-link" href="#p-search">Jump to search</a>
+		<div id="mw-content-text" lang="en" dir="ltr" class="mw-content-ltr"><div class="mw-parser-output"><pre>           LavishScript
+           Version 1.93
+  (c) 2004-2006 Lavish Software
+--------------------------------- 
+   
+1.93
+- Math acceleration implemented.  Math.Calc and Math.Calc64 (the 64-bit integer version
+  of Math.Calc), as well as math for control structures (if, while, etc) are now essentially
+  compiled in advance.  This is similar to the improvements made to all data sequences in
+  LavishScript 1.87.
+- Added object members:
+  int64ptr filelistentry.CreationTime
+  int64ptr filelistentry.LastWriteTime
+  int64ptr filelistentry.LastAccessTime
+- Script crashes in atomic scope should be more process friendly
+
+1.92
+- Fixed overflow issue with string.Right when using a length longer than the string
+- Added object type methods:
+  index:Insert[...]
+- Added object type members:
+  byte string.GetAt[#]
+  string uint.Hex[#]
+  string int.Hex[#]
+  string int64ptr.Hex[#]
+- string indexing now does the same as string.GetAt[#]
+- Fixed infinite loop in index:Collapse
+- Fixed crash when creating arrays of script-defined object types
+- 'atom' definitions now come in three scopes, and now use a scope declaration system
+  similar to variables.  The scopes are script (default), global, and globalkeep.
+  Scope declaration comes immediately after the atom keyword, before return type
+  declaration.  Example: atom(globalkeep):bool MyAtom().  The script and global scopes
+  will use the context of the script that created the atom, whereas the globalkeep
+  scope will not (otherwise, the script would potentially end, leaving the atom
+  without its proper context).
+
+1.91
+- Added standard 'for' control structure
+- 'This' context now properly keeps the object type.  Previously, if a script-defined
+  object was cast as another type, the context would still be the real object type
+  during the cast (e.g. during function execution while cast)
+- Fixed a bug with the variable keyword declaring arrays.  The second time the same
+  variable declaration was executed, it was being stripped of the indices (becoming
+  a single variable declaration instead of an array).
+- Leading and trailing spaces are now trimmed from parameters (function parameters, 
+  indices, etc)
+- Added object type methods:
+  script:EnableDebugLogging[filename]
+  script:DisableDebugLogging
+  iterator:JumpTo[...]
+- Added object type members:
+  iterator.RandomAccess
+
+1.90
+- queue object type now uses sub-types
+- stack object type now uses sub-types
+- collection object type now allows multi-parameter Set, as do
+  queue (Queue method) and stack (Push method)
+- Added object type methods:
+  queue:GetIterator[iterator object]
+  stack:GetIterator[iterator object]
+- Script-defined object initialization routines should now properly work when created
+  in ways other than actual variable creation (e.g. as items in a queue, stack, index, etc)
+- Removed object type methods:
+  collection:Initialize
+- Added object type members:
+  string index.Expand
+  string index.ExpandComma
+  string array.ExpandComma
+- Fixed bug with array variables in objectdefs
+- LavishScript now supports LSCrypt encrypted scripts.  Such scripts are compressed with
+  zlib and encrypted with ARCFOUR (LSCrypt is not a custom encryption algorithm, it is
+  a file format that LavishScript reads natively).  When executing an encrypted script,
+  the first parameter to the script must be the key (passcode), which will not be passed
+  to the script itself.  Encrypted scripts have debugging disabled by default.
+- Added object types:
+  * objectcontainer
+- array, collection, index, queue, set, stack now inherit the objectcontainer object type.  As
+  such, members such as collection.Elements are now removed, in favor of the objectcontainer
+  members.
+- set object type is now properly available
+ 
+1.89 
+- LSModule v16
+- All LavishScript types now allow indices, not just the array type
+- Index handling added to object types:
+  array
+  collection
+  set
+  index
+- Script-defined object types now have a special GetIndex member, used for object
+  indices.
+- filepath object type split into filepath and mutablefilepath
+- Atom execution extended to allow context separate from "This", which can be accessed
+  within the atom via "Context".
+- Events system can now be used with script-defined object methods
+- Triggers may now specify the name of a registered event to execute.
+
+1.88
+- Fixed memory leak from function return values
+- Added Object Types:
+  * variablescope
+- Added Top-Level Objects:
+  * Returning
+  * VariableScope
+- Added object type members:
+  * variablescope script.VariableScope
+  * variablescope lavishscript.VariableScope
+- Script-defined objects now have a VariableScope member 
+- Functions (function, atom, member, method) now allow a return object type, which
+  can be given by appending the word function (or atom, member, method) with a colon,
+  followed by the object type.  By default, the return object type is mutablestring 
+  (the string variable object type). The return object is created when the function 
+  scope begins, and is accessible via the Returning TLO.  Using return with no parameters 
+  or allowing the function to end naturally will return that object (it is recommended 
+  to use available methods to set the value of the Returning object).  Using return with 
+  parameters will re-create the object, using the given parameters to initialize the 
+  object.  The object will be destroyed when the calling function leaves scope, or when 
+  the calling function calls another function.
+- Script-defined object methods and members can now be a data sequence instead of
+  an atomic function, like so:
+    member Test=${OtherObject.Value}
+    method Test=${OtherObject:Method}
+  If an index is provided to the member or method, it will be used on the final
+  object in the data sequence, so for example ${MyObject.Test[1,2]} would therefore
+  be equivalent to ${OtherObject.Value[1,2]}.
+- Fixed bug that prevented triggers from using script-defined object methods
+  
+1.87
+- LSModule v15
+- point3f's "To Text" is now the same as point3f.XYZ
+- Fixed bug with whitepace when setting function or object property default values
+- Added internal support for object subtypes, for object types such as "collection"
+  which is a collection *of* another object type.  Object subtypes can be used for
+  types that support it by appending a colon&#160;: and the name of the subtype, such as
+  collection:int or collection:string.  Subtypes may contain additional subtypes,
+  meaning that collection:collection:string is a collection of collections of strings.
+  Subtypes are not allowed by all object types -- only those that specifically support
+  them.
+- Current Working Directory is now checked BEFORE the default folders for file search
+  paths
+- Added memory usage to script profiling
+- QueuedCommands TLO now accepts a parameter to look for specific queued commands
+- mutablestring (string variable type) now operates on the utf8string class
+- Removed "noparse" command
+- Major optimizations to the LavishScript parser (faster command parsing speed).
+  Complex aliases are temporarily unavailable as a result
+- Data sequences now get compiled when used with commands and control structures
+- Blech-based trigger system moved directly into LavishScript, instead of in individual
+  LavishScript-enabled applications
+- Improved resolution of functions for Call command
+- Improved parser behavior for escaped quotes
+- Atoms not added as part of script context (e.g. embedded scripts) are now correctly
+  optimized
+- Fixed crash when the current script ends during execution of an atom
+- Added proper variable creation syntax, available inside or outside of functions.  The
+  DeclareVariable command is still useful for dynamic creation of variables, but no
+  longer the preferable way to create variables.  Variables are created in one of the
+  following forms:
+  * variable type name
+  * variable(scope) type name
+  * variable type name = Default
+  * variable(scope) type name = Default
+  Arrays can still be created by adding dimensions to the name, such as name[50].  Object
+  variables can still be declared with the "property" keyword, which uses the same syntax.
+- Added object types:
+  * index
+  * collection
+  * queue
+  * stack
+  * set
+  (note: collection, queue and stack are from the ExtTypes module, which is now directly
+   part of LavishScript, but with source still available as a module for an example)
+- Added object type members:
+  * string point3f.XYZ
+  * string mutablestring.String
+  * uint system.MemoryUsage
+  * uint system.APICall
+- Added object type methods:
+  * system:APICall
+- Added commands:
+  * cp
+
+1.86
+- math.Rand now supports formulae
+- Old objectdef "members" have been renamed to "properties".  All member variable
+  declarations should now use the property keyword, isntead of member.
+- Objectdef member and method declarations can now be used to create member and
+  method atoms, used like members and methods of any other object.  Note that
+  properties will override members of the same name.
+- Objectdefs now support constructor and deconstructor methods, named Initialize and
+  Shutdown, which are automatically executed if available when an object is created.  
+  Parameters can be passed to Initialize by adding extra parameters in the DeclareVariable
+  line, such as 'DeclareVariable MyObject myobject param1 param2 param3'.  Due to this
+  flexibility, **Initialize routines of inherited types are NOT automatically executed, and
+  should be explicitly executed by the descendant object type.**  This can be done by
+  casting This to the given type, such as 'This(myinheritedtype):Initialize[a,b,c]'.
+  Shutdown routines ARE automatically executed in order of inheritance from the descendant
+  up to the base type, when the object leaves scope or is otherwise deleted.
+- Objectdefs now support a ToText member, which is applied when a data sequence ends
+  with an object of that type.  The return value of the member will be the resulting
+  text.
+- "object" scope is now available to objectdef members and methods
+- Casting a variable declared as an objectdef type to "type" will now give the name 
+  of the objectdef instead of "scriptobject" (note that casting to type has always
+  given the type of the object cast)
+- Added optional parameter to "This" when used with script-defined objects.  This[parent]
+  will be the same as casting the object to its inherited type, if any.  
+  This[parent]:Initialize will automatically execute the parent type's Initialize method,
+  regardless of the parent type's name.
+- Added data type members:
+  string script.ExecuteAtom[name,...]
+  string lavishscript.ExecuteAtom[name,...]
+  ** These versions are in addition to the existing methods, which do not allow
+     return values.  Members do.
+  filepath lavishscript.Executable
+- Added data type methods:
+  file:Flush
+- Added file system commands:
+  rename &lt;old filename&gt; &lt;new filename&gt;
+  rm &lt;directory&gt;
+  rmdir &lt;filename&gt;
+- Fixed bug in calculator that caused a minus to be treated as a negation operator instead 
+  of subtraction when following a parenthesis and a space.  For example, "18 - 1" was 17,
+  but "(18) - 1" was -1.
+- Fixed small memory leak in function calls
+- Functions (and atoms) now support variable numbers of arguments.  The final parameter
+  in the function definition can use ... as the type, and any remaining parameters passed
+  to the function when called will be placed in an array of strings with the name given.  
+  For example:
+  function vararg(string Something, ... Params)
+  {
+    ; Params is an array
+    echo ${Params.Size} extra arguments
+  }
+  function main()
+  {
+    call vararg "This is the normal parameter 'Something'" These will be put in Params
+  }
+- Fixed crash in filelist.File
+
+1.85
+- Fixed bugs in complex aliases
+- script.Variable now supports arrays
+
+1.84
+- Added "variablecase" to switches.  If no normal case matches, each variable
+  case will be processed and checked for a match, from top to bottom.  If no
+  variable case exists or matches, the flow continues to the "default" if it
+  exists, otherwise skipping past the switch.
+- Fixed bug that prevented logical AND from being properly optimized in
+  if and while statements
+- File system operations now support UTF-8 filenames
+
+1.83
+- The variable datatype now works correctly for arrays
+- mkdir command should now work properly with UTF-8
+
+1.82
+- The Variable Top-Level Object now supports arrays
+
+1.81
+- LSModule v14
+- Fixed crash in embedded script errors
+- FromString and ToString functions in LSTypeDefinition have been changed to
+  FromText and ToText to reduce confusion with the string datatype.  The old
+  names are deprecated, and should be changed in your code
+- Various enumeration functions have been added
+- LavishScript events added:
+	Alias Added
+	Alias Removed
+	Command Added
+	Command Removed
+	Datatype Added
+	Datatype Removed
+	Top-Level Object Added
+	Top-Level Object Removed
+
+1.80
+- Fixed script-defined object bug with inherited functions
+- Fixed crash on division or modulus by zero
+
+1.79
+- Added data type members:
+  float math.DistancePointLine[x,y,ax,ay,bx,by]
+
+1.78
+- Optimized command and alias resolution
+- Fixed LSType command crash
+- Fixed transference of This object in function calls
+
+1.77
+- LSModule v13
+- LSTypeDefinition has changed a bit.  The changes make it possible to modify an existing
+  data type by adding or removing methods and/or members.  This slightly changes the 
+  development of types that use inheritance.  To do so, overriding the new 
+  "GetInheritedMember"  and "GetInheritedMethod" functions will be required.  We have
+  provided convenience macros INHERITDIRECT and INHERITINDIRECT to do this easily for
+  single-inheritance.  Multiple inheritance must be done the old-fashioned way.
+  
+  For types that require no special conversion, inheritance can be implemented by using
+  the INHERITDIRECT macro in your type definition class, like so:
+     INHERITDIRECT(pIntType);
+  For types that require special conversion, inheritance can be implemented by using the
+  INHERITINDIRECT macro in your type definition class, like so:
+     INHERITINDIRECT(pStringType,Temp.Ptr=((string*)ObjectData.Ptr)-&gt;c_str(),((string*)ObjectData.Ptr)-&gt;assign(Temp.CharPtr))
+  Note that the second parameter of the macro converts from the current type to the inherited type.
+  The third parameter converts from the inherited type back to the current type.  In most
+  cases, the third parameter may simply be 0.  Converting back is ONLY necessary when inherited
+  methods can change the value stored by the object.  For example, if the object is a pointer
+  to some other type being inherited (e.g. a boolptr, pointing to a bool), then an inherited
+  method of bool operates only on a temporary copy of the data
+  
+  *** OLD INHERITANCE WILL NOT WORK AND SHOULD BE REMOVED FROM YOUR GETMEMBER AND GETMETHOD FUNCTIONS! ***
+  
+  Additionally, the efficiency of the old GetMember/GetMethod functions is slightly lessened.  They
+  are guaranteed to have a valid member when called, so determining if the member is valid can be removed.
+  Any GetMember/GetMethod functions should be replaced with the new version, which uses PLSTYPEMEMBER and
+  PLSTYPEMETHOD directly instead of char * to pass the member or method information.  Without overriding
+  these new versions of the function, the old GetMember/GetMethod will be called.
+- Fixed problem with #include not using the current input file's directory by default
+- Fixed script-defined object inheritance
+
+1.76
+- Relevant parts of LavishScript are now converted to use UTF-8 instead of ASCII.
+
+1.75
+- Fixed order of operation issue in short circuiting
+
+1.74
+- Fixed issue with elseif
+
+1.73
+- Fixed issue with short circuiting
+
+1.72
+- Fixed issue with while loops and the new short circuiting functionality
+
+1.71
+- LSModule v12
+- Each LavishScript data type now keeps a record of variables created with that type.  
+  When the type is removed, all of those variables are now deleted automatically to 
+  prevent crashes (though scripts containing these variables may not function correctly,
+  they should not subsequently crash)
+- If and While control structures (all forms) now support short circuiting.  This is an
+  internal optimization that automatically breaks conditions containing logical AND or
+  OR operators into separate portions, such that data sequences on the right side of
+  a &amp;&amp; or || are not processed if the left side of the &amp;&amp; is 0 or the left side of the
+  || is non-zero.  This means that developers no longer need to manually split these
+  control structures into several pieces to prevent data sequences from being processed
+  when unnecessary.  
+- Fixed string.Replace
+- mkdir command is now properly active
+- Added data types:
+  filelist
+  filelistentry
+- math.Atan[#,#] now performs atan2
+- Fixed filepath:Set[new path]
+- Added data type methods:
+  filepath:MakeSubdirectory[subdir]
+
+1.70
+- Added commands:
+  mkdir
+
+1.69
+- Fixed script:End used in atexit
+
+1.68
+- Call is now valid within atoms
+
+1.67
+- LSModule v11
+- Fixed #includeoptional, which wasnt acting very optional
+- Improved script context switching.  Scripts that take an excessive amount of time
+  will be interrupted.
+- "atexit" is now atomic.  If it is defined as a function, it will automatically be
+  converted to an atom.  EndScript and script:End now complete in the current frame,
+  rather than a following frame.
+- Escaping strings (with string.Escape for example) now includes escaping data sequences
+- Methods used as commands should no longer following text, assuming the command list 
+  character (;) is used
+- Added a script profiling system.  When enabled, each line will be profiled and
+  information will be stored about number of executions and total time spent.  This
+  can be used to determine which parts of a script should be targeted for optimization.
+- Added -time switch to the Execute command
+- Scripts can now be explicitly set to not provide explicit debugging information.
+  With this set, script stack dumps will be crippled to not show the function name or
+  command, and some other information such as profiling will also be unavailable.
+- Added events system.  A LavishScript event is a list of atoms that will be executed in 
+  arbitrary order, when the event itself is executed.  Executing an event may involve
+  passing a set of parameters and a "This" object, which in turn will be passed to each atom.
+- Added datatypes:
+  event
+- Added Top-Level Object forms:
+  event Event[name]
+  event Event[#]
+- Added datatype members and methods:
+  string lavishscript.LSModule
+  bool script.Profiling
+  bool script.AllowDebug
+  script:EnableProfiling
+  script:DisableProfiling
+  script:DisableDebugging
+  script:DumpStack
+  script:DumpProfiling
+  lavishscript:RegisterEvent[name]
+
+1.66
+- Fixed rgb members Red, Green and Blue (they were reversed)
+
+1.65
+- Fixed crash issue with atoms that result in a script error
+
+1.64
+- LSModule v9
+- Updated Atoms internally to allow for return values
+
+1.63
+- Added "ElseIf" to the If..Else control structure.
+- New "atom" concept added to the engine.  An atom is basically a script function that
+  executes as if it were a single command.  It is allowed to have control structures,
+  but NOT "wait" commands and cannot call a function (but can execute other atoms).
+  Atoms do not need to be (but can be) associated with a script.
+- Added commands:
+  * ExecuteAtom
+  * AddAtom
+  * DeleteAtom
+- Added data type members and methods:
+  * script:ExecuteAtom[name]
+- \ at the end of a line now assumes the \ should be a \, instead of escaping the NULL
+  terminator for the command string (i.e. \ at the end of a line no longer does weird
+  things)
+
+1.62
+- Fixed bugs with atexit not executing sometimes due to recent optimizations
+- Added data type members:
+  filepath lavishscript.HomeDirectory
+- Fixed bug with multiline ANSI-C comments
+
+1.61
+- Current Working Directory for scripts now default to the script's path.  This means
+  interface files, other scripts or other files can be used relative to the script's
+  path instead of having to hard-code a path into the script
+- Fixed crash error with Script:End in such used in atexit
+
+1.60
+- LSModule v7
+- Optimized script flow.  The following changes are a direct result:
+  * EndSwitch is now deprecated.  Switch now goes by the code block following the command
+  * While loops can be created without Do by putting a command or code block on the
+    following line
+  * Certain types of flow errors are now detected before the script executes
+
+1.55
+- Fixed issues with arrays
+- Added "object" scope in DeclareVariable
+
+1.54
+- Fixed stability issue with 1.53
+
+1.53
+- Methods used as commands will now result in script errors where appropriate (such as
+  where there is no member or method to match an access)
+- Function parameters and script object members can now supply default values using
+  "=", such as
+    function main(int Size=10)
+  and
+    member int Size=10
+
+1.52
+- Fixed issue with global variable auto-deletion
+
+1.51
+- Fixed an issue with variable existence checking that checked ALL available scopes (e.g.
+  global, script and local) instead of just the current scope (e.g. local)
+- Declaring a global variable twice will now destroy the first and successfully create the
+  new one
+- DeleteVariable no longer accepts "* global", but still accepts the name of a single
+  script- or global-scope variable
+- When global variables are declared in a script, the script will now automatically clean them
+  up when it ends.  If you wish to keep global variables AFTER the script has ended, use
+  "globalkeep" as the scope name (only valid in scripts)
+
+1.50
+- Added "OSExecute" command, which can be used to run programs and such
+- "variable" datatype no longer has its own members, but now accepts the name of an in-scope
+  variable upon variable creation.  For example:
+    declare MyVariable int 1
+    declare Test variable MyVariable
+    ${Test} is equal to 1
+  This CAN be used to pass local variables to functions by reference.  Please report any 
+  issues with using referenced variables
+- Scripts can now create objects which can have members and functions (but not methods)
+- Added datatype members:
+  * bool script.Paused
+- Added datatype methods:
+  * script:Pause
+  * script:Resume
+- Declaring variables twice within the same scope is now detected and considered an error
+
+1.47
+- LSModule v6
+- Added datatypes:
+  * uint, uintptr, int64, int64ptr, filepath, file, buffer
+  Note: LavishScript is currently 32-bit.  Extensions to LavishScript (such as LSModules,
+        Inner Space extensions or Fury plugins) cannot directly use int64, they must use
+        int64ptr.  int64 is a dummy type for creating variables, which gets redirected to
+        int64ptr.
+- Added data type members:
+  * uint int.Unsigned
+  * int uint.Signed
+  * int64ptr math.Calc64
+- Things that use or display file paths in LavishScript should as of now be using / so that
+  escaping is unnecessary.  Please report any instances where this is not true
+- system.CurrentDirectory, script.CurrentDirectory and lavishscript.CurrentDirectory now
+  use the filepath type
+- Added WaitScript command, available only to scripts.  This is logically the same as 
+  RunScript, followed by a wait until the script ends
+- DataParse is now updated for secure buffers
+
+1.46
+- Fixed issue with temporary buffer system
+
+1.45
+- LSModule v5
+- LSType now has a new virtual function so that data types can automatically use to
+  cause DeclareVariable to use a different type instead (for example, "string" returns
+  the mutablestring type).  Return 0 to prevent variables from being created with a
+  given type.
+- Implemented temporary buffer system which can be used in the object system (TLOs and
+  data types).  This corrects some rare string-related issues.
+
+1.44
+- Fixed a sometimes convenient bug with absolute file paths working as relative paths
+
+1.43
+- Fixed issue with syntactically valid methods used as commands causing errant
+  "Error parsing data sequence" messages
+
+1.42
+- Fixed issue with scripts ending themselves via EndScript or Script:End
+
+1.41
+- Fixed crash issue with triggers + EndScript during "atexit"
+
+1.40
+- EndScript will now forcefully end "atexit" execution
+
+1.39
+- Fixed crash when "main" function of script used an illegally-named parameter
+
+1.38
+- LSModule v4
+
+1.37
+- Math.Rand is now seeded differently
+
+1.36
+- LSModule v3
+- Fixed crash bugs with string.Escape and string.EscapeQuotes
+- Added data type members:
+  * string.Replace[character,with,...]
+  * script:QueueCommand[command]
+- More complex aliases are now supported, but still work like before if the new features
+  are not used.  
+
+1.35
+* Fixed EndScript command requiring a full path under some conditions
+
+1.34
+- Added Top-Level Objects:
+  * int Select[value,...]
+ 
+1.33
+- Fixed float:Inc and float:Dec when not using indices
+- Added data type members:
+  * float.Ceil
+  * float.Round
+- Fixed EndScript command so using a full path and/or file extension is allowed
+ 
+1.32
+- Added data type methods:
+  * string.EscapeQuotes
+  * string.Escape
+- Scripts missing a closing brace } after a function will report the error and not
+  load
+
+1.31
+- Fixed issue with recursive functions
+
+1.30
+- Fixed Continue command
+- Added per-script squelching in addition to the existing global squelching
+- Added data type methods:
+  * script:Squelch
+  * script:Unsquelch
+- Commands VarCalc, VarData and VarSet, previously marked deprecated have been removed
+
+1.29
+- Added data type methods:
+  * rgb:Set[rrggbb]
+- rgb.Red, rgb.Green, rgb.Blue are now byteptr type instead of int type, thus allowing
+  rgb.Red:Set[#] and so on
+- Added Top-Level Objects:
+  * int Execute[command]
+
+1.28
+- Added #includeoptional preprocessor directive.  This will include a file if it exists,
+  otherwise continue as if it never saw anything.
+
+1.27
+- Fixed script.RunningTime
+- Added script.CurrentDirectory
+- All functionality based on LavishScript CurrentDirectory now automatically uses per-script 
+  CurrentDirectory if one is running
+
+1.26
+- Fixed issue with modules not unloading correctly
+
+1.25
+- Fixed issue with aliases not being applied correctly
+
+1.24
+- Added data type members:
+  * string int.LeadingZeroes[desired length]
+  * int script.RunningTime
+
+1.23
+- Switch, when used with no parameters, will now look for an empty "case" line.  Previously, it
+  would show the syntax, and execute the first case.
+
+1.22
+- Removed \ parsing from the Preprocessor (this was not supposed to be there, and inconveniently
+  required double escaping in scripts)
+
+1.21
+- Added data type members:
+  * variable script.Variable[name]
+- Restructured variable data type.  Now acts exactly like the variable it views, but with
+  Name and Type members.
+
+1.20
+- Added Top-Level Objects:
+  * script Script
+  * script Script[name]
+- Preprocessor #include now checks directory of current script file first
+- Empty commands no longer resolve to the first command alphabetically
+- ExecuteQueued will now accept an optional parameter for a case-sensitive substring search 
+  to execute the next command in line that contains the given substring
+- VarSet, VarCalc and VarData will now give a "deprecated" warning message.  Please switch 
+  to using the :Set method for these variables
+  Examples:
+   "VarCalc x ${x}+1" becomes "x:Inc" or "x:Set[${x}+1]"
+   "VarData x y" becomes "x:Set[${y}]"
+   "VarSet x ${y}" becomes "x:Set[${y}]"
+- Added "mutablestring" datatype, which inherits string. This type adds methods which should
+  only be used on variables (like mutablestring:Set).  Any variables declared with the "string" 
+  type will automatically use the "mutablestring" type (no changes to existing scripts or 
+  extensions are generally necessary)
+- To promote general simplicity, the I/O redirection operators &lt; | &gt; and &gt;&gt; have been removed.
+  Subsequently, most mathematical formulae no longer need to be quoted (e.g. If and While
+  condition expressions)
+- Added command to replace output redirection operator:
+  Redirect [-append] &lt;filename&gt; &lt;command&gt;  
+- Scripts can now use ANSI-C comments which look like /* this */ (but C++ programmers dont get
+  too excited, the non-ANSI // comments will not be added)
+   
+1.19
+- LSModule v2
+
+1.18
+- Updated "time" type with new methods and members, changed the type of some of its members 
+  to pointers, and allowed "time" variables to be set by a timestamp (standard unix timestamp),
+  to make time-based calculations involving dates and times easier
+
+1.17
+- Fixed bugs with modules
+- Added "exists" type, which always gives TRUE
+- Added auto-execution of command file and script named "LavishScript" on startup
+
+1.16
+- Fixed Calculation issues
+- Fixed variable casting
+- Implemented current working directory independent of Windows.  If something still goes to
+  the game directory by default let us know.
+- Redirected input/output uses the LavishScript current working directory
+- Added data type members:
+  * string system.CurrentDirectory
+  * string lavishscript.CurrentDirectory
+  * int lavishscript.RunningTime
+- New command: cd
+
+1.14
+- Fixed bug in point3f type
+- Added column rendering to list functions
+
+1.13
+- Fixed several scripting bugs
+
+1.12
+- Fixed bug in script parsing when function parameters had no spacing
+
+1.11
+- New Modules system provides product-independent system for adding LavishScript commands, 
+  Top-Level objects and data types
+- Added "Modules" command
+  Syntax: Modules -list|-add &lt;name&gt;|-remove &lt;name&gt;|-require &lt;name&gt;
+  The -require option is meant for use in scripts -- if the module is not and cannot be loaded, 
+  the script ends with an error message.
+</pre>
+<ul><li><a href="https://www.lavishsoft.com/wiki/index.php/LavishScript" title="LavishScript">LavishScript</a></li></ul>
+<!-- 
+NewPP limit report
+Cached time: 20250915181418
+Cache expiry: 86400
+Dynamic content: false
+CPU time usage: 0.016 seconds
+Real time usage: 0.079 seconds
+Preprocessor visited node count: 1/1000000
+Preprocessor generated node count: 4/1000000
+Post‐expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+Highest expansion depth: 1/40
+Expensive parser function count: 0/100
+Unstrip recursion depth: 0/20
+Unstrip post‐expand size: 0/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00%    0.000      1 -total
+-->
+
+<!-- Saved in parser cache with key lax-wiki_:pcache:idhash:1259-0!canonical and timestamp 20250915181418 and revision id 6284
+ -->
+</div></div>
+		
+		<div class="printfooter">Retrieved from "<a dir="ltr" href="https://www.lavishsoft.com/wiki/index.php?title=LavishScript:Release_Notes&amp;oldid=6284">https://www.lavishsoft.com/wiki/index.php?title=LavishScript:Release_Notes&amp;oldid=6284</a>"</div>
+		
+		<div id="catlinks" class="catlinks" data-mw="interface"><div id="mw-normal-catlinks" class="mw-normal-catlinks"><a href="https://www.lavishsoft.com/wiki/index.php/Special:Categories" title="Special:Categories">Category</a>: <ul><li><a href="https://www.lavishsoft.com/wiki/index.php/Category:LavishScript" title="Category:LavishScript">LavishScript</a></li></ul></div></div>
+		
+		<div class="visualClear"></div>
+		
+	</div>
+</div>
+
+		<div id="mw-navigation">
+			<h2>Navigation menu</h2>
+			<div id="mw-head">
+									<div id="p-personal" role="navigation" aria-labelledby="p-personal-label">
+						<h3 id="p-personal-label">Personal tools</h3>
+						<ul>
+							<li id="pt-login"><a href="https://www.lavishsoft.com/forum-x/ucp.php?mode=login&amp;redirect=https%3A%2F%2Fwww.lavishsoft.com%2Fwiki%2Findex.php%2FLavishScript%3ARelease_Notes" title="You are encouraged to log in; however, it is not mandatory [o]" accesskey="o">Log in</a></li>						</ul>
+					</div>
+									<div id="left-navigation">
+										<div id="p-namespaces" role="navigation" class="vectorTabs" aria-labelledby="p-namespaces-label">
+						<h3 id="p-namespaces-label">Namespaces</h3>
+						<ul>
+							<li id="ca-nstab-main" class="selected"><span><a href="LavishScript_Release_Notes.html" title="View the content page [c]" accesskey="c">Article</a></span></li><li id="ca-talk" class="new"><span><a href="https://www.lavishsoft.com/wiki/index.php?title=Talk:LavishScript:Release_Notes&amp;action=edit&amp;redlink=1" rel="discussion" title="Discussion about the content page (page does not exist) [t]" accesskey="t">Discussion</a></span></li>						</ul>
+					</div>
+										<div id="p-variants" role="navigation" class="vectorMenu emptyPortlet" aria-labelledby="p-variants-label">
+												<input type="checkbox" class="vectorMenuCheckbox" aria-labelledby="p-variants-label" />
+						<h3 id="p-variants-label">
+							<span>Variants</span>
+						</h3>
+						<ul class="menu">
+													</ul>
+					</div>
+									</div>
+				<div id="right-navigation">
+										<div id="p-views" role="navigation" class="vectorTabs" aria-labelledby="p-views-label">
+						<h3 id="p-views-label">Views</h3>
+						<ul>
+							<li id="ca-view" class="collapsible selected"><span><a href="LavishScript_Release_Notes.html">Read</a></span></li><li id="ca-viewsource" class="collapsible"><span><a href="https://www.lavishsoft.com/wiki/index.php?title=LavishScript:Release_Notes&amp;action=edit" title="This page is protected.&#10;You can view its source [e]" accesskey="e">View source</a></span></li><li id="ca-history" class="collapsible"><span><a href="https://www.lavishsoft.com/wiki/index.php?title=LavishScript:Release_Notes&amp;action=history" title="Past revisions of this page [h]" accesskey="h">View history</a></span></li>						</ul>
+					</div>
+										<div id="p-cactions" role="navigation" class="vectorMenu emptyPortlet" aria-labelledby="p-cactions-label">
+						<input type="checkbox" class="vectorMenuCheckbox" aria-labelledby="p-cactions-label" />
+						<h3 id="p-cactions-label"><span>More</span></h3>
+						<ul class="menu">
+													</ul>
+					</div>
+										<div id="p-search" role="search">
+						<h3>
+							<label for="searchInput">Search</label>
+						</h3>
+						<form action="https://www.lavishsoft.com/wiki/index.php" id="searchform">
+							<div id="simpleSearch">
+								<input type="search" name="search" placeholder="Search Lavish Software Wiki" title="Search Lavish Software Wiki [f]" accesskey="f" id="searchInput"/><input type="hidden" value="Special:Search" name="title"/><input type="submit" name="fulltext" value="Search" title="Search the pages for this text" id="mw-searchButton" class="searchButton mw-fallbackSearchButton"/><input type="submit" name="go" value="Go" title="Go to a page with this exact name if it exists" id="searchButton" class="searchButton"/>							</div>
+						</form>
+					</div>
+									</div>
+			</div>
+			<div id="mw-panel">
+				<div id="p-logo" role="banner"><a class="mw-wiki-logo" href="https://www.lavishsoft.com/wiki/index.php/Main_Page" title="Visit the main page"></a></div>
+						<div class="portal" role="navigation" id="p-navigation" aria-labelledby="p-navigation-label">
+			<h3 id="p-navigation-label">Navigation</h3>
+			<div class="body">
+								<ul>
+					<li id="n-mainpage-description"><a href="https://www.lavishsoft.com/wiki/index.php/Main_Page" title="Visit the main page [z]" accesskey="z">Main page</a></li><li id="n-LavishScript"><a href="https://www.lavishsoft.com/wiki/index.php/LavishScript">LavishScript</a></li><li id="n-LavishGUI"><a href="https://www.lavishsoft.com/wiki/index.php/LavishGUI">LavishGUI</a></li><li id="n-LavishGUI-2"><a href="https://www.lavishsoft.com/wiki/index.php/LavishGUI_2">LavishGUI 2</a></li><li id="n-recentchanges"><a href="https://www.lavishsoft.com/wiki/index.php/Special:RecentChanges" title="A list of recent changes in the wiki [r]" accesskey="r">Recent changes</a></li><li id="n-randompage"><a href="https://www.lavishsoft.com/wiki/index.php/Special:Random" title="Load a random page [x]" accesskey="x">Random page</a></li><li id="n-help"><a href="https://www.lavishsoft.com/wiki/index.php/Help:Contents" title="The place to find out">Help</a></li>				</ul>
+							</div>
+		</div>
+			<div class="portal" role="navigation" id="p-tb" aria-labelledby="p-tb-label">
+			<h3 id="p-tb-label">Toolbox</h3>
+			<div class="body">
+								<ul>
+					<li id="t-whatlinkshere"><a href="https://www.lavishsoft.com/wiki/index.php/Special:WhatLinksHere/LavishScript:Release_Notes" title="A list of all wiki pages that link here [j]" accesskey="j">What links here</a></li><li id="t-recentchangeslinked"><a href="https://www.lavishsoft.com/wiki/index.php/Special:RecentChangesLinked/LavishScript:Release_Notes" rel="nofollow" title="Recent changes in pages linked from this page [k]" accesskey="k">Related changes</a></li><li id="t-specialpages"><a href="https://www.lavishsoft.com/wiki/index.php/Special:SpecialPages" title="A list of all special pages [q]" accesskey="q">Special pages</a></li><li id="t-print"><a href="https://www.lavishsoft.com/wiki/index.php?title=LavishScript:Release_Notes&amp;printable=yes" rel="alternate" title="Printable version of this page [p]" accesskey="p">Printable version</a></li><li id="t-permalink"><a href="https://www.lavishsoft.com/wiki/index.php?title=LavishScript:Release_Notes&amp;oldid=6284" title="Permanent link to this revision of the page">Permanent link</a></li><li id="t-info"><a href="https://www.lavishsoft.com/wiki/index.php?title=LavishScript:Release_Notes&amp;action=info" title="More information about this page">Page information</a></li>				</ul>
+							</div>
+		</div>
+				</div>
+		</div>
+				<div id="footer" role="contentinfo">
+						<ul id="footer-info">
+								<li id="footer-info-lastmod"> This page was last edited on 26 June 2006, at 21:07.</li>
+							</ul>
+						<ul id="footer-places">
+								<li id="footer-places-privacy"><a href="https://www.lavishsoft.com/wiki/index.php/Lavish_Software_Wiki:Privacy_policy" title="Lavish Software Wiki:Privacy policy">Privacy policy</a></li>
+								<li id="footer-places-about"><a href="https://www.lavishsoft.com/wiki/index.php/Lavish_Software_Wiki:About" title="Lavish Software Wiki:About">About Lavish Software Wiki</a></li>
+								<li id="footer-places-disclaimer"><a href="https://www.lavishsoft.com/wiki/index.php/Lavish_Software_Wiki:General_disclaimer" title="Lavish Software Wiki:General disclaimer">Disclaimers</a></li>
+							</ul>
+										<ul id="footer-icons" class="noprint">
+										<li id="footer-poweredbyico">
+						<a href="http://www.mediawiki.org/"><img src="https://www.lavishsoft.com/wiki/resources/assets/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" srcset="/wiki/resources/assets/poweredby_mediawiki_132x47.png 1.5x, /wiki/resources/assets/poweredby_mediawiki_176x62.png 2x" width="88" height="31"/></a>					</li>
+									</ul>
+						<div style="clear: both;"></div>
+		</div>
+		
+
+<script>(window.RLQ=window.RLQ||[]).push(function(){mw.config.set({"wgPageParseReport":{"limitreport":{"cputime":"0.016","walltime":"0.079","ppvisitednodes":{"value":1,"limit":1000000},"ppgeneratednodes":{"value":4,"limit":1000000},"postexpandincludesize":{"value":0,"limit":2097152},"templateargumentsize":{"value":0,"limit":2097152},"expansiondepth":{"value":1,"limit":40},"expensivefunctioncount":{"value":0,"limit":100},"unstrip-depth":{"value":0,"limit":20},"unstrip-size":{"value":0,"limit":5000000},"timingprofile":["100.00%    0.000      1 -total"]},"cachereport":{"timestamp":"20250915181418","ttl":86400,"transientcontent":false}}});mw.config.set({"wgBackendResponseTime":1131});});</script>
+</body>
+
+<!-- Mirrored from www.lavishsoft.com/wiki/index.php/LavishScript:Release_Notes by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 16 Sep 2025 16:30:22 GMT -->
+</html>

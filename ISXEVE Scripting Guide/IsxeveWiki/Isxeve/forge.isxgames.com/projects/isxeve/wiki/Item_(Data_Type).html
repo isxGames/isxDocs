@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Mirrored from forge.isxgames.com/projects/isxeve/wiki/Item_(Data_Type) by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 16 Sep 2025 16:23:38 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=utf-8" /><!-- /Added by HTTrack -->
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<title>Item (Data Type) - ISXEVE - isxGames Forge</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Redmine" />
+<meta name="keywords" content="issue,bug,tracker" />
+<meta name="csrf-param" content="authenticity_token" />
+<meta name="csrf-token" content="8+tLI/vsVcWBoyDPkzLuhHZ2nBZlh99qRYqL0/k43kf4yRRLVDyax3S57QuQ8i7Zb5T/G4zWqGHFeBnJmVMiVQ==" />
+<link rel='shortcut icon' href='https://forge.isxgames.com/themes/PurpleMine2/favicon/favicon.ico?1595053228' />
+<link rel="stylesheet" media="all" href="https://forge.isxgames.com/stylesheets/jquery/jquery-ui-1.11.0.css?1586192448" />
+<link rel="stylesheet" media="all" href="https://forge.isxgames.com/stylesheets/tribute-3.7.3.css?1586192449" />
+<link rel="stylesheet" media="all" href="https://forge.isxgames.com/themes/PurpleMine2/stylesheets/application.css?1595057985" />
+<link rel="stylesheet" media="all" href="https://forge.isxgames.com/stylesheets/responsive.css?1586192449" />
+
+<script src="https://forge.isxgames.com/javascripts/jquery-2.2.4-ui-1.11.0-ujs-5.2.3.js?1586192448"></script>
+<script src="https://forge.isxgames.com/javascripts/tribute-3.7.3.min.js?1586192448"></script>
+<script src="https://forge.isxgames.com/javascripts/application.js?1586192448"></script>
+<script src="https://forge.isxgames.com/javascripts/responsive.js?1586192449"></script>
+<script>
+//<![CDATA[
+$(window).on('load', function(){ warnLeavingUnsaved('The current page contains unsaved text that will be lost if you leave this page.'); });
+//]]>
+</script>
+<script src="https://forge.isxgames.com/themes/PurpleMine2/javascripts/theme.js?1595057985"></script>
+<link rel="stylesheet" media="screen" href="https://forge.isxgames.com/plugin_assets/redmine_knowledgebase/stylesheets/knowledgebase.css?1594934434" />
+<!-- page specific tags -->
+
+</head>
+<body class="theme-Purplemine2 project-isxeve has-main-menu controller-wiki action-show avatars-on">
+
+<div id="wrapper">
+
+<div class="flyout-menu js-flyout-menu">
+
+
+        <div class="flyout-menu__search">
+            <form action="https://forge.isxgames.com/projects/isxeve/search" accept-charset="UTF-8" name="form-951c9b3c" method="get"><input name="utf8" type="hidden" value="&#x2713;" />
+            <input type="hidden" name="wiki_pages" value="1" />
+            <label class="search-magnifier search-magnifier--flyout" for="flyout-search">&#9906;</label>
+            <input type="text" name="q" id="flyout-search" class="small js-search-input" placeholder="Search" />
+</form>        </div>
+
+
+        <h3>Project</h3>
+        <span class="js-project-menu"></span>
+
+    <h3>General</h3>
+    <span class="js-general-menu"></span>
+
+    <span class="js-sidebar flyout-menu__sidebar"></span>
+
+    <h3>Profile</h3>
+    <span class="js-profile-menu"></span>
+
+</div>
+
+<div id="wrapper2">
+<div id="wrapper3">
+<div id="top-menu">
+    <div id="account">
+        <ul><li><a class="login" href="https://forge.isxgames.com/login">Sign in</a></li></ul>    </div>
+    
+    <ul><li><a class="home" href="https://forge.isxgames.com/">Home</a></li><li><a class="projects" href="https://forge.isxgames.com/projects">Projects</a></li><li><a class="help" href="https://www.redmine.org/guide">Help</a></li></ul></div>
+
+<div id="header">
+
+    <a href="#" class="mobile-toggle-button js-flyout-menu-toggle-button"></a>
+
+    <div id="quick-search">
+        <form action="https://forge.isxgames.com/projects/isxeve/search" accept-charset="UTF-8" name="form-d799fccd" method="get"><input name="utf8" type="hidden" value="&#x2713;" />
+        <input type="hidden" name="scope" />
+        <input type="hidden" name="wiki_pages" value="1" />
+        <label for='q'>
+          <a accesskey="4" href="https://forge.isxgames.com/projects/isxeve/search">Search</a>:
+        </label>
+        <input type="text" name="q" id="q" size="20" class="small" accesskey="f" data-auto-complete="true" data-issues-url="/issues/auto_complete?q=" />
+</form>        <div id="project-jump" class="drdn"><span class="drdn-trigger">ISXEVE</span><div class="drdn-content"><div class="quick-search"><input type="text" name="q" id="projects-quick-search" value="" class="autocomplete" data-automcomplete-url="/projects/autocomplete.js?jump=wiki" autocomplete="off" /></div><div class="drdn-items projects selection"></div><div class="drdn-items all-projects selection"><a href="https://forge.isxgames.com/projects?jump=wiki">All Projects</a></div></div></div>
+    </div>
+
+    <h1><span class="breadcrumbs"><a class="root" href="https://forge.isxgames.com/projects/eve-online?jump=wiki">EVE Online</a><span class="separator"> &raquo; </span></span><span class="current-project">ISXEVE</span></h1>
+
+    <div id="main-menu" class="tabs">
+        <ul><li><a class="overview" href="https://forge.isxgames.com/projects/isxeve">Overview</a></li><li><a class="activity" href="https://forge.isxgames.com/projects/isxeve/activity">Activity</a></li><li><a class="articles" href="https://forge.isxgames.com/projects/isxeve/knowledgebase/articles">Knowledgebase</a></li><li><a class="issues" href="https://forge.isxgames.com/projects/isxeve/issues">Issues</a></li><li><a class="wiki selected" href="../wiki.html">Wiki</a></li></ul>
+        <div class="tabs-buttons" style="display:none;">
+            <button class="tab-left" onclick="moveTabLeft(this); return false;"></button>
+            <button class="tab-right" onclick="moveTabRight(this); return false;"></button>
+        </div>
+    </div>
+</div>
+
+<div id="main" class="">
+    <div id="sidebar">
+          
+<h3>Wiki</h3>
+<ul>
+  <li><a href="../wiki.html">Start page</a></li>
+  <li><a href="index.html">Index by title</a></li>
+  <li><a href="date_index.html">Index by date</a></li>
+</ul>
+
+
+
+
+        
+    </div>
+
+    <div id="content">
+        
+        <div class="contextual">
+
+  
+  
+
+  </div>
+
+
+
+
+<div class="wiki wiki-page">
+  <a name="Item-Data-Type"></a>
+<h2 ><span style="color:#800000;">Item (Data Type)</span><a href="#Item-Data-Type" class="wiki-anchor">&para;</a></h2>
+
+<ul class="toc right"><li><strong>Table of contents</strong></li><li><a href="#Item-Data-Type">Item (Data Type)</a></li><li><a href="#Description">Description</a></li><li><a href="#Members">Members</a></li><li><a href="#Methods">Methods</a></li><li><a href="#Examples">Examples</a></li></ul>
+
+
+<a name="Description"></a>
+<h2 >Description<a href="#Description" class="wiki-anchor">&para;</a></h2>
+<p>This DataType includes information and performs actions that are exclusive to items</p>
+
+
+<a name="Members"></a>
+<h2 >Members<a href="#Members" class="wiki-anchor">&para;</a></h2>
+<ul>
+<li>
+<strong>Identification</strong>
+<ul>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:int64">int64</a> <code>ID</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:string">string</a> <code>Name</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:string">string</a> <code>&lt;MW_DOUBLEBRACKET&gt;Category&lt;/MW_DOUBLEBRACKET&gt;</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:int">int</a> <code>&lt;MW_DOUBLEBRACKET&gt;Category|CategoryID&lt;/MW_DOUBLEBRACKET&gt;</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:string">string</a> <code>Group</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:int">int</a> <code>GroupID</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:int64">int64</a> <code>OwnerID</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:string">string</a> <code>Type</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:int">int</a> <code>TypeID</code>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>
+<strong>Physical Information/Status</strong>
+<ul>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>Capacity</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:string">string</a> <code>Description</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:int">int</a> <code>GraphicID</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:bool">bool</a> <code>IsRepackable</code>
+<ul>
+<li>This returns TRUE if the item is a 'repackable' type AND if it's currently in a state to be repackaged. However, it does not make sure that the item is in a location where it CAN be repackaged (ie, your hangar).</li>
+</ul>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:string">string</a> <code>Location</code>
+<ul>
+<li>Example: "Amadeus' Harbinger"</li>
+</ul>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:int">int</a> <code>LocationID</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:int">int</a> <code>MarketGroupID</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:int">int</a> <code>PortionSize</code>
+<ul>
+<li>ie, "Units to Refine"</li>
+</ul>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:int">int</a> <code>Quantity</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:int">int</a> <code>RaceID</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>Radius</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:string">string</a> <code>Slot</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:int">int</a> <code>SlotID</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>Volume</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>CargoCapacity</code>
+<ul>
+<li>NOTE: This member only works for 'secure cargo container' type items (GroupID: 340)</li>
+</ul>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>UsedCargoCapacity</code>
+<ul>
+<li>NOTE: This member only works for 'secure cargo container' type items (GroupID: 340)</li>
+</ul>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:float">float</a> <code>MetaLevel</code>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><ul>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:bool">bool</a> <code>IsContraband</code> [returns TRUE if the item is contraband anywhere in the universe]</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:bool">bool</a> <code>IsContraband&lt;MW_SINGLEBRACKET&gt;FACTIONID#]</code> [returns TRUE if the item is contraband for the given factionID#
+<ul>
+<li>(HINT: The 'interstellar' datatype has "FactionID" and "Faction" members. For example ${Universe[${Me.SolarSystemID}]}, ${Universe[${Me.ConstellationID}]}, and ${Universe[${Me.RegionID}]} are all 'interstellar' type objects.)</li>
+</ul>
+</li>
+</ul></li>
+</ul>
+<ul>
+<li>
+<strong>Financial</strong>
+<ul>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>BasePrice</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:bool">bool</a> <code>IsInsured</code>
+<ul>
+<li>Ships only, CAN return NULL if insurance window has not fully loaded yet</li>
+</ul>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:string">string</a> <code>InsuranceLevel</code>
+<ul>
+<li>Basic, Standard, Bronze...Platinum, etc</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+
+<dd>
+
+<dd>When opening the insurance window, call ${...IsInsured(exists)} to verify it has loaded the insurance records before attempting to validate insurance
+</dd>
+
+</dd>
+
+<ul>
+<li>''' Weapon Charges ''' -- Used for charges installed on a high slot on your active ship. In other words, you can use GetModules and access the information in that way, or something similar to: ${Me.Ship.Module[hislot0].Charge.MaxFlightTime}
+<ul>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:float">float</a> <code>MaxFlightTime</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:float">float</a> <code>MaxVelocity</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:float">float</a> <code>ExplosionRadius</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:float">float</a> <code>ExplosionVelocity</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:float">float</a> <code>SignatureRadiusBonus</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:float">float</a> <code>EMDamage</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:float">float</a> <code>KineticDamag</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:float">float</a> <code>ExplosiveDamage</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:float">float</a> <code>ThermalDamage</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:int">int</a> <code>ChargeSize</code>
+<ul>
+<li>1=small 2=medium 3=Large 4=XL</li>
+</ul>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:float">float</a> <code>RangeBonus</code>
+</li>
+</ul>
+</li>
+</ul>
+
+
+<a name="Methods"></a>
+<h2 >Methods<a href="#Methods" class="wiki-anchor">&para;</a></h2>
+<p>''' Item Transport Methods '''</p>
+<ul>
+<li><code>Jettison</code></li>
+<li><code>MoveTo&lt;MW_SINGLEBRACKET&gt;&lt;ID#&gt;, &lt;Destination&gt;&lt;/MW_SINGLEBRACKET&gt;</code></li>
+<li><code>MoveTo&lt;MW_SINGLEBRACKET&gt;&lt;ID#&gt;, &lt;Destination&gt;, &lt;Quantity&gt;&lt;/MW_SINGLEBRACKET&gt;</code></li>
+<li><code>MoveTo&lt;MW_SINGLEBRACKET&gt;&lt;ID#&gt;, &lt;Destination&gt;, &lt;Quantity&gt;, &lt;FolderName&gt;&lt;/MW_SINGLEBRACKET&gt;</code></li>
+</ul>
+
+
+<dd>NOTE: To move an item to YOUR ship using this syntax, simply use ${MyShip.ID} as the first parameter. Otherwise, use the EntityID# of the destination container.)
+</dd>
+<dd>NOTE: "FolderName" only applies to the destinations 'CorpHangars' and 'StationCorporateHangar')
+</dd>
+<dd>NOTE: When indicating a specific FolderName, you MUST indicate a quantity as the third parameter.)
+</dd>
+<dd>NOTE: If you do not provide a 4th paramater, the item will be moved to the "Corporation Folder 1" folder.)
+</dd>
+
+<p><code>  Can be used in place of </code><br><code>  1.  MyShip</code><br><code>  2.  MyStationHangar</code><br><code>  3.  MyStationCorporateHangar</code></p>
+<p><code>  Possible Destinations:</code><br><code>  1.  CargoHold                (The traditional cargo hold)</code><br><code>  2.  DroneBay</code><br><code>  3.  CorpHangars              (Will work on your ship as well as the corporation hangars of a capital ship or POS)</code><br><code>  4.  MaintenanceBay           (Will work on your ship as well as the Maintenance Bay of a capital ship)</code><br><code>  5.  OreHold</code><br><code>  6.  FuelBay </code><br><code>  7.  GasHold</code><br><code>  8.  MineralHold</code><br><code>  9.  SalvageHold</code><br><code>  10. IndustrialShipHold</code><br><code>  11. AmmoHold</code><br><code>  12. StationCorporateHangar   (For this destination, you can enter any positive integer for the ID#)</code><br><code>  13. Hangar                   (For this destination, you can enter any positive integer for the ID#)</code></p>
+<p><code>  Possible Folder Names (for all Methods that use folder names as a possible parameter):</code><br><code>  1.  Corporation Folder 1</code><br><code>  2.  Corporation Folder 2</code><br><code>  3.  Corporation Folder 3</code><br><code>  4.  Corporation Folder 4</code><br><code>  5.  Corporation Folder 5</code><br><code>  6.  Corporation Folder 6</code><br><code>  7.  Corporation Folder 7</code></p>
+<p>''' Drone Methods '''</p>
+<ul>
+<li>
+<code>Launch</code>
+<ul>
+<li>Drones only.</li>
+</ul>
+</li>
+</ul>
+<p><em>' Ship Methods</em>'</p>
+<ul>
+<li>
+<code>MakeActive</code>
+<ul>
+<li>For ships in your "${Me.Station.GetHangarShips}".</li>
+</ul>
+</li>
+<li>
+<code>LeaveShip</code>
+<ul>
+<li>Leave your ship</li>
+</ul>
+</li>
+<li>
+<code>Repackage</code>
+<ul>
+<li>Scripts should accept the dialog using the Click* methods in the evewindow datatype</li>
+</ul>
+</li>
+<li><code>FitToActiveShip</code></li>
+<li><code>AssembleShip</code></li>
+<li><code>AssembleContainer</code></li>
+<li>
+<code>GetInsuranceQuotes&lt;MW_SINGLEBRACKET&gt;collection:float&lt;/MW_SINGLEBRACKET&gt;</code>
+<ul>
+<li>Ships only: Returns the insurance quotes for the relevant ship item, in a collection where key = Level, and value is Cost</li>
+</ul>
+</li>
+</ul>
+
+
+<dd>See <a href="https://www.isxgames.com/EVEBot/Trunk/EVEbot/Testcases/test_Item_GetInsuranceQuotes.iss">https://www.isxgames.com/EVEBot/Trunk/EVEbot/Testcases/test_Item_GetInsuranceQuotes.iss</a> for example usage
+</dd>
+
+<ul>
+<li><code>Insure&lt;MW_SINGLEBRACKET&gt;Cost&lt;/MW_SINGLEBRACKET&gt;</code></li>
+</ul>
+<p>a. Ships only - Cost is one of the values from GetInsuranceQuotes b. Using other values WON'T work. c. Using other values WILL lead to server-side detection, and will NOT be filtered by isxeve. Don't be stupid.</p>
+<p>''' Skill Methods '''</p>
+<ul>
+<li><code>InjectSkill</code></li>
+<li>
+<code>TrainSkill</code>
+<ul>
+<li>Only works for skill books...obviously</li>
+</ul>
+</li>
+</ul>
+<p>''' Uncategorized '''</p>
+<ul>
+<li><code>PlaceSellOrder&lt;MW_SINGLEBRACKET&gt;Price#, Quantity#, Duration&lt;/MW_SINGLEBRACKET&gt;</code></li>
+</ul>
+<p><code>Duration is in DAYS</code><br><code>NOTE: If you place a sell order that already matches a buy order that's on the market, it will act as an 'instant' sell order'</code><br><code>NOTE: As of now, you may only sell items within a station (and they will sell from THAT station) with ISXEVE.</code><br><code>NOTE: As of now, ISXEVE does not take into account your current/maximum number of sell orders.  Your script must handle that.</code></p>
+<ul>
+<li><code>GetCargo&lt;MW_SINGLEBRACKET&gt;&lt;index:item&gt;&lt;/MW_SINGLEBRACKET&gt;</code></li>
+<li><code>Open</code></li>
+<li><code>Close</code></li>
+</ul>
+<p><code>An example for using these 'secure cargo container' members/methods can be found at:</code><br><a href="http://www.isxgames.com/forums/showthread.php?p=12195"><code><a class="external" href="http://www.isxgames.com/forums/showthread.php?p=12195">http://www.isxgames.com/forums/showthread.php?p=12195</a></code></a></p>
+<ul>
+<li>
+<code>ConsumeBooster</code>
+<ul>
+<li>Uses a booster</li>
+</ul>
+</li>
+<li><code>ApplyPilotLicense</code></li>
+<li><code>PluginImplant</code></li>
+</ul>
+<ul>
+<li>
+<code>GetContrabandFactions&lt;MW_SINGLEBRACKET&gt;index:int&lt;/MW_SINGLEBRACKET&gt;</code>
+<ul>
+<li>(This method populates an index:int with all the factionIDs for which this item is contraband. If the item is not a contraband item, then the index returned will contain zero nodes.)</li>
+</ul>
+</li>
+</ul>
+
+
+<a name="Examples"></a>
+<h2 >Examples<a href="#Examples" class="wiki-anchor">&para;</a></h2>
+
+
+<dd>More examples might be found <a href="http://www.isxgames.com/forums/showthread.php?t=1393">here</a>
+</dd>
+
+<hr>
+<p>This snippet loots everything from a container entity called "Cargo Container". You could easily modify this for looting wrecks as well as specifying particular types of things you wanted to loot (rather than looting everything.)</p>
+<p><code>function main()</code><br><code>{</code><br><code>  variable string ContainerName = "Cargo Container"</code><br><code>  variable index:item ContainerCargo</code><br><code>  variable int ContainerCargoCount</code><br><code>  variable int i = 1</code><br><code> </code><br><code>  ; Make sure that there is actually a cargo container there that matches the name we set</code><br><code>  if (!${Entity</code>[<code>${ContainerName}</code><code>(exists)})</code><br><code>  {</code><br><code>     echo No Entities in the area that match the name you provided.</code><br><code>     return</code><br><code>  }</code><br><code> </code><br><code>  ; If it exists, get close enough to it!</code><br><code>  if (${Entity</code><code>${ContainerName}</code><code>.Distance} &gt; 1300)</code><br><code>  {</code><br><code>     Entity</code><code>${ContainerName}</code><code>:Approach</code><br><code>     do</code><br><code>     {</code><br><code>       wait 20</code><br><code>     }</code><br><code>     while ${Entity</code><code>${ContainerName}</code><code>.Distance} &gt; 1300</code><br><code>  }</code><br><code> </code><br><code>  ; Always make sure that the container's cargo is accessible.  If not, then open the cargo to populate the window</code><br><code>  if (!${Entity</code><code>${ContainerName}</code><code>.IsCargoAccessible})</code><br><code>  {</code><br><code>     Entity</code><code>${ContainerName}</code><code>:OpenCargo</code><br><code>     wait 30</code><br><code>     Entity</code><code>${ContainerName}</code><code>:CloseCargo</code><br><code>     wait 3</code><br><code>  }   </code><br><code> </code><br><code>  ContainerCargoCount:Set</code><code>${Entity[${ContainerName}].GetCargo[ContainerCargo]}</code><br><code> </code><br><code>  do</code><br><code>  {</code><br><code>     ContainerCargo.Get</code><code>${i}]:MoveTo[MyShip</code>]<br><code>     wait 15</code><br><code>  }</code><br><code>  while ${i:Inc} &lt;= ${ContainerCargoCount}</code><br><code> </code><br><code>  ; After everything is looted...let's clean up our Cargo</code><br><code>  Me.Ship:StackAllCargo</code><br><code> </code><br><code>  echo Script Ended</code><br><code>}</code></p>
+<hr>
+<p>This particular snippet moves everything from your ship's cargo (that is of CategoryID 25: asteroid) to a cargo container. Basically, it jettisons the first cargo item that matches our search, renames the cargo container to "Amadeus", and then moves everything else in the ship's cargo to the new container.</p>
+<p><code>function main()</code><br><code>{</code><br><code>  ; The name we want our container to have</code><br><code>  variable string ContainerName = "Amadeus"</code><br><code>  variable index:item MyCargo</code><br><code>  variable int i = 1</code><br><code>   </code><br><code>  ; Make sure that my cargo is accessible.  If not, open it to populate the window.</code><br><code>  if (!${Me.Ship.IsCargoAccessible})</code><br><code>  {</code><br><code>      EVE:Execute</code>[<code>OpenCargoHoldOfActiveShip</code><br><code>      wait 30</code><br><code>      EVE:Execute</code><code>OpenCargoHoldOfActiveShip</code><br><code>      wait 3</code><br><code>  }     </code><br><code>   </code><br><code>  variable int MyCargoCount = ${Me.Ship.GetCargo</code><code>MyCargo</code><code>}</code><br><code>   </code><br><code>  ; Loop through my cargo -- I want to jettison the first thing that is of CategoryID 25 (Asteroid).</code><br><code>  ; Then, I want to add all of the other items that match that CategoryID to the container that was created.</code><br><code>  do</code><br><code>  {</code><br><code>     if (${MyCargo.Get</code><code>${i}</code><code>.CategoryID} == 25)</code><br><code>     {</code><br><code>        if !${Entity</code><code>${ContainerName}</code><code>(exists)}</code><br><code>        {</code><br><code>           MyCargo.Get</code><code>${i}</code><code>:Jettison</code><br><code>           wait 2</code><br><code>           do</code><br><code>           {</code><br><code>             wait 15</code><br><code>           }</code><br><code>           while !${Entity</code><code>"Cargo Container"</code><code>(exists)}</code><br><code>           wait 5</code><br><code>           Entity</code><code>"Cargo Container"]:SetName[${ContainerName}</code><br><code>           wait 20      </code><br><code>           ; Always make sure that the container's cargo is accessible.  If not, then open the cargo to populate the window.</code><br><code>           ; (This is not required for this particular task; however, it's good to be in the habit.)</code><br><code>           if (!${Entity</code><code>${ContainerName}</code><code>.IsCargoAccessible})</code><br><code>           {</code><br><code>             Entity</code><code>${ContainerName}</code><code>:OpenCargo</code><br><code>             wait 30</code><br><code>             Entity</code><code>${ContainerName}</code><code>:CloseCargo</code><br><code>             wait 3</code><br><code>           }            </code><br><code>        }            </code><br><code>        else</code><br><code>        {</code><br><code>           ;echo Moving ${MyCargo.Get</code><code>${i}].Name} to ${Entity[${ContainerName}</code><code>.ID}</code><br><code>           MyCargo.Get</code><code>${i}]:MoveTo[${Entity[${ContainerName}].ID}</code><br><code>           wait 10</code><br><code>        }  </code><br><code>     } </code><br><code>  }</code><br><code>  while ${i:Inc} &lt;= ${MyCargoCount}</code><br><code>   </code><br><code>  ; After everything is done ...let's clean up the stacks.</code><br><code>  Entity</code><code>${ContainerName}</code>]<code>:StackAllCargo</code><br><code>   </code><br><code>  echo Script Ended</code><br><code>}</code></p>
+
+
+</div>
+
+
+<fieldset class="collapsible collapsed hide-when-print">
+  <legend onclick="toggleFieldset(this);" class="icon icon-collapsed">Files (0)</legend>
+  <div style="display: none;">
+
+  
+
+</div>
+</fieldset>
+
+<p class="wiki-update-info">
+</p>
+
+
+
+
+
+        
+        <div style="clear:both;"></div>
+    </div>
+</div>
+<div id="footer">
+    Powered by <a href="https://www.redmine.org/">Redmine</a> &copy; 2006-2020 Jean-Philippe Lang
+</div>
+</div>
+
+<div id="ajax-indicator" style="display:none;"><span>Loading...</span></div>
+<div id="ajax-modal" style="display:none;"></div>
+
+</div>
+</div>
+
+</body>
+
+<!-- Mirrored from forge.isxgames.com/projects/isxeve/wiki/Item_(Data_Type) by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 16 Sep 2025 16:23:38 GMT -->
+</html>

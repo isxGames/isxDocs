@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Mirrored from forge.isxgames.com/projects/isxeve/wiki/Module_(Data_Type) by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 16 Sep 2025 16:23:38 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=utf-8" /><!-- /Added by HTTrack -->
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<title>Module (Data Type) - ISXEVE - isxGames Forge</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Redmine" />
+<meta name="keywords" content="issue,bug,tracker" />
+<meta name="csrf-param" content="authenticity_token" />
+<meta name="csrf-token" content="RwA8AiZxg8pGHm4wNZIzYoRnUHp4pk0hirsVmSRVO+lMImNqiaFMyLMEo/Q2UvM/nYUzd5H3OioKSYeDRD7H+w==" />
+<link rel='shortcut icon' href='https://forge.isxgames.com/themes/PurpleMine2/favicon/favicon.ico?1595053228' />
+<link rel="stylesheet" media="all" href="https://forge.isxgames.com/stylesheets/jquery/jquery-ui-1.11.0.css?1586192448" />
+<link rel="stylesheet" media="all" href="https://forge.isxgames.com/stylesheets/tribute-3.7.3.css?1586192449" />
+<link rel="stylesheet" media="all" href="https://forge.isxgames.com/themes/PurpleMine2/stylesheets/application.css?1595057985" />
+<link rel="stylesheet" media="all" href="https://forge.isxgames.com/stylesheets/responsive.css?1586192449" />
+
+<script src="https://forge.isxgames.com/javascripts/jquery-2.2.4-ui-1.11.0-ujs-5.2.3.js?1586192448"></script>
+<script src="https://forge.isxgames.com/javascripts/tribute-3.7.3.min.js?1586192448"></script>
+<script src="https://forge.isxgames.com/javascripts/application.js?1586192448"></script>
+<script src="https://forge.isxgames.com/javascripts/responsive.js?1586192449"></script>
+<script>
+//<![CDATA[
+$(window).on('load', function(){ warnLeavingUnsaved('The current page contains unsaved text that will be lost if you leave this page.'); });
+//]]>
+</script>
+<script src="https://forge.isxgames.com/themes/PurpleMine2/javascripts/theme.js?1595057985"></script>
+<link rel="stylesheet" media="screen" href="https://forge.isxgames.com/plugin_assets/redmine_knowledgebase/stylesheets/knowledgebase.css?1594934434" />
+<!-- page specific tags -->
+
+</head>
+<body class="theme-Purplemine2 project-isxeve has-main-menu controller-wiki action-show avatars-on">
+
+<div id="wrapper">
+
+<div class="flyout-menu js-flyout-menu">
+
+
+        <div class="flyout-menu__search">
+            <form action="https://forge.isxgames.com/projects/isxeve/search" accept-charset="UTF-8" name="form-03f41720" method="get"><input name="utf8" type="hidden" value="&#x2713;" />
+            <input type="hidden" name="wiki_pages" value="1" />
+            <label class="search-magnifier search-magnifier--flyout" for="flyout-search">&#9906;</label>
+            <input type="text" name="q" id="flyout-search" class="small js-search-input" placeholder="Search" />
+</form>        </div>
+
+
+        <h3>Project</h3>
+        <span class="js-project-menu"></span>
+
+    <h3>General</h3>
+    <span class="js-general-menu"></span>
+
+    <span class="js-sidebar flyout-menu__sidebar"></span>
+
+    <h3>Profile</h3>
+    <span class="js-profile-menu"></span>
+
+</div>
+
+<div id="wrapper2">
+<div id="wrapper3">
+<div id="top-menu">
+    <div id="account">
+        <ul><li><a class="login" href="https://forge.isxgames.com/login">Sign in</a></li></ul>    </div>
+    
+    <ul><li><a class="home" href="https://forge.isxgames.com/">Home</a></li><li><a class="projects" href="https://forge.isxgames.com/projects">Projects</a></li><li><a class="help" href="https://www.redmine.org/guide">Help</a></li></ul></div>
+
+<div id="header">
+
+    <a href="#" class="mobile-toggle-button js-flyout-menu-toggle-button"></a>
+
+    <div id="quick-search">
+        <form action="https://forge.isxgames.com/projects/isxeve/search" accept-charset="UTF-8" name="form-4d89aa9c" method="get"><input name="utf8" type="hidden" value="&#x2713;" />
+        <input type="hidden" name="scope" />
+        <input type="hidden" name="wiki_pages" value="1" />
+        <label for='q'>
+          <a accesskey="4" href="https://forge.isxgames.com/projects/isxeve/search">Search</a>:
+        </label>
+        <input type="text" name="q" id="q" size="20" class="small" accesskey="f" data-auto-complete="true" data-issues-url="/issues/auto_complete?q=" />
+</form>        <div id="project-jump" class="drdn"><span class="drdn-trigger">ISXEVE</span><div class="drdn-content"><div class="quick-search"><input type="text" name="q" id="projects-quick-search" value="" class="autocomplete" data-automcomplete-url="/projects/autocomplete.js?jump=wiki" autocomplete="off" /></div><div class="drdn-items projects selection"></div><div class="drdn-items all-projects selection"><a href="https://forge.isxgames.com/projects?jump=wiki">All Projects</a></div></div></div>
+    </div>
+
+    <h1><span class="breadcrumbs"><a class="root" href="https://forge.isxgames.com/projects/eve-online?jump=wiki">EVE Online</a><span class="separator"> &raquo; </span></span><span class="current-project">ISXEVE</span></h1>
+
+    <div id="main-menu" class="tabs">
+        <ul><li><a class="overview" href="https://forge.isxgames.com/projects/isxeve">Overview</a></li><li><a class="activity" href="https://forge.isxgames.com/projects/isxeve/activity">Activity</a></li><li><a class="articles" href="https://forge.isxgames.com/projects/isxeve/knowledgebase/articles">Knowledgebase</a></li><li><a class="issues" href="https://forge.isxgames.com/projects/isxeve/issues">Issues</a></li><li><a class="wiki selected" href="../wiki.html">Wiki</a></li></ul>
+        <div class="tabs-buttons" style="display:none;">
+            <button class="tab-left" onclick="moveTabLeft(this); return false;"></button>
+            <button class="tab-right" onclick="moveTabRight(this); return false;"></button>
+        </div>
+    </div>
+</div>
+
+<div id="main" class="">
+    <div id="sidebar">
+          
+<h3>Wiki</h3>
+<ul>
+  <li><a href="../wiki.html">Start page</a></li>
+  <li><a href="index.html">Index by title</a></li>
+  <li><a href="date_index.html">Index by date</a></li>
+</ul>
+
+
+
+
+        
+    </div>
+
+    <div id="content">
+        
+        <div class="contextual">
+
+  
+  
+
+  </div>
+
+
+
+
+<div class="wiki wiki-page">
+  <a name="Module-Data-Type"></a>
+<h2 ><span style="color:#800000;">Module (Data Type)</span><a href="#Module-Data-Type" class="wiki-anchor">&para;</a></h2>
+
+<ul class="toc right"><li><strong>Table of contents</strong></li><li><a href="#Module-Data-Type">Module (Data Type)</a></li><li><a href="#Description">Description</a></li><li><a href="#Members">Members</a></li><li><a href="#Methods">Methods</a></li><li><a href="#Examples">Examples</a></li></ul>
+
+
+<a name="Description"></a>
+<h2 >Description<a href="#Description" class="wiki-anchor">&para;</a></h2>
+<p>This data type includes information and performs actions that are exclusive to fitted ship Modules</p>
+<p>Please note that ONLY the ToItem member will work when not in space, the rest require you to be undocked.</p>
+
+
+<a name="Members"></a>
+<h2 >Members<a href="#Members" class="wiki-anchor">&para;</a></h2>
+<ul>
+<li><a class="wiki-page" href="Item_(Data_Type).html">item</a> <code>ToItem</code>
+<ul>
+<li>Access the module as an item type</li>
+</ul>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:int64">int64</a> <code>ID</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:bool">bool</a> <code>IsGoingOnline</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:bool">bool</a> <code>IsWaitingForActiveTarget</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:bool">bool</a> <code>IsChangingAmmo</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:bool">bool</a> <code>IsReloadingAmmo</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:bool">bool</a> <code>IsOnline</code>
+<ul>
+<li>Is module online (as opposed to active)</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:bool">bool</a> <code>IsDeactivating</code>
+</li>
+</ul>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:bool">bool</a> <code>IsActivatable</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:bool">bool</a> <code>IsAutoReloadOn</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>SpecialtyCrystalMiningAmount</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:string">string</a> <code>DefaultEffectName</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:string">string</a> <code>DefaultEffectDescription</code>
+</li>
+<li><a class="wiki-page" href="Entity_(Data_Type).html">entity</a> <code>LastTarget</code>
+<ul>
+<li>This member returns the last target upon which the module was activated.</li>
+</ul>
+</li>
+<li><a class="wiki-page" href="Entity_(Data_Type).html">entity</a> <code>LastTargeted</code>
+<ul>
+<li>alias for LastTarget</li>
+</ul>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:int64">int64</a> <code>TargetID</code>
+<ul>
+<li>-1 if target destroyed, no target, or N/A</li>
+</ul>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:int64">int64</a> <code>LastTargetedID</code>
+<ul>
+<li>alias for TargetID</li>
+</ul>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:bool">bool</a> <code>AutoRepeat</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:bool">bool</a> <code>IsBeingRepaired</code>
+</li>
+</ul>
+<ul>
+<li>
+<strong>Activatable Modules</strong> - Require Module.IsActivatable == TRUE
+<ul>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:bool">bool</a> <code>IsActive</code>
+<ul>
+<li>TRUE when the module is active, including when the module is flashing red in cooldown mode after being deactivated.</li>
+</ul>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:bool">bool</a> <code>IsOffensive</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:bool">bool</a> <code>IsAssistance</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:int">int</a> <code>EffectCategory</code>
+</li>
+<li><a class="wiki-page" href="Evetime_(Data_Type).html">evetime</a> <code>TimeLastClicked</code>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>
+<strong>Modules with charges</strong> - Require Module.Charge(exists)
+<ul>
+<li><a class="wiki-page" href="Item_(Data_Type).html">item</a> <code>Charge</code>
+<ul>
+<li>The charge type loaded into this module.</li>
+</ul>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:int">int</a> <code>CurrentCharges</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:int">int</a> <code>MaxCharges</code>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>
+<strong>Module Properties</strong> - Will report NULL if module does not have property.
+<ul>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>PowergridUsage</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>OptimalRange</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>TechLevel</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>ActivationCost</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>HP</code>
+<ul>
+<li>Hitpoints.</li>
+</ul>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>Damage</code>
+<ul>
+<li>Hit points damage.</li>
+</ul>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>ActivationTime</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>Duration</code>
+<ul>
+<li>Alias for ActivationTime.</li>
+</ul>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>Volume</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>AccessDifficultyBonus</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>CPUUsage</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>Capacity</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>MaxTractorVelocity</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>Mass</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>OverloadSpeedFactorBonus</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>MassAddition</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>HeatDamage</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>Thrust</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>MaxVelocityBonus</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>MaxVelocityPenalty</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>StructureHPBonus</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>CargoCapacityBonus</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>ShieldBonus</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>CapacitorRechargeRateBonus</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>ShieldRechargeRateBonus</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>ShieldTransferRange</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>CapacitorBonus</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>PowergridBonus</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>ShieldHPBonus</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>VelocityModifier</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>ChargeRate</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>RateOfFire</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>OverloadRateOfFireBonus</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>MiningAmount</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>CrystalsDamage</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:int">int</a> <code>TargetGroup</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>SurveyScanRange</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>CPUOutputBonus</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>TrackingSpeed</code>
+<ul>
+<li>This rounds to the nearest thousandth.</li>
+</ul>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>DamageModifier</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>EMDamage</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>KineticDamage</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>ThermalDamage</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>ExplosiveDamage</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:int">int</a> <code>ChargeSize</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>AccuracyFalloff</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>SignatureResolution</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>OverloadOptimalRangeBonus</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>OverloadRepairBonus</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>OverloadDurationBonus</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>ArmorHPRepaired</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>ExplosiveDmgResistanceBonus</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>KineticDmgResistanceBonus</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>ThermalDmgResistanceBonus</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>EMDmgResistanceBonus</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>ArmorHPBonus</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>RateOfFireBonus</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>MiningAmountBonus</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>CPUPenaltyPercent</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>WarpScrambleStrength</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:bool">bool</a> <code>UsesFrequencyCrystals</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>SensorRecalibrationTime</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>ReactivationDelay</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:int">int</a> <code>ScanResolutionBonus</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>EnergyTransferAmount</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>TransferRange</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>MaxNeutralizationRange</code>
+</li>
+<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>EnergyNeutralized</code>
+</li>
+</ul>
+</li>
+</ul>
+
+
+<a name="Methods"></a>
+<h2 >Methods<a href="#Methods" class="wiki-anchor">&para;</a></h2>
+<ul>
+<li><code>Activate</code></li>
+<li><code>Activate&lt;MW_SINGLEBRACKET&gt;#&lt;/MW_SINGLEBRACKET&gt;</code></li>
+<li><ul>
+<li><ol>
+<li>is the ID number of an entity that is currently locked</li>
+</ol></li>
+</ul></li>
+<li><code>Click</code></li>
+<li>
+<code>ChangeAmmo</code>
+<ul>
+<li>The "ChangeAmmo" METHOD of the 'module' datatype will now work without any arguments. When utilized in this fashion, it will simply "reload" using the same type of ammo that is currently found in it (obviously, this only works if there is currently ammo/charge in the module when you use this method.)</li>
+</ul>
+</li>
+</ul>
+
+
+<dd>Here is an example:
+
+
+<dd>"MyShip.Module[HiSlot0]:ChangeAmmo"
+</dd>
+
+</dd>
+
+<ul>
+<li><code>ChangeAmmo&lt;MW_SINGLEBRACKET&gt;AmmoID#&lt;/MW_SINGLEBRACKET&gt;</code></li>
+<li>
+<code>ChangeAmmo&lt;MW_SINGLEBRACKET&gt;AmmoID#,Quantity&lt;/MW_SINGLEBRACKET&gt;</code>
+<ul>
+<li>Parameter is the Item.ID of an ammunition from your ship's cargo</li>
+</ul>
+</li>
+</ul>
+
+
+<dd>NOTE: This method will replace your current ammo with the ammo given in the same quantity, unless you provide Quantity
+</dd>
+<dd>NOTE: If using the Quantity parameter, be careful: if you use a quantity that is too high for the module, it'll fail entirely. See Module.MaxCharges
+</dd>
+
+<ul>
+<li>
+<code>UnloadToCargo</code> (For modules that contain charges/ammo)</li>
+<li>
+<code>ReloadAll</code> (For modules that have the 'Reload all' menu option available)</li>
+</ul>
+<ul>
+<li><code>Deactivate</code></li>
+<li><code>SetAutoReloadOn</code></li>
+<li><code>SetAutoReloadOff</code></li>
+<li><code>PutOnline</code></li>
+<li><code>PutOffline</code></li>
+<li><code>GetAvailableAmmo&lt;MW_SINGLEBRACKET&gt;&lt;index:item&gt;&lt;/MW_SINGLEBRACKET&gt;</code></li>
+<li>
+<code>RemoveCharge</code>
+<ul>
+<li>requires you to be in station and fitting window be open</li>
+</ul>
+</li>
+<li><code>SetManualOff</code></li>
+<li><code>SetManualOn</code></li>
+<li><code>ToggleOverload</code></li>
+<li>
+<code>Unfit</code>
+<ul>
+<li>requires you to be in station and fitting window be open</li>
+</ul>
+</li>
+</ul>
+
+
+<a name="Examples"></a>
+<h2 >Examples<a href="#Examples" class="wiki-anchor">&para;</a></h2>
+<p>1)</p>
+<p><code>variable int i = 1</code><br><code>variable index:module Modules</code><br><code>variable int ModulesCount = ${Me.Ship.GetModules</code>[<code>Modules</code><code>}</code><br><code>echo Populating Modules List:: ${ModulesCount} modules total</code><br><code>do</code><br><code>{</code><br><code> echo Module ${i} - ${Modules.Get</code><code>${i}</code>]<code>.ToItem.Name}</code><br><code>}</code><br><code>while ${i:Inc} &lt;= ${ModulesCount}</code></p>
+<p>2)</p>
+<p><code>variable int i = 0</code><br><code>do</code><br><code>{</code><br><code> echo Module ${i} - ${Me.Ship.Module</code>[<code>HiSlot${i}].ToItem.Name}: ${Me.Ship.Module[HiSlot${i}</code>]<code>.IsActive}</code><br><code>}</code><br><code>while ${i:Inc} &lt;= 7</code></p>
+<p>Returns:</p>
+<p><code>Module 0 - Electron Blaster Cannon II: FALSE</code><br><code>Module 1 - Electron Blaster Cannon I: FALSE</code><br><code>Module 2 - Electron Blaster Cannon I: FALSE</code><br><code>Module 3 - Electron Blaster Cannon I: FALSE</code><br><code>Module 4 - Electron Blaster Cannon I: FALSE</code><br><code>Module 5 - Salvager I: FALSE</code><br><code>Module 6 - NULL: NULL</code><br><code>Module 7 - NULL: NULL</code></p>
+
+
+</div>
+
+
+<fieldset class="collapsible collapsed hide-when-print">
+  <legend onclick="toggleFieldset(this);" class="icon icon-collapsed">Files (0)</legend>
+  <div style="display: none;">
+
+  
+
+</div>
+</fieldset>
+
+<p class="wiki-update-info">
+</p>
+
+
+
+
+
+        
+        <div style="clear:both;"></div>
+    </div>
+</div>
+<div id="footer">
+    Powered by <a href="https://www.redmine.org/">Redmine</a> &copy; 2006-2020 Jean-Philippe Lang
+</div>
+</div>
+
+<div id="ajax-indicator" style="display:none;"><span>Loading...</span></div>
+<div id="ajax-modal" style="display:none;"></div>
+
+</div>
+</div>
+
+</body>
+
+<!-- Mirrored from forge.isxgames.com/projects/isxeve/wiki/Module_(Data_Type) by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 16 Sep 2025 16:23:38 GMT -->
+</html>

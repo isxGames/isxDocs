@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html class="client-nojs" lang="en" dir="ltr">
+
+<!-- Mirrored from www.lavishsoft.com/wiki/index.php/LavishScript:Syntax by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 16 Sep 2025 16:30:23 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=UTF-8" /><!-- /Added by HTTrack -->
+<head>
+<meta charset="UTF-8"/>
+<title>LavishScript:Syntax - Lavish Software Wiki</title>
+<script>document.documentElement.className = document.documentElement.className.replace( /(^|\s)client-nojs(\s|$)/, "$1client-js$2" );</script>
+<script>(window.RLQ=window.RLQ||[]).push(function(){mw.config.set({"wgCanonicalNamespace":"","wgCanonicalSpecialPageName":false,"wgNamespaceNumber":0,"wgPageName":"LavishScript:Syntax","wgTitle":"LavishScript:Syntax","wgCurRevisionId":7582,"wgRevisionId":7582,"wgArticleId":961,"wgIsArticle":true,"wgIsRedirect":false,"wgAction":"view","wgUserName":null,"wgUserGroups":["*"],"wgCategories":["LavishScript"],"wgBreakFrames":false,"wgPageContentLanguage":"en","wgPageContentModel":"wikitext","wgSeparatorTransformTable":["",""],"wgDigitTransformTable":["",""],"wgDefaultDateFormat":"dmy","wgMonthNames":["","January","February","March","April","May","June","July","August","September","October","November","December"],"wgMonthNamesShort":["","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],"wgRelevantPageName":"LavishScript:Syntax","wgRelevantArticleId":961,"wgRequestId":"eb9c88ff8409fae8250569ad","wgCSPNonce":false,"wgIsProbablyEditable":false,"wgRelevantPageIsProbablyEditable":false,"wgRestrictionEdit":[],"wgRestrictionMove":[]});mw.loader.state({"site.styles":"ready","noscript":"ready","user.styles":"ready","user":"ready","user.options":"ready","user.tokens":"loading","mediawiki.legacy.shared":"ready","mediawiki.legacy.commonPrint":"ready","mediawiki.toc.styles":"ready","mediawiki.skinning.interface":"ready","skins.vector.styles":"ready"});mw.loader.implement("user.tokens@0tffind",function($,jQuery,require,module){/*@nomin*/mw.user.tokens.set({"editToken":"+\\","patrolToken":"+\\","watchToken":"+\\","csrfToken":"+\\"});
+});RLPAGEMODULES=["site","mediawiki.page.startup","mediawiki.page.ready","mediawiki.toc","mediawiki.searchSuggest","skins.vector.js"];mw.loader.load(RLPAGEMODULES);});</script>
+<link rel="stylesheet" href="https://www.lavishsoft.com/wiki/load.php?lang=en&amp;modules=mediawiki.legacy.commonPrint%2Cshared%7Cmediawiki.skinning.interface%7Cmediawiki.toc.styles%7Cskins.vector.styles&amp;only=styles&amp;skin=vector"/>
+<script async="" src="https://www.lavishsoft.com/wiki/load.php?lang=en&amp;modules=startup&amp;only=scripts&amp;skin=vector"></script>
+<meta name="ResourceLoaderDynamicStyles" content=""/>
+<meta name="generator" content="MediaWiki 1.33.0"/>
+<link rel="shortcut icon" href="https://www.lavishsoft.com/favicon.ico"/>
+<link rel="search" type="application/opensearchdescription+xml" href="https://www.lavishsoft.com/wiki/opensearch_desc.php" title="Lavish Software Wiki (en)"/>
+<link rel="EditURI" type="application/rsd+xml" href="https://www.lavishsoft.com/wiki/api.php?action=rsd"/>
+<link rel="alternate" type="application/atom+xml" title="Lavish Software Wiki Atom feed" href="https://www.lavishsoft.com/wiki/index.php?title=Special:RecentChanges&amp;feed=atom"/>
+<!--[if lt IE 9]><script src="/wiki/load.php?lang=en&amp;modules=html5shiv&amp;only=scripts&amp;skin=vector&amp;sync=1"></script><![endif]-->
+</head>
+<body class="mediawiki ltr sitedir-ltr mw-hide-empty-elt ns-0 ns-subject page-LavishScript_Syntax rootpage-LavishScript_Syntax skin-vector action-view">
+<div id="mw-page-base" class="noprint"></div>
+<div id="mw-head-base" class="noprint"></div>
+<div id="content" class="mw-body" role="main">
+	<a id="top"></a>
+	
+	<div class="mw-indicators mw-body-content">
+</div>
+
+	<h1 id="firstHeading" class="firstHeading" lang="en">LavishScript:Syntax</h1>
+	
+	<div id="bodyContent" class="mw-body-content">
+		<div id="siteSub" class="noprint">From Lavish Software Wiki</div>
+		<div id="contentSub"></div>
+		
+		
+		
+		<div id="jump-to-nav"></div>
+		<a class="mw-jump-link" href="#mw-head">Jump to navigation</a>
+		<a class="mw-jump-link" href="#p-search">Jump to search</a>
+		<div id="mw-content-text" lang="en" dir="ltr" class="mw-content-ltr"><div class="mw-parser-output"><p>This page describes the syntax for any given command, including "data" sequences.  Script format can be found in <a href="https://www.lavishsoft.com/wiki/index.php/Script_Development" class="mw-redirect" title="Script Development">Script Development</a>.
+</p>
+<div id="toc" class="toc"><input type="checkbox" role="button" id="toctogglecheckbox" class="toctogglecheckbox" style="display:none" /><div class="toctitle" lang="en" dir="ltr"><h2>Contents</h2><span class="toctogglespan"><label class="toctogglelabel" for="toctogglecheckbox"></label></span></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#Simple_Command"><span class="tocnumber">1</span> <span class="toctext">Simple Command</span></a>
+<ul>
+<li class="toclevel-2 tocsection-2"><a href="#Examples"><span class="tocnumber">1.1</span> <span class="toctext">Examples</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-3"><a href="#Command_Name"><span class="tocnumber">2</span> <span class="toctext">Command Name</span></a></li>
+<li class="toclevel-1 tocsection-4"><a href="#Parameters"><span class="tocnumber">3</span> <span class="toctext">Parameters</span></a>
+<ul>
+<li class="toclevel-2 tocsection-5"><a href="#Examples_2"><span class="tocnumber">3.1</span> <span class="toctext">Examples</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-6"><a href="#Data_Sequences"><span class="tocnumber">4</span> <span class="toctext">Data Sequences</span></a></li>
+<li class="toclevel-1 tocsection-7"><a href="#Indices"><span class="tocnumber">5</span> <span class="toctext">Indices</span></a></li>
+<li class="toclevel-1 tocsection-8"><a href="#Complex_Command"><span class="tocnumber">6</span> <span class="toctext">Complex Command</span></a>
+<ul>
+<li class="toclevel-2 tocsection-9"><a href="#Examples_3"><span class="tocnumber">6.1</span> <span class="toctext">Examples</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-10"><a href="#Escape_Sequences"><span class="tocnumber">7</span> <span class="toctext">Escape Sequences</span></a>
+<ul>
+<li class="toclevel-2 tocsection-11"><a href="#Examples_4"><span class="tocnumber">7.1</span> <span class="toctext">Examples</span></a></li>
+</ul>
+</li>
+</ul>
+</div>
+
+<h2><span class="mw-headline" id="Simple_Command">Simple Command</span></h2>
+<p>A Simple Command is made up of a Command Name, and any Parameters given to it.  Parameters are <i>optional</i>.
+</p><p>Possible forms are as follows
+</p>
+<ul><li><tt>&lt;Command Name&gt;</tt><br /></li>
+<li><tt>&lt;Command Name&gt; [Parameters]</tt></li></ul>
+<h3><span class="mw-headline" id="Examples">Examples</span></h3>
+<pre><tt>LSVersion</tt>
+</pre>
+<p>In this example, "LSVersion" is the Command Name
+</p>
+<pre><tt>DeclareVariable MyBool bool local false</tt>
+</pre>
+<p>In this example, "DeclareVariable" is the Command Name, and "MyBool bool local false" are the parameters
+</p>
+<h2><span class="mw-headline" id="Command_Name">Command Name</span></h2>
+<p>A command name is a single word.  The only "special" character that has any effect in a command name is <tt>[</tt>, which will be used as an Index, for use with data <i>methods</i>.  Quotes do not have an effect on spaces, as they would with parameters or indices, but will be stripped if they surround the single word.  Data are not processed as part of the command name.
+</p><p>If the command name is found to contain a <tt>:</tt>, the command name is assumed to be that of a data <i>method</i>.  In such cases, any parameters following the command are ignored, and the command is considered successful, whether or not the method is successfully processed.
+</p><p>If the command name is not assumed to be a <i>method</i>, it will first be checked for a matching <i>alias</i>, and then for an actual command.  Aliases must match completely, though actual commands can be shortened and will resolve to the first matching command alphabetically.
+</p>
+<h2><span class="mw-headline" id="Parameters">Parameters</span></h2>
+<p>Parameters are words separated by spaces.  If an individual parameter must itself include a space, or certain special characters should not be interpreted as part of a complex command, double quotes (<tt>"</tt>) should be used around the parameter.  Data are valid in any parameter, and will be processed (potentially becoming multiple parameters) unless the command name indicates a command that instructs otherwise (in which case the data will be treated as a single word).  If data are processed, they will be replaced with the "return" (also referred to as "To String") value of the final resulting object.
+</p>
+<h3><span class="mw-headline" id="Examples_2">Examples</span></h3>
+<pre>Test OneParameter Two Parameters "One Parameter"
+</pre>
+<p>In this example, the <a href="https://www.lavishsoft.com/wiki/index.php/Command:Test" title="Command:Test">Test command</a> is executed with exactly four parameters.  The fourth parameter contains a space.  The quotes are removed before the command sees them.  See <a href="LavishScript_Syntax.html#Escape_Sequences" title="LavishScript:Syntax">Escape Sequences</a> for how to pass quotes to a command.  The following are the resulting parameters.
+</p>
+<ol><li>OneParameter</li>
+<li>Two</li>
+<li>Parameters</li>
+<li>One Parameter</li></ol>
+<h2><span class="mw-headline" id="Data_Sequences">Data Sequences</span></h2>
+<p>Data sequences begin with <tt>${</tt> and end with <tt>}</tt>.  Inside this, possible forms are as follows:
+</p>
+<ul><li><tt>&lt;Object&gt;</tt></li>
+<li><tt>&lt;Object&gt;<b>.</b>&lt;Member&gt;</tt></li>
+<li><tt>&lt;Object&gt;<b>:</b>&lt;Method&gt;</tt></li>
+<li><tt>&lt;Object&gt;<b>(</b>cast<b>)</b></tt></li>
+<li><tt>&lt;Object&gt;<b>[</b>Index<b>]</b></tt></li></ul>
+<p>These forms are <tt>recursive</tt>.  Every Member, Method, or cast results in an Object for which the form can be continued. Indices have special rules, as described below.
+</p><p>To prevent a data sequence from reducing upon execution of the command, use the <b>escape character</b> to escape the initial ${, such as:
+</p>
+<pre>echo \${System.OS}
+</pre>
+<h2><span class="mw-headline" id="Indices">Indices</span></h2>
+<p>Indices begin with <tt>[</tt> and end with <tt>]</tt>.  Inside this, each <i>dimension</i> is described and separated by a comma.  If a comma or ] must be used within a single dimension, double quotes (<tt>"</tt>) are used around the dimension.  Dimensions are interpreted as dimensions for arrays, or individual parameters where applicable.  Data are processed in indices (possibly becoming multiple dimensions if the result contains a comma), unless used in a parameter to a command that instructs otherwise (in which case the data will be processed as a term in a single dimension).  If data are processed, they will be reduced to text.  Indices are <i>not</i> limited to numerical values, they are the same as parameters, but delimited by commas.
+</p>
+<h2><span class="mw-headline" id="Complex_Command">Complex Command</span></h2>
+<p>Complex commands are commands and their parameters, with the allowance of command lists.
+</p><p>A Command List is described as follows:
+</p>
+<ul><li><tt>&lt;Simple Command&gt;;&lt;Simple Command&gt;</tt></li></ul>
+<p>Command lists are interpreted from left to right
+</p>
+<h3><span class="mw-headline" id="Examples_3">Examples</span></h3>
+<dl><dt>Execute two commands</dt></dl>
+<pre>echo one line;echo two lines
+</pre>
+<dl><dt>Execute one command which uses a command list as a single parameter</dt></dl>
+<pre>bind example ctrl+alt+x "echo one line;echo two lines"
+</pre>
+<h2><span class="mw-headline" id="Escape_Sequences">Escape Sequences</span></h2>
+<p>Escape sequences are character sequences that have their own special meaning.  
+</p><p>Escape sequences consist of a backslash (<tt>\</tt>) and a following character:
+</p>
+<ul><li><tt>\&lt;character&gt;</tt></li></ul>
+<p>Recognized characters and their meanings are as follows:
+</p>
+<ul><li>a: Character 7, the ASCII beep</li>
+<li>e: Character 27, the ESC character (useful for terminal color/control/etc sequences)</li>
+<li>n: Character 10, Line feed</li>
+<li>r: Character 13, Carriage return</li>
+<li>t: Character 9, Horizontal tab</li>
+<li>xFF: Where "FF" is exactly two hexadecimal digits, the sequence is replaced by the character identified by this value</li></ul>
+<dl><dt>All other characters following the escape character are treated as that character, and the escape character is removed.  For example, \" is a quote, and \\ is a backslash.</dt></dl>
+<p>Often times it is necessary to prevent characters from having the special meanings as described in other sections.  For example, one way to use a comma inside a dimension in an Index is to enclose the entire dimension in quotes.  However, escape sequences can also be used for this purpose.  By escaping a comma, it will not be treated as a dimension separator in an index.
+</p>
+<h3><span class="mw-headline" id="Examples_4">Examples</span></h3>
+<pre>Test OneParameter Two Parameters "One \"Parameter\""
+</pre>
+<p>In this example, the <a href="https://www.lavishsoft.com/wiki/index.php/Command:Test" title="Command:Test">Test command</a> is executed with exactly four parameters.  The fourth parameter contains a space.  The unescaped quotes are removed before the command sees them.  However, the escaped quotes will become unescaped quotes when sent to the function, resulting in the following parameters
+</p>
+<ol><li>OneParameter</li>
+<li>Two</li>
+<li>Parameters</li>
+<li>One "Parameter"</li></ol>
+<!-- 
+NewPP limit report
+Cached time: 20250916070051
+Cache expiry: 86400
+Dynamic content: false
+CPU time usage: 0.016 seconds
+Real time usage: 0.016 seconds
+Preprocessor visited node count: 43/1000000
+Preprocessor generated node count: 48/1000000
+Post‐expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+Highest expansion depth: 2/40
+Expensive parser function count: 0/100
+Unstrip recursion depth: 0/20
+Unstrip post‐expand size: 0/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00%    0.000      1 -total
+-->
+
+<!-- Saved in parser cache with key lax-wiki_:pcache:idhash:961-0!canonical and timestamp 20250916070051 and revision id 7582
+ -->
+</div></div>
+		
+		<div class="printfooter">Retrieved from "<a dir="ltr" href="https://www.lavishsoft.com/wiki/index.php?title=LavishScript:Syntax&amp;oldid=7582">https://www.lavishsoft.com/wiki/index.php?title=LavishScript:Syntax&amp;oldid=7582</a>"</div>
+		
+		<div id="catlinks" class="catlinks" data-mw="interface"><div id="mw-normal-catlinks" class="mw-normal-catlinks"><a href="https://www.lavishsoft.com/wiki/index.php/Special:Categories" title="Special:Categories">Category</a>: <ul><li><a href="https://www.lavishsoft.com/wiki/index.php/Category:LavishScript" title="Category:LavishScript">LavishScript</a></li></ul></div></div>
+		
+		<div class="visualClear"></div>
+		
+	</div>
+</div>
+
+		<div id="mw-navigation">
+			<h2>Navigation menu</h2>
+			<div id="mw-head">
+									<div id="p-personal" role="navigation" aria-labelledby="p-personal-label">
+						<h3 id="p-personal-label">Personal tools</h3>
+						<ul>
+							<li id="pt-login"><a href="https://www.lavishsoft.com/forum-x/ucp.php?mode=login&amp;redirect=https%3A%2F%2Fwww.lavishsoft.com%2Fwiki%2Findex.php%2FLavishScript%3ASyntax" title="You are encouraged to log in; however, it is not mandatory [o]" accesskey="o">Log in</a></li>						</ul>
+					</div>
+									<div id="left-navigation">
+										<div id="p-namespaces" role="navigation" class="vectorTabs" aria-labelledby="p-namespaces-label">
+						<h3 id="p-namespaces-label">Namespaces</h3>
+						<ul>
+							<li id="ca-nstab-main" class="selected"><span><a href="LavishScript_Syntax.html" title="View the content page [c]" accesskey="c">Article</a></span></li><li id="ca-talk" class="new"><span><a href="https://www.lavishsoft.com/wiki/index.php?title=Talk:LavishScript:Syntax&amp;action=edit&amp;redlink=1" rel="discussion" title="Discussion about the content page (page does not exist) [t]" accesskey="t">Discussion</a></span></li>						</ul>
+					</div>
+										<div id="p-variants" role="navigation" class="vectorMenu emptyPortlet" aria-labelledby="p-variants-label">
+												<input type="checkbox" class="vectorMenuCheckbox" aria-labelledby="p-variants-label" />
+						<h3 id="p-variants-label">
+							<span>Variants</span>
+						</h3>
+						<ul class="menu">
+													</ul>
+					</div>
+									</div>
+				<div id="right-navigation">
+										<div id="p-views" role="navigation" class="vectorTabs" aria-labelledby="p-views-label">
+						<h3 id="p-views-label">Views</h3>
+						<ul>
+							<li id="ca-view" class="collapsible selected"><span><a href="LavishScript_Syntax.html">Read</a></span></li><li id="ca-viewsource" class="collapsible"><span><a href="https://www.lavishsoft.com/wiki/index.php?title=LavishScript:Syntax&amp;action=edit" title="This page is protected.&#10;You can view its source [e]" accesskey="e">View source</a></span></li><li id="ca-history" class="collapsible"><span><a href="https://www.lavishsoft.com/wiki/index.php?title=LavishScript:Syntax&amp;action=history" title="Past revisions of this page [h]" accesskey="h">View history</a></span></li>						</ul>
+					</div>
+										<div id="p-cactions" role="navigation" class="vectorMenu emptyPortlet" aria-labelledby="p-cactions-label">
+						<input type="checkbox" class="vectorMenuCheckbox" aria-labelledby="p-cactions-label" />
+						<h3 id="p-cactions-label"><span>More</span></h3>
+						<ul class="menu">
+													</ul>
+					</div>
+										<div id="p-search" role="search">
+						<h3>
+							<label for="searchInput">Search</label>
+						</h3>
+						<form action="https://www.lavishsoft.com/wiki/index.php" id="searchform">
+							<div id="simpleSearch">
+								<input type="search" name="search" placeholder="Search Lavish Software Wiki" title="Search Lavish Software Wiki [f]" accesskey="f" id="searchInput"/><input type="hidden" value="Special:Search" name="title"/><input type="submit" name="fulltext" value="Search" title="Search the pages for this text" id="mw-searchButton" class="searchButton mw-fallbackSearchButton"/><input type="submit" name="go" value="Go" title="Go to a page with this exact name if it exists" id="searchButton" class="searchButton"/>							</div>
+						</form>
+					</div>
+									</div>
+			</div>
+			<div id="mw-panel">
+				<div id="p-logo" role="banner"><a class="mw-wiki-logo" href="https://www.lavishsoft.com/wiki/index.php/Main_Page" title="Visit the main page"></a></div>
+						<div class="portal" role="navigation" id="p-navigation" aria-labelledby="p-navigation-label">
+			<h3 id="p-navigation-label">Navigation</h3>
+			<div class="body">
+								<ul>
+					<li id="n-mainpage-description"><a href="https://www.lavishsoft.com/wiki/index.php/Main_Page" title="Visit the main page [z]" accesskey="z">Main page</a></li><li id="n-LavishScript"><a href="https://www.lavishsoft.com/wiki/index.php/LavishScript">LavishScript</a></li><li id="n-LavishGUI"><a href="https://www.lavishsoft.com/wiki/index.php/LavishGUI">LavishGUI</a></li><li id="n-LavishGUI-2"><a href="https://www.lavishsoft.com/wiki/index.php/LavishGUI_2">LavishGUI 2</a></li><li id="n-recentchanges"><a href="https://www.lavishsoft.com/wiki/index.php/Special:RecentChanges" title="A list of recent changes in the wiki [r]" accesskey="r">Recent changes</a></li><li id="n-randompage"><a href="https://www.lavishsoft.com/wiki/index.php/Special:Random" title="Load a random page [x]" accesskey="x">Random page</a></li><li id="n-help"><a href="https://www.lavishsoft.com/wiki/index.php/Help:Contents" title="The place to find out">Help</a></li>				</ul>
+							</div>
+		</div>
+			<div class="portal" role="navigation" id="p-tb" aria-labelledby="p-tb-label">
+			<h3 id="p-tb-label">Toolbox</h3>
+			<div class="body">
+								<ul>
+					<li id="t-whatlinkshere"><a href="https://www.lavishsoft.com/wiki/index.php/Special:WhatLinksHere/LavishScript:Syntax" title="A list of all wiki pages that link here [j]" accesskey="j">What links here</a></li><li id="t-recentchangeslinked"><a href="https://www.lavishsoft.com/wiki/index.php/Special:RecentChangesLinked/LavishScript:Syntax" rel="nofollow" title="Recent changes in pages linked from this page [k]" accesskey="k">Related changes</a></li><li id="t-specialpages"><a href="https://www.lavishsoft.com/wiki/index.php/Special:SpecialPages" title="A list of all special pages [q]" accesskey="q">Special pages</a></li><li id="t-print"><a href="https://www.lavishsoft.com/wiki/index.php?title=LavishScript:Syntax&amp;printable=yes" rel="alternate" title="Printable version of this page [p]" accesskey="p">Printable version</a></li><li id="t-permalink"><a href="https://www.lavishsoft.com/wiki/index.php?title=LavishScript:Syntax&amp;oldid=7582" title="Permanent link to this revision of the page">Permanent link</a></li><li id="t-info"><a href="https://www.lavishsoft.com/wiki/index.php?title=LavishScript:Syntax&amp;action=info" title="More information about this page">Page information</a></li>				</ul>
+							</div>
+		</div>
+				</div>
+		</div>
+				<div id="footer" role="contentinfo">
+						<ul id="footer-info">
+								<li id="footer-info-lastmod"> This page was last edited on 5 May 2014, at 02:05.</li>
+							</ul>
+						<ul id="footer-places">
+								<li id="footer-places-privacy"><a href="https://www.lavishsoft.com/wiki/index.php/Lavish_Software_Wiki:Privacy_policy" title="Lavish Software Wiki:Privacy policy">Privacy policy</a></li>
+								<li id="footer-places-about"><a href="https://www.lavishsoft.com/wiki/index.php/Lavish_Software_Wiki:About" title="Lavish Software Wiki:About">About Lavish Software Wiki</a></li>
+								<li id="footer-places-disclaimer"><a href="https://www.lavishsoft.com/wiki/index.php/Lavish_Software_Wiki:General_disclaimer" title="Lavish Software Wiki:General disclaimer">Disclaimers</a></li>
+							</ul>
+										<ul id="footer-icons" class="noprint">
+										<li id="footer-poweredbyico">
+						<a href="http://www.mediawiki.org/"><img src="https://www.lavishsoft.com/wiki/resources/assets/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" srcset="/wiki/resources/assets/poweredby_mediawiki_132x47.png 1.5x, /wiki/resources/assets/poweredby_mediawiki_176x62.png 2x" width="88" height="31"/></a>					</li>
+									</ul>
+						<div style="clear: both;"></div>
+		</div>
+		
+
+<script>(window.RLQ=window.RLQ||[]).push(function(){mw.config.set({"wgPageParseReport":{"limitreport":{"cputime":"0.016","walltime":"0.016","ppvisitednodes":{"value":43,"limit":1000000},"ppgeneratednodes":{"value":48,"limit":1000000},"postexpandincludesize":{"value":0,"limit":2097152},"templateargumentsize":{"value":0,"limit":2097152},"expansiondepth":{"value":2,"limit":40},"expensivefunctioncount":{"value":0,"limit":100},"unstrip-depth":{"value":0,"limit":20},"unstrip-size":{"value":0,"limit":5000000},"timingprofile":["100.00%    0.000      1 -total"]},"cachereport":{"timestamp":"20250916070051","ttl":86400,"transientcontent":false}}});mw.config.set({"wgBackendResponseTime":1380});});</script>
+</body>
+
+<!-- Mirrored from www.lavishsoft.com/wiki/index.php/LavishScript:Syntax by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 16 Sep 2025 16:30:23 GMT -->
+</html>

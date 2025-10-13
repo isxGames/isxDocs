@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html class="client-nojs" lang="en" dir="ltr">
+
+<!-- Mirrored from www.lavishsoft.com/wiki/index.php/LavishScript:Data_Types by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 16 Sep 2025 16:30:22 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=UTF-8" /><!-- /Added by HTTrack -->
+<head>
+<meta charset="UTF-8"/>
+<title>LavishScript:Object Types - Lavish Software Wiki</title>
+<script>document.documentElement.className = document.documentElement.className.replace( /(^|\s)client-nojs(\s|$)/, "$1client-js$2" );</script>
+<script>(window.RLQ=window.RLQ||[]).push(function(){mw.config.set({"wgCanonicalNamespace":"","wgCanonicalSpecialPageName":false,"wgNamespaceNumber":0,"wgPageName":"LavishScript:Object_Types","wgTitle":"LavishScript:Object Types","wgCurRevisionId":7787,"wgRevisionId":7787,"wgArticleId":929,"wgIsArticle":true,"wgIsRedirect":false,"wgAction":"view","wgUserName":null,"wgUserGroups":["*"],"wgCategories":["LavishScript","Object Types","LavishScript Data Types"],"wgBreakFrames":false,"wgPageContentLanguage":"en","wgPageContentModel":"wikitext","wgSeparatorTransformTable":["",""],"wgDigitTransformTable":["",""],"wgDefaultDateFormat":"dmy","wgMonthNames":["","January","February","March","April","May","June","July","August","September","October","November","December"],"wgMonthNamesShort":["","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],"wgRelevantPageName":"LavishScript:Object_Types","wgRelevantArticleId":929,"wgRequestId":"8f964f70e90086267fed2f3b","wgCSPNonce":false,"wgIsProbablyEditable":false,"wgRelevantPageIsProbablyEditable":false,"wgRestrictionEdit":[],"wgRestrictionMove":[],"wgRedirectedFrom":"LavishScript:Data_Types","wgInternalRedirectTargetUrl":"/wiki/index.php/LavishScript:Object_Types"});mw.loader.state({"site.styles":"ready","noscript":"ready","user.styles":"ready","user":"ready","user.options":"ready","user.tokens":"loading","mediawiki.legacy.shared":"ready","mediawiki.legacy.commonPrint":"ready","mediawiki.toc.styles":"ready","mediawiki.skinning.interface":"ready","skins.vector.styles":"ready"});mw.loader.implement("user.tokens@0tffind",function($,jQuery,require,module){/*@nomin*/mw.user.tokens.set({"editToken":"+\\","patrolToken":"+\\","watchToken":"+\\","csrfToken":"+\\"});
+});RLPAGEMODULES=["mediawiki.action.view.redirect","site","mediawiki.page.startup","mediawiki.page.ready","mediawiki.toc","mediawiki.searchSuggest","skins.vector.js"];mw.loader.load(RLPAGEMODULES);});</script>
+<link rel="stylesheet" href="https://www.lavishsoft.com/wiki/load.php?lang=en&amp;modules=mediawiki.legacy.commonPrint%2Cshared%7Cmediawiki.skinning.interface%7Cmediawiki.toc.styles%7Cskins.vector.styles&amp;only=styles&amp;skin=vector"/>
+<script async="" src="https://www.lavishsoft.com/wiki/load.php?lang=en&amp;modules=startup&amp;only=scripts&amp;skin=vector"></script>
+<meta name="ResourceLoaderDynamicStyles" content=""/>
+<meta name="generator" content="MediaWiki 1.33.0"/>
+<link rel="shortcut icon" href="https://www.lavishsoft.com/favicon.ico"/>
+<link rel="search" type="application/opensearchdescription+xml" href="https://www.lavishsoft.com/wiki/opensearch_desc.php" title="Lavish Software Wiki (en)"/>
+<link rel="EditURI" type="application/rsd+xml" href="https://www.lavishsoft.com/wiki/api.php?action=rsd"/>
+<link rel="alternate" type="application/atom+xml" title="Lavish Software Wiki Atom feed" href="https://www.lavishsoft.com/wiki/index.php?title=Special:RecentChanges&amp;feed=atom"/>
+<link rel="canonical" href="LavishScript_Object_Types.html"/>
+<!--[if lt IE 9]><script src="/wiki/load.php?lang=en&amp;modules=html5shiv&amp;only=scripts&amp;skin=vector&amp;sync=1"></script><![endif]-->
+</head>
+<body class="mediawiki ltr sitedir-ltr mw-hide-empty-elt ns-0 ns-subject page-LavishScript_Object_Types rootpage-LavishScript_Object_Types skin-vector action-view">
+<div id="mw-page-base" class="noprint"></div>
+<div id="mw-head-base" class="noprint"></div>
+<div id="content" class="mw-body" role="main">
+	<a id="top"></a>
+	
+	<div class="mw-indicators mw-body-content">
+</div>
+
+	<h1 id="firstHeading" class="firstHeading" lang="en">LavishScript:Object Types</h1>
+	
+	<div id="bodyContent" class="mw-body-content">
+		<div id="siteSub" class="noprint">From Lavish Software Wiki</div>
+		<div id="contentSub"><span class="mw-redirectedfrom">(Redirected from <a href="https://www.lavishsoft.com/wiki/index.php?title=LavishScript:Data_Types&amp;redirect=no" class="mw-redirect" title="LavishScript:Data Types">LavishScript:Data Types</a>)</span></div>
+		
+		
+		
+		<div id="jump-to-nav"></div>
+		<a class="mw-jump-link" href="#mw-head">Jump to navigation</a>
+		<a class="mw-jump-link" href="#p-search">Jump to search</a>
+		<div id="mw-content-text" lang="en" dir="ltr" class="mw-content-ltr"><div class="mw-parser-output"><div id="toc" class="toc"><input type="checkbox" role="button" id="toctogglecheckbox" class="toctogglecheckbox" style="display:none" /><div class="toctitle" lang="en" dir="ltr"><h2>Contents</h2><span class="toctogglespan"><label class="toctogglelabel" for="toctogglecheckbox"></label></span></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#Terms"><span class="tocnumber">1</span> <span class="toctext">Terms</span></a></li>
+<li class="toclevel-1 tocsection-2"><a href="#Introduction"><span class="tocnumber">2</span> <span class="toctext">Introduction</span></a></li>
+<li class="toclevel-1 tocsection-3"><a href="#Vitals"><span class="tocnumber">3</span> <span class="toctext">Vitals</span></a>
+<ul>
+<li class="toclevel-2 tocsection-4"><a href="#Defined_By"><span class="tocnumber">3.1</span> <span class="toctext">Defined By</span></a></li>
+<li class="toclevel-2 tocsection-5"><a href="#Inherits"><span class="tocnumber">3.2</span> <span class="toctext">Inherits</span></a></li>
+<li class="toclevel-2 tocsection-6"><a href="#Reduces_To"><span class="tocnumber">3.3</span> <span class="toctext">Reduces To</span></a></li>
+<li class="toclevel-2 tocsection-7"><a href="#Variable_Object_Type"><span class="tocnumber">3.4</span> <span class="toctext">Variable Object Type</span></a></li>
+<li class="toclevel-2 tocsection-8"><a href="#Uses_Sub-Types"><span class="tocnumber">3.5</span> <span class="toctext">Uses Sub-Types</span></a></li>
+<li class="toclevel-2 tocsection-9"><a href="#C.2FC.2B.2B_Type"><span class="tocnumber">3.6</span> <span class="toctext">C/C++ Type</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-10"><a href="#Built-in_Object_Types"><span class="tocnumber">4</span> <span class="toctext">Built-in Object Types</span></a></li>
+<li class="toclevel-1 tocsection-11"><a href="#See_Also"><span class="tocnumber">5</span> <span class="toctext">See Also</span></a></li>
+</ul>
+</div>
+
+<h2><span class="mw-headline" id="Terms">Terms</span></h2>
+<ul><li>Member</li></ul>
+<dl><dd>A <i>member</i> in the <a href="https://www.lavishsoft.com/wiki/index.php/LavishScript" title="LavishScript">LavishScript</a> context means an object associated with the object type, referred to by a specific term.  <i>Members</i> are accessed with a <tt>.</tt></dd></dl>
+<ul><li>Method</li></ul>
+<dl><dd>A <i>method</i> in the <a href="https://www.lavishsoft.com/wiki/index.php/LavishScript" title="LavishScript">LavishScript</a> context means a function or action associated with the object type, referred to by a specific term.  <i>Methods</i> are accessed with a <tt>:</tt></dd></dl>
+<ul><li>Index</li></ul>
+<dl><dd>An <i>index</i> in the <a href="https://www.lavishsoft.com/wiki/index.php/LavishScript" title="LavishScript">LavishScript</a> context means a value or set of values that, when used with a <i>member</i> or <i>method</i>, indicates parameters such as coordinates to be used in retrieving a value or taking an action.  Indices are surrounded with <tt>[ ]</tt>, and separated by a <tt>,</tt></dd></dl>
+<ul><li>Inherit</li></ul>
+<dl><dd>If an object type <i>inherits</i> another, <i>members</i> and <i>methods</i> of the inherited datatype can be used as if they were of the original object type, if not defined by the original object type.</dd></dl>
+<h2><span class="mw-headline" id="Introduction">Introduction</span></h2>
+<p>Object Types, also known as data types, are the complement to objects, including <a href="LavishScript_Top-Level_Objects.html" title="LavishScript:Top-Level Objects">Top-Level Objects</a> (TLOs) and Variables.  Where a variable is a <i>specific</i> object, an object type describes a <i>class</i> of objects (i.e. the type of object).  For example, "table" would be an object type, but "my dining table" would be an object.  Everything said about "my dining table" can <i>generally</i> be said about every other table.  Thus, an object type is a <i>generalized</i> way of describing many objects.  Using this generalization makes it relatively easy to work with a large number of objects, because they are all described in the same way, and that's the idea behind object types.
+</p>
+<h2><span class="mw-headline" id="Vitals">Vitals</span></h2>
+<p>All object types have a number of <tt>vitals</tt> -- important properties or information -- besides their members or methods.
+</p>
+<h3><span class="mw-headline" id="Defined_By">Defined By</span></h3>
+<p>This tells what product, library, extension, module, etc is responsible for interaction with the given object type, and therefore where you might look to find further information relating to that object type.
+</p>
+<h3><span class="mw-headline" id="Inherits">Inherits</span></h3>
+<p>This tells what object type or types a given object type <tt>inherits</tt>.  To repeat what is described above, this means that an object of this type will have all members or methods of the inherited type, and all members or methods of whatever the inherited type inherits (and so on).
+</p>
+<h3><span class="mw-headline" id="Reduces_To">Reduces To</span></h3>
+<p>At the end of a data sequence, the entire sequence including the ${} is reduced to text, another way of saying that the entire sequence is replaced (in place) with the "Reduced To" value of the final object in the sequence.
+</p>
+<h3><span class="mw-headline" id="Variable_Object_Type">Variable Object Type</span></h3>
+<p>When creating a new variable with a given object type, that object type may reroute the creation to a different object type, or it may refuse to create variables altogether.  For example, the <a href="https://www.lavishsoft.com/wiki/index.php/ObjectType:string" title="ObjectType:string">string</a> object type is text that cannot be changed, and it reroutes variable creation to the <a href="https://www.lavishsoft.com/wiki/index.php/ObjectType:mutablestring" title="ObjectType:mutablestring">mutablestring</a> object type, which is text that <i>can</i> be changed.  The <a href="https://www.lavishsoft.com/wiki/index.php/ObjectType:lavishscript" title="ObjectType:lavishscript">lavishscript</a> object type is an example that simply refuses to create variables, as only one <a href="https://www.lavishsoft.com/wiki/index.php/ObjectType:lavishscript" title="ObjectType:lavishscript">lavishscript</a> object is necessary, and it is provided for you.
+</p>
+<h3><span class="mw-headline" id="Uses_Sub-Types">Uses Sub-Types</span></h3>
+<p>Some object types require the use of sub-types in order to create a variable.  A sub-type generally means that the object is a container for some other type of object.  You don't just have "an index", you have "an index of strings" for example.  Sub-types are used by adding&#160;: and then the sub-type to the original object type when creating a variable, such as "index:string" or "index:int".
+</p>
+<h3><span id="C/C++_Type"></span><span class="mw-headline" id="C.2FC.2B.2B_Type">C/C++ Type</span></h3>
+<p>The C/C++ Type is only useful to C/C++ developers, so anyone else should probably ignore this entirely.  An object in LavishScript is simply a 32-bit value, paired with a pointer to an LSTypeDefinition representing the object type (this tells LavishScript how it can access the value).  In this fashion, pretty much any C/C++ datatype is available (structures larger than 32-bits must of course be referred to by a pointer).  Therefore, the 32-bit value is always going to be the immediate value or a pointer to an instance of a given structure or class.  The C/C++ Type given in Object Type Vitals is going to be the datatype of the stored value.  <tt>int</tt> means the value is a stored <tt>int</tt>, and <tt>int *</tt> means the value is a pointer to an <tt>int</tt>.  Not all of the C/C++ types are open source.
+</p>
+<h2><span class="mw-headline" id="Built-in_Object_Types">Built-in Object Types</span></h2>
+<div style="border:1px solid #888888;">
+<div style="background:#2f1fef; padding:0px; margin-bottom:5px">
+<div style="color: #3349dd; text-align:center; line-height:120%; padding:0.2em; background-color:#eeeeee; border-bottom:1px solid #3349dd;">
+<p><span style="font-size:120%; font-weight: bold;">LavishScript <a class="mw-selflink selflink">Object Types</a></span>
+</p>
+</div>
+</div>
+<div style="color: #000000; background:#ffffff; padding:0.5em">
+<dl><dt>Text</dt>
+<dd><a href="https://www.lavishsoft.com/wiki/index.php/ObjectType:string" title="ObjectType:string">string</a> - <a href="https://www.lavishsoft.com/wiki/index.php/ObjectType:mutablestring" title="ObjectType:mutablestring">mutablestring</a> - <a href="https://www.lavishsoft.com/wiki/index.php/ObjectType:unistring" title="ObjectType:unistring">unistring</a></dd>
+<dt>Numbers</dt>
+<dd><a href="https://www.lavishsoft.com/wiki/index.php/ObjectType:byte" title="ObjectType:byte">byte</a> - <a href="https://www.lavishsoft.com/wiki/index.php/ObjectType:float" title="ObjectType:float">float</a> - <a href="https://www.lavishsoft.com/wiki/index.php/ObjectType:float64" title="ObjectType:float64">float64</a> - <a href="https://www.lavishsoft.com/wiki/index.php/ObjectType:int" title="ObjectType:int">int</a> - <a href="https://www.lavishsoft.com/wiki/index.php/ObjectType:uint" title="ObjectType:uint">uint</a> - <a href="https://www.lavishsoft.com/wiki/index.php/ObjectType:int64" title="ObjectType:int64">int64</a></dd>
+<dt>Boolean (TRUE/FALSE)</dt>
+<dd><a href="https://www.lavishsoft.com/wiki/index.php/ObjectType:bool" title="ObjectType:bool">bool</a></dd>
+<dt>Pointers</dt>
+<dd><a href="https://www.lavishsoft.com/wiki/index.php/ObjectType:boolptr" title="ObjectType:boolptr">boolptr</a> - <a href="https://www.lavishsoft.com/wiki/index.php/ObjectType:byteptr" title="ObjectType:byteptr">byteptr</a> - <a href="https://www.lavishsoft.com/wiki/index.php/ObjectType:floatptr" title="ObjectType:floatptr">floatptr</a> - <a href="https://www.lavishsoft.com/wiki/index.php/ObjectType:float64ptr" title="ObjectType:float64ptr">float64ptr</a> - <a href="https://www.lavishsoft.com/wiki/index.php/ObjectType:intptr" title="ObjectType:intptr">intptr</a> - <a href="https://www.lavishsoft.com/wiki/index.php/ObjectType:uintptr" title="ObjectType:uintptr">uintptr</a> - <a href="https://www.lavishsoft.com/wiki/index.php/ObjectType:int64ptr" title="ObjectType:int64ptr">int64ptr</a> - <a href="https://www.lavishsoft.com/wiki/index.php/ObjectType:rgbptr" title="ObjectType:rgbptr">rgbptr</a> - <a href="https://www.lavishsoft.com/wiki/index.php/ObjectType:stringptr" title="ObjectType:stringptr">stringptr</a></dd>
+<dt>Containers</dt>
+<dd><a href="https://www.lavishsoft.com/wiki/index.php/ObjectType:objectcontainer" title="ObjectType:objectcontainer">objectcontainer</a> - <a href="https://www.lavishsoft.com/wiki/index.php/ObjectType:array" title="ObjectType:array">array</a> - <a href="https://www.lavishsoft.com/wiki/index.php/ObjectType:index" title="ObjectType:index">index</a> - <a href="https://www.lavishsoft.com/wiki/index.php/ObjectType:collection" title="ObjectType:collection">collection</a> - <a href="https://www.lavishsoft.com/wiki/index.php/ObjectType:queue" title="ObjectType:queue">queue</a> - <a href="https://www.lavishsoft.com/wiki/index.php/ObjectType:stack" title="ObjectType:stack">stack</a> - <a href="https://www.lavishsoft.com/wiki/index.php/ObjectType:set" title="ObjectType:set">set</a> - <a href="https://www.lavishsoft.com/wiki/index.php/ObjectType:variablescope" title="ObjectType:variablescope">variablescope</a></dd>
+<dt>JSON</dt>
+<dd><a href="https://www.lavishsoft.com/wiki/index.php/ObjectType:jsonobject" title="ObjectType:jsonobject">jsonobject</a> - <a href="https://www.lavishsoft.com/wiki/index.php/ObjectType:jsonarray" title="ObjectType:jsonarray">jsonarray</a> - <a href="https://www.lavishsoft.com/wiki/index.php/ObjectType:jsonvaluecontainer" title="ObjectType:jsonvaluecontainer">jsonvaluecontainer</a> - <a href="https://www.lavishsoft.com/wiki/index.php/ObjectType:jsonvalue" title="ObjectType:jsonvalue">jsonvalue</a></dd></dl>
+<dl><dt>Iteration</dt>
+<dd><a href="https://www.lavishsoft.com/wiki/index.php/ObjectType:iterator" title="ObjectType:iterator">iterator</a> - <a href="https://www.lavishsoft.com/wiki/index.php?title=ObjectType:jsoniterator&amp;action=edit&amp;redlink=1" class="new" title="ObjectType:jsoniterator (page does not exist)">jsoniterator</a></dd></dl>
+<dl><dt>Date/Time</dt>
+<dd><a href="https://www.lavishsoft.com/wiki/index.php/ObjectType:time" title="ObjectType:time">time</a></dd></dl>
+<dl><dt>Events</dt>
+<dd><a href="https://www.lavishsoft.com/wiki/index.php?title=ObjectType:anonevent&amp;action=edit&amp;redlink=1" class="new" title="ObjectType:anonevent (page does not exist)">anonevent</a> - <a href="https://www.lavishsoft.com/wiki/index.php/ObjectType:event" title="ObjectType:event">event</a></dd></dl>
+<dl><dt>Other</dt>
+<dd><a href="https://www.lavishsoft.com/wiki/index.php/ObjectType:point3f" title="ObjectType:point3f">point3f</a> - <a href="https://www.lavishsoft.com/wiki/index.php/ObjectType:rgb" title="ObjectType:rgb">rgb</a> - <a href="https://www.lavishsoft.com/wiki/index.php/ObjectType:script" title="ObjectType:script">script</a> - <a href="https://www.lavishsoft.com/wiki/index.php/ObjectType:binary" title="ObjectType:binary">binary</a> - <a href="https://www.lavishsoft.com/wiki/index.php/ObjectType:enumtype" title="ObjectType:enumtype">enumtype</a></dd></dl>
+<dl><dt>File Handling</dt>
+<dd><a href="https://www.lavishsoft.com/wiki/index.php/ObjectType:filepath" title="ObjectType:filepath">filepath</a> - <a href="https://www.lavishsoft.com/wiki/index.php/ObjectType:file" title="ObjectType:file">file</a> - <a href="https://www.lavishsoft.com/wiki/index.php/ObjectType:filelist" title="ObjectType:filelist">filelist</a> - <a href="https://www.lavishsoft.com/wiki/index.php/ObjectType:filelistentry" title="ObjectType:filelistentry">filelistentry</a></dd></dl>
+<dl><dt>Utilities</dt>
+<dd><a href="https://www.lavishsoft.com/wiki/index.php/ObjectType:exists" title="ObjectType:exists">exists</a> - <a href="https://www.lavishsoft.com/wiki/index.php/ObjectType:lavishscript" title="ObjectType:lavishscript">lavishscript</a> - <a href="https://www.lavishsoft.com/wiki/index.php/ObjectType:math" title="ObjectType:math">math</a> - <a href="https://www.lavishsoft.com/wiki/index.php/ObjectType:system" title="ObjectType:system">system</a> - <a href="https://www.lavishsoft.com/wiki/index.php/ObjectType:type" title="ObjectType:type">type</a> - <a href="https://www.lavishsoft.com/wiki/index.php/ObjectType:variable" title="ObjectType:variable">variable</a></dd></dl>
+<dl><dt><a href="LavishScript_Tasks.html" title="LavishScript:Tasks">Tasks</a></dt>
+<dd><a href="https://www.lavishsoft.com/wiki/index.php/ObjectType:lavishmachine" title="ObjectType:lavishmachine">lavishmachine</a> - Accessed via the Top-Level Object <a href="https://www.lavishsoft.com/wiki/index.php?title=TLO:LMAC&amp;action=edit&amp;redlink=1" class="new" title="TLO:LMAC (page does not exist)">LMAC</a></dd>
+<dd><a href="https://www.lavishsoft.com/wiki/index.php/ObjectType:task" title="ObjectType:task">task</a> - <a href="https://www.lavishsoft.com/wiki/index.php/ObjectType:tasklibrary" title="ObjectType:tasklibrary">tasklibrary</a> - <a href="https://www.lavishsoft.com/wiki/index.php/ObjectType:taskmanager" title="ObjectType:taskmanager">taskmanager</a> - <a href="https://www.lavishsoft.com/wiki/index.php/ObjectType:tasktype" title="ObjectType:tasktype">tasktype</a> - <a href="https://www.lavishsoft.com/wiki/index.php/ObjectType:taskpulseargs" title="ObjectType:taskpulseargs">taskpulseargs</a> - <a href="https://www.lavishsoft.com/wiki/index.php?title=ObjectType:elmactaskstate&amp;action=edit&amp;redlink=1" class="new" title="ObjectType:elmactaskstate (page does not exist)">elmactaskstate</a></dd></dl>
+<dl><dt>XML</dt>
+<dd><a href="https://www.lavishsoft.com/wiki/index.php?title=ObjectType:xmlnode&amp;action=edit&amp;redlink=1" class="new" title="ObjectType:xmlnode (page does not exist)">xmlnode</a> - <a href="https://www.lavishsoft.com/wiki/index.php?title=ObjectType:xmlreader&amp;action=edit&amp;redlink=1" class="new" title="ObjectType:xmlreader (page does not exist)">xmlreader</a></dd></dl>
+</div>
+</div>
+<div style="height: 5px;">
+</div>
+<h2><span class="mw-headline" id="See_Also">See Also</span></h2>
+<ul><li><a href="LavishScript_Top-Level_Objects.html" title="LavishScript:Top-Level Objects">Top-Level Objects</a></li>
+<li><a href="LavishScript_Variables.html" title="LavishScript:Variables">Variables</a></li>
+<li><a href="LavishScript_Script-Defined_Object_Types.html" title="LavishScript:Script-Defined Object Types">Script-Defined Object Types</a></li></ul>
+<!-- 
+NewPP limit report
+Cached time: 20250916044332
+Cache expiry: 86400
+Dynamic content: false
+CPU time usage: 0.036 seconds
+Real time usage: 0.172 seconds
+Preprocessor visited node count: 60/1000000
+Preprocessor generated node count: 100/1000000
+Post‐expand include size: 5592/2097152 bytes
+Template argument size: 2367/2097152 bytes
+Highest expansion depth: 3/40
+Expensive parser function count: 0/100
+Unstrip recursion depth: 0/20
+Unstrip post‐expand size: 0/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00%   38.007      1 -total
+100.00%   38.007      1 Template:LavishScript:Object_Types
+ 44.08%   16.754      1 Template:Section
+-->
+
+<!-- Saved in parser cache with key lax-wiki_:pcache:idhash:929-0!canonical and timestamp 20250916044331 and revision id 7787
+ -->
+</div></div>
+		
+		<div class="printfooter">Retrieved from "<a dir="ltr" href="https://www.lavishsoft.com/wiki/index.php?title=LavishScript:Object_Types&amp;oldid=7787">https://www.lavishsoft.com/wiki/index.php?title=LavishScript:Object_Types&amp;oldid=7787</a>"</div>
+		
+		<div id="catlinks" class="catlinks" data-mw="interface"><div id="mw-normal-catlinks" class="mw-normal-catlinks"><a href="https://www.lavishsoft.com/wiki/index.php/Special:Categories" title="Special:Categories">Categories</a>: <ul><li><a href="https://www.lavishsoft.com/wiki/index.php/Category:LavishScript" title="Category:LavishScript">LavishScript</a></li><li><a href="https://www.lavishsoft.com/wiki/index.php/Category:Object_Types" title="Category:Object Types">Object Types</a></li><li><a href="https://www.lavishsoft.com/wiki/index.php/Category:LavishScript_Data_Types" title="Category:LavishScript Data Types">LavishScript Data Types</a></li></ul></div></div>
+		
+		<div class="visualClear"></div>
+		
+	</div>
+</div>
+
+		<div id="mw-navigation">
+			<h2>Navigation menu</h2>
+			<div id="mw-head">
+									<div id="p-personal" role="navigation" aria-labelledby="p-personal-label">
+						<h3 id="p-personal-label">Personal tools</h3>
+						<ul>
+							<li id="pt-login"><a href="https://www.lavishsoft.com/forum-x/ucp.php?mode=login&amp;redirect=https%3A%2F%2Fwww.lavishsoft.com%2Fwiki%2Findex.php%2FLavishScript%3AData_Types" title="You are encouraged to log in; however, it is not mandatory [o]" accesskey="o">Log in</a></li>						</ul>
+					</div>
+									<div id="left-navigation">
+										<div id="p-namespaces" role="navigation" class="vectorTabs" aria-labelledby="p-namespaces-label">
+						<h3 id="p-namespaces-label">Namespaces</h3>
+						<ul>
+							<li id="ca-nstab-main" class="selected"><span><a href="LavishScript_Object_Types.html" title="View the content page [c]" accesskey="c">Article</a></span></li><li id="ca-talk" class="new"><span><a href="https://www.lavishsoft.com/wiki/index.php?title=Talk:LavishScript:Object_Types&amp;action=edit&amp;redlink=1" rel="discussion" title="Discussion about the content page (page does not exist) [t]" accesskey="t">Discussion</a></span></li>						</ul>
+					</div>
+										<div id="p-variants" role="navigation" class="vectorMenu emptyPortlet" aria-labelledby="p-variants-label">
+												<input type="checkbox" class="vectorMenuCheckbox" aria-labelledby="p-variants-label" />
+						<h3 id="p-variants-label">
+							<span>Variants</span>
+						</h3>
+						<ul class="menu">
+													</ul>
+					</div>
+									</div>
+				<div id="right-navigation">
+										<div id="p-views" role="navigation" class="vectorTabs" aria-labelledby="p-views-label">
+						<h3 id="p-views-label">Views</h3>
+						<ul>
+							<li id="ca-view" class="collapsible selected"><span><a href="LavishScript_Object_Types.html">Read</a></span></li><li id="ca-viewsource" class="collapsible"><span><a href="https://www.lavishsoft.com/wiki/index.php?title=LavishScript:Object_Types&amp;action=edit" title="This page is protected.&#10;You can view its source [e]" accesskey="e">View source</a></span></li><li id="ca-history" class="collapsible"><span><a href="https://www.lavishsoft.com/wiki/index.php?title=LavishScript:Object_Types&amp;action=history" title="Past revisions of this page [h]" accesskey="h">View history</a></span></li>						</ul>
+					</div>
+										<div id="p-cactions" role="navigation" class="vectorMenu emptyPortlet" aria-labelledby="p-cactions-label">
+						<input type="checkbox" class="vectorMenuCheckbox" aria-labelledby="p-cactions-label" />
+						<h3 id="p-cactions-label"><span>More</span></h3>
+						<ul class="menu">
+													</ul>
+					</div>
+										<div id="p-search" role="search">
+						<h3>
+							<label for="searchInput">Search</label>
+						</h3>
+						<form action="https://www.lavishsoft.com/wiki/index.php" id="searchform">
+							<div id="simpleSearch">
+								<input type="search" name="search" placeholder="Search Lavish Software Wiki" title="Search Lavish Software Wiki [f]" accesskey="f" id="searchInput"/><input type="hidden" value="Special:Search" name="title"/><input type="submit" name="fulltext" value="Search" title="Search the pages for this text" id="mw-searchButton" class="searchButton mw-fallbackSearchButton"/><input type="submit" name="go" value="Go" title="Go to a page with this exact name if it exists" id="searchButton" class="searchButton"/>							</div>
+						</form>
+					</div>
+									</div>
+			</div>
+			<div id="mw-panel">
+				<div id="p-logo" role="banner"><a class="mw-wiki-logo" href="https://www.lavishsoft.com/wiki/index.php/Main_Page" title="Visit the main page"></a></div>
+						<div class="portal" role="navigation" id="p-navigation" aria-labelledby="p-navigation-label">
+			<h3 id="p-navigation-label">Navigation</h3>
+			<div class="body">
+								<ul>
+					<li id="n-mainpage-description"><a href="https://www.lavishsoft.com/wiki/index.php/Main_Page" title="Visit the main page [z]" accesskey="z">Main page</a></li><li id="n-LavishScript"><a href="https://www.lavishsoft.com/wiki/index.php/LavishScript">LavishScript</a></li><li id="n-LavishGUI"><a href="https://www.lavishsoft.com/wiki/index.php/LavishGUI">LavishGUI</a></li><li id="n-LavishGUI-2"><a href="https://www.lavishsoft.com/wiki/index.php/LavishGUI_2">LavishGUI 2</a></li><li id="n-recentchanges"><a href="https://www.lavishsoft.com/wiki/index.php/Special:RecentChanges" title="A list of recent changes in the wiki [r]" accesskey="r">Recent changes</a></li><li id="n-randompage"><a href="https://www.lavishsoft.com/wiki/index.php/Special:Random" title="Load a random page [x]" accesskey="x">Random page</a></li><li id="n-help"><a href="https://www.lavishsoft.com/wiki/index.php/Help:Contents" title="The place to find out">Help</a></li>				</ul>
+							</div>
+		</div>
+			<div class="portal" role="navigation" id="p-tb" aria-labelledby="p-tb-label">
+			<h3 id="p-tb-label">Toolbox</h3>
+			<div class="body">
+								<ul>
+					<li id="t-whatlinkshere"><a href="https://www.lavishsoft.com/wiki/index.php/Special:WhatLinksHere/LavishScript:Object_Types" title="A list of all wiki pages that link here [j]" accesskey="j">What links here</a></li><li id="t-recentchangeslinked"><a href="https://www.lavishsoft.com/wiki/index.php/Special:RecentChangesLinked/LavishScript:Object_Types" rel="nofollow" title="Recent changes in pages linked from this page [k]" accesskey="k">Related changes</a></li><li id="t-specialpages"><a href="https://www.lavishsoft.com/wiki/index.php/Special:SpecialPages" title="A list of all special pages [q]" accesskey="q">Special pages</a></li><li id="t-print"><a href="https://www.lavishsoft.com/wiki/index.php?title=LavishScript:Object_Types&amp;printable=yes" rel="alternate" title="Printable version of this page [p]" accesskey="p">Printable version</a></li><li id="t-permalink"><a href="https://www.lavishsoft.com/wiki/index.php?title=LavishScript:Object_Types&amp;oldid=7787" title="Permanent link to this revision of the page">Permanent link</a></li><li id="t-info"><a href="https://www.lavishsoft.com/wiki/index.php?title=LavishScript:Object_Types&amp;action=info" title="More information about this page">Page information</a></li>				</ul>
+							</div>
+		</div>
+				</div>
+		</div>
+				<div id="footer" role="contentinfo">
+						<ul id="footer-info">
+								<li id="footer-info-lastmod"> This page was last edited on 8 July 2018, at 14:51.</li>
+							</ul>
+						<ul id="footer-places">
+								<li id="footer-places-privacy"><a href="https://www.lavishsoft.com/wiki/index.php/Lavish_Software_Wiki:Privacy_policy" title="Lavish Software Wiki:Privacy policy">Privacy policy</a></li>
+								<li id="footer-places-about"><a href="https://www.lavishsoft.com/wiki/index.php/Lavish_Software_Wiki:About" title="Lavish Software Wiki:About">About Lavish Software Wiki</a></li>
+								<li id="footer-places-disclaimer"><a href="https://www.lavishsoft.com/wiki/index.php/Lavish_Software_Wiki:General_disclaimer" title="Lavish Software Wiki:General disclaimer">Disclaimers</a></li>
+							</ul>
+										<ul id="footer-icons" class="noprint">
+										<li id="footer-poweredbyico">
+						<a href="http://www.mediawiki.org/"><img src="https://www.lavishsoft.com/wiki/resources/assets/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" srcset="/wiki/resources/assets/poweredby_mediawiki_132x47.png 1.5x, /wiki/resources/assets/poweredby_mediawiki_176x62.png 2x" width="88" height="31"/></a>					</li>
+									</ul>
+						<div style="clear: both;"></div>
+		</div>
+		
+
+<script>(window.RLQ=window.RLQ||[]).push(function(){mw.config.set({"wgPageParseReport":{"limitreport":{"cputime":"0.036","walltime":"0.172","ppvisitednodes":{"value":60,"limit":1000000},"ppgeneratednodes":{"value":100,"limit":1000000},"postexpandincludesize":{"value":5592,"limit":2097152},"templateargumentsize":{"value":2367,"limit":2097152},"expansiondepth":{"value":3,"limit":40},"expensivefunctioncount":{"value":0,"limit":100},"unstrip-depth":{"value":0,"limit":20},"unstrip-size":{"value":0,"limit":5000000},"timingprofile":["100.00%   38.007      1 -total","100.00%   38.007      1 Template:LavishScript:Object_Types"," 44.08%   16.754      1 Template:Section"]},"cachereport":{"timestamp":"20250916044332","ttl":86400,"transientcontent":false}}});mw.config.set({"wgBackendResponseTime":917});});</script>
+</body>
+
+<!-- Mirrored from www.lavishsoft.com/wiki/index.php/LavishScript:Data_Types by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 16 Sep 2025 16:30:22 GMT -->
+</html>

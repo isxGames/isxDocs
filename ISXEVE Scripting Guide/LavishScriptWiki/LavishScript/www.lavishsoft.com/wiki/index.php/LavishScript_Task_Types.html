@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html class="client-nojs" lang="en" dir="ltr">
+
+<!-- Mirrored from www.lavishsoft.com/wiki/index.php/LavishScript:Task_Types by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 16 Sep 2025 16:30:23 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=UTF-8" /><!-- /Added by HTTrack -->
+<head>
+<meta charset="UTF-8"/>
+<title>LavishScript:Task Types - Lavish Software Wiki</title>
+<script>document.documentElement.className = document.documentElement.className.replace( /(^|\s)client-nojs(\s|$)/, "$1client-js$2" );</script>
+<script>(window.RLQ=window.RLQ||[]).push(function(){mw.config.set({"wgCanonicalNamespace":"","wgCanonicalSpecialPageName":false,"wgNamespaceNumber":0,"wgPageName":"LavishScript:Task_Types","wgTitle":"LavishScript:Task Types","wgCurRevisionId":8257,"wgRevisionId":8257,"wgArticleId":2603,"wgIsArticle":true,"wgIsRedirect":false,"wgAction":"view","wgUserName":null,"wgUserGroups":["*"],"wgCategories":["LavishScript","Tasks"],"wgBreakFrames":false,"wgPageContentLanguage":"en","wgPageContentModel":"wikitext","wgSeparatorTransformTable":["",""],"wgDigitTransformTable":["",""],"wgDefaultDateFormat":"dmy","wgMonthNames":["","January","February","March","April","May","June","July","August","September","October","November","December"],"wgMonthNamesShort":["","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],"wgRelevantPageName":"LavishScript:Task_Types","wgRelevantArticleId":2603,"wgRequestId":"50592974e9efad54eadd3962","wgCSPNonce":false,"wgIsProbablyEditable":false,"wgRelevantPageIsProbablyEditable":false,"wgRestrictionEdit":[],"wgRestrictionMove":[]});mw.loader.state({"site.styles":"ready","noscript":"ready","user.styles":"ready","user":"ready","user.options":"ready","user.tokens":"loading","mediawiki.legacy.shared":"ready","mediawiki.legacy.commonPrint":"ready","mediawiki.toc.styles":"ready","mediawiki.skinning.interface":"ready","skins.vector.styles":"ready"});mw.loader.implement("user.tokens@0tffind",function($,jQuery,require,module){/*@nomin*/mw.user.tokens.set({"editToken":"+\\","patrolToken":"+\\","watchToken":"+\\","csrfToken":"+\\"});
+});RLPAGEMODULES=["site","mediawiki.page.startup","mediawiki.page.ready","mediawiki.toc","mediawiki.searchSuggest","skins.vector.js"];mw.loader.load(RLPAGEMODULES);});</script>
+<link rel="stylesheet" href="https://www.lavishsoft.com/wiki/load.php?lang=en&amp;modules=mediawiki.legacy.commonPrint%2Cshared%7Cmediawiki.skinning.interface%7Cmediawiki.toc.styles%7Cskins.vector.styles&amp;only=styles&amp;skin=vector"/>
+<script async="" src="https://www.lavishsoft.com/wiki/load.php?lang=en&amp;modules=startup&amp;only=scripts&amp;skin=vector"></script>
+<meta name="ResourceLoaderDynamicStyles" content=""/>
+<meta name="generator" content="MediaWiki 1.33.0"/>
+<link rel="shortcut icon" href="https://www.lavishsoft.com/favicon.ico"/>
+<link rel="search" type="application/opensearchdescription+xml" href="https://www.lavishsoft.com/wiki/opensearch_desc.php" title="Lavish Software Wiki (en)"/>
+<link rel="EditURI" type="application/rsd+xml" href="https://www.lavishsoft.com/wiki/api.php?action=rsd"/>
+<link rel="alternate" type="application/atom+xml" title="Lavish Software Wiki Atom feed" href="https://www.lavishsoft.com/wiki/index.php?title=Special:RecentChanges&amp;feed=atom"/>
+<!--[if lt IE 9]><script src="/wiki/load.php?lang=en&amp;modules=html5shiv&amp;only=scripts&amp;skin=vector&amp;sync=1"></script><![endif]-->
+</head>
+<body class="mediawiki ltr sitedir-ltr mw-hide-empty-elt ns-0 ns-subject page-LavishScript_Task_Types rootpage-LavishScript_Task_Types skin-vector action-view">
+<div id="mw-page-base" class="noprint"></div>
+<div id="mw-head-base" class="noprint"></div>
+<div id="content" class="mw-body" role="main">
+	<a id="top"></a>
+	
+	<div class="mw-indicators mw-body-content">
+</div>
+
+	<h1 id="firstHeading" class="firstHeading" lang="en">LavishScript:Task Types</h1>
+	
+	<div id="bodyContent" class="mw-body-content">
+		<div id="siteSub" class="noprint">From Lavish Software Wiki</div>
+		<div id="contentSub"></div>
+		
+		
+		
+		<div id="jump-to-nav"></div>
+		<a class="mw-jump-link" href="#mw-head">Jump to navigation</a>
+		<a class="mw-jump-link" href="#p-search">Jump to search</a>
+		<div id="mw-content-text" lang="en" dir="ltr" class="mw-content-ltr"><div class="mw-parser-output"><p>A <a class="mw-selflink selflink">Task Type</a> defines a routine to process a <a href="LavishScript_Task.html" class="mw-redirect" title="LavishScript:Task">Task</a>.
+</p><p>For a Task defined as...
+</p>
+<pre>{
+ "type": "ls1.echo",
+ "output":"Hello World!"}
+}
+</pre>
+<p>... the "ls1.echo" corresponds to a Task Type that is pre-defined by <a href="https://www.lavishsoft.com/wiki/index.php/LavishScript" title="LavishScript">LavishScript</a>. The Task Type is responsible for interpreting the rest of the Task, which in this case indicates that it should output "Hello World!".
+</p><p><br />
+</p>
+<div id="toc" class="toc"><input type="checkbox" role="button" id="toctogglecheckbox" class="toctogglecheckbox" style="display:none" /><div class="toctitle" lang="en" dir="ltr"><h2>Contents</h2><span class="toctogglespan"><label class="toctogglelabel" for="toctogglecheckbox"></label></span></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#Task_Type_Properties"><span class="tocnumber">1</span> <span class="toctext">Task Type Properties</span></a></li>
+<li class="toclevel-1 tocsection-2"><a href="#Creating_a_Task_Type"><span class="tocnumber">2</span> <span class="toctext">Creating a Task Type</span></a></li>
+<li class="toclevel-1 tocsection-3"><a href="#Implementing_a_Task_Type"><span class="tocnumber">3</span> <span class="toctext">Implementing a Task Type</span></a>
+<ul>
+<li class="toclevel-2 tocsection-4"><a href="#Example_1:_Echo"><span class="tocnumber">3.1</span> <span class="toctext">Example 1: Echo</span></a></li>
+<li class="toclevel-2 tocsection-5"><a href="#Example_2:_Keystroke"><span class="tocnumber">3.2</span> <span class="toctext">Example 2: Keystroke</span></a></li>
+</ul>
+</li>
+</ul>
+</div>
+
+<h2><span class="mw-headline" id="Task_Type_Properties">Task Type Properties</span></h2>
+<p>Task Types are defined by a JSON object with these properties, and registered via <a href="https://www.lavishsoft.com/wiki/index.php/ObjectType:lavishmachine" title="ObjectType:lavishmachine">lavishmachine</a>.NewTaskType or other available methods (such as via <a href="https://www.lavishsoft.com/wiki/index.php?title=LavishMachine:Package&amp;action=edit&amp;redlink=1" class="new" title="LavishMachine:Package (page does not exist)">Package</a> loading)
+</p>
+<table border="1" style="border-collapse:collapse" cellpadding="5">
+<tbody><tr>
+<th colspan="2">Task Type properties
+</th></tr>
+<tr>
+<th>name
+</th>
+<td><b>(required)</b> The Name of the Task Type
+</td></tr>
+<tr>
+<th>object
+</th>
+<td><b>(required)</b> A globally-accessible LavishScript object
+</td></tr>
+<tr>
+<th>method
+</th>
+<td><b>(required)</b> A method to execute within the LavishScript object, for this Task
+</td></tr>
+<tr>
+<th>schema
+</th>
+<td>(optional) A <a rel="nofollow" class="external text" href="https://json-schema.org/">JSON Schema</a> which can be used to validate Tasks for this Task Type, provide GUI configuration to properly define a Task, as well as providing auto-completion for many text editors
+</td></tr></tbody></table>
+<p><br />
+</p>
+<h2><span class="mw-headline" id="Creating_a_Task_Type">Creating a Task Type</span></h2>
+<p>Task Types can be defined by <a href="LavishScript_Scripts.html" title="LavishScript:Scripts">LavishScript:Scripts</a>.
+</p><p>To add a Task Type requires a globally-accessible LavishScript Object, e.g. defined by an <b>objectdef</b> and instantiated with <b>variable(global)</b>, with a method to handle a recurring "pulse" to process the Task. The method needs no parameters, as the <b>Context</b> <a href="LavishScript_TLO.html" class="mw-redirect" title="LavishScript:TLO">TLO</a> will be a <a href="https://www.lavishsoft.com/wiki/index.php/ObjectType:taskpulseargs" title="ObjectType:taskpulseargs">taskpulseargs</a>.
+</p>
+<dl><dt>Here we provide a template you can follow! Also found at <a rel="nofollow" class="external text" href="https://gist.github.com/LaxLacks/5874db4f10499bad2fd9457d83f523b0">gist.github.com</a></dt></dl>
+<pre>objectdef mytasks_Controller
+{
+  variable taskmanager TaskManager=${LMAC.NewTaskManager["mytaskstest"]}
+
+	method Initialize()
+	{
+		This:AddTaskType["{\"name\":\"my first task type\",\"object\":\"MyTasks\",\"method\":\"Task_Template\"}"]
+	}
+
+	method Shutdown() 
+	{ 
+    		LMAC.TaskManager["mytaskstest"]:Destroy
+	}
+
+	method AddTaskType(string jsonData)
+	{
+		variable int64 id
+		id:Set[${LMAC.NewTaskType["${jsonData.Escape}"].ID}]
+		if ${id}
+		{
+			echo "LMAC: Task Type ${id} added: ${LMAC.TaskType[${id}].Name.Escape}"
+		}
+	}
+
+	method Task_Template()
+	{		
+		switch ${Context.TaskState}
+		{
+		case Start
+			echo ${Context(type)} ${Context.Timestamp} ${Context.ElapsedMS} ${Context.Task} ${Context.TaskState} instant=${Context.Task.IsInstant} ${Context.Task.Args}
+			break
+		case Continue
+; 			echo ${Context(type)} ${Context.Timestamp} ${Context.ElapsedMS} ${Context.Task} ${Context.TaskState} instant=${Context.Task.IsInstant} ${Context.Task.Args}
+			break
+		case Stop
+			echo ${Context(type)} ${Context.Timestamp} ${Context.ElapsedMS} ${Context.Task} ${Context.TaskState} instant=${Context.Task.IsInstant} ${Context.Task.Args}
+			break
+		}
+	}
+  
+  ; begin a test!
+ method Start()
+ {
+    TaskManager:BeginTask["{\"type\":\"my first task type\",\"duration\":1.0,\"my setting\":\"my setting value\"}"]
+ }
+}
+
+variable(global) mytasks_Controller MyTasks
+
+function main()
+{
+	MyTasks:Start
+	while 1
+	{
+		waitframe
+	}
+}
+
+atom atexit()
+{
+}
+</pre>
+<p>This example can be saved as, for example, <b>mytasks.iss</b>. 
+</p>
+<dl><dt>Output</dt></dl>
+<p>Running the script will produce approximately this output (your timestamps and IDs will likely differ from this example):
+</p>
+<pre>LMAC: Task Type 161 added: my first task type
+taskpulseargs 271000984 0 164 Start instant=FALSE {"duration":1.000000,"my setting":"my setting value","type":"my first task type"}
+taskpulseargs 271001984 1000 164 Stop instant=FALSE {"duration":1.000000,"my setting":"my setting value","type":"my first task type"}
+</pre>
+<p><br />
+</p>
+<h2><span class="mw-headline" id="Implementing_a_Task_Type">Implementing a Task Type</span></h2>
+<h3><span class="mw-headline" id="Example_1:_Echo">Example 1: Echo</span></h3>
+<p>In our example above using the <b>Task_Template</b> method, the Task itself does nothing other than output its state information for testing purposes.
+</p><p>The "ls1.echo" Task could be implemented as follows:
+</p>
+<pre>method Task_Template()
+{
+  echo ${Context.Task.Args[output]}
+  Context.Task:Stop
+} 
+</pre>
+<p>The Task -- to echo the "output" value -- is performed, and then the Task is immediately Stopped. This Task Type is then effectively instant, ignoring any specified duration.
+</p><p><br />
+</p>
+<h3><span class="mw-headline" id="Example_2:_Keystroke">Example 2: Keystroke</span></h3>
+<p>In this example, a Keystroke Task uses the <b>press</b> command to hold a combination of keys specified as "combo" in the Task. For example, if this were registered as a "keystroke" Task Type...
+</p>
+<pre>	method Task_Keystroke()
+	{
+		switch ${Context.TaskState}
+		{
+		case Start
+			press -hold "${Context.Task.Args[combo].Escape[0]}"
+			break
+		case Continue
+			break
+		case Stop
+			press -release "${Context.Task.Args[combo].Escape[0]}"
+			break
+		}
+	}
+</pre>
+<p>... then we could use the following Task to press Alt+1 for 1.0 seconds.
+</p>
+<pre>{
+  "type":"keystroke",
+  "combo":"Alt+1",
+  "duration":1.0
+}
+</pre>
+<!-- 
+NewPP limit report
+Cached time: 20250915202746
+Cache expiry: 86400
+Dynamic content: false
+CPU time usage: 0.016 seconds
+Real time usage: 0.017 seconds
+Preprocessor visited node count: 19/1000000
+Preprocessor generated node count: 24/1000000
+Post‐expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+Highest expansion depth: 2/40
+Expensive parser function count: 0/100
+Unstrip recursion depth: 0/20
+Unstrip post‐expand size: 0/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00%    0.000      1 -total
+-->
+
+<!-- Saved in parser cache with key lax-wiki_:pcache:idhash:2603-0!canonical and timestamp 20250915202746 and revision id 8257
+ -->
+</div></div>
+		
+		<div class="printfooter">Retrieved from "<a dir="ltr" href="https://www.lavishsoft.com/wiki/index.php?title=LavishScript:Task_Types&amp;oldid=8257">https://www.lavishsoft.com/wiki/index.php?title=LavishScript:Task_Types&amp;oldid=8257</a>"</div>
+		
+		<div id="catlinks" class="catlinks" data-mw="interface"><div id="mw-normal-catlinks" class="mw-normal-catlinks"><a href="https://www.lavishsoft.com/wiki/index.php/Special:Categories" title="Special:Categories">Categories</a>: <ul><li><a href="https://www.lavishsoft.com/wiki/index.php/Category:LavishScript" title="Category:LavishScript">LavishScript</a></li><li><a href="https://www.lavishsoft.com/wiki/index.php/Category:Tasks" title="Category:Tasks">Tasks</a></li></ul></div></div>
+		
+		<div class="visualClear"></div>
+		
+	</div>
+</div>
+
+		<div id="mw-navigation">
+			<h2>Navigation menu</h2>
+			<div id="mw-head">
+									<div id="p-personal" role="navigation" aria-labelledby="p-personal-label">
+						<h3 id="p-personal-label">Personal tools</h3>
+						<ul>
+							<li id="pt-login"><a href="https://www.lavishsoft.com/forum-x/ucp.php?mode=login&amp;redirect=https%3A%2F%2Fwww.lavishsoft.com%2Fwiki%2Findex.php%2FLavishScript%3ATask_Types" title="You are encouraged to log in; however, it is not mandatory [o]" accesskey="o">Log in</a></li>						</ul>
+					</div>
+									<div id="left-navigation">
+										<div id="p-namespaces" role="navigation" class="vectorTabs" aria-labelledby="p-namespaces-label">
+						<h3 id="p-namespaces-label">Namespaces</h3>
+						<ul>
+							<li id="ca-nstab-main" class="selected"><span><a href="LavishScript_Task_Types.html" title="View the content page [c]" accesskey="c">Article</a></span></li><li id="ca-talk" class="new"><span><a href="https://www.lavishsoft.com/wiki/index.php?title=Talk:LavishScript:Task_Types&amp;action=edit&amp;redlink=1" rel="discussion" title="Discussion about the content page (page does not exist) [t]" accesskey="t">Discussion</a></span></li>						</ul>
+					</div>
+										<div id="p-variants" role="navigation" class="vectorMenu emptyPortlet" aria-labelledby="p-variants-label">
+												<input type="checkbox" class="vectorMenuCheckbox" aria-labelledby="p-variants-label" />
+						<h3 id="p-variants-label">
+							<span>Variants</span>
+						</h3>
+						<ul class="menu">
+													</ul>
+					</div>
+									</div>
+				<div id="right-navigation">
+										<div id="p-views" role="navigation" class="vectorTabs" aria-labelledby="p-views-label">
+						<h3 id="p-views-label">Views</h3>
+						<ul>
+							<li id="ca-view" class="collapsible selected"><span><a href="LavishScript_Task_Types.html">Read</a></span></li><li id="ca-viewsource" class="collapsible"><span><a href="https://www.lavishsoft.com/wiki/index.php?title=LavishScript:Task_Types&amp;action=edit" title="This page is protected.&#10;You can view its source [e]" accesskey="e">View source</a></span></li><li id="ca-history" class="collapsible"><span><a href="https://www.lavishsoft.com/wiki/index.php?title=LavishScript:Task_Types&amp;action=history" title="Past revisions of this page [h]" accesskey="h">View history</a></span></li>						</ul>
+					</div>
+										<div id="p-cactions" role="navigation" class="vectorMenu emptyPortlet" aria-labelledby="p-cactions-label">
+						<input type="checkbox" class="vectorMenuCheckbox" aria-labelledby="p-cactions-label" />
+						<h3 id="p-cactions-label"><span>More</span></h3>
+						<ul class="menu">
+													</ul>
+					</div>
+										<div id="p-search" role="search">
+						<h3>
+							<label for="searchInput">Search</label>
+						</h3>
+						<form action="https://www.lavishsoft.com/wiki/index.php" id="searchform">
+							<div id="simpleSearch">
+								<input type="search" name="search" placeholder="Search Lavish Software Wiki" title="Search Lavish Software Wiki [f]" accesskey="f" id="searchInput"/><input type="hidden" value="Special:Search" name="title"/><input type="submit" name="fulltext" value="Search" title="Search the pages for this text" id="mw-searchButton" class="searchButton mw-fallbackSearchButton"/><input type="submit" name="go" value="Go" title="Go to a page with this exact name if it exists" id="searchButton" class="searchButton"/>							</div>
+						</form>
+					</div>
+									</div>
+			</div>
+			<div id="mw-panel">
+				<div id="p-logo" role="banner"><a class="mw-wiki-logo" href="https://www.lavishsoft.com/wiki/index.php/Main_Page" title="Visit the main page"></a></div>
+						<div class="portal" role="navigation" id="p-navigation" aria-labelledby="p-navigation-label">
+			<h3 id="p-navigation-label">Navigation</h3>
+			<div class="body">
+								<ul>
+					<li id="n-mainpage-description"><a href="https://www.lavishsoft.com/wiki/index.php/Main_Page" title="Visit the main page [z]" accesskey="z">Main page</a></li><li id="n-LavishScript"><a href="https://www.lavishsoft.com/wiki/index.php/LavishScript">LavishScript</a></li><li id="n-LavishGUI"><a href="https://www.lavishsoft.com/wiki/index.php/LavishGUI">LavishGUI</a></li><li id="n-LavishGUI-2"><a href="https://www.lavishsoft.com/wiki/index.php/LavishGUI_2">LavishGUI 2</a></li><li id="n-recentchanges"><a href="https://www.lavishsoft.com/wiki/index.php/Special:RecentChanges" title="A list of recent changes in the wiki [r]" accesskey="r">Recent changes</a></li><li id="n-randompage"><a href="https://www.lavishsoft.com/wiki/index.php/Special:Random" title="Load a random page [x]" accesskey="x">Random page</a></li><li id="n-help"><a href="https://www.lavishsoft.com/wiki/index.php/Help:Contents" title="The place to find out">Help</a></li>				</ul>
+							</div>
+		</div>
+			<div class="portal" role="navigation" id="p-tb" aria-labelledby="p-tb-label">
+			<h3 id="p-tb-label">Toolbox</h3>
+			<div class="body">
+								<ul>
+					<li id="t-whatlinkshere"><a href="https://www.lavishsoft.com/wiki/index.php/Special:WhatLinksHere/LavishScript:Task_Types" title="A list of all wiki pages that link here [j]" accesskey="j">What links here</a></li><li id="t-recentchangeslinked"><a href="https://www.lavishsoft.com/wiki/index.php/Special:RecentChangesLinked/LavishScript:Task_Types" rel="nofollow" title="Recent changes in pages linked from this page [k]" accesskey="k">Related changes</a></li><li id="t-specialpages"><a href="https://www.lavishsoft.com/wiki/index.php/Special:SpecialPages" title="A list of all special pages [q]" accesskey="q">Special pages</a></li><li id="t-print"><a href="https://www.lavishsoft.com/wiki/index.php?title=LavishScript:Task_Types&amp;printable=yes" rel="alternate" title="Printable version of this page [p]" accesskey="p">Printable version</a></li><li id="t-permalink"><a href="https://www.lavishsoft.com/wiki/index.php?title=LavishScript:Task_Types&amp;oldid=8257" title="Permanent link to this revision of the page">Permanent link</a></li><li id="t-info"><a href="https://www.lavishsoft.com/wiki/index.php?title=LavishScript:Task_Types&amp;action=info" title="More information about this page">Page information</a></li>				</ul>
+							</div>
+		</div>
+				</div>
+		</div>
+				<div id="footer" role="contentinfo">
+						<ul id="footer-info">
+								<li id="footer-info-lastmod"> This page was last edited on 11 March 2019, at 01:42.</li>
+							</ul>
+						<ul id="footer-places">
+								<li id="footer-places-privacy"><a href="https://www.lavishsoft.com/wiki/index.php/Lavish_Software_Wiki:Privacy_policy" title="Lavish Software Wiki:Privacy policy">Privacy policy</a></li>
+								<li id="footer-places-about"><a href="https://www.lavishsoft.com/wiki/index.php/Lavish_Software_Wiki:About" title="Lavish Software Wiki:About">About Lavish Software Wiki</a></li>
+								<li id="footer-places-disclaimer"><a href="https://www.lavishsoft.com/wiki/index.php/Lavish_Software_Wiki:General_disclaimer" title="Lavish Software Wiki:General disclaimer">Disclaimers</a></li>
+							</ul>
+										<ul id="footer-icons" class="noprint">
+										<li id="footer-poweredbyico">
+						<a href="http://www.mediawiki.org/"><img src="https://www.lavishsoft.com/wiki/resources/assets/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" srcset="/wiki/resources/assets/poweredby_mediawiki_132x47.png 1.5x, /wiki/resources/assets/poweredby_mediawiki_176x62.png 2x" width="88" height="31"/></a>					</li>
+									</ul>
+						<div style="clear: both;"></div>
+		</div>
+		
+
+<script>(window.RLQ=window.RLQ||[]).push(function(){mw.config.set({"wgPageParseReport":{"limitreport":{"cputime":"0.016","walltime":"0.017","ppvisitednodes":{"value":19,"limit":1000000},"ppgeneratednodes":{"value":24,"limit":1000000},"postexpandincludesize":{"value":0,"limit":2097152},"templateargumentsize":{"value":0,"limit":2097152},"expansiondepth":{"value":2,"limit":40},"expensivefunctioncount":{"value":0,"limit":100},"unstrip-depth":{"value":0,"limit":20},"unstrip-size":{"value":0,"limit":5000000},"timingprofile":["100.00%    0.000      1 -total"]},"cachereport":{"timestamp":"20250915202746","ttl":86400,"transientcontent":false}}});mw.config.set({"wgBackendResponseTime":1077});});</script>
+</body>
+
+<!-- Mirrored from www.lavishsoft.com/wiki/index.php/LavishScript:Task_Types by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 16 Sep 2025 16:30:23 GMT -->
+</html>

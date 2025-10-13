@@ -1,0 +1,11 @@
+HTTrack3.49-2+htsswf+htsjava launched on Tue, 16 Sep 2025 10:29:08 at https://www.lavishsoft.com/wiki/index.php/Special:PrefixIndex/LavishScript: -* +https://www.lavishsoft.com/wiki/index.php/LavishScript:* +https://www.lavishsoft.com/wiki/index.php/Special:PrefixIndex/LavishScript:*
+(winhttrack -qwC2%Ps0u1%s%uN0%I0p3DaK0H0%kf2A25000%f#f -F "Mozilla/4.5 (compatible; HTTrack 3.0x; Windows 98)" -%F "<!-- Mirrored from %s%s by HTTrack Website Copier/3.x [XR&CO'2014], %s -->" -%l "en, *" https://www.lavishsoft.com/wiki/index.php/Special:PrefixIndex/LavishScript: -O1 "C:\Users\Owner\Desktop\Eve\___metatron rework EOFY2025\LavishScriptWiki\LavishScript" -* +https://www.lavishsoft.com/wiki/index.php/LavishScript:* +https://www.lavishsoft.com/wiki/index.php/Special:PrefixIndex/LavishScript:* )
+
+Information, Warnings and Errors reported for this mirror:
+note:	the hts-log.txt file, and hts-cache folder, may contain sensitive information,
+	such as username/password authentication for websites mirrored in this project
+	do not share these files/folders if you want these information to remain private
+
+
+HTTrack Website Copier/3.49-2 mirror complete in 1 minutes 15 seconds : 53 links scanned, 53 files written (1094483 bytes overall) [350473 bytes received at 4672 bytes/sec], 1094483 bytes transferred using HTTP compression in 53 files, ratio 29%, 8.8 requests per connection
+(No errors, 0 warnings, 0 messages)

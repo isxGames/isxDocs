@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Mirrored from forge.isxgames.com/projects/isxeve/wiki/ChangeLogs_Archive_4 by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 16 Sep 2025 16:23:37 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=utf-8" /><!-- /Added by HTTrack -->
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<title>ChangeLogs Archive 4 - ISXEVE - isxGames Forge</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Redmine" />
+<meta name="keywords" content="issue,bug,tracker" />
+<meta name="csrf-param" content="authenticity_token" />
+<meta name="csrf-token" content="yQqfxtFZkqIqkuSxw4UelGQS/+cbUEy5OMFwfQttboPCKMCufoldoN+IKXXARd7JffCc6vIBO7K4M+JnawaSkQ==" />
+<link rel='shortcut icon' href='https://forge.isxgames.com/themes/PurpleMine2/favicon/favicon.ico?1595053228' />
+<link rel="stylesheet" media="all" href="https://forge.isxgames.com/stylesheets/jquery/jquery-ui-1.11.0.css?1586192448" />
+<link rel="stylesheet" media="all" href="https://forge.isxgames.com/stylesheets/tribute-3.7.3.css?1586192449" />
+<link rel="stylesheet" media="all" href="https://forge.isxgames.com/themes/PurpleMine2/stylesheets/application.css?1595057985" />
+<link rel="stylesheet" media="all" href="https://forge.isxgames.com/stylesheets/responsive.css?1586192449" />
+
+<script src="https://forge.isxgames.com/javascripts/jquery-2.2.4-ui-1.11.0-ujs-5.2.3.js?1586192448"></script>
+<script src="https://forge.isxgames.com/javascripts/tribute-3.7.3.min.js?1586192448"></script>
+<script src="https://forge.isxgames.com/javascripts/application.js?1586192448"></script>
+<script src="https://forge.isxgames.com/javascripts/responsive.js?1586192449"></script>
+<script>
+//<![CDATA[
+$(window).on('load', function(){ warnLeavingUnsaved('The current page contains unsaved text that will be lost if you leave this page.'); });
+//]]>
+</script>
+<script src="https://forge.isxgames.com/themes/PurpleMine2/javascripts/theme.js?1595057985"></script>
+<link rel="stylesheet" media="screen" href="https://forge.isxgames.com/plugin_assets/redmine_knowledgebase/stylesheets/knowledgebase.css?1594934434" />
+<!-- page specific tags -->
+
+</head>
+<body class="theme-Purplemine2 project-isxeve has-main-menu controller-wiki action-show avatars-on">
+
+<div id="wrapper">
+
+<div class="flyout-menu js-flyout-menu">
+
+
+        <div class="flyout-menu__search">
+            <form action="https://forge.isxgames.com/projects/isxeve/search" accept-charset="UTF-8" name="form-5837ddb6" method="get"><input name="utf8" type="hidden" value="&#x2713;" />
+            <input type="hidden" name="wiki_pages" value="1" />
+            <label class="search-magnifier search-magnifier--flyout" for="flyout-search">&#9906;</label>
+            <input type="text" name="q" id="flyout-search" class="small js-search-input" placeholder="Search" />
+</form>        </div>
+
+
+        <h3>Project</h3>
+        <span class="js-project-menu"></span>
+
+    <h3>General</h3>
+    <span class="js-general-menu"></span>
+
+    <span class="js-sidebar flyout-menu__sidebar"></span>
+
+    <h3>Profile</h3>
+    <span class="js-profile-menu"></span>
+
+</div>
+
+<div id="wrapper2">
+<div id="wrapper3">
+<div id="top-menu">
+    <div id="account">
+        <ul><li><a class="login" href="https://forge.isxgames.com/login">Sign in</a></li></ul>    </div>
+    
+    <ul><li><a class="home" href="https://forge.isxgames.com/">Home</a></li><li><a class="projects" href="https://forge.isxgames.com/projects">Projects</a></li><li><a class="help" href="https://www.redmine.org/guide">Help</a></li></ul></div>
+
+<div id="header">
+
+    <a href="#" class="mobile-toggle-button js-flyout-menu-toggle-button"></a>
+
+    <div id="quick-search">
+        <form action="https://forge.isxgames.com/projects/isxeve/search" accept-charset="UTF-8" name="form-daae43d8" method="get"><input name="utf8" type="hidden" value="&#x2713;" />
+        <input type="hidden" name="scope" />
+        <input type="hidden" name="wiki_pages" value="1" />
+        <label for='q'>
+          <a accesskey="4" href="https://forge.isxgames.com/projects/isxeve/search">Search</a>:
+        </label>
+        <input type="text" name="q" id="q" size="20" class="small" accesskey="f" data-auto-complete="true" data-issues-url="/issues/auto_complete?q=" />
+</form>        <div id="project-jump" class="drdn"><span class="drdn-trigger">ISXEVE</span><div class="drdn-content"><div class="quick-search"><input type="text" name="q" id="projects-quick-search" value="" class="autocomplete" data-automcomplete-url="/projects/autocomplete.js?jump=wiki" autocomplete="off" /></div><div class="drdn-items projects selection"></div><div class="drdn-items all-projects selection"><a href="https://forge.isxgames.com/projects?jump=wiki">All Projects</a></div></div></div>
+    </div>
+
+    <h1><span class="breadcrumbs"><a class="root" href="https://forge.isxgames.com/projects/eve-online?jump=wiki">EVE Online</a><span class="separator"> &raquo; </span></span><span class="current-project">ISXEVE</span></h1>
+
+    <div id="main-menu" class="tabs">
+        <ul><li><a class="overview" href="https://forge.isxgames.com/projects/isxeve">Overview</a></li><li><a class="activity" href="https://forge.isxgames.com/projects/isxeve/activity">Activity</a></li><li><a class="articles" href="https://forge.isxgames.com/projects/isxeve/knowledgebase/articles">Knowledgebase</a></li><li><a class="issues" href="https://forge.isxgames.com/projects/isxeve/issues">Issues</a></li><li><a class="wiki selected" href="../wiki.html">Wiki</a></li></ul>
+        <div class="tabs-buttons" style="display:none;">
+            <button class="tab-left" onclick="moveTabLeft(this); return false;"></button>
+            <button class="tab-right" onclick="moveTabRight(this); return false;"></button>
+        </div>
+    </div>
+</div>
+
+<div id="main" class="">
+    <div id="sidebar">
+          
+<h3>Wiki</h3>
+<ul>
+  <li><a href="../wiki.html">Start page</a></li>
+  <li><a href="index.html">Index by title</a></li>
+  <li><a href="date_index.html">Index by date</a></li>
+</ul>
+
+
+
+
+        
+    </div>
+
+    <div id="content">
+        
+        <div class="contextual">
+
+  
+  
+
+  </div>
+
+
+
+
+<div class="wiki wiki-page">
+  <a name="ChangeLogs-Archive-4"></a>
+<h2 ><span style="color:#800000;">ChangeLogs Archive 4</span><a href="#ChangeLogs-Archive-4" class="wiki-anchor">&para;</a></h2>
+
+<ul class="toc right"><li><strong>Table of contents</strong></li><li><a href="#ChangeLogs-Archive-4">ChangeLogs Archive 4</a></li><li><a href="#Introduction">Introduction</a></li></ul>
+
+
+<a name="Introduction"></a>
+<h2 >Introduction<a href="#Introduction" class="wiki-anchor">&para;</a></h2>
+<p>This changelog contains the recent changes made to <a class="wiki-page" href="ISXEVE.html">ISXEVE</a>. Users are encouraged to click on the "watch" tab at the top of this page in order to be informed of when ISXEVE is updated.</p>
+<p>The Latest change log is available here: <a href="http://www.isxgames.com/isxeve/Extensions/ISXEVEChanges.txt"></a><a href="http://www.isxgames.com/isxeve/Extensions/ISXEVEChanges.txt">http://www.isxgames.com/isxeve/Extensions/ISXEVEChanges.txt</a></p>
+<p><strong>THIS PAGE IS AN ARCHIVE</strong></p>
+<p>For recent changes, please see <a class="wiki-page" href="ChangeLogs.html">ChangeLogs</a></p>
+<hr>
+<p>January 29, 2012 [ISXEVE-20120124.0121]</p>
+<ul>
+<li>General Change OVerview</li>
+</ul>
+<p><code>  1. MASSIVE changes for performance and mantainability -- FPS and CPU usage should both be vastly improved, and future improvements to ISXEVE should be quicker for us</code><br><code>  2. Entity Access is completely revamped. Scripting changes required.</code><br><code>  3. Market Access is completely revamped. Scripting changes required.</code><br><code>  4. ALL members named Get* which populate an index have been removed</code><br><code>     ALL methods named DoGet* which did the same have been renamed to Get*</code></p>
+<p>If the method did not exist, the member was moved to a method.</p>
+<p>This is documented in the per-datatype sections as well.</p>
+<p><code>  5. Events -- ISXEVE now has events. These are active anytime ISXEVE is loaded.</code><br><code>  6. All datatypes ToText members now return the ID the datatype is backed by, instead of resolving to name or id or other.</code><br><code>     ToText is called when you resolve the base datatype without a member, ie, echo ${Entity</code>[<code>id</code>]<code>}</code><br><code>     Exceptions:</code></p>
+<p>ISXEVE ("isxeve"), EVE ("eve"), item (type name), module (type name), skill (type name), bookmark (same as .Label),</p>
+<p>login ("login"), charselect ("charselect"), agentmission, (mission name), evetime (same as .DateAndTime),</p>
+<p>dialogstring (same as .Text), standing ("standing"), queuedskill (type name), attack (same as .Name),</p>
+<ul>
+<li>Event: New: EVE_OnPilotJoinedChannel(int64 ChannelID, string PilotName, int64 PilotID, int64 AllianceID)</li>
+<li>Event: New: EVE_OnPilotLeftChannel(int64 ChannelID, string PilotName, int64 PilotID, int64 AllianceID)</li>
+<li>Event: Changed: EVE_OnChannelMessage(int64 ChannelID, string PilotName, int64 PilotID, int64 AllianceID, string Message)</li>
+</ul>
+<ul>
+<li>Datatype: 'cachedentity' REMOVED</li>
+<li>TLO: 'Overhead' REMOVED</li>
+</ul>
+<ul>
+<li>Datatype: 'eve'</li>
+</ul>
+<p><code>  Removed Members:</code><br><code>   1. GetChannelMessages</code><br><code>   2. GetLocal</code><br><code>   3. GetPilots</code><br><code>   4. GetEntities   </code>[<code>See "QueryEntities" section under ADDED METHODS below</code>]<br><code>   5. GetCachedEntities</code><br><code>   6. GetEntityIDs</code><br><code>   7. GetMarketOrders</code><br><code>   8. GetBookmarks</code><br><code>   9. GetToDestinationPath</code><br><code>   10. GetWaypoints</code><br><code>   11. GetAgentMissions</code><br><code>   12. GetOnlineCorpMembers</code></p>
+<p>13. LocalsCount (use Local via ChatChannel dtype instead)</p>
+<p><code>  Removed Methods:</code><br><code>   1. ActivateChannelMessageEvents</code><br><code>   2. DoGetChannelMessages</code><br><code>   3. DoGetLocal</code><br><code>   4. DoGetEntities       </code>[<code>See "QueryEntities" section under ADDED METHODS below</code>]<br><code>   5. DoGetCachedEntities</code><br><code>   6. DoGetMarketOrders</code><br><code>   7. EnterCriticalSection</code><br><code>   8. LeaveCriticalSection</code></p>
+<p>9. DoGetEntityIDs</p>
+<p><code>  Renamed Methods:</code><br><code>   1. GetPilots -&gt; GetLocalPilots</code><br><code>   2. NumOpenChannels -&gt; ChatChannelCount</code><br><code>   3. DoGetBookmarks -&gt; GetBookmarks</code><br><code>   4. DoGetToDestinationPath -&gt; GetToDestinationPath</code><br><code>   5. DoGetWaypoints -&gt; GetWaypoints</code><br><code>   6. DoGetAgentMissions -&gt; GetAgentMissions</code><br><code>   7. DoGetOnlineCorpMembers -&gt;GetOnlineCorpMembers</code></p>
+<p>8. DoGetBuddies -&gt; GetBuddies</p>
+<p><code>  Added Members:</code><br><code>   1. NextSessionChange (int type)</code><br><code>        # of seconds until a session change can be performed.</code><br><code>        This includes docking, undocking, exiting a ship, entering a new ship, etc</code><br><code>   2. QueryEvaluate (bool)</code><br><code>        Note: Same as LavishScript:QueryEvaluate, this exists only to wrap the currently broken function, and will be removed in the future.</code><br><code>   3. ChatChannel</code>[<code>ID</code>]<code> (ChatChannel type)</code><br><code>   4. IsTextureLoadingOn (bool)   TODO</code></p>
+<p>5. IsProgressWindowOpen (bool)</p>
+<p>True if a window is open with a progress bar, such as during login</p>
+<p>6. ProgressWindowTitle (string)</p>
+<p><code>  Added Methods:</code><br><code>   1. QueryEntities</code>[<code>index:entity</code>]</p>
+<p>Get All Entities</p>
+<p><code>   2. QueryEntities</code>[<code>index:entity, int QueryID</code>]</p>
+<p>Note: ID from Lavishscript query system -- query will not be freed</p>
+<p><code>   3. QueryEntities</code>[<code>index:entity, string Query</code>]</p>
+<p>Note: Uses Lavishscript query syntax, query will be created and destroyed after use</p>
+<p><code>   4. PopulateEntities</code>[<code>bool</code>]</p>
+<p>If bool is true, forces repopulation of internal entity cache. This should be called ONCE after isxeve is loaded... any more will have no effect.</p>
+<p><code>   5. GetMarketOrders</code><br><code>        Syntax:</code><br><code>          EVE:GetMarketOrders</code>[<code>index:order, typeid</code><br><code>          EVE:GetMarketOrders</code><code>index:order, typeid, "buy"/"sell"</code><br><code>        The second parameter is required. The third is optional, and if left out will retrieve both buy and sell.</code><br><code>         NOTE: Returns NULL while the orders are being retrieved, call in a loop with a delay between calls.</code><br><code>         Example:</code><br><code>          EVE:FetchMarketOrders</code><code>${typeID}</code><br><code>          while !${EVE:GetMarketOrders</code><code>OrderIndex, ${typeID}</code>]<code>}</code><br><code>          {</code><br><code>              wait 10</code><br><code>          }</code><br><code>          echo Found ${OrderIndex.Used} orders</code><br><code>   6. ToggleTextureLoading</code><br><code>  Modified Methods:</code><br><code>   1. CreateBookmark now requires at least one parameter</code></p>
+<ul>
+<li>Datatype: 'character'</li>
+</ul>
+<p><code>  Removed Members:</code><br><code>   1. GetMyOrders</code><br><code>   2. GetMyOrdersIsReady</code><br><code>   3. CorporationTicker</code><br><code>   4. CorporationID</code><br><code>   5. Corporation</code><br><code>   6. GetTargets</code><br><code>   7. GetTargeting</code><br><code>   8. GetTargetedBy</code><br><code>   9. GetSkillQueue</code><br><code>   10. GetSkills</code><br><code>   11. GetActiveDrones</code><br><code>   12. GetActiveDroneIDs</code><br><code>   13. GetAssets</code><br><code>   14. GetStationsWithAssets</code><br><code>   15. GetCorpHangarItems</code><br><code>   16. GetCorpHangarShips</code><br><code>   17. GetHangarItems</code><br><code>   18. GetHangarShips</code><br><code>   19. GetAttackers</code><br><code>   20. GetJammers</code><br><code>  Removed Methods:</code><br><code>   1. DoGetMyOrders</code><br><code>  Renamed Methods:</code><br><code>   1. DoGetTargets -&gt; GetTargets</code><br><code>   2. DoGetTargeting -&gt; GetTargeting</code><br><code>   3. DoGetTargetedBy -&gt; GetTargetedBy</code><br><code>   4. DoGetSkillQueue -&gt; GetSkillQueue</code><br><code>   5. DoGetSkills -&gt; GetSkills</code><br><code>   6. DoGetActiveDrones -&gt; GetActiveDrones</code><br><code>   7. DoGetActiveDroneIDs -&gt; GetActiveDroneIDs</code><br><code>   8. DoGetAssets -&gt; GetAssets</code><br><code>   9. DoGetStationsWithAssets -&gt; GetStationsWithAssets</code><br><code>   10. DoGetCorpHangarItems -&gt; GetCorpHangarItems</code><br><code>   11. DoGetCorpHangarShips -&gt; GetCorpHangarShips</code><br><code>   12. DoGetHangarItems -&gt; GetHangarItems</code><br><code>   13. DoGetHangarShips -&gt; GetHangarShips</code><br><code>   14. DoGetAttackers -&gt; GetAttackers</code><br><code>   15. DoGetJammers -&gt; GetJammers</code><br><code>  Added Members:</code><br><code>   1. TargetCount                            (int type) Your current target count</code><br><code>   2. TargetingCount                         (int type) Your current targeting (in process) count</code><br><code>   3. TargetedByCount                        (int type) Count of entities currently targeting you</code><br><code>   4. Corp                                   (corporation type)</code></p>
+<p>5. ID (int64, alias of CharID)</p>
+<p><code>  Added Methods:</code><br><code>   1. GetMyOrders</code>[<code>           (bool) {retrieves all "My Orders"}</code><br><code>      GetMyOrders</code><code>,#</code><code>         (bool) {retrieves all "My Orders" for the given TypeID#}</code><br><code>      GetMyOrders</code><code>,"Buy"</code><code>     (bool) {retrieves all *buy* "My Orders"}</code><br><code>      GetMyOrders</code><code>,"Buy",#</code><code>   (bool) {retrieves all *buy* "My Orders" for the given TypeID#}</code><br><code>      GetMyOrders</code><code>,"Sell"</code><code>    (bool) {retrieves all *sell* "My Orders"}</code><br><code>      GetMyOrders</code><code>,"Sell",#</code>]<code>  (bool) {retrieves all *sell* "My Orders" for the given TypeID#}</code></p>
+<p>NOTE: Returns NULL while the orders are being retrieved, call in a loop with a delay between calls.</p>
+<p>Example:</p>
+<p><code>          Me:UpdateMyOrders</code></p>
+<p>while !${Me:GetMyOrders[OrderIndex]}</p>
+<p>{</p>
+<p>wait 10</p>
+<p>}</p>
+<p>echo Found ${OrderIndex.Used} orders</p>
+<p><code>  Changed Methods:</code><br><code>   1. GetTargetedBy will always return 0 or more, never null</code><br><code>   2. GetTargeting will always return 0 or more, never null</code><br><code>   3. GetTargets will always return 0 or more, never null</code><br><code>  Changed Members:</code><br><code>   1. StationID will always return -1 or the station id, never null</code></p>
+<p>2. MaxLockedTargets is now an int instead of float</p>
+<p>3. CharID (int64)</p>
+<ul>
+<li>DataType: 'attacker'</li>
+</ul>
+<p><code>  Removed Members:</code><br><code>   1. ToEntity</code><br><code>   1. GetAttacks</code><br><code>  Added Members:</code><br><code>   1. ID (int64 type)</code><br><code>  Renamed Methods:</code><br><code>   1. DoGetAttacks -&gt; GetAttacks</code></p>
+<p><code>  Changes:</code><br><code>   1. Now inherits directly from 'entity' datatype</code></p>
+<ul>
+<li>DataType: 'jammer'</li>
+</ul>
+<p><code>  Removed Members:</code><br><code>   1. ToEntity</code><br><code>  Added Members:</code><br><code>   1. ID (int type)</code><br><code>  Changes:</code><br><code>   1. Now inherits directly from 'attacker' datatype</code></p>
+<ul>
+<li>Datatype: 'attack'</li>
+</ul>
+<p><code>  Added Members:</code><br><code>   1. ID (string)</code></p>
+<ul>
+<li>Datatype: 'pilot'</li>
+</ul>
+<p><code>  Removed Members:</code><br><code>   1. CorporationTicker</code><br><code>   2. Corporation</code><br><code>   3. CorporationID</code><br><code>  Added Members:</code><br><code>   1. Corp (corporation type)</code><br><code>  Changed Members:</code><br><code>   1. ID/CharID is now int64</code></p>
+<ul>
+<li>Datatype: 'isxeve'</li>
+</ul>
+<p><code>  Removed Methods:</code><br><code>   1. Reload</code><br><code>   2. Patch</code><br><code>  Added Methods:</code><br><code>   1. Debug_SetTypeValidation</code>[<code>bool</code><br><code>   2. Debug_SetHighPerfLogging</code><code>bool</code>]</p>
+<p>Disables flushing/closing the ISXEVE logfile between logs, critical for intensive debug logging. Use only when requested by ISXEVE dev.</p>
+<p><code>   3. Debug_LogMsg</code>[<code>string scriptname, string logmsg</code>]</p>
+<p>This will send a message to the ISXEVE logfile. Useful for marking script actions around ISXEVE output.</p>
+<p><code>       Example: ISXEVE:LogMsg</code>[<code>"EVEBot", "I'm in yur ISXEVE, loggin yur msg"</code>]</p>
+<ul>
+<li>Datatype: 'station'</li>
+</ul>
+<p><code>  Removed Members:</code><br><code>   1. GetHangarItems</code><br><code>   2. GetHangarShips</code><br><code>   3. GetCorpHangarItems</code><br><code>   4. GetcorpHangarShips</code><br><code>  Renamed Methods:</code><br><code>   1. DoGetHangarItems -&gt; GetHangarItems</code><br><code>   2. DoGetHangarShips -&gt; GetHangarShips</code><br><code>   3. DoGetCorpHangarItems -&gt; GetCorpHangarItems</code><br><code>   4. DoGetcorpHangarShips -&gt; GetcorpHangarShips</code></p>
+<ul>
+<li>Datatype: 'agent'</li>
+</ul>
+<p><code>  Removed Members:</code><br><code>   1. GetDialogResponses</code><br><code>  Renamed Methods:</code><br><code>   1. DoGetDialogResponses -&gt; GetDialogResponses</code></p>
+<ul>
+<li>Datatype: 'agentmission'</li>
+</ul>
+<p><code>  Removed Members:</code><br><code>   1. GetBookmarks</code><br><code>  Renamed Members:</code><br><code>   1. Expires -&gt; ExpirationTime</code><br><code>  Renamed Methods:</code><br><code>   1. DoGetBookmarks -&gt; GetBookmarks</code><br><code>  Added Members:</code><br><code>   1. Expires (bool)</code></p>
+<ul>
+<li>Datatype: 'module'</li>
+</ul>
+<p><code>  Removed Members:</code><br><code>   1. GetAvailableAmmo</code><br><code>  Renamed Methods:</code><br><code>   1. DoGetAvailableAmmo -&gt; GetAvailableAmmo</code><br><code>  Changed Members:</code><br><code>   1. ChargeSize (int)</code></p>
+<ul>
+<li>Datatype: 'fleet'</li>
+</ul>
+<p><code>  Modified Members</code><br><code>   1. ID &amp; CharID (int64)</code></p>
+<ul>
+<li>Datatype: 'being'</li>
+</ul>
+<p><code>  Modified Members</code><br><code>   1. ID &amp; CharID (int64)</code></p>
+<ul>
+<li>Datatype: 'charselect'</li>
+</ul>
+<p><code>  Added Members:</code><br><code>   1. SelectedChar (string)</code><br><code>   2. SelectedCharID (int64)</code><br><code>  Modified Members:</code><br><code>   1. CharExists</code>[<code>Char ID #</code><br><code>      CharExists</code><code>Char Name</code><br><code>   3. ClickCharacter</code><code>Char ID #</code><br><code>      ClickCharacter</code><code>Char Name</code>]</p>
+<ul>
+<li>Datatype 'evewindow'</li>
+</ul>
+<p><code>  Added Members:</code><br><code>   1. Text (string)</code><br><code>   2. ItemID (int64)</code><br><code>        ItemID is the ID of the ship or other that this window belongs to.  EVEWindow</code>[<code>MyShipCargo</code>]<code>.ItemID will be your ship ID</code><br><code>  Added Methods</code><br><code>   1. ClickButtonYes</code><br><code>   2. ClickButtonNo</code><br><code>   3. ClickButtonOK</code><br><code>   4. ClickButtonCancel</code><br><code>   5. ClickButtonClose</code></p>
+<ul>
+<li>Datatype 'entity'</li>
+</ul>
+<p><code>  Added Members:</code><br><code>   1. IsAbandoned (bool)</code><br><code>   2. Corp (corporation)</code><br><code>  Removed Members:</code><br><code>   1. GetCargo</code><br><code>   2. GetActiveDrones</code><br><code>   3. CanLoot (alias for HaveLootRights)</code><br><code>   4. CorporationTicker</code><br><code>   5. Corporation</code><br><code>   6. CorporationID</code><br><code>  Removed Methods:</code><br><code>   1. Align (was an alias for AlignTo)</code></p>
+<p>2. WarpToAndDock (was an alias for Dock)</p>
+<p><code>  Renamed Methods:</code><br><code>   1. DoGetCargo -&gt; GetCargo</code><br><code>   2. DoGetActiveDrones -&gt; GetActiveDrones</code><br><code>  Changed Members:</code><br><code>   1. Distance (float64)</code><br><code>   2. Velocity (float64)</code></p>
+<p>3. CharID (int64)</p>
+<p>4. OwnerID (int64)</p>
+<p><code>  Modified Methods:</code><br><code>   1. CreateBookmark now requires at least one parameter</code><br><code>  Fixes</code><br><code>   1. HaveLootRights (CanLoot) should now be working properly in all cases.</code></p>
+<ul>
+<li>TLO 'Entity'</li>
+</ul>
+<p><code>  Changes:</code><br><code>   1. Now uses Lavishscript query syntax, or the EntityID</code></p>
+<p>Note: "fromID" radius search syntax from the old system is not supported</p>
+<p>Note: Sorting syntax from the old system is not supported. Sort in-script.</p>
+<p>Example: Entity[id,123456] IS NOW Entity[123456]</p>
+<p>Example: Entity[Amadeus] IS NOW Entity[Name =- "Amadeus"]</p>
+<p>Example: Entity[ExactName,Amadeus] IS NOW Entity[Name = "Amadeus"]</p>
+<p>Note: If the query returns more than one entity, you will get the first one returned.</p>
+<p>SEE THIS PAGE FOR MORE INFORMATION: <a href="http://www.lavishsoft.com/wiki/index.php/LavishScript:Object_Queries">http://www.lavishsoft.com/wiki/index.php/LavishScript:Object_Queries</a></p>
+<p>2. The old "Entity Search Parameters" is completely removed</p>
+<ul>
+<li>TLO 'Local'</li>
+</ul>
+<p><code>  Changes:</code><br><code>   1. Now accepts either CharID or Name, instead of Index # or Name. Index # is no longer supported</code></p>
+<ul>
+<li>Datatype: 'ship'</li>
+</ul>
+<p><code>  Added Members:</code><br><code>   1. ToItem (item) (Only works in station)</code><br><code>  Removed Members:</code><br><code>   1. GetCargo</code><br><code>   2. GetDrones</code><br><code>   3. GetModules</code><br><code>  Renamed Methods:</code><br><code>   1. DoGetCargo -&gt; GetCargo</code><br><code>   2. DoGetDrones -&gt; GetDrones</code><br><code>   3. DoGetModules -&gt; GetModules</code><br><code>  Changed Members:</code><br><code>   1. MaxLockedTargets is now an int instead of float64</code></p>
+<ul>
+<li>Datatype 'item'</li>
+</ul>
+<p><code>  Added Members:</code><br><code>   1. IsInsured (bool)</code><br><code>        Ships only, CAN return NULL if insurance window has not fully loaded yet</code><br><code>   2. InsuranceLevel (string)</code></p>
+<p>Basic, Standard, Bronze...Platinum, etc</p>
+<p><code>        When opening the insurance window, call ${...IsInsured(exists)} to verify it</code><br><code>        has loaded the insurance records before attempting to validate insurance</code><br><code>   3. ChargeSize (int)</code></p>
+<p>1=small 2=medium 3=Large 4=XL</p>
+<p>4. RangeBonus (float)</p>
+<p><code>  Removed Members:</code><br><code>   1. GetCargo</code></p>
+<p>2. LocationID (was alias for Item.SlotID)</p>
+<p><code>   3. Location removed (was alias for Item.Slot)</code><br><code>  Added Methods:</code></p>
+<p>1. ApplyPilotLicense</p>
+<p><code>   2. AssembleShip</code><br><code>   3. AssembleContainer</code></p>
+<p>4. InjectSkill</p>
+<p><code>   5. GetInsuranceQuotes</code>[<code>collection:float</code><br><code>        Ships only: Returns the insurance quotes for the relevant ship item, in a collection where key = Level, and value is Cost</code><br><code>        See </code><a href="https://www.isxgames.com/EVEBot/Trunk/EVEbot/Testcases/test_Item_GetInsuranceQuotes.iss"><code><a class="external" href="https://www.isxgames.com/EVEBot/Trunk/EVEbot/Testcases/test_Item_GetInsuranceQuotes.iss">https://www.isxgames.com/EVEBot/Trunk/EVEbot/Testcases/test_Item_GetInsuranceQuotes.iss</a></code></a><code> for example usage</code><br><code>   6. Insure</code><code>Cost</code>]<br><code>       a. Ships only - Cost is one of the values from GetInsuranceQuotes</code><br><code>       b. Using other values WON'T work.</code><br><code>       c. Using other values WILL lead to server-side detection, and will NOT be filtered by isxeve. Don't be stupid.</code><br><code>   7. ConsumeBooster</code></p>
+<p>Boosters only (obviously)</p>
+<p><code>   8. PluginImplant</code><br><code>  Renamed Members:</code><br><code>   1. MacroLocationID renamed to LocationID</code><br><code>   2. MacroLocation renamed to Location</code></p>
+<p><code>  Renamed Methods:</code><br><code>   1. DoGetCargo -&gt; GetCargo</code><br><code>  Changes:</code><br><code>   1. Repackage - it no longer accepts the dialog automatically.</code><br><code>        Scripts should accept the dialog using the new Click* methods in the evewindow datatype</code></p>
+<ul>
+<li>Datatype: 'bookmark'</li>
+</ul>
+<p><code>  Removed Methods:</code><br><code>   1. Align (was alias to AlignTo)</code><br><code>  Added Methods:</code><br><code>   1. WarpFleetTo</code></p>
+<p>Warps the portion of the fleet which you have control to the bookmark</p>
+<ul>
+<li>Datatype: 'corporation' ADDED</li>
+</ul>
+<p><code>  Added Members:</code><br><code>   1. ID (int64)</code><br><code>   2. Name (string)</code><br><code>   3. Ticker (string)</code><br><code>   4. Wallet (corporationwallet)  Only for your own corporation</code></p>
+<ul>
+<li>Datatype: 'wallet' ADDED</li>
+</ul>
+<p><code>  Added Members:</code><br><code>   1. Balance (float64)   Note - 0 until the wallet window is opened</code><br><code>   2. BalanceAUR (float64)   Note - 0 until the wallet window is opened</code></p>
+<ul>
+<li>Datatype: 'corporationwallet' ADDED</li>
+</ul>
+<p><code>  Added Members:</code><br><code>   1. Balance (float64)   Note - Disabled as of 2011-12-01</code></p>
+<ul>
+<li>Datatype: 'chatchannel' ADDED</li>
+</ul>
+<p><code>  Added Members:</code><br><code>   1. ID          int64</code><br><code>   2. Name        string</code><br><code>   3. OwnerID     int64</code><br><code>   4. PilotCount  int</code><br><code>   5. MOTD        string</code><br><code>  Added Methods:</code><br><code>   1. GetMembers     TODO - unfinished</code></p>
+<p>January 24, 2012 [ISXEVE-20120124.0004]</p>
+<ul>
+<li>Added new MEMBER to the 'bookmark' datatype:</li>
+</ul>
+<p><code> 1.  CreatorID                  (int64 type)</code></p>
+<ul>
+<li>Disabled authentication via the secondary authentication server indefinitely. All users will need to authenticate with the</li>
+</ul>
+<p><code> primary server at </code><a href="https://www.isxgames.com/"><code><a class="external" href="https://www.isxgames.com/">https://www.isxgames.com</a></code></a></p>
+<p>December 7, 2011 [ISXEVE-20111206.0002]</p>
+<ul>
+<li>Fixed the "CargoWindow" MEMBER of the 'entity' datatype for Crucible 1.0.1</li>
+</ul>
+<p>December 6, 2011 [ISXEVE-20111206.0001]</p>
+<ul>
+<li>Crucible 1.0.1 Patch</li>
+</ul>
+<p>December 3, 2011 [ISXEVE-20111129.0111]</p>
+<ul>
+<li>Fixed the "MoveItemsTo" METHOD of the 'eve' datatype when moving items to hangar.</li>
+</ul>
+<p><code> - (<a class="external" href="http://www.isxgames.com/forums/project.php?issueid=1130">http://www.isxgames.com/forums/project.php?issueid=1130</a>)</code></p>
+<ul>
+<li>Fixed the "GetAssets" MEMBER of the 'character' datatype</li>
+</ul>
+<p><code> - (<a class="external" href="http://www.isxgames.com/forums/project.php?issueid=1138">http://www.isxgames.com/forums/project.php?issueid=1138</a>)</code></p>
+<p>December 2, 2011 [ISXEVE-20111129.0087]</p>
+<ul>
+<li>Re-Fixed (and tested) LootWindow and StorageWindow members of the entity datatype.</li>
+<li>CachedEntity.WarpToAndDock and Entity.WarpToAndDock are now an alias to *.Dock</li>
+<li>CachedEntity.Dock and Entity.Dock now behave the same as the ingame command post-Crucible (it will warp or approach if needed)</li>
+</ul>
+<p>December 2, 2011 [ISXEVE-20111129.0084]</p>
+<ul>
+<li>Fixed Fleet invite-related methods and members</li>
+<li>Fixed evewindow.Text</li>
+</ul>
+<p>December 1, 2011 [ISXEVE-20111129.0074]</p>
+<ul>
+<li>Fixed LootWindow and StorageWindow members of the entity datatype</li>
+<li>Fix various members of the myorder datatype.</li>
+</ul>
+<p>December 1, 2011 [ISXEVE-20111129.0073]</p>
+<ul>
+<li>Fixed the 'dialogstring' datatype to return the string associated with an agent option.</li>
+<li>Note that the text for these options has changed, and will be consistent across different language clients</li>
+</ul>
+<p>November 29, 2011 [ISXEVE-20111129.0072]</p>
+<ul>
+<li>Updates for Crucible EVE Expansion</li>
+<li>Added the following MEMBER to the 'bookmark' datatype</li>
+</ul>
+<p><code> 1. OwnerID     (int64)</code><br><code>     Note -- this can be used to determine which bookmarks from GetBookmarks are yours, and which ones are corp</code></p>
+<p>October 8, 2011 [ISXEVE-20110913.0003]</p>
+<ul>
+<li>Fixed getting of local pilots failing randomly</li>
+</ul>
+<p>September 10, 2011 [ISXEVE-20110901.0041]</p>
+<ul>
+<li>Added ability to Open/Close/(Do)GetCargo/GetCargoCapacity for the following:</li>
+</ul>
+<p>- GroupID 12 - Standard Containers</p>
+<p>- GroupID 448 - Audit Log Secure Containers, Station Container, Station Vault, Station Warehouse</p>
+<p>- GroupID 649 - General Freight Containers</p>
+<p>September 3, 2011 [ISXEVE-20110901.0039]</p>
+<ul>
+<li>Fixed random failure in GetLocalPilots</li>
+</ul>
+<p>September 3, 2011 [ISXEVE-20110901.0031]</p>
+<ul>
+<li>Fixed Entity.CargoCapacity &amp; Entity.UsedCargoCapacity for CHA and Ship (orca, etc) CHA when opened by others</li>
+</ul>
+<p>September 2, 2011 [ISXEVE-20110901.0003]</p>
+<ul>
+<li>Fixed EVEWindow for MyDroneBay and MyShipCargo</li>
+<li>Fixed MyShip TLO</li>
+<li>Fixed Me.Ship, Me.ShipID</li>
+</ul>
+<p>July 12, 2011 [ISXEVE-20110628.0045]</p>
+<ul>
+<li>The 'ChangeAmmo' method of the module datatype should now work in all situations.</li>
+</ul>
+<p>July 3, 2011 [ISXEVE-20110628.0044]</p>
+<ul>
+<li>Added new MEMBER to the 'entity' datatype:</li>
+</ul>
+<p><code> 1.  StorageWindow     (EVEWindow Type)</code></p>
+<p>July 3, 2011 [ISXEVE-20110628.0041]</p>
+<ul>
+<li>Fixed module activation failing periodically</li>
+<li>Clarification: For ships which have a CHA and a cargohold, one would use the</li>
+</ul>
+<p><code> "OpenCargo" method of the SHIP datatype to open the traditional cargohold and the "OpenStorage"</code><br><code> method of the entity datatype to open the CHA. (i.e., Me.ToEntity:OpenStorage)</code></p>
+<p>June 29, 2011 [ISXEVE-20110628.0021]</p>
+<ul>
+<li>Fixed the "OpenCargo"/"OpenStorage" METHODS of the 'entity' and 'cachedentity' datatypes.</li>
+<li>Added the following METHOD to the 'entity' and 'cachedentity' datatypes:</li>
+</ul>
+<p><code> 1. CloseStorage</code></p>
+<p>(NOTE: You will need to use the 'CloseStorage' METHOD for most everything except loot windows (cans),</p>
+<p><code>       traditional ship cargoholds, and drone bays.)</code></p>
+<p>June 27, 2011 [ISXEVE-20110621.0028]</p>
+<ul>
+<li>The "OpenCargo" METHOD of the 'entity' and 'cachedentity' datatypes should now work for most all types of</li>
+</ul>
+<p><code> entities (including yourself.)   When/if it fails,it should now provide an error message in the console.</code></p>
+<ul>
+<li>Added "OpenStorage" as a new METHOD of the 'entity' and 'cachedentity' datatype. It does exactly the same</li>
+</ul>
+<p><code> thing as "OpenCargo"; however, it makes more sense to use with Player Owned Structures and other entities </code><br><code> that have 'storage' instead of 'cargo'.</code></p>
+<p>June 25, 2011 [ISXEVE-20110621.0021]</p>
+<ul>
+<li>The 'ID' MEMBER of the 'myorder' and 'marketorder' datatypes now returns int64 instead of int</li>
+</ul>
+<p>June 4, 2011 [ISXEVE-20110531.0004]</p>
+<ul>
+<li>Enabled the "IsUIDisplayOn" MEMBER of the EVE datatype.</li>
+<li>Enabled the "ToggleUIDisplay" METHOD of the EVE datatype.</li>
+</ul>
+<p>June 1, 2011 [ISXEVE-20110531.0003]</p>
+<ul>
+<li>Disabled the "IsUIDisplayOn" MEMBER of the EVE datatype.</li>
+<li>Disabled the "ToggleUIDisplay" METHOD of the EVE datatype.</li>
+<li>Removed the following MEMBERS from the 'agent' datatype:</li>
+</ul>
+<p><code> 1. Quality</code></p>
+<p>April 7, 2011 [ISXEVE-20110406.0024]</p>
+<ul>
+<li>Added the following MEMBERS to the 'module' datatype:</li>
+</ul>
+<p><code> 1.  EnergyTransferAmount        (double type)</code><br><code> 2.  TransferRange               (double type)</code><br><code> 3.  MaxNeutralizationRange      (double type)</code><br><code> 4.  EnergyNeutralized           (double type)</code></p>
+<p>March 31, 2011 [ISXEVE-20110308.0148]</p>
+<ul>
+<li>The 'IsActive' member of the module datatype will now return TRUE if the module is currently in the process of activating.</li>
+<li>The 'SolarSystemID' member of the 'bookmark' datatype will no longer fail on new bookmarks</li>
+</ul>
+<p>March 18, 2011 [ISXEVE-20110308.0138]</p>
+<ul>
+<li>Fixed the 'GetAttackers'/'DoGetAttackers' MEMBER/METHOD of the 'character' datatype</li>
+</ul>
+<p><code> ~ This MEMBER/METHOD will now accept "index:entity" as an argument as well as "index:attacker"</code></p>
+<ul>
+<li>Fixed the 'GetJammers'/'DoGetJammers' MEMBER/METHOD of the 'character' datatype</li>
+<li>Reviewed and made fixes to the 'attacker', 'attack', and 'jammer' datatypes.</li>
+<li>Removed the 'ToJammer' MEMBER of the "attack" datatype.</li>
+<li>Added the following MEMBER to the 'entity' datatype:</li>
+</ul>
+<p><code> 1. ToJammer          (jammer type)</code><br><code> (NOTE: If the entity is not jamming you, then this member will return NULL.)</code></p>
+<ul>
+<li>Added the following MEMBER to the 'attacker' datatype:</li>
+</ul>
+<p><code> 1. ToJammer          (jammer type)</code><br><code> (NOTE: If the attacker is not jamming you, then this member will return NULL.)</code></p>
+<ul>
+<li>Removed the following MEMBERS from the 'jammer' datatype:</li>
+</ul>
+<p><code> 1. CycleTimeRemaining</code><br><code> 2. Type</code><br><code> 3. Origin</code><br><code> 4. StartTime</code></p>
+<ul>
+<li>Added the following MEMBER to the 'jammer' datatype:</li>
+</ul>
+<p><code> 1. ToEntity</code></p>
+<ul>
+<li>Added the following METHOD to the 'jammer' datatype:</li>
+</ul>
+<p><code> 1. GetJams</code>[<code>index:string</code>]</p>
+<ul>
+<li><ul>
+<li>
+</ul></li>
+</ul>
+<p>March 11, 2011 [ISXEVE-20110308.0105]</p>
+<ul>
+<li>The "ChangeAmmo" METHOD of the 'module' datatype will now work without any arguments. When utilized in this</li>
+</ul>
+<p><code> fashion, it will simply "reload" using the same type of ammo that is currently found in it (obviously, this</code><br><code> only works if there is currently ammo/charge in the module when you use this method.)   Here is an example:</code><br><code> "MyShip.Module</code>[<code>HiSlot0</code>]<code>:ChangeAmmo"</code></p>
+<p>March 11, 2011 [ISXEVE-20110308.0101]</p>
+<ul>
+<li>The "ChangeAmmo" METHOD of the module datatype has been reenabled and improved.</li>
+</ul>
+<p>March 10, 2011 [ISXEVE-20110308.0008]</p>
+<ul>
+<li>Fixed the "ToggleUIDisplay" METHOD of the 'eve' datatype</li>
+</ul>
+<p>March 10, 2011 [ISXEVE-20110308.0002]</p>
+<ul>
+<li>The "ChangeAmmo" METHOD of the module datatype has been temporarily disabled.</li>
+</ul>
+<p>March 1, 2011 [ISXEVE-20110127.0091]</p>
+<ul>
+<li>Fix Bookmark.SolarSystemID and Bookmark.JumpsTo to work in call cases.</li>
+</ul>
+<p>February 2, 2011 [ISXEVE-20110127.0033]</p>
+<ul>
+<li>Added the following METHOD to the 'bookmark' datatype:</li>
+</ul>
+<p><code> 1. AlignTo      (This will only work with bookmarks for which there is an "Align To" option available via the in-game UI.)</code></p>
+<p>January 28, 2011 [ISXEVE-20110127.0005]</p>
+<ul>
+<li>The 'SkillPoints' MEMBER of the 'character' datatype will now return a "double" type object (rather than an "int" type as before.)</li>
+</ul>
+<p>January 24, 2011 [ISXEVE-20110121.0089]</p>
+<ul>
+<li>Added new METHOD to the 'entity' datatype:</li>
+</ul>
+<p><code> 1. Abandon             </code>[<code>Note:  This is the preferred method if your script is abandoning one thing at a time.</code><br><code> 2. AbandonAll          </code><code>Abandons all of nearby entities of the same group type</code>]</p>
+<ul>
+<li>The 'CanLoot' MEMBER of the 'entity' datatype should be more reliable now and should no longer return TRUE for</li>
+</ul>
+<p><code> entities that are not lootable in the first place.</code></p>
+<p>January 22, 2011 [ISXEVE-20110121.0066]</p>
+<ul>
+<li>Implemented several changes that should help with stability</li>
+</ul>
+<p>January 21, 2011 [ISXEVE-20110121.0047]</p>
+<ul>
+<li>Added new MEMBER to the 'character' datatype:</li>
+</ul>
+<p><code> 1. SkillQueueLength       (double type)</code></p>
+<ul>
+<li><ul>
+<li>
+</ul></li>
+</ul>
+<p>January 21, 2011 [ISXEVE-20110121.0036]</p>
+<ul>
+<li>Removed the following MEMBERS from the 'interstellar' datatype:</li>
+</ul>
+<p><code> 1. System</code></p>
+<ul>
+<li>Fixed the "Region", "Constellation", and "JumpsTo" MEMBERS of the 'interstellar' datatype. (NOTE: "JumpsTo" only works</li>
+</ul>
+<p><code> for solar system interstellar types.)</code></p>
+<ul>
+<li>Added the following MEMBERS to the 'interstellar' datatype:</li>
+</ul>
+<p><code> 1. Faction               (string type)        </code>[<code>solar systems only</code><br><code> 2. FactionID             (int type)           </code><code>solar systems only</code>]</p>
+<ul>
+<li>Fixed the "TrainSkill" METHOD of the 'item' datatype</li>
+</ul>
+<p>January 20, 2011 [ISXEVE-20110118.0096]</p>
+<ul>
+<li>Drone related methods which require you to have an active target will now do nothing when the player does not have an active target.</li>
+</ul>
+<p>January 20, 2011 [ISXEVE-20110118.0089]</p>
+<ul>
+<li>In the 'module' datatype:</li>
+</ul>
+<p><code> - Added "LastTargeted" as an alias for "LastTarget"</code><br><code> - Added "LastTargetedID" as an alias for "TargetID"</code><br><code> - (See </code><a href="http://www.isxgames.com/forums/project.php?issueid=935"><code><a class="external" href="http://www.isxgames.com/forums/project.php?issueid=935">http://www.isxgames.com/forums/project.php?issueid=935</a></code></a><code> for more info on this.)</code></p>
+<ul>
+<li>Added the following MEMBER to the 'entity' datatype:</li>
+</ul>
+<p><code> - IsAbandoned           (bool type)</code></p>
+<ul>
+<li>Fixed the "CanLoot"/"HaveLootRights" MEMBER of the 'entity' datatype to return TRUE if the wreck is abandoned (blue)</li>
+</ul>
+<p>January 20, 2011 [ISXEVE-20110118.0083]</p>
+<ul>
+<li>Revamped the "Jump" METHOD of the 'entity' datatype to be more stable.</li>
+<li>Revamped the "Dock" METHOD of the 'entity' datatype to be more stable.</li>
+</ul>
+<p>January 13, 2011 [ISXEVE-20101215.0317]</p>
+<ul>
+<li>Fixed the MoveItemsTo METHOD of the eve datatype when moving items to/from the ship cargohold.</li>
+</ul>
+<p><code> (<a class="external" href="http://www.isxgames.com/forums/project.php?issueid=874">http://www.isxgames.com/forums/project.php?issueid=874</a>)</code></p>
+<ul>
+<li>Fixed the CargoCapacity MEMBER of the entity datatype:</li>
+</ul>
+<p><code> (<a class="external" href="http://www.isxgames.com/forums/project.php?issueid=920">http://www.isxgames.com/forums/project.php?issueid=920</a>)</code></p>
+<p>December 26, 2010 [ISXEVE-20101102.0012]</p>
+<ul>
+<li>Due to optimization changes made to the game client, the following members of the 'item' datatype are only available when</li>
+</ul>
+<p><code> accessed through the module datatype (i.e.,  "</code>[<code>Module</code>]<code>.ToItem") or as ammo.  In other words, the item must be FITTED or as</code><br><code> ammunition in a FITTED module before these members are available:</code><br><code> - MaxFlightTime    - ThermalDamage</code><br><code> - MaxVelocity     - ExplosiveDamage</code><br><code> - ExplosionRadius    - MetaLevel</code><br><code> - ExplosionVelocity   - SignatureRadiusBonus</code><br><code> - EMDamage      - KineticDamage</code></p>
+<ul>
+<li>Due to optimization changes made to the game client, the "AllianceTicker" member of the 'character' datatype may not work</li>
+</ul>
+<p><code> the first time you try it (i.e., data may have to be requested from the server.)  Scripters should keep this in mind and</code><br><code> properly handle NULL returns by waiting a few seconds and trying again.  (NOTE:  The client will not request the same data</code><br><code> from the server more than once, so it is acceptable to spam check ${Me.AllianceTicker})</code></p>
+<ul>
+<li>Fixed the "Division" MEMBER of the 'agent' datatype</li>
+<li>Added new MEMBER to the 'bookmark' datatype:</li>
+</ul>
+<p><code> 1. DeadSpace     (bool type)           (NOTE:  Only works for agent bookmarks.)</code></p>
+<ul>
+<li>Added new MEMBERS to the 'agentmission' datatype:</li>
+</ul>
+<p><code> 1. RemoteOfferable            (bool type)</code><br><code> 2. RemoteCompletable          (bool type)</code></p>
+<p>December 21, 2010 [ISXEVE-20101102.0012]</p>
+<ul>
+<li>Added 'GetCorpHangarShips' and 'DoGetCorpHangarShips' to the character and station datatypes. (They function similar to</li>
+</ul>
+<p><code> 'GetCorpHangarItems' / 'DoGetCorpHangarItems', which already exist.)</code></p>
+<ul>
+<li>Fixed several members of the 'item' datatype</li>
+</ul>
+<p>December 10, 2010 [ISXEVE-20101102.0269]</p>
+<ul>
+<li>Item and module charge quantities will no longer be negative</li>
+</ul>
+<p>November 29, 2010 [ISXEVE-20101102.0268]</p>
+<ul>
+<li>Fixed the following members:</li>
+</ul>
+<p><code> - Me.RegionID</code><br><code> - Me.ConstellationID</code></p>
+<p>November 10, 2010 [ISXEVE-20101102.0187]</p>
+<ul>
+<li>The following datatype MEMBERS have been changed to 'int64':</li>
+</ul>
+<p><code> - Bookmark.ID</code><br><code> - Bookmark.ItemID</code><br><code> - Bookmark.LocationID</code></p>
+<ul>
+<li>Added the following MEMBERS:</li>
+</ul>
+<p><code> - Module.ID           (int64 type)</code><br><code> - AttackRef.ID        (int64 type)</code><br><code> - AttackerRef.ID      (int64 type)</code><br><code> - Being.ID            (alias for Being.CharID)</code><br><code> - FleetMember.ID      (alias for FleetMember.CharID)</code><br><code> - DialogStringRef.ID  (int type)</code><br><code> - Pilot.ID            (alias for Pilot.CharID)</code></p>
+<p>November 7, 2010 [ISXEVE-20101102.0167]</p>
+<ul>
+<li>Removed the following MEMBER from the 'item' datatype:</li>
+</ul>
+<p><code> - IsContraband</code></p>
+<ul>
+<li>The following datatype MEMBERS have been changed to 'int64':</li>
+</ul>
+<p><code> - character.shipID</code><br><code> - entity.ID</code><br><code> - cachedentity.ID</code><br><code> - item.ID</code><br><code> - activedrone.ID</code><br><code> - module.TargetID</code></p>
+<ul>
+<li>The following METHODS, which previously used index:int as the first parameter, now require that the first parameter be index:int64</li>
+</ul>
+<p><code> - EVE:MoveItemsTo</code><br><code> - EVE:DronesReturnToDroneBay</code><br><code> - EVE:LaunchDrones</code><br><code> - EVE:DronesEngageMyTarget</code><br><code> - EVE:DronesScoopToDroneBay</code><br><code> - EVE:DronesReturnAndOrbit</code><br><code> - EVE:DronesMineRepeatedly</code><br><code> - EVE:DronesMine</code><br><code> - Me:DoGetActiveDroneIDs</code><br><code> - Me.GetActiveDroneIDs</code><br><code> - Me.GetStationsWithAssets</code><br><code> - Me:DoGetStationsWithAssets</code><br><code> - EVE.GetEntityIDs</code><br><code> - EVE:DoGetEntityIDs</code></p>
+<p>August 6, 2010 [ISXEVE-20100629.0004]</p>
+<ul>
+<li>The "Modules" MEMBER of the 'ship' datatype will now accept the ID# of the module as a parameter.</li>
+</ul>
+<p>May 28, 2010 [ISXEVE-20100526.0067]</p>
+<ul>
+<li>Fixed standing values being returned for pilots with standings set post-tyrannis</li>
+<li>Modified all existing members of the "standing" datatype changed type from "double" to "int"</li>
+<li>Modified all members of the "standing" datatype to always return a value, default 0</li>
+<li>Added the following members to the "standing" datatype:</li>
+</ul>
+<p><code> 1. MeToAlliance             (int type)</code><br><code> 2. AllianceToCorp           (int type)</code><br><code> 3. AllianceToPilot          (int type)</code></p>
+<ul>
+<li>Fixed Pilot.Standing</li>
+<li>Fixed Me.StandingTo</li>
+<li>Removed the "GetBuddies" member of the "eve" datatype. Use DoGetBuddies.</li>
+<li>Removed the "GetAgents" member of the "eve" datatype. Use DoGetAgents.</li>
+</ul>
+<p>April 5, 2010 [ISXEVE-20100325.0021]</p>
+<ul>
+<li>Fixed the "Say" method of the "dialogstring" datatype, allowing missions to be accepted once again</li>
+</ul>
+<p>January 21, 2010 [ISXEVE-20100121.0001]</p>
+<ul>
+<li>Fixed the following METHODS of the 'eve' datatype</li>
+</ul>
+<p><code> 1. EVE:MoveItemsTo when used with an entity ID as destination</code></p>
+<ul>
+<li>Added the following MEMBERS to the 'character' datatype</li>
+</ul>
+<p><code> 1. GetMyOrdersIsReady     (bool) If this is true, you are able to call GetMyOrders/DoGetMyOrders, otherwise they will fail.</code></p>
+<p>December 27, 2009 [ISXEVE-20091201.0131]</p>
+<ul>
+<li>Removed the following MEMBERS from the 'entity' datatype:</li>
+</ul>
+<p><code> 1. Location</code><br><code> 2. vLocation</code></p>
+<ul>
+<li>Removed the following MEMBER from the 'cachedentity' datatype:</li>
+</ul>
+<p><code> 1. Location</code></p>
+<ul>
+<li>Added the following MEMBERS to the 'cachedentity' datatype:</li>
+</ul>
+<p><code> 1. X                      (double type)</code><br><code> 2. Y                      (double type)</code><br><code> 3. Z                      (double type)</code></p>
+<p>December 20, 2009 [ISXEVE-20091201.0057]</p>
+<ul>
+<li>The 'GetCachedEntities' MEMBER of the 'eve' datatype is now a METHOD instead. The .NET wrapper has</li>
+</ul>
+<p><code> been updated to reflect this change.</code></p>
+<p>December 20, 2009 [ISXEVE-20091201.0055]</p>
+<ul>
+<li>Added new datatype 'cachedentity' with the following MEMBERS:</li>
+</ul>
+<p><code> 1.  Name                  (string type)</code><br><code> 2.  ID                    (int type)</code><br><code> 3.  GroupID               (int type)</code><br><code> 4.  TypeID                (int type)</code><br><code> 5.  CategoryID            (int type)</code><br><code> 6.  ShieldPct             (double type)</code><br><code> 7.  ArmorPct              (double type)</code><br><code> 8.  StructurePct          (double type)</code><br><code> 9.  Distance              (double type)</code><br><code> 10. Location              (POINT3F type)</code><br><code> 11. BeingTargeted         (bool type)</code><br><code> 12. IsLockedTarget        (bool type)</code><br><code> 13. IsNPC                 (bool type)</code><br><code> 14. IsPC                  (bool type)</code><br><code> 15. IsTargetingMe         (bool type)</code><br><code> 16. ToEntity              (entity type)</code></p>
+<ul>
+<li>Added all METHODS from the 'entity' datatype to the 'cachedentity' datatype</li>
+<li>Added new MEMBER to the 'eve' datatype:</li>
+</ul>
+<p><code> 1. GetCachedEntities                           (int type)</code><br><code>    GetCachedEntities</code>[<code>index:cachedentity,...</code>]<code>   (int type)</code></p>
+<ul>
+<li><ul>
+<li>
+</ul></li>
+<li>Added new EVENT:</li>
+</ul>
+<p><code> 1.  ISXEVE_onFrame()</code></p>
+<ul>
+<li><ul>
+<li>
+</ul></li>
+<li>Removed the following MEMBERS from the 'entity' datatype:</li>
+</ul>
+<p><code> 1. GotoX</code><br><code> 2. GotoY</code><br><code> 3. GotoZ</code><br><code> 4. GotoLocation</code></p>
+<p>December 3, 2009 [ISXEVE-20091201.0274]</p>
+<ul>
+<li>Added new MEMBER to the 'login' datatype:</li>
+</ul>
+<p><code> 1. ServerMOTD                   (string type)</code></p>
+<ul>
+<li>Removed the following METHODS from the 'eve' datatype:</li>
+</ul>
+<p><code> 1. UpdateMarketOrders_A</code><br><code> 2. UpdateMarketOrders_B</code></p>
+<ul>
+<li>Added new METHOD to the 'eve' datatype:</li>
+</ul>
+<p><code> 1. FetchMarketOrders</code>[<code>#</code>]<code>         (# is the TypeID of the item for which you are searching)</code></p>
+<ul>
+<li><ul>
+<li>
+</ul></li>
+</ul>
+<p>November 1, 2009 [ISXEVE-20090820.0034]</p>
+<ul>
+<li>All percentage-based members will now return -1 on error instead of 0</li>
+<li>Fixed potential crash on agents with extra long dialog text</li>
+</ul>
+<p>September 25, 2009 [ISXEVE-20090820.0005]</p>
+<ul>
+<li>Fixed the "ID", "Owner", "OwnerID", "TypeID" members of the "station" datatype</li>
+</ul>
+<p><code>   They've been broken since 2007, how did nobody ever report this!</code></p>
+<p>August 22, 2009 [ISXEVE-20090820.xxxx]</p>
+<ul>
+<li>Added new COMMAND: "GetURL"</li>
+</ul>
+<p><code> ~ Syntax:  GetURL "</code><a href="http://address/to/file"><code><a class="external" href="http://address/to/file">http://address/to/file</a></code></a><code>"</code><br><code>            GetURL "</code><a href="https://address/to/file"><code><a class="external" href="https://address/to/file">https://address/to/file</a></code></a><code>"</code><br><code>  </code><br><code> ~ NOTES:</code><br><code>   1.  https requests typically return one response; however, http requests (when the response is larger than 3000 or so bytes) will be</code><br><code>       split in to multiple responses.</code><br><code>   2.  https requests are not as fast as http requests (for obvious reasons).</code><br><code>   3.  This command utilizes multiple threads; therefore, your script will not wait/freeze after the command is issued. </code><br><code>   4.  You may issue multiple "GetURL" commands at once.  The requests will queue and be issued in the order they were received.</code><br><code>   5.  Only http and https are supported at this time; however, any normalized URL should work regardless of the file type being retrieved.</code><br><code>   6.  The response you receive from this command will be accessible via the "isxGames_onHTTPResponse" event.</code></p>
+<ul>
+<li>Added new EVENT</li>
+</ul>
+<p><code> 1. isxGames_onHTTPResponse(int Size, string URL, string IPAddress, int ResponseCode, float TransferTime, string ResponseText, string ParsedBody)</code><br><code>    ~ This event only fires for responses that occur due to the "GetURL" command being utilized</code><br><code>    ~ "Size" is in bytes</code><br><code>    ~ "URL" should match the URL issued with the "GetURL" command (unless modified by the server)</code><br><code>    ~ "ResponseText" is the entire response text unparsed (ie, including all html/xml tags)</code><br><code>    ~ "ParsedBody" will return the plain text of the </code></p>
+
+<p>section of an html document. However, at this time it only works for simple documents</p>
+<p><code>      with only plain text between the </code></p>
+
+
+<p>tags. I will be improving upon this in the future.</p>
+<ul>
+<li>You can test the new "GetURL" command with the new event with either of these URLs:</li>
+</ul>
+<p><code> ~ </code><a href="https://www.isxgames.com/libcurltest.html"><code><a class="external" href="https://www.isxgames.com/libcurltest.html">https://www.isxgames.com/libcurltest.html</a></code></a><br><code> ~ </code><a href="http://www.isxgames.com/libcurltest.html"><code><a class="external" href="http://www.isxgames.com/libcurltest.html">http://www.isxgames.com/libcurltest.html</a></code></a><br><code> </code><br><code>   </code></p>
+<p>August 22, 2009 [ISXEVE-20090820.0059]</p>
+<ul>
+<li>Fixed the "ClickCharacter" METHOD of the CharSelect datatype when used without a parameter</li>
+</ul>
+
+
+</div>
+
+
+<fieldset class="collapsible collapsed hide-when-print">
+  <legend onclick="toggleFieldset(this);" class="icon icon-collapsed">Files (0)</legend>
+  <div style="display: none;">
+
+  
+
+</div>
+</fieldset>
+
+<p class="wiki-update-info">
+</p>
+
+
+
+
+
+        
+        <div style="clear:both;"></div>
+    </div>
+</div>
+<div id="footer">
+    Powered by <a href="https://www.redmine.org/">Redmine</a> &copy; 2006-2020 Jean-Philippe Lang
+</div>
+</div>
+
+<div id="ajax-indicator" style="display:none;"><span>Loading...</span></div>
+<div id="ajax-modal" style="display:none;"></div>
+
+</div>
+</div>
+
+</body>
+
+<!-- Mirrored from forge.isxgames.com/projects/isxeve/wiki/ChangeLogs_Archive_4 by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 16 Sep 2025 16:23:37 GMT -->
+</html>

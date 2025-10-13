@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html class="client-nojs" lang="en" dir="ltr">
+
+<!-- Mirrored from www.lavishsoft.com/wiki/index.php/LavishScript:Language_and_Engine_Overview by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 16 Sep 2025 16:30:22 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=UTF-8" /><!-- /Added by HTTrack -->
+<head>
+<meta charset="UTF-8"/>
+<title>LavishScript:Language and Engine Overview - Lavish Software Wiki</title>
+<script>document.documentElement.className = document.documentElement.className.replace( /(^|\s)client-nojs(\s|$)/, "$1client-js$2" );</script>
+<script>(window.RLQ=window.RLQ||[]).push(function(){mw.config.set({"wgCanonicalNamespace":"","wgCanonicalSpecialPageName":false,"wgNamespaceNumber":0,"wgPageName":"LavishScript:Language_and_Engine_Overview","wgTitle":"LavishScript:Language and Engine Overview","wgCurRevisionId":7415,"wgRevisionId":7415,"wgArticleId":2201,"wgIsArticle":true,"wgIsRedirect":false,"wgAction":"view","wgUserName":null,"wgUserGroups":["*"],"wgCategories":[],"wgBreakFrames":false,"wgPageContentLanguage":"en","wgPageContentModel":"wikitext","wgSeparatorTransformTable":["",""],"wgDigitTransformTable":["",""],"wgDefaultDateFormat":"dmy","wgMonthNames":["","January","February","March","April","May","June","July","August","September","October","November","December"],"wgMonthNamesShort":["","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],"wgRelevantPageName":"LavishScript:Language_and_Engine_Overview","wgRelevantArticleId":2201,"wgRequestId":"1950f2e82481b812ed9dc9b8","wgCSPNonce":false,"wgIsProbablyEditable":false,"wgRelevantPageIsProbablyEditable":false,"wgRestrictionEdit":[],"wgRestrictionMove":[]});mw.loader.state({"site.styles":"ready","noscript":"ready","user.styles":"ready","user":"ready","user.options":"ready","user.tokens":"loading","mediawiki.legacy.shared":"ready","mediawiki.legacy.commonPrint":"ready","mediawiki.toc.styles":"ready","mediawiki.skinning.interface":"ready","skins.vector.styles":"ready"});mw.loader.implement("user.tokens@0tffind",function($,jQuery,require,module){/*@nomin*/mw.user.tokens.set({"editToken":"+\\","patrolToken":"+\\","watchToken":"+\\","csrfToken":"+\\"});
+});RLPAGEMODULES=["site","mediawiki.page.startup","mediawiki.page.ready","mediawiki.toc","mediawiki.searchSuggest","skins.vector.js"];mw.loader.load(RLPAGEMODULES);});</script>
+<link rel="stylesheet" href="https://www.lavishsoft.com/wiki/load.php?lang=en&amp;modules=mediawiki.legacy.commonPrint%2Cshared%7Cmediawiki.skinning.interface%7Cmediawiki.toc.styles%7Cskins.vector.styles&amp;only=styles&amp;skin=vector"/>
+<script async="" src="https://www.lavishsoft.com/wiki/load.php?lang=en&amp;modules=startup&amp;only=scripts&amp;skin=vector"></script>
+<meta name="ResourceLoaderDynamicStyles" content=""/>
+<meta name="generator" content="MediaWiki 1.33.0"/>
+<link rel="shortcut icon" href="https://www.lavishsoft.com/favicon.ico"/>
+<link rel="search" type="application/opensearchdescription+xml" href="https://www.lavishsoft.com/wiki/opensearch_desc.php" title="Lavish Software Wiki (en)"/>
+<link rel="EditURI" type="application/rsd+xml" href="https://www.lavishsoft.com/wiki/api.php?action=rsd"/>
+<link rel="alternate" type="application/atom+xml" title="Lavish Software Wiki Atom feed" href="https://www.lavishsoft.com/wiki/index.php?title=Special:RecentChanges&amp;feed=atom"/>
+<!--[if lt IE 9]><script src="/wiki/load.php?lang=en&amp;modules=html5shiv&amp;only=scripts&amp;skin=vector&amp;sync=1"></script><![endif]-->
+</head>
+<body class="mediawiki ltr sitedir-ltr mw-hide-empty-elt ns-0 ns-subject page-LavishScript_Language_and_Engine_Overview rootpage-LavishScript_Language_and_Engine_Overview skin-vector action-view">
+<div id="mw-page-base" class="noprint"></div>
+<div id="mw-head-base" class="noprint"></div>
+<div id="content" class="mw-body" role="main">
+	<a id="top"></a>
+	
+	<div class="mw-indicators mw-body-content">
+</div>
+
+	<h1 id="firstHeading" class="firstHeading" lang="en">LavishScript:Language and Engine Overview</h1>
+	
+	<div id="bodyContent" class="mw-body-content">
+		<div id="siteSub" class="noprint">From Lavish Software Wiki</div>
+		<div id="contentSub"></div>
+		
+		
+		
+		<div id="jump-to-nav"></div>
+		<a class="mw-jump-link" href="#mw-head">Jump to navigation</a>
+		<a class="mw-jump-link" href="#p-search">Jump to search</a>
+		<div id="mw-content-text" lang="en" dir="ltr" class="mw-content-ltr"><div class="mw-parser-output"><div id="toc" class="toc"><input type="checkbox" role="button" id="toctogglecheckbox" class="toctogglecheckbox" style="display:none" /><div class="toctitle" lang="en" dir="ltr"><h2>Contents</h2><span class="toctogglespan"><label class="toctogglelabel" for="toctogglecheckbox"></label></span></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#Introduction"><span class="tocnumber">1</span> <span class="toctext">Introduction</span></a></li>
+<li class="toclevel-1 tocsection-2"><a href="#The_Language"><span class="tocnumber">2</span> <span class="toctext">The Language</span></a>
+<ul>
+<li class="toclevel-2 tocsection-3"><a href="#Preprocessor"><span class="tocnumber">2.1</span> <span class="toctext">Preprocessor</span></a></li>
+<li class="toclevel-2 tocsection-4"><a href="#Comments"><span class="tocnumber">2.2</span> <span class="toctext">Comments</span></a>
+<ul>
+<li class="toclevel-3 tocsection-5"><a href="#ANSI-C_Comments"><span class="tocnumber">2.2.1</span> <span class="toctext">ANSI-C Comments</span></a></li>
+<li class="toclevel-3 tocsection-6"><a href="#Full-line_Comments"><span class="tocnumber">2.2.2</span> <span class="toctext">Full-line Comments</span></a></li>
+</ul>
+</li>
+<li class="toclevel-2 tocsection-7"><a href="#Object_type_definitions"><span class="tocnumber">2.3</span> <span class="toctext">Object type definitions</span></a></li>
+<li class="toclevel-2 tocsection-8"><a href="#Functions"><span class="tocnumber">2.4</span> <span class="toctext">Functions</span></a>
+<ul>
+<li class="toclevel-3 tocsection-9"><a href="#Special_types_of_functions"><span class="tocnumber">2.4.1</span> <span class="toctext">Special types of functions</span></a></li>
+<li class="toclevel-3 tocsection-10"><a href="#Atoms"><span class="tocnumber">2.4.2</span> <span class="toctext">Atoms</span></a></li>
+</ul>
+</li>
+<li class="toclevel-2 tocsection-11"><a href="#Variables"><span class="tocnumber">2.5</span> <span class="toctext">Variables</span></a></li>
+<li class="toclevel-2 tocsection-12"><a href="#Control_Structures"><span class="tocnumber">2.6</span> <span class="toctext">Control Structures</span></a>
+<ul>
+<li class="toclevel-3 tocsection-13"><a href="#Conditional"><span class="tocnumber">2.6.1</span> <span class="toctext">Conditional</span></a></li>
+<li class="toclevel-3 tocsection-14"><a href="#Repetitive"><span class="tocnumber">2.6.2</span> <span class="toctext">Repetitive</span></a></li>
+<li class="toclevel-3 tocsection-15"><a href="#Selective"><span class="tocnumber">2.6.3</span> <span class="toctext">Selective</span></a></li>
+</ul>
+</li>
+<li class="toclevel-2 tocsection-16"><a href="#Statements"><span class="tocnumber">2.7</span> <span class="toctext">Statements</span></a>
+<ul>
+<li class="toclevel-3 tocsection-17"><a href="#Commands"><span class="tocnumber">2.7.1</span> <span class="toctext">Commands</span></a></li>
+<li class="toclevel-3 tocsection-18"><a href="#Object_methods"><span class="tocnumber">2.7.2</span> <span class="toctext">Object methods</span></a></li>
+</ul>
+</li>
+<li class="toclevel-2 tocsection-19"><a href="#Special_functions"><span class="tocnumber">2.8</span> <span class="toctext">Special functions</span></a>
+<ul>
+<li class="toclevel-3 tocsection-20"><a href="#Main"><span class="tocnumber">2.8.1</span> <span class="toctext">Main</span></a></li>
+<li class="toclevel-3 tocsection-21"><a href="#AtExit"><span class="tocnumber">2.8.2</span> <span class="toctext">AtExit</span></a></li>
+</ul>
+</li>
+<li class="toclevel-2 tocsection-22"><a href="#Script_Errors"><span class="tocnumber">2.9</span> <span class="toctext">Script Errors</span></a>
+<ul>
+<li class="toclevel-3 tocsection-23"><a href="#Preprocessing"><span class="tocnumber">2.9.1</span> <span class="toctext">Preprocessing</span></a></li>
+<li class="toclevel-3 tocsection-24"><a href="#Post-processing"><span class="tocnumber">2.9.2</span> <span class="toctext">Post-processing</span></a></li>
+<li class="toclevel-3 tocsection-25"><a href="#Runtime"><span class="tocnumber">2.9.3</span> <span class="toctext">Runtime</span></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-26"><a href="#Example_Scripts"><span class="tocnumber">3</span> <span class="toctext">Example Scripts</span></a>
+<ul>
+<li class="toclevel-2 tocsection-27"><a href="#Example_1:_Hello_World"><span class="tocnumber">3.1</span> <span class="toctext">Example 1: Hello World</span></a></li>
+<li class="toclevel-2 tocsection-28"><a href="#Example_2"><span class="tocnumber">3.2</span> <span class="toctext">Example 2</span></a></li>
+<li class="toclevel-2 tocsection-29"><a href="#Example_3"><span class="tocnumber">3.3</span> <span class="toctext">Example 3</span></a></li>
+</ul>
+</li>
+</ul>
+</div>
+
+<h1><span class="mw-headline" id="Introduction">Introduction</span></h1>
+<p>LavishScript is designed for a mixed, hostile environment.  That is, an environment where objects and types of objects may be forcefully removed without notice by an external source.  For example, as part of an addon to a game that was not meant to have addons, with scripts to automate gameplay and such.  Safety is ensured by discarding object references after use (as each <a href="LavishScript_Data_Sequences.html" title="LavishScript:Data Sequences">data sequence</a> is closed).
+</p><p>LavishScript is <b>pre-emptively scheduled</b> and <i>also has a concept of atomic code sequences</i>.  Pre-emptive scheduling is necessary to allow a script to run "in the background" iteratively while a game plays, as opposed to a purely event-based paradigm, though it is possible to create fully event-driven scripts as well.
+</p><p>LavishScript's structural syntax is derived from C, with statement syntax derived from command-line interpreters.
+</p><p>LavishScript is <b>object-oriented</b>.  Each piece of data is an object, and each type of object (object type, also known as data type) may have various operations or other objects associated with it, by containment or otherwise.  Object types can be created via script, or in C++.  Object types follow a single-inheritance model (though special handling can be used for object types created in C++ to use any sort of inheritance).  <b>Object sub-types</b> can be used to create an object that uses another type (compare to C++ templates), such as a <i>collection of</i> strings.
+</p>
+<h1><span class="mw-headline" id="The_Language">The Language</span></h1>
+<h2><span class="mw-headline" id="Preprocessor">Preprocessor</span></h2>
+<p>LavishScript includes a built-in <a href="LavishScript_Preprocessor.html" title="LavishScript:Preprocessor">preprocessor</a>.  The preprocessor's job is to take input (generally a file), and apply given transformations (such as word replacements, macros, pre-selection of portions of code, insertion of additional files, and so on), sending the output to the engine for final processing.  See the <a href="LavishScript_Preprocessor.html" title="LavishScript:Preprocessor">preprocessor</a> page for a complete reference to the LavishScript preprocessor.
+</p>
+<h2><span class="mw-headline" id="Comments">Comments</span></h2>
+<p>Comments are a method of introducing plain text into code for human readability, and are completely ignored by the script processor.  LavishScript supports two types of comments.
+</p>
+<h3><span class="mw-headline" id="ANSI-C_Comments">ANSI-C Comments</span></h3>
+<p>ANSI-C comments begin with <tt>/*</tt> and end with <tt>*/</tt>.  This style of comment may begin and end anywhere (including in the middle of other lines) without restriction, but may not be nested.  For some tips on using ANSI-C comments, see <a rel="nofollow" class="external text" href="http://www.jetcafe.org/~jim/c-style.html#Comments">Standards and Style for Coding in ANSI C</a>.
+</p>
+<pre>/* This is an ANSI-C Comment */
+/********************************
+ *                              *
+ *          So is this          *
+ *                              *
+ ********************************/
+/*
+ * And this
+ */
+</pre>
+<h3><span class="mw-headline" id="Full-line_Comments">Full-line Comments</span></h3>
+<p>Full-line comments begin with a <tt>;</tt> as the first non-whitespace character on a line, and end naturally at the end of the line.  This style of comment <b>cannot</b> be used in the middle of a line.
+</p>
+<pre>; This is a full-line comment
+echo hi; This is NOT a full-line comment
+</pre>
+<h2><span class="mw-headline" id="Object_type_definitions">Object type definitions</span></h2>
+<p>Types of objects can be defined as part of a script.  These object types will only be available for object creation or typecasting within their owning script, but objects of these types can be accessed anywhere within scope of the object.  Object scopes are discussed in the Variables section below.
+</p><p>Object type definitions begin with the keyword <tt>objectdef</tt>, followed by the name of the type of object, such as
+</p>
+<pre>objectdef character
+</pre>
+<p>Inheritance can be specified by using the keyword <tt>inherits</tt>, followed by the name of the script-defined object type to inherit, such as
+</p>
+<pre>objectdef player inherits actor
+</pre>
+<p>The lines immediately following the objectdef line describe the contents of the new object type.  They may contain variables, functions, methods, members and atoms.  The contents of the objectdef begins with a line containing only <tt>{</tt>, and ends with a line containing only <tt>}</tt> (referred to as a code block).
+</p><p>The following is an example of a valid, empty object definition:
+</p>
+<pre>objectdef player inherits actor
+{
+}
+</pre>
+<p>See <a href="LavishScript_Script-Defined_Object_Types.html" title="LavishScript:Script-Defined Object Types">Script-Defined Object Types</a> for further information on usage and implementation, such as object initialization and shutdown routines (constructor and deconstructor), and special members and methods.
+</p>
+<h2><span class="mw-headline" id="Functions">Functions</span></h2>
+<p>A function is a sequence of code to be executed.  Function definitions begin with the keyword <tt>function</tt>, followed by the name of the function, along with a set of parentheses such as
+</p>
+<pre>function MoveTo()
+</pre>
+<p>The parentheses are actually to contain a list of parameters, separated by commas.  Each parameter becomes a local variable when the function is eventually called.  Each parameter definition begins with the name of an object type, such as string, followed by the name of the parameter, such as Name.  The following is an example of a function with parameters:
+</p>
+<pre>function InitializePerson(string Name, uint Age, bool Male)
+</pre>
+<p>This example has three parameters, a <a href="https://www.lavishsoft.com/wiki/index.php/ObjectType:string" title="ObjectType:string">string</a> called Name, a <a href="https://www.lavishsoft.com/wiki/index.php/ObjectType:uint" title="ObjectType:uint">uint</a> called Age, and a <a href="https://www.lavishsoft.com/wiki/index.php/ObjectType:bool" title="ObjectType:bool">bool</a> called Male.  It would presumably keep a record of some personal information entered in a user interface.  
+</p><p>To assign a default value to a parameter if not all parameters are given to the function, follow the name of the parameter with = and the default value, like so
+</p>
+<pre>function InitializePerson(string Name, uint Age, bool Male=TRUE)
+</pre>
+<p>To accept a variable number of parameters to a function, use <tt>...</tt> as the object type, as the last parameter, such as:
+</p>
+<pre>function HowManyParameters(... Params)
+</pre>
+<p>The variable will be an <a href="https://www.lavishsoft.com/wiki/index.php/ObjectType:array" title="ObjectType:array">array</a> of <a href="https://www.lavishsoft.com/wiki/index.php/ObjectType:string" title="ObjectType:string">strings</a>, with the size equal to the number of parameters actually given to the function.
+</p><p>All functions have the ability to <i>return</i> an object.  By default, the return type is <i>string</i>.  To return another type of object, append the function keyword with a colon, followed by the object type (this is the same construct as object sub-types), like so
+</p>
+<pre>function:bool InitializePerson(string Name, uint Age, bool Male=TRUE)
+</pre>
+<p>The returned object is initialized to the object type's default (empty, zero, etc) value when the function is called, and can be directly accessed via an object called <a href="https://www.lavishsoft.com/wiki/index.php?title=TLO:Returning&amp;action=edit&amp;redlink=1" class="new" title="TLO:Returning (page does not exist)">Returning</a>.  The <a href="https://www.lavishsoft.com/wiki/index.php/Command:Return" title="Command:Return">Return</a> command can be used to end execution of the function at any point -- if the command is used without following parameters, the return object is returned unchanged.  If parameters <i>are</i> used, the original object is destroyed, and a new object is given, initialized with the parameters given.  The object can be retrieved from the calling function with the <a href="https://www.lavishsoft.com/wiki/index.php/TLO:Return" title="TLO:Return">Return</a> object.
+</p><p>Immediately following the function line, a code block must be given, beginning with a <tt>{</tt> line and ending with a <tt>}</tt> line.  The following is a complete example of a function:
+</p>
+<pre>function:bool InitializePerson(string Name, uint Age, bool Male=TRUE)
+{
+  echo ${Name} is ${Age} years old and is ${If[${Male},male,female]}
+  return TRUE
+}
+</pre>
+<p>Function code blocks may contain variables, control structures and statements (commands or object methods) to execute.
+</p><p>To call a function, use the <a href="https://www.lavishsoft.com/wiki/index.php/Command:Call" title="Command:Call">Call</a> command, followed by the function name, and then any parameters, like so:
+</p>
+<pre>call InitializePerson Jimmy 12 TRUE
+echo ${If[${Return},"InitializePerson successful","InitializePerson failed"]}
+</pre>
+<h3><span class="mw-headline" id="Special_types_of_functions">Special types of functions</span></h3>
+<p>There are 4 types of functions in LavishScript, each defined in the same way, but with their own keyword: <tt>function</tt>, <tt>atom</tt>, <tt>member</tt>, and <tt>method</tt>.  Each type of function is also executed in its own way.  Here's a little tree to show you how these types of functions are related:
+</p>
+<ul><li>function
+<ul><li>atom
+<ul><li>member</li>
+<li>method</li></ul></li></ul></li></ul>
+<p>As the tree indicates, an atom is a function, and members and methods are atoms.
+</p><p>Here's the differences.  
+</p>
+<ul><li>A <b>function</b> is simply a segment of code.  A function is not guaranteed to execute to completion before anything else happens -- it may be broken up by the scheduler to run on subsequent frames, and functions are also allowed to use certain commands that force a delay.  Because of this, a function cannot be used directly in a data sequence (which begin with ${ and end with }), because data sequences are <i>atomic</i>.  When something is atomic, it cannot be broken up (in this case, meaning that it cannot wait until a subsequent frame).</li>
+<li>An <b>atom</b> therefore is an atomic function.  The difference is simply that it <i>is</i> guaranteed to execute to completion immediately, cannot use delays, will not be broken up by the scheduler, and so on, and therefore an atom <i>can</i> be used in a data sequence.  Atoms (but not members or methods) can also be used as commands within their scope.</li>
+<li><b>Members</b> and <b>methods</b> are specialized atoms for use with objects, which have the advantage of natively being used in data sequences.  These can only be created within the context of an object type definition.  Member and method definitions can also be created without parameters or a code block, but instead a data sequence to redirect to, like so:</li></ul>
+<pre>member Location=${Me.Location}
+</pre>
+<p>Any parameters given to members or methods defined in such a way will be given as indices to the final object in the given data sequence (e.g. ${Me.Location[1,2,3]}).
+</p>
+<h3><span class="mw-headline" id="Atoms">Atoms</span></h3>
+<p>Atoms are defined just like functions, but with the <tt>atom</tt> keyword.  Atoms cannot be part of an object definition.
+</p>
+<pre>atom MyAtom()
+{
+}
+</pre>
+<p>Similar to variables, atoms can be placed into one of three scopes: script, global, or globalkeep.  To apply scope to an atom, append parentheses containing the name of the scope to the <tt>atom</tt> keyword, before the sub-type, if any.
+</p>
+<ul><li><b>script</b></li></ul>
+<dl><dd>The script scope is the default for an atom if no scope is given.  In this scope, the script context is the current script, and the atom will be destroyed upon the script ending.</dd></dl>
+<ul><li><b>global</b></li></ul>
+<dl><dd>The global scope may be specified to create an atom that is accessible globally, but retain the context of its defining script.  In this scope, the script context is the current script, and the atom will be destroyed upon the script ending.</dd></dl>
+<ul><li><b>globalkeep</b></li></ul>
+<dl><dd>The globalkeep scope may be specified to create an atom that is effectively detached from the script, i.e. a persistent script-defined command.  In this scope, the script context is the global script -- you cannot directly access in-script data or functions -- and the atom will be kept after the script ends.  Defining the same global or globalkeep atom twice will replace the existing atom.</dd></dl>
+<pre>atom(script) MyAtom()
+{
+}
+atom(global) MyAtom2()
+{
+}
+atom(globalkeep) MyAtom3(... Params)
+{
+   if&#160;!${Params.Size}
+   {
+     echo "Syntax: MyAtom3 &lt;your name&gt;"
+     return
+   }
+   echo Hi ${Params[1]}!
+   return "${Params[1]}"
+}
+atom(script):bool MyAtom4()
+{
+  return FALSE
+}
+</pre>
+<p>Atoms can be executed in a few different ways.  The easiest way within the atom's scope is to use the atom as a command (note that this is case insensitive):
+</p>
+<pre>/* will output "Syntax: MyAtom3 &lt;your name&gt;" */
+myatom3
+/* will output "Hi Bob!" */
+myatom3 Bob
+</pre>
+<p>The other way is to use one of the available ExecuteAtom members or methods:
+</p>
+<pre>Script:ExecuteAtom[MyAtom]
+LavishScript:ExecuteAtom[MyAtom3,Jimmy]
+echo ${LavishScript.ExecuteAtom[MyAtom3,Bob]}
+echo ${Script.ExecuteAtom[MyAtom4]}
+</pre>
+<h2><span class="mw-headline" id="Variables">Variables</span></h2>
+<p>A variable is an object created of a given type for use in LavishScript.  This differs from built-in objects (referred to as Top-Level Objects), which are simply there, or added by a LavishScript module.
+</p><p>Variables can be created as part of script structure, or dynamically while a script is running with the <a href="https://www.lavishsoft.com/wiki/index.php/Command:DeclareVariable" title="Command:DeclareVariable">DeclareVariable</a> command.  This section will detail creating variables as part of script structure.
+</p><p>Variables are placed into one of five "scopes", which describe where the variable exists, and where it does not.  When the scope of the variable is destroyed, the variable is destroyed too.  The five variable scopes are as follows:
+</p>
+<ul><li><b>local</b></li></ul>
+<dl><dd>Exists only within a function.  This scope is default (and the only scope available) when declaring a variable within a function.</dd></dl>
+<ul><li><b>object</b></li></ul>
+<dl><dd>Exists only within a script-defined object.  This scope is default (and the only scope available) when declaring a variable within an object type definition (not within one of its functions)</dd></dl>
+<ul><li><b>script</b></li></ul>
+<dl><dd>Exists only within a script.  This scope is only available outside of functions or object type definitions, and is default in that case.</dd></dl>
+<ul><li><b>global</b></li></ul>
+<dl><dd>Exists globally, but destroyed with the owning script. This scope is only available outside of functions or object type definitions.</dd></dl>
+<ul><li><b>globalkeep</b></li></ul>
+<dl><dd>Exists globally, <i>not</i> destroyed with the owning script. This scope is only available outside of functions or object type definitions.</dd></dl>
+<p>Variables are defined with the <tt>variable</tt> keyword, followed by the type, and finally the name of the variable, like so:
+</p>
+<pre>variable type name
+</pre>
+<p>Where type is the object type to use, and name is the name to use.  Variables may be initialized to given values on creation by adding an equals sign (=) and the default value.  For object types that allow variable initialization with multiple parameters, these must be separated by spaces (follow basic <a href="LavishScript_Syntax.html" title="LavishScript:Syntax">LavishScript Command Syntax</a> for parameter grouping).  To specify a different scope for the variable, the scope is placed in parentheses and attached to the end of the variable keyword, like so:
+</p>
+<pre>variable(globalkeep) string MyString="Initialize to value"
+</pre>
+<p>In the above statement, a global variable that will be detached from the script is created, called MyString, of the string object type, and initialized to <b>Initialize to value</b>.
+</p><p><b>As the <tt>variable</tt> keyword is part of script structure, all <tt>variable</tt> statements in a function are processed BEFORE all other statements in that function.</b> In other words, the following code...
+</p>
+<pre>function main()
+{
+ echo "Hello World! ${MySecondString}"
+ variable string MyString="One"
+ MyString:Set[Two]
+ variable string MySecondString=${MyString}
+}
+</pre>
+<p>... results in the output...
+</p>
+<pre>Hello World! One
+</pre>
+<p>This is because <tt>variable</tt> keywords are processed in order at the beginning of function execution, before the function begins to execute. Both variables are initialized with the given values before the echo command executes, making MySecondString contain the value <tt>One</tt> because the <tt>MyString:Set[Two]</tt> command has not changed the value of MyString, and therefore resulting in the given output rather than <tt>Hello World! NULL</tt>, which would happen if MySecondString had not initialized.
+</p>
+<h2><span class="mw-headline" id="Control_Structures">Control Structures</span></h2>
+<p>Some keywords can change the flow of execution of the script.  A control structure is generally made up of one or more keywords, such as "if", followed by a condition or other expression, along with one command or a code block.  These structures may cause a section of code to repeat, or only be executed under a certain condition.  These keywords along with the commands or code blocks they affect make up <tt>control structures</tt>.  See <a href="LavishScript_Mathematical_Formulae.html" title="LavishScript:Mathematical Formulae">Mathematical Formulae</a> for insights on how "conditions" are processed (they are simply math!).
+</p>
+<h3><span class="mw-headline" id="Conditional">Conditional</span></h3>
+<ul><li><a href="https://www.lavishsoft.com/wiki/index.php/Control:If..Else" title="Control:If..Else">If</a></li>
+<li><a href="https://www.lavishsoft.com/wiki/index.php/Control:If..Else#If-Else" title="Control:If..Else">If..Else</a></li>
+<li><a href="https://www.lavishsoft.com/wiki/index.php/Control:If..Else#If-Elseif" title="Control:If..Else">If..Elseif</a></li></ul>
+<p>Note: There is also <a href="https://www.lavishsoft.com/wiki/index.php/TLO:If" title="TLO:If">Inline branching</a> (not a control structure)
+</p>
+<h3><span class="mw-headline" id="Repetitive">Repetitive</span></h3>
+<ul><li><a href="https://www.lavishsoft.com/wiki/index.php/Control:While#do-while" title="Control:While">do..while loop</a> (<a href="https://www.lavishsoft.com/wiki/index.php/Control:While#Break" title="Control:While">break</a>, <a href="https://www.lavishsoft.com/wiki/index.php/Control:While#Continue" title="Control:While">continue</a>)</li>
+<li><a href="https://www.lavishsoft.com/wiki/index.php/Control:While" title="Control:While">while loop</a> (<a href="https://www.lavishsoft.com/wiki/index.php/Control:While#Break" title="Control:While">break</a>, <a href="https://www.lavishsoft.com/wiki/index.php/Control:While#Continue" title="Control:While">continue</a>)</li>
+<li><a href="https://www.lavishsoft.com/wiki/index.php/Control:For" title="Control:For">for loop</a> (<a href="https://www.lavishsoft.com/wiki/index.php/Control:For#break" title="Control:For">break</a>, <a href="https://www.lavishsoft.com/wiki/index.php/Control:For#continue" title="Control:For">continue</a>)</li></ul>
+<h3><span class="mw-headline" id="Selective">Selective</span></h3>
+<ul><li><a href="https://www.lavishsoft.com/wiki/index.php/Control:Switch" title="Control:Switch">Switch</a> (<a href="https://www.lavishsoft.com/wiki/index.php/Control:Switch#Break" title="Control:Switch">Break</a>, <a href="https://www.lavishsoft.com/wiki/index.php/Control:Switch#Case" title="Control:Switch">Case</a>, <a href="https://www.lavishsoft.com/wiki/index.php/Control:Switch#Default" title="Control:Switch">Default</a>, <a href="https://www.lavishsoft.com/wiki/index.php/Control:Switch#VariableCase" title="Control:Switch">VariableCase</a>)</li></ul>
+<h2><span class="mw-headline" id="Statements">Statements</span></h2>
+<h3><span class="mw-headline" id="Commands">Commands</span></h3>
+<p>Commands are simply LavishScript commands, as may be entered in a console or command file.  See <a href="LavishScript_Command_Syntax.html" title="LavishScript:Command Syntax">Command_Syntax</a> for LavishScript command syntax rules.
+</p>
+<h3><span class="mw-headline" id="Object_methods">Object methods</span></h3>
+<p>Object <b>methods</b> can be used as commands by leaving off the ${}, which would cause the <a href="https://www.lavishsoft.com/wiki/index.php?title=LavishScript:Data_Sequence&amp;action=edit&amp;redlink=1" class="new" title="LavishScript:Data Sequence (page does not exist)">data sequence</a> to be reduced to text, in a valid <a href="https://www.lavishsoft.com/wiki/index.php?title=LavishScript:Data_Sequence&amp;action=edit&amp;redlink=1" class="new" title="LavishScript:Data Sequence (page does not exist)">data sequence</a> ending in a method.  Here is an example of a method used as a command
+</p>
+<pre>MyObject:MyMethod
+</pre>
+<h2><span class="mw-headline" id="Special_functions">Special functions</span></h2>
+<h3><span class="mw-headline" id="Main">Main</span></h3>
+<p>All scripts must have a <b>main</b> function.  This function is called when the script begins, and any parameters passed to the script are passed thusly to the main function.  When the main function ends, the script ends.  Any return value from the main function is discarded.
+</p>
+<h3><span class="mw-headline" id="AtExit">AtExit</span></h3>
+<p>The <b>atexit</b> <i>atom</i> is executed when the script ends, either naturally, forced, or because of an error.  This can be used to perform cleanup operations for the script, such as unloading user interfaces, modules, and so on.
+</p>
+<h2><span class="mw-headline" id="Script_Errors">Script Errors</span></h2>
+<h3><span class="mw-headline" id="Preprocessing">Preprocessing</span></h3>
+<p>Preprocessor errors are simply displayed, and the script fails to launch.  Preprocessor errors only happen as a direct result of preprocessor directives, or the source file not existing to process in the first place.
+</p>
+<h3><span class="mw-headline" id="Post-processing">Post-processing</span></h3>
+<p>Post-processing errors are those found while the script structure is being cached and optimized.  This type of error is identified by the source file, line number, and the text on the line, as well as a description of the problem.  A common error is a missing } causing errors like "Local function definitions not allowed".
+</p>
+<h3><span class="mw-headline" id="Runtime">Runtime</span></h3>
+<p>Runtime errors are those found while the script is in the process of running.  These errors generally display a line containing the error message, followed by a <i>stack dump</i> of the script's current state.  This shows each file, line number and line in the call stack, with the current line at the top.
+</p>
+<h1><span class="mw-headline" id="Example_Scripts">Example Scripts</span></h1>
+<h2><span class="mw-headline" id="Example_1:_Hello_World">Example 1: Hello World</span></h2>
+<pre>function main()
+{
+   echo Hello World
+}
+</pre>
+<h2><span class="mw-headline" id="Example_2">Example 2</span></h2>
+<p>A fairly pointless script that demonstrates looping, functions, variables, data methods
+</p>
+<pre>function MyFunction(int Count)
+{
+  return -${Count}
+}
+
+function main()
+{
+  variable int Count=1
+  do
+  {
+     call MyFunction ${Count}
+     echo Count: ${Count} ${Return}
+  }
+  while (${Count:Inc}&lt;=10)
+}
+</pre>
+<h2><span class="mw-headline" id="Example_3">Example 3</span></h2>
+<p>The same pointless script as above, but with a parameter passed to main to determine the size of the loop.
+</p>
+<pre>function MyFunction(int Count)
+{
+  return -${Count}
+}
+
+function main(int Max)
+{
+  variable int Count=1
+  if (${Max}&lt;1)
+    return
+  do
+  {
+     call MyFunction ${Count}
+     echo Count: ${Count} ${Return}
+  }
+  while (${Count:Inc}&lt;=${Max})
+}
+</pre>
+<p>The script may be run like so:
+</p>
+<pre>runscript myscript 10
+</pre>
+<!-- 
+NewPP limit report
+Cached time: 20250915235924
+Cache expiry: 86400
+Dynamic content: false
+CPU time usage: 0.036 seconds
+Real time usage: 0.041 seconds
+Preprocessor visited node count: 114/1000000
+Preprocessor generated node count: 120/1000000
+Post‐expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+Highest expansion depth: 2/40
+Expensive parser function count: 0/100
+Unstrip recursion depth: 0/20
+Unstrip post‐expand size: 0/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00%    0.000      1 -total
+-->
+
+<!-- Saved in parser cache with key lax-wiki_:pcache:idhash:2201-0!canonical and timestamp 20250915235924 and revision id 7415
+ -->
+</div></div>
+		
+		<div class="printfooter">Retrieved from "<a dir="ltr" href="https://www.lavishsoft.com/wiki/index.php?title=LavishScript:Language_and_Engine_Overview&amp;oldid=7415">https://www.lavishsoft.com/wiki/index.php?title=LavishScript:Language_and_Engine_Overview&amp;oldid=7415</a>"</div>
+		
+		<div id="catlinks" class="catlinks catlinks-allhidden" data-mw="interface"></div>
+		
+		<div class="visualClear"></div>
+		
+	</div>
+</div>
+
+		<div id="mw-navigation">
+			<h2>Navigation menu</h2>
+			<div id="mw-head">
+									<div id="p-personal" role="navigation" aria-labelledby="p-personal-label">
+						<h3 id="p-personal-label">Personal tools</h3>
+						<ul>
+							<li id="pt-login"><a href="https://www.lavishsoft.com/forum-x/ucp.php?mode=login&amp;redirect=https%3A%2F%2Fwww.lavishsoft.com%2Fwiki%2Findex.php%2FLavishScript%3ALanguage_and_Engine_Overview" title="You are encouraged to log in; however, it is not mandatory [o]" accesskey="o">Log in</a></li>						</ul>
+					</div>
+									<div id="left-navigation">
+										<div id="p-namespaces" role="navigation" class="vectorTabs" aria-labelledby="p-namespaces-label">
+						<h3 id="p-namespaces-label">Namespaces</h3>
+						<ul>
+							<li id="ca-nstab-main" class="selected"><span><a href="LavishScript_Language_and_Engine_Overview.html" title="View the content page [c]" accesskey="c">Article</a></span></li><li id="ca-talk" class="new"><span><a href="https://www.lavishsoft.com/wiki/index.php?title=Talk:LavishScript:Language_and_Engine_Overview&amp;action=edit&amp;redlink=1" rel="discussion" title="Discussion about the content page (page does not exist) [t]" accesskey="t">Discussion</a></span></li>						</ul>
+					</div>
+										<div id="p-variants" role="navigation" class="vectorMenu emptyPortlet" aria-labelledby="p-variants-label">
+												<input type="checkbox" class="vectorMenuCheckbox" aria-labelledby="p-variants-label" />
+						<h3 id="p-variants-label">
+							<span>Variants</span>
+						</h3>
+						<ul class="menu">
+													</ul>
+					</div>
+									</div>
+				<div id="right-navigation">
+										<div id="p-views" role="navigation" class="vectorTabs" aria-labelledby="p-views-label">
+						<h3 id="p-views-label">Views</h3>
+						<ul>
+							<li id="ca-view" class="collapsible selected"><span><a href="LavishScript_Language_and_Engine_Overview.html">Read</a></span></li><li id="ca-viewsource" class="collapsible"><span><a href="https://www.lavishsoft.com/wiki/index.php?title=LavishScript:Language_and_Engine_Overview&amp;action=edit" title="This page is protected.&#10;You can view its source [e]" accesskey="e">View source</a></span></li><li id="ca-history" class="collapsible"><span><a href="https://www.lavishsoft.com/wiki/index.php?title=LavishScript:Language_and_Engine_Overview&amp;action=history" title="Past revisions of this page [h]" accesskey="h">View history</a></span></li>						</ul>
+					</div>
+										<div id="p-cactions" role="navigation" class="vectorMenu emptyPortlet" aria-labelledby="p-cactions-label">
+						<input type="checkbox" class="vectorMenuCheckbox" aria-labelledby="p-cactions-label" />
+						<h3 id="p-cactions-label"><span>More</span></h3>
+						<ul class="menu">
+													</ul>
+					</div>
+										<div id="p-search" role="search">
+						<h3>
+							<label for="searchInput">Search</label>
+						</h3>
+						<form action="https://www.lavishsoft.com/wiki/index.php" id="searchform">
+							<div id="simpleSearch">
+								<input type="search" name="search" placeholder="Search Lavish Software Wiki" title="Search Lavish Software Wiki [f]" accesskey="f" id="searchInput"/><input type="hidden" value="Special:Search" name="title"/><input type="submit" name="fulltext" value="Search" title="Search the pages for this text" id="mw-searchButton" class="searchButton mw-fallbackSearchButton"/><input type="submit" name="go" value="Go" title="Go to a page with this exact name if it exists" id="searchButton" class="searchButton"/>							</div>
+						</form>
+					</div>
+									</div>
+			</div>
+			<div id="mw-panel">
+				<div id="p-logo" role="banner"><a class="mw-wiki-logo" href="https://www.lavishsoft.com/wiki/index.php/Main_Page" title="Visit the main page"></a></div>
+						<div class="portal" role="navigation" id="p-navigation" aria-labelledby="p-navigation-label">
+			<h3 id="p-navigation-label">Navigation</h3>
+			<div class="body">
+								<ul>
+					<li id="n-mainpage-description"><a href="https://www.lavishsoft.com/wiki/index.php/Main_Page" title="Visit the main page [z]" accesskey="z">Main page</a></li><li id="n-LavishScript"><a href="https://www.lavishsoft.com/wiki/index.php/LavishScript">LavishScript</a></li><li id="n-LavishGUI"><a href="https://www.lavishsoft.com/wiki/index.php/LavishGUI">LavishGUI</a></li><li id="n-LavishGUI-2"><a href="https://www.lavishsoft.com/wiki/index.php/LavishGUI_2">LavishGUI 2</a></li><li id="n-recentchanges"><a href="https://www.lavishsoft.com/wiki/index.php/Special:RecentChanges" title="A list of recent changes in the wiki [r]" accesskey="r">Recent changes</a></li><li id="n-randompage"><a href="https://www.lavishsoft.com/wiki/index.php/Special:Random" title="Load a random page [x]" accesskey="x">Random page</a></li><li id="n-help"><a href="https://www.lavishsoft.com/wiki/index.php/Help:Contents" title="The place to find out">Help</a></li>				</ul>
+							</div>
+		</div>
+			<div class="portal" role="navigation" id="p-tb" aria-labelledby="p-tb-label">
+			<h3 id="p-tb-label">Toolbox</h3>
+			<div class="body">
+								<ul>
+					<li id="t-whatlinkshere"><a href="https://www.lavishsoft.com/wiki/index.php/Special:WhatLinksHere/LavishScript:Language_and_Engine_Overview" title="A list of all wiki pages that link here [j]" accesskey="j">What links here</a></li><li id="t-recentchangeslinked"><a href="https://www.lavishsoft.com/wiki/index.php/Special:RecentChangesLinked/LavishScript:Language_and_Engine_Overview" rel="nofollow" title="Recent changes in pages linked from this page [k]" accesskey="k">Related changes</a></li><li id="t-specialpages"><a href="https://www.lavishsoft.com/wiki/index.php/Special:SpecialPages" title="A list of all special pages [q]" accesskey="q">Special pages</a></li><li id="t-print"><a href="https://www.lavishsoft.com/wiki/index.php?title=LavishScript:Language_and_Engine_Overview&amp;printable=yes" rel="alternate" title="Printable version of this page [p]" accesskey="p">Printable version</a></li><li id="t-permalink"><a href="https://www.lavishsoft.com/wiki/index.php?title=LavishScript:Language_and_Engine_Overview&amp;oldid=7415" title="Permanent link to this revision of the page">Permanent link</a></li><li id="t-info"><a href="https://www.lavishsoft.com/wiki/index.php?title=LavishScript:Language_and_Engine_Overview&amp;action=info" title="More information about this page">Page information</a></li>				</ul>
+							</div>
+		</div>
+				</div>
+		</div>
+				<div id="footer" role="contentinfo">
+						<ul id="footer-info">
+								<li id="footer-info-lastmod"> This page was last edited on 11 January 2010, at 03:48.</li>
+							</ul>
+						<ul id="footer-places">
+								<li id="footer-places-privacy"><a href="https://www.lavishsoft.com/wiki/index.php/Lavish_Software_Wiki:Privacy_policy" title="Lavish Software Wiki:Privacy policy">Privacy policy</a></li>
+								<li id="footer-places-about"><a href="https://www.lavishsoft.com/wiki/index.php/Lavish_Software_Wiki:About" title="Lavish Software Wiki:About">About Lavish Software Wiki</a></li>
+								<li id="footer-places-disclaimer"><a href="https://www.lavishsoft.com/wiki/index.php/Lavish_Software_Wiki:General_disclaimer" title="Lavish Software Wiki:General disclaimer">Disclaimers</a></li>
+							</ul>
+										<ul id="footer-icons" class="noprint">
+										<li id="footer-poweredbyico">
+						<a href="http://www.mediawiki.org/"><img src="https://www.lavishsoft.com/wiki/resources/assets/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" srcset="/wiki/resources/assets/poweredby_mediawiki_132x47.png 1.5x, /wiki/resources/assets/poweredby_mediawiki_176x62.png 2x" width="88" height="31"/></a>					</li>
+									</ul>
+						<div style="clear: both;"></div>
+		</div>
+		
+
+<script>(window.RLQ=window.RLQ||[]).push(function(){mw.config.set({"wgPageParseReport":{"limitreport":{"cputime":"0.036","walltime":"0.041","ppvisitednodes":{"value":114,"limit":1000000},"ppgeneratednodes":{"value":120,"limit":1000000},"postexpandincludesize":{"value":0,"limit":2097152},"templateargumentsize":{"value":0,"limit":2097152},"expansiondepth":{"value":2,"limit":40},"expensivefunctioncount":{"value":0,"limit":100},"unstrip-depth":{"value":0,"limit":20},"unstrip-size":{"value":0,"limit":5000000},"timingprofile":["100.00%    0.000      1 -total"]},"cachereport":{"timestamp":"20250915235924","ttl":86400,"transientcontent":false}}});mw.config.set({"wgBackendResponseTime":1206});});</script>
+</body>
+
+<!-- Mirrored from www.lavishsoft.com/wiki/index.php/LavishScript:Language_and_Engine_Overview by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 16 Sep 2025 16:30:22 GMT -->
+</html>

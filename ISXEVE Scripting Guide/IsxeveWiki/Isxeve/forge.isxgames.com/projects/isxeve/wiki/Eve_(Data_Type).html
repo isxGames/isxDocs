@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Mirrored from forge.isxgames.com/projects/isxeve/wiki/Eve_(Data_Type) by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 16 Sep 2025 16:23:38 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=utf-8" /><!-- /Added by HTTrack -->
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<title>Eve (Data Type) - ISXEVE - isxGames Forge</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Redmine" />
+<meta name="keywords" content="issue,bug,tracker" />
+<meta name="csrf-param" content="authenticity_token" />
+<meta name="csrf-token" content="KJsgf2SmcvlLv+5966DkGukDNGKfyrQpm6S+xLG1lFEjuX8Xy3a9+76lI7noYCRH8OFXb3abwyIbVize0d5oQw==" />
+<link rel='shortcut icon' href='https://forge.isxgames.com/themes/PurpleMine2/favicon/favicon.ico?1595053228' />
+<link rel="stylesheet" media="all" href="https://forge.isxgames.com/stylesheets/jquery/jquery-ui-1.11.0.css?1586192448" />
+<link rel="stylesheet" media="all" href="https://forge.isxgames.com/stylesheets/tribute-3.7.3.css?1586192449" />
+<link rel="stylesheet" media="all" href="https://forge.isxgames.com/themes/PurpleMine2/stylesheets/application.css?1595057985" />
+<link rel="stylesheet" media="all" href="https://forge.isxgames.com/stylesheets/responsive.css?1586192449" />
+
+<script src="https://forge.isxgames.com/javascripts/jquery-2.2.4-ui-1.11.0-ujs-5.2.3.js?1586192448"></script>
+<script src="https://forge.isxgames.com/javascripts/tribute-3.7.3.min.js?1586192448"></script>
+<script src="https://forge.isxgames.com/javascripts/application.js?1586192448"></script>
+<script src="https://forge.isxgames.com/javascripts/responsive.js?1586192449"></script>
+<script>
+//<![CDATA[
+$(window).on('load', function(){ warnLeavingUnsaved('The current page contains unsaved text that will be lost if you leave this page.'); });
+//]]>
+</script>
+<script src="https://forge.isxgames.com/themes/PurpleMine2/javascripts/theme.js?1595057985"></script>
+<link rel="stylesheet" media="screen" href="https://forge.isxgames.com/plugin_assets/redmine_knowledgebase/stylesheets/knowledgebase.css?1594934434" />
+<!-- page specific tags -->
+
+</head>
+<body class="theme-Purplemine2 project-isxeve has-main-menu controller-wiki action-show avatars-on">
+
+<div id="wrapper">
+
+<div class="flyout-menu js-flyout-menu">
+
+
+        <div class="flyout-menu__search">
+            <form action="https://forge.isxgames.com/projects/isxeve/search" accept-charset="UTF-8" name="form-2c72bb59" method="get"><input name="utf8" type="hidden" value="&#x2713;" />
+            <input type="hidden" name="wiki_pages" value="1" />
+            <label class="search-magnifier search-magnifier--flyout" for="flyout-search">&#9906;</label>
+            <input type="text" name="q" id="flyout-search" class="small js-search-input" placeholder="Search" />
+</form>        </div>
+
+
+        <h3>Project</h3>
+        <span class="js-project-menu"></span>
+
+    <h3>General</h3>
+    <span class="js-general-menu"></span>
+
+    <span class="js-sidebar flyout-menu__sidebar"></span>
+
+    <h3>Profile</h3>
+    <span class="js-profile-menu"></span>
+
+</div>
+
+<div id="wrapper2">
+<div id="wrapper3">
+<div id="top-menu">
+    <div id="account">
+        <ul><li><a class="login" href="https://forge.isxgames.com/login">Sign in</a></li></ul>    </div>
+    
+    <ul><li><a class="home" href="https://forge.isxgames.com/">Home</a></li><li><a class="projects" href="https://forge.isxgames.com/projects">Projects</a></li><li><a class="help" href="https://www.redmine.org/guide">Help</a></li></ul></div>
+
+<div id="header">
+
+    <a href="#" class="mobile-toggle-button js-flyout-menu-toggle-button"></a>
+
+    <div id="quick-search">
+        <form action="https://forge.isxgames.com/projects/isxeve/search" accept-charset="UTF-8" name="form-82309038" method="get"><input name="utf8" type="hidden" value="&#x2713;" />
+        <input type="hidden" name="scope" />
+        <input type="hidden" name="wiki_pages" value="1" />
+        <label for='q'>
+          <a accesskey="4" href="https://forge.isxgames.com/projects/isxeve/search">Search</a>:
+        </label>
+        <input type="text" name="q" id="q" size="20" class="small" accesskey="f" data-auto-complete="true" data-issues-url="/issues/auto_complete?q=" />
+</form>        <div id="project-jump" class="drdn"><span class="drdn-trigger">ISXEVE</span><div class="drdn-content"><div class="quick-search"><input type="text" name="q" id="projects-quick-search" value="" class="autocomplete" data-automcomplete-url="/projects/autocomplete.js?jump=wiki" autocomplete="off" /></div><div class="drdn-items projects selection"></div><div class="drdn-items all-projects selection"><a href="https://forge.isxgames.com/projects?jump=wiki">All Projects</a></div></div></div>
+    </div>
+
+    <h1><span class="breadcrumbs"><a class="root" href="https://forge.isxgames.com/projects/eve-online?jump=wiki">EVE Online</a><span class="separator"> &raquo; </span></span><span class="current-project">ISXEVE</span></h1>
+
+    <div id="main-menu" class="tabs">
+        <ul><li><a class="overview" href="https://forge.isxgames.com/projects/isxeve">Overview</a></li><li><a class="activity" href="https://forge.isxgames.com/projects/isxeve/activity">Activity</a></li><li><a class="articles" href="https://forge.isxgames.com/projects/isxeve/knowledgebase/articles">Knowledgebase</a></li><li><a class="issues" href="https://forge.isxgames.com/projects/isxeve/issues">Issues</a></li><li><a class="wiki selected" href="../wiki.html">Wiki</a></li></ul>
+        <div class="tabs-buttons" style="display:none;">
+            <button class="tab-left" onclick="moveTabLeft(this); return false;"></button>
+            <button class="tab-right" onclick="moveTabRight(this); return false;"></button>
+        </div>
+    </div>
+</div>
+
+<div id="main" class="">
+    <div id="sidebar">
+          
+<h3>Wiki</h3>
+<ul>
+  <li><a href="../wiki.html">Start page</a></li>
+  <li><a href="index.html">Index by title</a></li>
+  <li><a href="date_index.html">Index by date</a></li>
+</ul>
+
+
+
+
+        
+    </div>
+
+    <div id="content">
+        
+        <div class="contextual">
+
+  
+  
+
+  </div>
+
+
+
+
+<div class="wiki wiki-page">
+  <a name="Eve-Data-Type"></a>
+<h2 ><span style="color:#800000;">Eve (Data Type)</span><a href="#Eve-Data-Type" class="wiki-anchor">&para;</a></h2>
+
+<ul class="toc right"><li><strong>Table of contents</strong></li><li><a href="#Eve-Data-Type">Eve (Data Type)</a></li><li><a href="#Description">Description</a></li><li><a href="#Members">Members</a></li><li><a href="#Methods">Methods</a></li><li><a href="#Execute-Commands">Execute Commands</a></li><li><a href="#NOTES">NOTES</a></li><li><a href="#EXAMPLES">EXAMPLES</a></li></ul>
+
+
+<a name="Description"></a>
+<h2 >Description<a href="#Description" class="wiki-anchor">&para;</a></h2>
+
+<p>This DataType includes all of the data available to <strong>ISXEVE</strong> that is related to EVE as a whole.</p>
+
+
+
+<a name="Members"></a>
+<h2 >Members<a href="#Members" class="wiki-anchor">&para;</a></h2>
+
+<ul>
+	<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:int">int</a> <code>EntitiesCount</code>
+
+	<ul>
+		<li>Number of entities currently in range of your overhead</li>
+	</ul>
+	</li>
+	<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:int">int</a> <code>NextSessionChange</code>
+	<ul>
+		<li>Number of seconds before a session change can occur</li>
+	</ul>
+	</li>
+	<li><a class="wiki-page" href="ChatChannel_(Data_Type)-2.html">ChatChannel</a> <code>ChatChannel[ID]</code>
+	<ul>
+		<li>This returns a chat channel type based on ID, local channel ID is Me.SolarSystemID</li>
+	</ul>
+	</li>
+	<li><a class="wiki-page" href="Bookmark_(Data_Type).html">bookmark</a> <code>Bookmark[&lt;Label&gt;]</code>
+	<ul>
+		<li>Returns a bookmark based on its label. (Case Sensitive)</li>
+	</ul>
+	</li>
+	<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:string">string</a> <code>Time</code>
+	<ul>
+		<li>example: "18:23:55"</li>
+	</ul>
+	</li>
+	<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:string">string</a> <code>Time[short]</code>
+	<ul>
+		<li>example: "18:23"</li>
+	</ul>
+	</li>
+	<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:string">string</a> <code>Date</code>
+	<ul>
+		<li>example: "2007.08.25"</li>
+	</ul>
+	</li>
+	<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:int">int</a> <code>NumAssetsAtStation[#]</code>
+	<ul>
+		<li>Returns the number of items currently housed at the StationID# given.</li>
+	</ul>
+	</li>
+	<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:string">string</a> <code>GetLocationNameByID[#]</code>
+	<ul>
+		<li>Useful for changing a StationID# to an actual name.</li>
+	</ul>
+	</li>
+	<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:bool">bool</a> <code>InCriticalSection</code>
+</li>
+	<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:bool">bool</a> <code>QueryEvaluate</code>
+	<ul>
+		<li>Note: Same as LavishScript:QueryEvaluate, this exists only to wrap the currently broken function, and will be removed in the future.</li>
+	</ul>
+	</li>
+	<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:bool">bool</a> <code>AbandonedDronesExist</code>
+</li>
+</ul>
+
+<ul>
+	<li>
+<strong>Display Members</strong>
+
+	<ul>
+		<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:bool">bool</a> <code>IsTextureLoadingOn</code>
+</li>
+		<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:bool">bool</a> <code>Is3DDisplayOn</code>
+</li>
+		<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:bool">bool</a> <code>IsUIDisplayOn</code>
+</li>
+	</ul>
+	</li>
+</ul>
+
+<ul>
+	<li>
+<strong>Location</strong>
+
+	<ul>
+		<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:int">int</a> <code>MinWarpDistance</code>
+</li>
+		<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:int">int</a> <code>JumpsToStation[&lt;StationID#&gt;]</code>
+		<ul>
+			<li>Returns number of jump to a station. Returns -1 if you're currently in the station.</li>
+		</ul>
+		</li>
+		<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:double">double</a> <code>DistanceBetween[&lt;Entity1ID#&gt;,&lt;Entity2ID#&gt;]</code>
+		<ul>
+			<li>Returns the distance between two entities.</li>
+		</ul>
+		</li>
+		<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:int">int</a> <code>JumpsTo[#]</code>
+</li>
+		<li>
+		<ul>
+			<li>
+			<ol>
+				<li>is the SolarSystemID you want to measure from your current location</li>
+			</ol>
+			</li>
+		</ul>
+		</li>
+		<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:int">int</a> <code>JumpsBetween[#,#]</code>
+</li>
+		<li>
+		<ul>
+			<li>
+			<ol>
+				<li>are the SolarSystemIDs you want to measure between in order of from,to</li>
+			</ol>
+			</li>
+		</ul>
+		</li>
+	</ul>
+	</li>
+	<li><a class="wiki-page" href="Station_(Data_Type).html">station</a> <code>Station[#]</code>
+	<ul>
+		<li>would be the ID# of any station</li>
+	</ul>
+	</li>
+</ul>
+
+
+	<dd>NOTE: This member is currently unreliable. Sometimes it returns NULL for a valid station ID.</dd>
+
+
+<ul>
+	<li>
+<strong>Windows</strong>
+
+	<ul>
+		<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:string">string</a> <code>ProgressWindowTitle</code>
+</li>
+		<li>
+<a href="http://www.lavishsoft.com/wiki/index.php/DataType:bool">bool</a> <code>IsProgressWindowOpen</code>
+		<ul>
+			<li>True if a window is open with a progress bar, such as during login</li>
+		</ul>
+		</li>
+	</ul>
+	</li>
+</ul>
+
+
+
+<a name="Methods"></a>
+<h2 >Methods<a href="#Methods" class="wiki-anchor">&para;</a></h2>
+
+<ul>
+	<li>
+<code>Execute[cmd]</code>
+
+	<ul>
+		<li>Execute an eve command. See the list of commands, below</li>
+	</ul>
+	</li>
+</ul>
+
+<p><strong>Entity Search Methods</strong></p>
+
+<ul>
+	<li>
+<code>QueryEntities[index:entity]</code>
+
+	<ul>
+		<li>This will fill an index with all entities on grid</li>
+	</ul>
+	</li>
+	<li>
+<code>QueryEntities[index:entity,int QueryID]</code>
+	<ul>
+		<li>QueryID is a the ID of a query registered using LavishScript.CreateQuery, for more information see <a href="http://www.lavishsoft.com/wiki/index.php/LavishScript:Object_Queries">here</a>
+</li>
+	</ul>
+	</li>
+	<li>
+<code>QueryEntities[index:entity, string Query]</code>
+	<ul>
+		<li>Query syntax follows syntax shown in above link</li>
+	</ul>
+	</li>
+	<li><code>GetViewedWrecks[index:int64]</code></li>
+	<li>
+<code>PopulateEntities[bool]</code>
+	<ul>
+		<li>This should only be called for debugging purposes</li>
+	</ul>
+	</li>
+</ul>
+
+<p><strong>Market Methods</strong></p>
+
+<ul>
+	<li>
+<code>GetMarketOrders</code>
+
+	<ul>
+		<li>Syntax:</li>
+	</ul>
+	</li>
+</ul>
+
+
+	<dd>EVE:GetMarketOrders[index:order, typeid]</dd>
+	<dd>EVE:GetMarketOrders[index:order, typeid, "buy"/"sell"]
+	
+		<dd>Someone with market experience should add more info to this</dd>
+	
+	</dd>
+
+
+<ul>
+	<li><code>FetchMarketOrders[#] (# is the TypeID of the item for which you are searching)</code></li>
+	<li>
+	<ul>
+		<li>The "FetchMarketOrders" method will either fetch an initial set of orders or update the orders you may have already fetched. In both cases, it does take a few moments to update the orders, so your script will have to handle this. The example below works well for getting an initial set of orders; however, if one were UPDATING orders, one would need to 'hard code' a long wait time to make sure they were updated (since "DoGetMarketOrders" retrieves whatever is saved in the cache.) I may be adding something soon that will be more efficient than this system; however, for now, this solution should make it fairly easy to adjust scripts written before the Dominion expansion.</li>
+	</ul>
+	</li>
+	<li>
+<code>ClearMarketOrderCache</code>
+	<ul>
+		<li>This clears your market order cache. It is useful if you're doing a lot of market transactions and want to keep things tidy.</li>
+	</ul>
+	</li>
+	<li><code>PlaceBuyOrder[StationID#, TypeID#, Price#, Quantity#, &lt;Range&gt;, MinQuantity#, &lt;Duration&gt;]</code></li>
+</ul>
+
+<p><code> can be: "Station", "System", "Region", 1, 2, 3, 4, 5, 10, 20, 30, 40</code><br>
+<code>Duration is in DAYS</code><br>
+<code>To get your current stationID# use ${Me.StationID}</code><br>
+<code>Quantity# is the MAX quantity you will buy overall, while MinQuantity# is the minimum that you will buy in a single transaction</code><br>
+<code>NOTE: If you place a buy order that already matches a sell order that's on market, it will act as an 'instant' buy order.</code></p>
+
+<p><strong>Travel Methods</strong></p>
+
+<ul>
+	<li>
+<code>GetToDestinationPath[&lt;index:int&gt;]</code>
+
+	<ul>
+		<li>The index is populated with the "SystemIDs" of the systems along your current destination (autopilot) route.</li>
+	</ul>
+	</li>
+	<li>
+<code>GetWaypoints[&lt;index:int&gt;]</code>
+	<ul>
+		<li>The index is populated with the "SystemIDs" of the waypoints in your current route.</li>
+	</ul>
+	</li>
+	<li>
+<code>CreateBookmark[&lt;label&gt;,&lt;notes&gt;,&lt;Corporation Locations&gt;]</code>
+	<ul>
+		<li>Requires at least one parameter (label)</li>
+	</ul>
+	</li>
+</ul>
+
+
+	<dd>Third parameter will indicate "destination". For now, the only valid argument for this parameter is: "Corporation Locations"</dd>
+	<dd>Any bookmark created without this third parameter will go into your "Personal Locations" folder.</dd>
+
+
+<ul>
+	<li>
+<code>RefreshBookmarks</code>
+
+	<ul>
+		<li>Initialize bookmarks list.</li>
+	</ul>
+	</li>
+</ul>
+
+
+	<dd>Also refreshes corporate bookmark list. NOT required for personal or mission bookmark lists!</dd>
+	<dd>There is no need to open "People and Places".</dd>
+
+
+<ul>
+	<li>
+<code>GetBookmarks[&lt;index:bookmark&gt;]</code>
+
+	<ul>
+		<li>Get list of bookmarks.</li>
+	</ul>
+	</li>
+	<li>
+<code>AddWaypoint[&lt;SolarSystemID#&gt;]</code>
+	<ul>
+		<li>Adds autopilot waypoint to solar system based on ID.</li>
+	</ul>
+	</li>
+	<li>
+<code>AddWaypoint[ID,bool]</code>
+	<ul>
+		<li>Accepts true/false. Default is false. Behavior is identical to Bookmark.AddWaypoint</li>
+	</ul>
+	</li>
+	<li>
+<code>ClearWaypoint[ID]</code>
+	<ul>
+		<li>Clears the specified waypoint</li>
+	</ul>
+	</li>
+	<li>
+<code>ClearAllWaypoints</code>
+	<ul>
+		<li>Clears all waypoints</li>
+	</ul>
+	</li>
+</ul>
+
+<p><strong>Drone Methods</strong></p>
+
+<ul>
+	<li><code>LaunchDrones[&lt;index:int64&gt;]</code></li>
+	<li><code>DronesMine[&lt;index:int64&gt;]</code></li>
+	<li><code>DronesMineRepeatedly[&lt;index:int64&gt;]</code></li>
+	<li><code>DronesReturnToDroneBay[&lt;index:int64&gt;]</code></li>
+	<li><code>DronesReturnAndOrbit[&lt;index:int64&gt;]</code></li>
+	<li><code>DronesScoopToDroneBay[&lt;index:int64&gt;]</code></li>
+	<li><code>DronesEngageMyTarget[&lt;index:int64&gt;]</code></li>
+	<li><code>ReclaimDrones</code></li>
+	<li><code>DronesAssist[&lt;index:int64&gt;,pilotID]</code></li>
+	<li><code>DronesDefend[&lt;index:int64&gt;,pilotID]</code></li>
+</ul>
+
+<p><strong>Chat and Window Methods</strong></p>
+
+<ul>
+	<li>
+<code>ChatChannelCount</code>
+
+	<ul>
+		<li>Number of open chat channels</li>
+	</ul>
+	</li>
+	<li>
+<code>CloseAllMessageBoxes</code>
+	<ul>
+		<li>Closes any of the simple 'information message boxes', etc that might be up.</li>
+	</ul>
+	</li>
+	<li><code>CloseAllChatInvites</code></li>
+	<li><code>GetLocalPilots[&lt;index:pilot&gt;]</code></li>
+	<li>
+<code>RefreshStandings</code>
+	<ul>
+		<li>This should be called at least once after logging in to EVE. It will take time to complete, so do not rely on standing data being immediately available.</li>
+	</ul>
+	</li>
+	<li><code>GetOnlineCorpMembers[&lt;index:pilot&gt;]</code></li>
+	<li><code>GetOnlineCorpMembers[&lt;index:being]</code></li>
+	<li><code>GetBuddies[&lt;index:being&gt;]</code></li>
+	<li><code>DoGetAgents[&lt;index:being&gt;]</code></li>
+	<li><code>GetAgentMissions[&lt;index:agentmission&gt;]</code></li>
+	<li>
+<code>InfoWindow[text]</code>
+	<ul>
+		<li>Creates a simple EVE popup window with the 'text' given.</li>
+	</ul>
+	</li>
+	<li>
+<code>SetInSpaceStatus[title,text]</code>
+	<ul>
+		<li>Sets the status text that appears in space over your ship controls.</li>
+	</ul>
+	</li>
+	<li><code>GetEVEWindows[&lt;index:evewindow&gt;]</code></li>
+</ul>
+
+<p><strong>Item Transport methods</strong></p>
+
+<ul>
+	<li><code>MoveItemsTo[&lt;index:int64&gt;, &lt;ToLocationEntityID#&gt;, &lt;ToDestination&gt;]</code></li>
+	<li><code>MoveItemsTo[&lt;index:int64&gt;, &lt;ToLocationEntityID#&gt;, &lt;ToDestination&gt;, &lt;ToFolderName&gt;]</code></li>
+	<li><code>MoveItemsTo[&lt;index:int64&gt;, &lt;ToLocationName&gt;, &lt;ToDestination&gt;]</code></li>
+	<li>
+<code>MoveItemsTo[&lt;index:int64&gt;, &lt;ToLocationName&gt;, &lt;ToDestination&gt;, &lt;ToFolderName&gt;]</code>
+	<ul>
+		<li>NOTE: To move items to YOUR ship using this syntax, simply use ${MyShip.ID} as the first parameter. Otherwise, use the EntityID# of the destination container.</li>
+	</ul>
+	</li>
+</ul>
+
+
+	<dd>NOTE: Use Destinations and folder names below.</dd>
+	<dd>NOTE: "FolderName" only applies to the destinations 'CorpHangars' and 'StationCorporateHangar'</dd>
+	<dd>NOTE: If you do not provide a 4th paramater, the item will be moved to the "Corporation Folder 1" folder.</dd>
+
+
+<p><code>  LocationNamess</code><br>
+<code>  1.  MyShip</code><br>
+<code>  2.  MyStationHangar</code><br>
+<code>  3.  MyStationCorporateHangar</code></p>
+
+<p><code>  Possible Destinations:</code><br>
+<code>  1.  CargoHold                (The traditional cargo hold)</code><br>
+<code>  2.  DroneBay</code><br>
+<code>  3.  CorpHangars              (Will work on your ship as well as the corporation hangars of a capital ship or POS)</code><br>
+<code>  4.  MaintenanceBay           (Will work on your ship as well as the Maintenance Bay of a capital ship)</code><br>
+<code>  5.  OreHold</code><br>
+<code>  6.  FuelBay </code><br>
+<code>  7.  GasHold</code><br>
+<code>  8.  MineralHold</code><br>
+<code>  9.  SalvageHold</code><br>
+<code>  10. IndustrialShipHold</code><br>
+<code>  11. AmmoHold</code><br>
+<code>  12. StationCorporateHangar   (For this destination, you can enter any positive integer for the ID#)</code><br>
+<code>  13. Hangar                   (For this destination, you can enter any positive integer for the ID#)</code></p>
+
+<p><code>  Possible Folder Names (for all Methods that use folder names as a possible parameter):</code><br>
+<code>  1.  Corporation Folder 1</code><br>
+<code>  2.  Corporation Folder 2</code><br>
+<code>  3.  Corporation Folder 3</code><br>
+<code>  4.  Corporation Folder 4</code><br>
+<code>  5.  Corporation Folder 5</code><br>
+<code>  6.  Corporation Folder 6</code><br>
+<code>  7.  Corporation Folder 7</code></p>
+
+<ul>
+	<li><code>StackItems[&lt;LocationEntityID#&gt;, &lt;Destination&gt;]</code></li>
+	<li><code>StackItems[&lt;LocationEntityID#&gt;, &lt;Destination&gt;, &lt;FolderName&gt;]</code></li>
+	<li><code>StackItems[&lt;LocationName&gt;, &lt;Destination&gt;]</code></li>
+	<li>
+<code>StackItems[&lt;LocationName, &lt;Destination&gt;, &lt;FolderName&gt;]</code>
+	<ul>
+		<li>This method uses the same parameters as item:MoveTo and eve:MoveItemsTo. So, please see the notes above for possible "LocationNames", "Destinations", and "FolderNames"</li>
+	</ul>
+	</li>
+</ul>
+
+<p><strong>Display Methods</strong></p>
+
+<ul>
+	<li>
+<code>Toggle3DDisplay</code>
+
+	<ul>
+		<li>resets to On when docking and undocking</li>
+	</ul>
+	</li>
+	<li>
+<code>ToggleUIDisplay</code>
+	<ul>
+		<li>resets to On when docking and undocking</li>
+	</ul>
+	</li>
+	<li>
+<code>ToggleTextureLoading</code>
+	<ul>
+		<li>This will toggle texture loading</li>
+	</ul>
+	</li>
+</ul>
+
+
+
+<a name="Execute-Commands"></a>
+<h2 >Execute Commands<a href="#Execute-Commands" class="wiki-anchor">&para;</a></h2>
+
+<ul>
+	<li>CmdAccelerate</li>
+	<li>CmdActivateHighPowerSlot1</li>
+	<li>CmdActivateHighPowerSlot2</li>
+	<li>CmdActivateHighPowerSlot3</li>
+	<li>CmdActivateHighPowerSlot4</li>
+	<li>CmdActivateHighPowerSlot5</li>
+	<li>CmdActivateHighPowerSlot6</li>
+	<li>CmdActivateHighPowerSlot7</li>
+	<li>CmdActivateHighPowerSlot8</li>
+	<li>CmdActivateLowPowerSlot1</li>
+	<li>CmdActivateLowPowerSlot2</li>
+	<li>CmdActivateLowPowerSlot3</li>
+	<li>CmdActivateLowPowerSlot4</li>
+	<li>CmdActivateLowPowerSlot5</li>
+	<li>CmdActivateLowPowerSlot6</li>
+	<li>CmdActivateLowPowerSlot7</li>
+	<li>CmdActivateLowPowerSlot8</li>
+	<li>CmdActivateMediumPowerSlot1</li>
+	<li>CmdActivateMediumPowerSlot2</li>
+	<li>CmdActivateMediumPowerSlot3</li>
+	<li>CmdActivateMediumPowerSlot4</li>
+	<li>CmdActivateMediumPowerSlot5</li>
+	<li>CmdActivateMediumPowerSlot6</li>
+	<li>CmdActivateMediumPowerSlot7</li>
+	<li>CmdActivateMediumPowerSlot8</li>
+	<li>CmdCloseActiveWindow</li>
+	<li>CmdCloseAllWindows</li>
+	<li>CmdCycleFleetBroadcastScope</li>
+	<li>CmdDecelerate</li>
+	<li>CmdDronesEngage</li>
+	<li>CmdDronesReturnAndOrbit</li>
+	<li>CmdDronesReturnToBay</li>
+	<li>CmdExitStation</li>
+	<li>CmdHideCursor</li>
+	<li>CmdHideUI</li>
+	<li>CmdLogOff</li>
+	<li>CmdMinimizeActiveWindow</li>
+	<li>CmdMinimizeAllWindows</li>
+	<li>CmdOpenNewMessage</li>
+	<li>CmdOverloadHighPowerRack</li>
+	<li>CmdOverloadHighPowerSlot1</li>
+	<li>CmdOverloadHighPowerSlot2</li>
+	<li>CmdOverloadHighPowerSlot3</li>
+	<li>CmdOverloadHighPowerSlot4</li>
+	<li>CmdOverloadHighPowerSlot5</li>
+	<li>CmdOverloadHighPowerSlot6</li>
+	<li>CmdOverloadHighPowerSlot7</li>
+	<li>CmdOverloadHighPowerSlot8</li>
+	<li>CmdOverloadLowPowerRack</li>
+	<li>CmdOverloadLowPowerSlot1</li>
+	<li>CmdOverloadLowPowerSlot2</li>
+	<li>CmdOverloadLowPowerSlot3</li>
+	<li>CmdOverloadLowPowerSlot4</li>
+	<li>CmdOverloadLowPowerSlot5</li>
+	<li>CmdOverloadLowPowerSlot6</li>
+	<li>CmdOverloadLowPowerSlot7</li>
+	<li>CmdOverloadLowPowerSlot8</li>
+	<li>CmdOverloadMediumPowerRack</li>
+	<li>CmdOverloadMediumPowerSlot1</li>
+	<li>CmdOverloadMediumPowerSlot2</li>
+	<li>CmdOverloadMediumPowerSlot3</li>
+	<li>CmdOverloadMediumPowerSlot4</li>
+	<li>CmdOverloadMediumPowerSlot5</li>
+	<li>CmdOverloadMediumPowerSlot6</li>
+	<li>CmdOverloadMediumPowerSlot7</li>
+	<li>CmdOverloadMediumPowerSlot8</li>
+	<li>CmdQuitGame</li>
+	<li>CmdReloadAmmo</li>
+	<li>CmdResetMonitor</li>
+	<li>CmdSendBroadcast_EnemySpotted</li>
+	<li>CmdSendBroadcast_HealArmor</li>
+	<li>CmdSendBroadcast_HealCapacitor</li>
+	<li>CmdSendBroadcast_HealShield</li>
+	<li>CmdSendBroadcast_HoldPosition</li>
+	<li>CmdSendBroadcast_InPosition</li>
+	<li>CmdSendBroadcast_JumpBeacon</li>
+	<li>CmdSendBroadcast_Location</li>
+	<li>CmdSendBroadcast_NeedBackup</li>
+	<li>CmdSendBroadcast_Target</li>
+	<li>CmdSetChatChannelFocus</li>
+	<li>CmdStopShip</li>
+	<li>CmdToggleAggressivePassive</li>
+	<li>CmdToggleAudio</li>
+	<li>CmdToggleAutopilot</li>
+	<li>CmdToggleDroneFocusFire</li>
+	<li>CmdToggleEffectTurrets</li>
+	<li>CmdToggleEffects</li>
+	<li>CmdToggleFighterAttackAndFollow</li>
+	<li>CmdToggleMap</li>
+	<li>CmdToggleShowAllBrackets</li>
+	<li>CmdToggleShowNoBrackets</li>
+	<li>CmdToggleShowSpecialBrackets</li>
+	<li>CmdZoomIn</li>
+	<li>CmdZoomOut</li>
+	<li>OpenAssets</li>
+	<li>OpenBrowser</li>
+	<li>OpenCalculator</li>
+	<li>OpenCalendar</li>
+	<li>OpenCapitalNavigation</li>
+	<li>OpenCargoHoldOfActiveShip</li>
+	<li>OpenCertificatePlanner</li>
+	<li>OpenChannels</li>
+	<li>OpenCharactersheet</li>
+	<li>OpenConfigMenu</li>
+	<li>OpenContracts</li>
+	<li>OpenCorpDeliveries</li>
+	<li>OpenCorporationPanel</li>
+	<li>OpenDroneBayOfActiveShip</li>
+	<li>OpenFactory</li>
+	<li>OpenFitting</li>
+	<li>OpenFleet</li>
+	<li>OpenFpsMonitor</li>
+	<li>OpenHangarFloor</li>
+	<li>OpenHelp</li>
+	<li>OpenInsurance</li>
+	<li>OpenJournal</li>
+	<li>OpenJukebox</li>
+	<li>OpenLog</li>
+	<li>OpenLpstore</li>
+	<li>OpenMail</li>
+	<li>OpenMapBrowser</li>
+	<li>OpenMarket</li>
+	<li>OpenMedical</li>
+	<li>OpenMilitia</li>
+	<li>OpenMissions</li>
+	<li>OpenMonitor</li>
+	<li>OpenMoonMining</li>
+	<li>OpenNotepad</li>
+	<li>OpenOverviewSettings</li>
+	<li>OpenPeopleAndPlaces</li>
+	<li>OpenRepairshop</li>
+	<li>OpenReprocessingPlant</li>
+	<li>OpenScanner</li>
+	<li>OpenShipConfig</li>
+	<li>OpenShipHangar</li>
+	<li>OpenSkillQueueWindow</li>
+	<li>OpenSovDashboard</li>
+	<li>OpenStationManagement</li>
+	<li>OpenTutorials</li>
+	<li>OpenWallet</li>
+	<li>WinCmdToggleWindowed</li>
+</ul>
+
+
+
+<a name="NOTES"></a>
+<h2 >NOTES<a href="#NOTES" class="wiki-anchor">&para;</a></h2>
+
+
+
+<a name="EXAMPLES"></a>
+<h2 >EXAMPLES<a href="#EXAMPLES" class="wiki-anchor">&para;</a></h2>
+
+<ul>
+	<li>
+	<ul>
+		<li>GetEntities:
+		<ul>
+			<li>"EVE:GetEntities[Entities,categoryID,6,radius,10000,SecurityR,-1.0,0]"</li>
+		</ul>
+		</li>
+	</ul>
+	</li>
+</ul>
+
+
+	<dd>
+	
+		<dd>Here is an example lavishscript script that would illustrate the functionality of this particular member. Please keep this example handy as any other methods provided for custom array handling will use the same concepts:</dd>
+	
+	</dd>
+
+
+<p><code>             {</code><br>
+<code>                 variable index:entity Entities</code><br>
+<code>                 echo Populating Entities List:: ${EVE.GetEntities</code>[<code>Entities</code><code>} entities total</code><br>
+<code>   </code><br>
+<code>                 echo The second Entity in the array is: ${Entities.Get</code><code>2].Name} at ${Entities.Get[2</code><code>.Location}.</code><br>
+<code>                 echo The third Entity in the array is: ${Entities.Get</code><code>3].Name} at ${Entities.Get[3</code>]<code>.Location}.</code><br>
+<code>             }</code></p>
+
+
+<ul>
+	<li><code>DronesAssign[&lt;index:int64&gt;]</code></li>
+	<li><code>DronesDefend[&lt;index:int64&gt;]</code></li>
+</ul>
+
+<ul>
+	<li><code>DronesAssign[&lt;index:int64&gt;]</code></li>
+	<li><code>DronesDefend[&lt;index:int64&gt;]</code></li>
+</ul>
+
+</div>
+
+
+<fieldset class="collapsible collapsed hide-when-print">
+  <legend onclick="toggleFieldset(this);" class="icon icon-collapsed">Files (0)</legend>
+  <div style="display: none;">
+
+  
+
+</div>
+</fieldset>
+
+<p class="wiki-update-info">
+</p>
+
+
+
+
+
+        
+        <div style="clear:both;"></div>
+    </div>
+</div>
+<div id="footer">
+    Powered by <a href="https://www.redmine.org/">Redmine</a> &copy; 2006-2020 Jean-Philippe Lang
+</div>
+</div>
+
+<div id="ajax-indicator" style="display:none;"><span>Loading...</span></div>
+<div id="ajax-modal" style="display:none;"></div>
+
+</div>
+</div>
+
+</body>
+
+<!-- Mirrored from forge.isxgames.com/projects/isxeve/wiki/Eve_(Data_Type) by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 16 Sep 2025 16:23:38 GMT -->
+</html>

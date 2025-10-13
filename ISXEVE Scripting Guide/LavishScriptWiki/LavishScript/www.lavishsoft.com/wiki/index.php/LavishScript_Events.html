@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html class="client-nojs" lang="en" dir="ltr">
+
+<!-- Mirrored from www.lavishsoft.com/wiki/index.php/LavishScript:Events by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 16 Sep 2025 16:30:22 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=UTF-8" /><!-- /Added by HTTrack -->
+<head>
+<meta charset="UTF-8"/>
+<title>LavishScript:Events - Lavish Software Wiki</title>
+<script>document.documentElement.className = document.documentElement.className.replace( /(^|\s)client-nojs(\s|$)/, "$1client-js$2" );</script>
+<script>(window.RLQ=window.RLQ||[]).push(function(){mw.config.set({"wgCanonicalNamespace":"","wgCanonicalSpecialPageName":false,"wgNamespaceNumber":0,"wgPageName":"LavishScript:Events","wgTitle":"LavishScript:Events","wgCurRevisionId":8488,"wgRevisionId":8488,"wgArticleId":2137,"wgIsArticle":true,"wgIsRedirect":false,"wgAction":"view","wgUserName":null,"wgUserGroups":["*"],"wgCategories":["LavishScript","LavishScript Events"],"wgBreakFrames":false,"wgPageContentLanguage":"en","wgPageContentModel":"wikitext","wgSeparatorTransformTable":["",""],"wgDigitTransformTable":["",""],"wgDefaultDateFormat":"dmy","wgMonthNames":["","January","February","March","April","May","June","July","August","September","October","November","December"],"wgMonthNamesShort":["","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],"wgRelevantPageName":"LavishScript:Events","wgRelevantArticleId":2137,"wgRequestId":"52bd45e2d932559af91212a0","wgCSPNonce":false,"wgIsProbablyEditable":false,"wgRelevantPageIsProbablyEditable":false,"wgRestrictionEdit":[],"wgRestrictionMove":[]});mw.loader.state({"site.styles":"ready","noscript":"ready","user.styles":"ready","user":"ready","user.options":"ready","user.tokens":"loading","mediawiki.legacy.shared":"ready","mediawiki.legacy.commonPrint":"ready","mediawiki.toc.styles":"ready","mediawiki.skinning.interface":"ready","skins.vector.styles":"ready"});mw.loader.implement("user.tokens@0tffind",function($,jQuery,require,module){/*@nomin*/mw.user.tokens.set({"editToken":"+\\","patrolToken":"+\\","watchToken":"+\\","csrfToken":"+\\"});
+});RLPAGEMODULES=["site","mediawiki.page.startup","mediawiki.page.ready","mediawiki.toc","mediawiki.searchSuggest","skins.vector.js"];mw.loader.load(RLPAGEMODULES);});</script>
+<link rel="stylesheet" href="https://www.lavishsoft.com/wiki/load.php?lang=en&amp;modules=mediawiki.legacy.commonPrint%2Cshared%7Cmediawiki.skinning.interface%7Cmediawiki.toc.styles%7Cskins.vector.styles&amp;only=styles&amp;skin=vector"/>
+<script async="" src="https://www.lavishsoft.com/wiki/load.php?lang=en&amp;modules=startup&amp;only=scripts&amp;skin=vector"></script>
+<meta name="ResourceLoaderDynamicStyles" content=""/>
+<meta name="generator" content="MediaWiki 1.33.0"/>
+<link rel="shortcut icon" href="https://www.lavishsoft.com/favicon.ico"/>
+<link rel="search" type="application/opensearchdescription+xml" href="https://www.lavishsoft.com/wiki/opensearch_desc.php" title="Lavish Software Wiki (en)"/>
+<link rel="EditURI" type="application/rsd+xml" href="https://www.lavishsoft.com/wiki/api.php?action=rsd"/>
+<link rel="alternate" type="application/atom+xml" title="Lavish Software Wiki Atom feed" href="https://www.lavishsoft.com/wiki/index.php?title=Special:RecentChanges&amp;feed=atom"/>
+<!--[if lt IE 9]><script src="/wiki/load.php?lang=en&amp;modules=html5shiv&amp;only=scripts&amp;skin=vector&amp;sync=1"></script><![endif]-->
+</head>
+<body class="mediawiki ltr sitedir-ltr mw-hide-empty-elt ns-0 ns-subject page-LavishScript_Events rootpage-LavishScript_Events skin-vector action-view">
+<div id="mw-page-base" class="noprint"></div>
+<div id="mw-head-base" class="noprint"></div>
+<div id="content" class="mw-body" role="main">
+	<a id="top"></a>
+	
+	<div class="mw-indicators mw-body-content">
+</div>
+
+	<h1 id="firstHeading" class="firstHeading" lang="en">LavishScript:Events</h1>
+	
+	<div id="bodyContent" class="mw-body-content">
+		<div id="siteSub" class="noprint">From Lavish Software Wiki</div>
+		<div id="contentSub"></div>
+		
+		
+		
+		<div id="jump-to-nav"></div>
+		<a class="mw-jump-link" href="#mw-head">Jump to navigation</a>
+		<a class="mw-jump-link" href="#p-search">Jump to search</a>
+		<div id="mw-content-text" lang="en" dir="ltr" class="mw-content-ltr"><div class="mw-parser-output"><div id="toc" class="toc"><input type="checkbox" role="button" id="toctogglecheckbox" class="toctogglecheckbox" style="display:none" /><div class="toctitle" lang="en" dir="ltr"><h2>Contents</h2><span class="toctogglespan"><label class="toctogglelabel" for="toctogglecheckbox"></label></span></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#Overview"><span class="tocnumber">1</span> <span class="toctext">Overview</span></a></li>
+<li class="toclevel-1 tocsection-2"><a href="#Using_events_in_scripts"><span class="tocnumber">2</span> <span class="toctext">Using events in scripts</span></a>
+<ul>
+<li class="toclevel-2 tocsection-3"><a href="#Registering_an_event"><span class="tocnumber">2.1</span> <span class="toctext">Registering an event</span></a></li>
+<li class="toclevel-2 tocsection-4"><a href="#Attaching_to_an_existing_event"><span class="tocnumber">2.2</span> <span class="toctext">Attaching to an existing event</span></a></li>
+<li class="toclevel-2 tocsection-5"><a href="#Executing_an_event"><span class="tocnumber">2.3</span> <span class="toctext">Executing an event</span></a></li>
+<li class="toclevel-2 tocsection-6"><a href="#Detaching_from_an_event"><span class="tocnumber">2.4</span> <span class="toctext">Detaching from an event</span></a></li>
+<li class="toclevel-2 tocsection-7"><a href="#Unregistering_an_event"><span class="tocnumber">2.5</span> <span class="toctext">Unregistering an event</span></a></li>
+<li class="toclevel-2 tocsection-8"><a href="#Alternate_way_to_register_and_unregister_an_event"><span class="tocnumber">2.6</span> <span class="toctext">Alternate way to register and unregister an event</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-9"><a href="#Using_Events_in_C"><span class="tocnumber">3</span> <span class="toctext">Using Events in C</span></a>
+<ul>
+<li class="toclevel-2 tocsection-10"><a href="#Registering_an_event_2"><span class="tocnumber">3.1</span> <span class="toctext">Registering an event</span></a></li>
+<li class="toclevel-2 tocsection-11"><a href="#Retrieving_the_Event_ID_of_an_existing_event"><span class="tocnumber">3.2</span> <span class="toctext">Retrieving the Event ID of an existing event</span></a></li>
+<li class="toclevel-2 tocsection-12"><a href="#Attaching_to_an_existing_event_2"><span class="tocnumber">3.3</span> <span class="toctext">Attaching to an existing event</span></a></li>
+<li class="toclevel-2 tocsection-13"><a href="#Executing_an_event_2"><span class="tocnumber">3.4</span> <span class="toctext">Executing an event</span></a></li>
+<li class="toclevel-2 tocsection-14"><a href="#Detaching_from_an_existing_event"><span class="tocnumber">3.5</span> <span class="toctext">Detaching from an existing event</span></a></li>
+<li class="toclevel-2 tocsection-15"><a href="#Unregistering_an_event_2"><span class="tocnumber">3.6</span> <span class="toctext">Unregistering an event</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-16"><a href="#See_Also"><span class="tocnumber">4</span> <span class="toctext">See Also</span></a></li>
+</ul>
+</div>
+
+<h2><span class="mw-headline" id="Overview">Overview</span></h2>
+<p>LavishScript events provide a way to <i>hook</i> functionality in either a script or module (or subsequently an extension or plugin for LavishScript applications such as Inner Space or Fury).  Each event is referred to by name, and any number of atoms or C functions can be attached to the event.  Every atom and C function will be executed in arbitrary order immediately when the event is executed.  Events may be executed with any number of parameters, which will be passed to the atoms or C functions.  Events will be sent to paused scripts, and the atoms will execute.
+</p>
+<h2><span class="mw-headline" id="Using_events_in_scripts">Using events in scripts</span></h2>
+<h3><span class="mw-headline" id="Registering_an_event">Registering an event</span></h3>
+<p>The LavishScript object type provides a method called RegisterEvent.  All you need is a name, preferably one that is fairly unique and describes what the event is for.  For example, "Alias Added" is a LavishScript event that executes when an alias is created with the alias command.
+</p>
+<pre>LavishScript:RegisterEvent["Alias Added"]
+LavishScript:RegisterEvent[My Event]
+</pre>
+<p>There are no restrictions on event names, so long as you follow LavishScript syntax rules.  Registering an event twice will have no further effect.
+</p>
+<h3><span class="mw-headline" id="Attaching_to_an_existing_event">Attaching to an existing event</span></h3>
+<p>To attach to an event, the event object type provides a method called Attach Atom.  All you need is the name of an atom to attach to the event, and your atom will be executed the next time the event is executed.  There is no limit to the number of atoms that can be attached to the same event.  Your atom should be tailored to the event -- for example, "Alias Added" will pass the name of the alias that was added as a parameter, and therefore an atom to attach to this event should have a parameter to take that.
+</p>
+<pre>Event[Alias Added]:AttachAtom[OMGAnAliasWasAdded]
+Event[My Event]:AttachAtom[MyEventExecuted]
+</pre>
+<h3><span class="mw-headline" id="Executing_an_event">Executing an event</span></h3>
+<p>The event object type provides two methods for execution: Execute and ThisExecute.  ThisExecute is for when the event requires a special object, to be accessed with This, and the methods are otherwise identical.  Any parameters given to the methods will be given to the event -- note that with ThisExecute, the first parameter will become This (use the name of an object currently in scope).
+</p>
+<pre>Event[My Event]:ThisExecute[SomeObject,"Hello this is a parameter to My Event"]
+Event[Alias Added]:Execute[Kwyjibo]
+</pre>
+<dl><dt>Note</dt>
+<dd>Kwyjibo is a Simpsons reference.  See <a rel="nofollow" class="external autonumber" href="http://en.wikipedia.org/wiki/List_of_neologisms_on_The_Simpsons#K">[1]</a></dd></dl>
+<h3><span class="mw-headline" id="Detaching_from_an_event">Detaching from an event</span></h3>
+<p>The event object type provides a method called DetachAtom.  This is used in exactly the same way as AttachAtom, so the explanation stops here (see Attaching to an event).
+</p>
+<pre>Event[Alias Added]:DetachAtom[OMGAnAliasWasAdded]
+Event[My Event]:DetachAtom[MyEventExecuted]
+</pre>
+<h3><span class="mw-headline" id="Unregistering_an_event">Unregistering an event</span></h3>
+<p>The event object type provides a method called Unregister.  You do NOT need to unregister the event, as doing so may introduce synchronization issues with the event targets.  For example, scripts or extensions that use your event will not be aware of its disappearance, and will not know they have been forcefully detached from the event.  You should only unregister an event if you want to forcefully detach all targets from an event.
+</p>
+<pre>Event["Alias Added"]:Unregister
+Event[My Event]:Unregister
+</pre>
+<h3><span class="mw-headline" id="Alternate_way_to_register_and_unregister_an_event">Alternate way to register and unregister an event</span></h3>
+<p>Alternatively, LavishScript allows you to create a variable of the event object type to automatically register and later unregister an event.  Simply declare the variable in the scope you want the event to be available.  The variable may be used as the event object for execution and such as well.
+</p>
+<pre>declare MyEvent event "My Event"
+MyEvent:ThisExecute[SomeObject,"Hello this is a parameter to My Event"]
+</pre>
+<h2><span class="mw-headline" id="Using_Events_in_C">Using Events in C</span></h2>
+<p>Note: This portion will be explained with LavishScript module API, but applies equally to APIs that expose LavishScript event API.
+</p>
+<h3><span class="mw-headline" id="Registering_an_event_2">Registering an event</span></h3>
+<p>Use the RegisterEvent function to register an event.  The return value of the function is the EventID, which is then used to attach or detach event targets, or unregister the event.
+</p>
+<pre> unsigned long MyEvent=pLSInterface-&gt;RegisterEvent("My Event");
+</pre>
+<h3><span class="mw-headline" id="Retrieving_the_Event_ID_of_an_existing_event">Retrieving the Event ID of an existing event</span></h3>
+<p>Retrieving the event ID is done exactly the same as registering an event.  There is no functional or logical difference, and it is not harmful to register the event before the module that actually intends to register the event.
+</p>
+<pre> unsigned long MyEvent=pLSInterface-&gt;RegisterEvent("My Event");
+</pre>
+<h3><span class="mw-headline" id="Attaching_to_an_existing_event_2">Attaching to an existing event</span></h3>
+<p>TODO
+</p>
+<h3><span class="mw-headline" id="Executing_an_event_2">Executing an event</span></h3>
+<p>Use the ExecuteEvent function to execute an event.  The function requires an event ID, and optionally accepts parameters to pass, as well as an object to use as the event's context.  Parameters are given in argc,argv form and, as is customary in LavishScript API, uses an inclusive begin and exclusive end in the argument list.
+</p>
+<pre>pLSInterface-&gt;ExecuteEvent(MyEvent);  // executes the event with NO parameters
+
+pLSInterface-&gt;ExecuteEvent(MyEvent,1,argc,argv); // executes the event with 1-argc parameters from argv
+
+char *Parameter1="Parameter 1";
+char *Parameter2="Parameter 2";
+char *argv[]={
+  Parameter1,
+  Parameter2,
+};
+pLSInterface-&gt;ExecuteEvent(MyEvent,0,2,argv); // executes the event with some custom parameters
+
+LSOBJECT This;
+This.Ptr="I am a string object";
+This.Type=pStringType;
+pLSInterface-&gt;ExecuteEvent(MyEvent,0,0,0,&amp;This); // executes the event with no parameters, in the context of a given string object
+</pre>
+<h3><span class="mw-headline" id="Detaching_from_an_existing_event">Detaching from an existing event</span></h3>
+<p>TODO
+</p>
+<h3><span class="mw-headline" id="Unregistering_an_event_2">Unregistering an event</span></h3>
+<p>You do NOT need to unregister the event, as doing so may introduce synchronization issues with the event targets.  For example, scripts or extensions that use your event will not be aware of its disappearance, and will not know they have been forcefully detached from the event.  You should only unregister an event if you want to forcefully detach all targets from an event.
+</p>
+<pre>pLSInterface-&gt;UnregisterEvent(MyEvent);
+</pre>
+<h2><span class="mw-headline" id="See_Also">See Also</span></h2>
+<ul><li><a href="https://www.lavishsoft.com/wiki/index.php/LavishScript" title="LavishScript">LavishScript</a></li>
+<li><a href="https://www.lavishsoft.com/wiki/index.php/ObjectType:event" title="ObjectType:event">event object type</a></li>
+<li><a href="https://www.lavishsoft.com/wiki/index.php/TLO:Event" title="TLO:Event">Event Top-Level Object</a></li>
+<li><a href="LavishScript_Atoms.html" title="LavishScript:Atoms">Atoms</a></li></ul>
+<!-- 
+NewPP limit report
+Cached time: 20250916162930
+Cache expiry: 86400
+Dynamic content: false
+CPU time usage: 0.016 seconds
+Real time usage: 0.016 seconds
+Preprocessor visited node count: 62/1000000
+Preprocessor generated node count: 68/1000000
+Post‐expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+Highest expansion depth: 2/40
+Expensive parser function count: 0/100
+Unstrip recursion depth: 0/20
+Unstrip post‐expand size: 0/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00%    0.000      1 -total
+-->
+
+<!-- Saved in parser cache with key lax-wiki_:pcache:idhash:2137-0!canonical and timestamp 20250916162930 and revision id 8488
+ -->
+</div></div>
+		
+		<div class="printfooter">Retrieved from "<a dir="ltr" href="https://www.lavishsoft.com/wiki/index.php?title=LavishScript:Events&amp;oldid=8488">https://www.lavishsoft.com/wiki/index.php?title=LavishScript:Events&amp;oldid=8488</a>"</div>
+		
+		<div id="catlinks" class="catlinks" data-mw="interface"><div id="mw-normal-catlinks" class="mw-normal-catlinks"><a href="https://www.lavishsoft.com/wiki/index.php/Special:Categories" title="Special:Categories">Categories</a>: <ul><li><a href="https://www.lavishsoft.com/wiki/index.php/Category:LavishScript" title="Category:LavishScript">LavishScript</a></li><li><a href="https://www.lavishsoft.com/wiki/index.php?title=Category:LavishScript_Events&amp;action=edit&amp;redlink=1" class="new" title="Category:LavishScript Events (page does not exist)">LavishScript Events</a></li></ul></div></div>
+		
+		<div class="visualClear"></div>
+		
+	</div>
+</div>
+
+		<div id="mw-navigation">
+			<h2>Navigation menu</h2>
+			<div id="mw-head">
+									<div id="p-personal" role="navigation" aria-labelledby="p-personal-label">
+						<h3 id="p-personal-label">Personal tools</h3>
+						<ul>
+							<li id="pt-login"><a href="https://www.lavishsoft.com/forum-x/ucp.php?mode=login&amp;redirect=https%3A%2F%2Fwww.lavishsoft.com%2Fwiki%2Findex.php%2FLavishScript%3AEvents" title="You are encouraged to log in; however, it is not mandatory [o]" accesskey="o">Log in</a></li>						</ul>
+					</div>
+									<div id="left-navigation">
+										<div id="p-namespaces" role="navigation" class="vectorTabs" aria-labelledby="p-namespaces-label">
+						<h3 id="p-namespaces-label">Namespaces</h3>
+						<ul>
+							<li id="ca-nstab-main" class="selected"><span><a href="LavishScript_Events.html" title="View the content page [c]" accesskey="c">Article</a></span></li><li id="ca-talk" class="new"><span><a href="https://www.lavishsoft.com/wiki/index.php?title=Talk:LavishScript:Events&amp;action=edit&amp;redlink=1" rel="discussion" title="Discussion about the content page (page does not exist) [t]" accesskey="t">Discussion</a></span></li>						</ul>
+					</div>
+										<div id="p-variants" role="navigation" class="vectorMenu emptyPortlet" aria-labelledby="p-variants-label">
+												<input type="checkbox" class="vectorMenuCheckbox" aria-labelledby="p-variants-label" />
+						<h3 id="p-variants-label">
+							<span>Variants</span>
+						</h3>
+						<ul class="menu">
+													</ul>
+					</div>
+									</div>
+				<div id="right-navigation">
+										<div id="p-views" role="navigation" class="vectorTabs" aria-labelledby="p-views-label">
+						<h3 id="p-views-label">Views</h3>
+						<ul>
+							<li id="ca-view" class="collapsible selected"><span><a href="LavishScript_Events.html">Read</a></span></li><li id="ca-viewsource" class="collapsible"><span><a href="https://www.lavishsoft.com/wiki/index.php?title=LavishScript:Events&amp;action=edit" title="This page is protected.&#10;You can view its source [e]" accesskey="e">View source</a></span></li><li id="ca-history" class="collapsible"><span><a href="https://www.lavishsoft.com/wiki/index.php?title=LavishScript:Events&amp;action=history" title="Past revisions of this page [h]" accesskey="h">View history</a></span></li>						</ul>
+					</div>
+										<div id="p-cactions" role="navigation" class="vectorMenu emptyPortlet" aria-labelledby="p-cactions-label">
+						<input type="checkbox" class="vectorMenuCheckbox" aria-labelledby="p-cactions-label" />
+						<h3 id="p-cactions-label"><span>More</span></h3>
+						<ul class="menu">
+													</ul>
+					</div>
+										<div id="p-search" role="search">
+						<h3>
+							<label for="searchInput">Search</label>
+						</h3>
+						<form action="https://www.lavishsoft.com/wiki/index.php" id="searchform">
+							<div id="simpleSearch">
+								<input type="search" name="search" placeholder="Search Lavish Software Wiki" title="Search Lavish Software Wiki [f]" accesskey="f" id="searchInput"/><input type="hidden" value="Special:Search" name="title"/><input type="submit" name="fulltext" value="Search" title="Search the pages for this text" id="mw-searchButton" class="searchButton mw-fallbackSearchButton"/><input type="submit" name="go" value="Go" title="Go to a page with this exact name if it exists" id="searchButton" class="searchButton"/>							</div>
+						</form>
+					</div>
+									</div>
+			</div>
+			<div id="mw-panel">
+				<div id="p-logo" role="banner"><a class="mw-wiki-logo" href="https://www.lavishsoft.com/wiki/index.php/Main_Page" title="Visit the main page"></a></div>
+						<div class="portal" role="navigation" id="p-navigation" aria-labelledby="p-navigation-label">
+			<h3 id="p-navigation-label">Navigation</h3>
+			<div class="body">
+								<ul>
+					<li id="n-mainpage-description"><a href="https://www.lavishsoft.com/wiki/index.php/Main_Page" title="Visit the main page [z]" accesskey="z">Main page</a></li><li id="n-LavishScript"><a href="https://www.lavishsoft.com/wiki/index.php/LavishScript">LavishScript</a></li><li id="n-LavishGUI"><a href="https://www.lavishsoft.com/wiki/index.php/LavishGUI">LavishGUI</a></li><li id="n-LavishGUI-2"><a href="https://www.lavishsoft.com/wiki/index.php/LavishGUI_2">LavishGUI 2</a></li><li id="n-recentchanges"><a href="https://www.lavishsoft.com/wiki/index.php/Special:RecentChanges" title="A list of recent changes in the wiki [r]" accesskey="r">Recent changes</a></li><li id="n-randompage"><a href="https://www.lavishsoft.com/wiki/index.php/Special:Random" title="Load a random page [x]" accesskey="x">Random page</a></li><li id="n-help"><a href="https://www.lavishsoft.com/wiki/index.php/Help:Contents" title="The place to find out">Help</a></li>				</ul>
+							</div>
+		</div>
+			<div class="portal" role="navigation" id="p-tb" aria-labelledby="p-tb-label">
+			<h3 id="p-tb-label">Toolbox</h3>
+			<div class="body">
+								<ul>
+					<li id="t-whatlinkshere"><a href="https://www.lavishsoft.com/wiki/index.php/Special:WhatLinksHere/LavishScript:Events" title="A list of all wiki pages that link here [j]" accesskey="j">What links here</a></li><li id="t-recentchangeslinked"><a href="https://www.lavishsoft.com/wiki/index.php/Special:RecentChangesLinked/LavishScript:Events" rel="nofollow" title="Recent changes in pages linked from this page [k]" accesskey="k">Related changes</a></li><li id="t-specialpages"><a href="https://www.lavishsoft.com/wiki/index.php/Special:SpecialPages" title="A list of all special pages [q]" accesskey="q">Special pages</a></li><li id="t-print"><a href="https://www.lavishsoft.com/wiki/index.php?title=LavishScript:Events&amp;printable=yes" rel="alternate" title="Printable version of this page [p]" accesskey="p">Printable version</a></li><li id="t-permalink"><a href="https://www.lavishsoft.com/wiki/index.php?title=LavishScript:Events&amp;oldid=8488" title="Permanent link to this revision of the page">Permanent link</a></li><li id="t-info"><a href="https://www.lavishsoft.com/wiki/index.php?title=LavishScript:Events&amp;action=info" title="More information about this page">Page information</a></li>				</ul>
+							</div>
+		</div>
+				</div>
+		</div>
+				<div id="footer" role="contentinfo">
+						<ul id="footer-info">
+								<li id="footer-info-lastmod"> This page was last edited on 2 December 2020, at 03:08.</li>
+							</ul>
+						<ul id="footer-places">
+								<li id="footer-places-privacy"><a href="https://www.lavishsoft.com/wiki/index.php/Lavish_Software_Wiki:Privacy_policy" title="Lavish Software Wiki:Privacy policy">Privacy policy</a></li>
+								<li id="footer-places-about"><a href="https://www.lavishsoft.com/wiki/index.php/Lavish_Software_Wiki:About" title="Lavish Software Wiki:About">About Lavish Software Wiki</a></li>
+								<li id="footer-places-disclaimer"><a href="https://www.lavishsoft.com/wiki/index.php/Lavish_Software_Wiki:General_disclaimer" title="Lavish Software Wiki:General disclaimer">Disclaimers</a></li>
+							</ul>
+										<ul id="footer-icons" class="noprint">
+										<li id="footer-poweredbyico">
+						<a href="http://www.mediawiki.org/"><img src="https://www.lavishsoft.com/wiki/resources/assets/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" srcset="/wiki/resources/assets/poweredby_mediawiki_132x47.png 1.5x, /wiki/resources/assets/poweredby_mediawiki_176x62.png 2x" width="88" height="31"/></a>					</li>
+									</ul>
+						<div style="clear: both;"></div>
+		</div>
+		
+
+<script>(window.RLQ=window.RLQ||[]).push(function(){mw.config.set({"wgPageParseReport":{"limitreport":{"cputime":"0.016","walltime":"0.016","ppvisitednodes":{"value":62,"limit":1000000},"ppgeneratednodes":{"value":68,"limit":1000000},"postexpandincludesize":{"value":0,"limit":2097152},"templateargumentsize":{"value":0,"limit":2097152},"expansiondepth":{"value":2,"limit":40},"expensivefunctioncount":{"value":0,"limit":100},"unstrip-depth":{"value":0,"limit":20},"unstrip-size":{"value":0,"limit":5000000},"timingprofile":["100.00%    0.000      1 -total"]},"cachereport":{"timestamp":"20250916162930","ttl":86400,"transientcontent":false}}});mw.config.set({"wgBackendResponseTime":1129});});</script>
+</body>
+
+<!-- Mirrored from www.lavishsoft.com/wiki/index.php/LavishScript:Events by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 16 Sep 2025 16:30:22 GMT -->
+</html>

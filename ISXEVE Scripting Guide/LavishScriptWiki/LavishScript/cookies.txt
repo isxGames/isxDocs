@@ -1,0 +1,5 @@
+# HTTrack Website Copier Cookie File
+# This file format is compatible with Netscape cookies
+.lavishsoft.com	TRUE	/	FALSE	1999999999	phpbb3_ivh6h_u	1
+.lavishsoft.com	TRUE	/	FALSE	1999999999	phpbb3_ivh6h_sid	f8e458666db5442961e377e3a36c76f4
+

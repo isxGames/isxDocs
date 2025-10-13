@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html class="client-nojs" lang="en" dir="ltr">
+
+<!-- Mirrored from www.lavishsoft.com/wiki/index.php/LavishScript:Developing_Top-Level_Objects by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 16 Sep 2025 16:30:22 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=UTF-8" /><!-- /Added by HTTrack -->
+<head>
+<meta charset="UTF-8"/>
+<title>LavishScript:Developing Top-Level Objects - Lavish Software Wiki</title>
+<script>document.documentElement.className = document.documentElement.className.replace( /(^|\s)client-nojs(\s|$)/, "$1client-js$2" );</script>
+<script>(window.RLQ=window.RLQ||[]).push(function(){mw.config.set({"wgCanonicalNamespace":"","wgCanonicalSpecialPageName":false,"wgNamespaceNumber":0,"wgPageName":"LavishScript:Developing_Top-Level_Objects","wgTitle":"LavishScript:Developing Top-Level Objects","wgCurRevisionId":4567,"wgRevisionId":4567,"wgArticleId":1213,"wgIsArticle":true,"wgIsRedirect":false,"wgAction":"view","wgUserName":null,"wgUserGroups":["*"],"wgCategories":["Stub"],"wgBreakFrames":false,"wgPageContentLanguage":"en","wgPageContentModel":"wikitext","wgSeparatorTransformTable":["",""],"wgDigitTransformTable":["",""],"wgDefaultDateFormat":"dmy","wgMonthNames":["","January","February","March","April","May","June","July","August","September","October","November","December"],"wgMonthNamesShort":["","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],"wgRelevantPageName":"LavishScript:Developing_Top-Level_Objects","wgRelevantArticleId":1213,"wgRequestId":"e6c3e9aeb4bab59d6503b4fb","wgCSPNonce":false,"wgIsProbablyEditable":false,"wgRelevantPageIsProbablyEditable":false,"wgRestrictionEdit":[],"wgRestrictionMove":[]});mw.loader.state({"site.styles":"ready","noscript":"ready","user.styles":"ready","user":"ready","user.options":"ready","user.tokens":"loading","mediawiki.legacy.shared":"ready","mediawiki.legacy.commonPrint":"ready","mediawiki.toc.styles":"ready","mediawiki.skinning.interface":"ready","skins.vector.styles":"ready"});mw.loader.implement("user.tokens@0tffind",function($,jQuery,require,module){/*@nomin*/mw.user.tokens.set({"editToken":"+\\","patrolToken":"+\\","watchToken":"+\\","csrfToken":"+\\"});
+});RLPAGEMODULES=["site","mediawiki.page.startup","mediawiki.page.ready","mediawiki.toc","mediawiki.searchSuggest","skins.vector.js"];mw.loader.load(RLPAGEMODULES);});</script>
+<link rel="stylesheet" href="https://www.lavishsoft.com/wiki/load.php?lang=en&amp;modules=mediawiki.legacy.commonPrint%2Cshared%7Cmediawiki.skinning.interface%7Cmediawiki.toc.styles%7Cskins.vector.styles&amp;only=styles&amp;skin=vector"/>
+<script async="" src="https://www.lavishsoft.com/wiki/load.php?lang=en&amp;modules=startup&amp;only=scripts&amp;skin=vector"></script>
+<meta name="ResourceLoaderDynamicStyles" content=""/>
+<meta name="generator" content="MediaWiki 1.33.0"/>
+<link rel="shortcut icon" href="https://www.lavishsoft.com/favicon.ico"/>
+<link rel="search" type="application/opensearchdescription+xml" href="https://www.lavishsoft.com/wiki/opensearch_desc.php" title="Lavish Software Wiki (en)"/>
+<link rel="EditURI" type="application/rsd+xml" href="https://www.lavishsoft.com/wiki/api.php?action=rsd"/>
+<link rel="alternate" type="application/atom+xml" title="Lavish Software Wiki Atom feed" href="https://www.lavishsoft.com/wiki/index.php?title=Special:RecentChanges&amp;feed=atom"/>
+<!--[if lt IE 9]><script src="/wiki/load.php?lang=en&amp;modules=html5shiv&amp;only=scripts&amp;skin=vector&amp;sync=1"></script><![endif]-->
+</head>
+<body class="mediawiki ltr sitedir-ltr mw-hide-empty-elt ns-0 ns-subject page-LavishScript_Developing_Top-Level_Objects rootpage-LavishScript_Developing_Top-Level_Objects skin-vector action-view">
+<div id="mw-page-base" class="noprint"></div>
+<div id="mw-head-base" class="noprint"></div>
+<div id="content" class="mw-body" role="main">
+	<a id="top"></a>
+	
+	<div class="mw-indicators mw-body-content">
+</div>
+
+	<h1 id="firstHeading" class="firstHeading" lang="en">LavishScript:Developing Top-Level Objects</h1>
+	
+	<div id="bodyContent" class="mw-body-content">
+		<div id="siteSub" class="noprint">From Lavish Software Wiki</div>
+		<div id="contentSub"></div>
+		
+		
+		
+		<div id="jump-to-nav"></div>
+		<a class="mw-jump-link" href="#mw-head">Jump to navigation</a>
+		<a class="mw-jump-link" href="#p-search">Jump to search</a>
+		<div id="mw-content-text" lang="en" dir="ltr" class="mw-content-ltr"><div class="mw-parser-output"><div id="toc" class="toc"><input type="checkbox" role="button" id="toctogglecheckbox" class="toctogglecheckbox" style="display:none" /><div class="toctitle" lang="en" dir="ltr"><h2>Contents</h2><span class="toctogglespan"><label class="toctogglelabel" for="toctogglecheckbox"></label></span></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#Introduction"><span class="tocnumber">1</span> <span class="toctext">Introduction</span></a></li>
+<li class="toclevel-1 tocsection-2"><a href="#Design"><span class="tocnumber">2</span> <span class="toctext">Design</span></a>
+<ul>
+<li class="toclevel-2 tocsection-3"><a href="#Organization"><span class="tocnumber">2.1</span> <span class="toctext">Organization</span></a></li>
+<li class="toclevel-2 tocsection-4"><a href="#Parameters"><span class="tocnumber">2.2</span> <span class="toctext">Parameters</span></a></li>
+<li class="toclevel-2 tocsection-5"><a href="#Returned_Values"><span class="tocnumber">2.3</span> <span class="toctext">Returned Values</span></a></li>
+<li class="toclevel-2 tocsection-6"><a href="#Forms"><span class="tocnumber">2.4</span> <span class="toctext">Forms</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-7"><a href="#Implementation"><span class="tocnumber">3</span> <span class="toctext">Implementation</span></a>
+<ul>
+<li class="toclevel-2 tocsection-8"><a href="#Function_Declaration"><span class="tocnumber">3.1</span> <span class="toctext">Function Declaration</span></a>
+<ul>
+<li class="toclevel-3 tocsection-9"><a href="#Function_Return_Value"><span class="tocnumber">3.1.1</span> <span class="toctext">Function Return Value</span></a></li>
+<li class="toclevel-3 tocsection-10"><a href="#Function_Name"><span class="tocnumber">3.1.2</span> <span class="toctext">Function Name</span></a></li>
+<li class="toclevel-3 tocsection-11"><a href="#argc"><span class="tocnumber">3.1.3</span> <span class="toctext">argc</span></a></li>
+<li class="toclevel-3 tocsection-12"><a href="#argv"><span class="tocnumber">3.1.4</span> <span class="toctext">argv</span></a></li>
+<li class="toclevel-3 tocsection-13"><a href="#Dest"><span class="tocnumber">3.1.5</span> <span class="toctext">Dest</span></a></li>
+</ul>
+</li>
+<li class="toclevel-2 tocsection-14"><a href="#Examples"><span class="tocnumber">3.2</span> <span class="toctext">Examples</span></a>
+<ul>
+<li class="toclevel-3 tocsection-15"><a href="#Example_1"><span class="tocnumber">3.2.1</span> <span class="toctext">Example 1</span></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-16"><a href="#See_Also"><span class="tocnumber">4</span> <span class="toctext">See Also</span></a></li>
+</ul>
+</div>
+
+<h2><span class="mw-headline" id="Introduction">Introduction</span></h2>
+<p>A Top-Level Object is a LavishScript scripter's entry point into a portion of your world.
+</p>
+<h2><span class="mw-headline" id="Design">Design</span></h2>
+<h3><span class="mw-headline" id="Organization">Organization</span></h3>
+<p>LavishScript is an object-oriented system. Top-Level Objects should ideally be limited to objects that are not a part of another object.  For example, you do not want to have a Top-Level Object that specifically retrieves your character's health in a game -- that should be a part of a character object, and referenced by something like "Me" (short and sweet, and easy to understand).
+</p>
+<h3><span class="mw-headline" id="Parameters">Parameters</span></h3>
+<p>Top-Level Objects can use any number of parameters (arguments), accessed through LavishScript via "indices" and accessed in your program via "argc" and "argv" (basically standard for C console apps, though for Top-Level Objects the name of the object is NOT given as an argument).  These arguments can be used in any fashion -- they are given to you as text, already parsed for any data sequences and such.  You do not need to use any arguments at all.  Most Top-Level Objects do not use parameters.
+</p><p>Examples of possible parameter uses:
+</p>
+<ul><li>Selection from a list by name</li>
+<li>Selection from a list by number</li></ul>
+<dl><dd>Note that this can be done in the same Top-Level Object as searching by name by using the IsNumber helper function to determine whether the argument is a number</dd></dl>
+<ul><li>Search conditions</li>
+<li>Selection of following parameters</li></ul>
+<dl><dd>For example, the "If" Top-Level Object returns a string object containing the second parameter if the first is not zero, or the third parameter if it exists and the first <i>is</i> zero.  The "Arg" Top-Level Object also returns a string object containing a given parameter based on the first parameter's integer value.  The "Select" Top-Level Object returns an int object containing the index of a given parameter, based on matching the first parameter's string value.</dd></dl>
+<h3><span class="mw-headline" id="Returned_Values">Returned Values</span></h3>
+<p>Top-Level Objects can return any valid object, or indicate to the system that the object is not valid.  You wouldn't want to return an object for "Target" if you did not currently have a target, for example.  The Top-Level Object must indicate both the <i>type</i> of object and the object itself.
+</p>
+<h3><span class="mw-headline" id="Forms">Forms</span></h3>
+<p>A Top-Level Object "form" consists of the Top-Level Object, a returned object type, and a set of parameters.  Top-Level Objects can have any number of forms, and the system itself is not concerned with that -- this is simply to describe to your users how to use your Top-Level Object.
+</p><p>The <a href="https://www.lavishsoft.com/wiki/index.php/TLO:If" title="TLO:If">If</a> Top-Level Object has two forms, as described below:
+</p>
+<ul><li><a href="https://www.lavishsoft.com/wiki/index.php/DataType:string" class="mw-redirect" title="DataType:string">string</a> <b>If[</b>condition<b>,</b>value when true<b>]</b></li>
+<li><a href="https://www.lavishsoft.com/wiki/index.php/DataType:string" class="mw-redirect" title="DataType:string">string</a> <b>If[</b>condition<b>,</b>value when true<b>,</b>value when false<b>]</b></li></ul>
+<p>Each form description shows the return type when the Top-Level Object is used in a certain way.  In this case, the Top-Level Object will always return a string, but may be used in two different ways.
+</p><p>Some identical ways of using Top-Level Objects may also have multiple return types, depending on external conditions.  This is usually undesirable and potentially confusing, but is clearly a possibility and in some cases perfectly acceptable.
+</p>
+<h2><span class="mw-headline" id="Implementation">Implementation</span></h2>
+<h3><span class="mw-headline" id="Function_Declaration">Function Declaration</span></h3>
+<p>A Top-Level Object function declaration looks like this:
+</p>
+<pre>bool TLO_If(int argc, char *argv[], LSOBJECT &amp;Dest)
+</pre>
+<h4><span class="mw-headline" id="Function_Return_Value">Function Return Value</span></h4>
+<p>A Top-Level Object must return <b>true</b> if a valid object is being returned, and <b>false</b> if a valid object is not being returned.  It is important to not return <b>true</b> without a valid object!
+</p>
+<h4><span class="mw-headline" id="Function_Name">Function Name</span></h4>
+<p>We recommend this simple naming convention for Top-Level Objects, as it clearly shows that it is a Top-Level Object (TLO) and its name.  TLO_If, as you probably guessed, is the "If" Top-Level Object.
+</p>
+<h4><span class="mw-headline" id="argc">argc</span></h4>
+<p>This parameter to the function is the number of arguments passed via LavishScript indices to the Top-Level Object.  For example, ${If[1&gt;2,ERROR]} has two arguments.  argc would be 2.  This is in contrast to <i>commands</i>, where the argc includes the full name of the command.
+</p>
+<h4><span class="mw-headline" id="argv">argv</span></h4>
+<p>This parameter to the function is the array of arguments passed via LavishScript indices to the Top-Level Object.  For example, ${If[1&gt;2,ERROR]} would have the following arguments:
+</p>
+<ul><li>1&gt;2</li>
+<li>ERROR</li></ul>
+<p>Each is accessed as a standard C string (character array) using argv[#], which can be shown like so:
+</p>
+<ul><li>printf("%s",argv[0]);</li></ul>
+<dl><dd>1&gt;2</dd></dl>
+<ul><li>printf("%s",argv[1]);</li></ul>
+<dl><dd>ERROR</dd></dl>
+<h4><span class="mw-headline" id="Dest">Dest</span></h4>
+<p>This parameter to the function (short for Destination) stores the "returned" LavishScript object and its type.  LSOBJECT has a <b>union</b> that can be used to set the value to any type depending on the object retrieved (for integers use Dest.Int, for floats use Dest.Float, for pointers to things use Dest.Ptr, etc), and a member called ObjectType (or Type for short) which accepts a pointer to a valid LSTypeDefinition.  The value placed in the union must be a valid value for the LSTypeDefinition -- you wouldn't want to set Ret.DWord to a random number and then set Ret.Type to pStringType.  That would literally be the same as setting a char* variable to a random number, then trying to print the string at that location (which most often would result in a crash).  pFloatType expects a float, pIntType expects an integer, pIntPtrType expects a pointer to a 32-bit integer, and so on.  Similarly, your custom "player" data type might expect a pointer to a player class.  That's all a LavishScript object is, the actual value, and then a "data type" to see how to view it!
+</p>
+<h3><span class="mw-headline" id="Examples">Examples</span></h3>
+<h4><span class="mw-headline" id="Example_1">Example 1</span></h4>
+<p>A custom player object TLO.  In this example, pPlayer is a pointer to the actual player data (which may be a "struct" or "class" in the actual game, for example).  The pPlayer pointer is checked, to make sure the player data exists (recalling from earlier that the
+object must exist if we return true).
+</p>
+<pre>bool TLO_Me(int argc, char *argv[], LSOBJECT &amp;Dest)
+{
+  if (Dest.Ptr=pPlayer)
+  {
+     Dest.Type=pPlayerType;
+     return true;
+  }
+  return false;
+}
+</pre>
+<h2><span class="mw-headline" id="See_Also">See Also</span></h2>
+<ul><li><a href="https://www.lavishsoft.com/wiki/index.php/LavishScript" title="LavishScript">LavishScript</a></li></ul>
+<div class="boilerplate metadata" id="stub"><table cellpadding="5" cellspacing="0" style="background-color: transparent;"><tbody><tr><td><i>This article is a <a href="https://www.lavishsoft.com/wiki/index.php/Stub" title="Stub">stub</a>. You can help us by <a rel="nofollow" class="external text" href="https://lavishsoft.com/wiki/index.php?title=LavishScript:Developing_Top-Level_Objects&amp;action=edit">expanding it</a></i>.</td></tr></tbody></table></div>
+<!-- 
+NewPP limit report
+Cached time: 20250915175524
+Cache expiry: 86400
+Dynamic content: false
+CPU time usage: 0.020 seconds
+Real time usage: 0.022 seconds
+Preprocessor visited node count: 71/1000000
+Preprocessor generated node count: 104/1000000
+Post‐expand include size: 478/2097152 bytes
+Template argument size: 0/2097152 bytes
+Highest expansion depth: 3/40
+Expensive parser function count: 0/100
+Unstrip recursion depth: 0/20
+Unstrip post‐expand size: 0/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00%    3.724      1 Template:Stub
+100.00%    3.724      1 -total
+-->
+
+<!-- Saved in parser cache with key lax-wiki_:pcache:idhash:1213-0!canonical and timestamp 20250915175524 and revision id 4567
+ -->
+</div></div>
+		
+		<div class="printfooter">Retrieved from "<a dir="ltr" href="https://www.lavishsoft.com/wiki/index.php?title=LavishScript:Developing_Top-Level_Objects&amp;oldid=4567">https://www.lavishsoft.com/wiki/index.php?title=LavishScript:Developing_Top-Level_Objects&amp;oldid=4567</a>"</div>
+		
+		<div id="catlinks" class="catlinks" data-mw="interface"><div id="mw-normal-catlinks" class="mw-normal-catlinks"><a href="https://www.lavishsoft.com/wiki/index.php/Special:Categories" title="Special:Categories">Category</a>: <ul><li><a href="https://www.lavishsoft.com/wiki/index.php/Category:Stub" title="Category:Stub">Stub</a></li></ul></div></div>
+		
+		<div class="visualClear"></div>
+		
+	</div>
+</div>
+
+		<div id="mw-navigation">
+			<h2>Navigation menu</h2>
+			<div id="mw-head">
+									<div id="p-personal" role="navigation" aria-labelledby="p-personal-label">
+						<h3 id="p-personal-label">Personal tools</h3>
+						<ul>
+							<li id="pt-login"><a href="https://www.lavishsoft.com/forum-x/ucp.php?mode=login&amp;redirect=https%3A%2F%2Fwww.lavishsoft.com%2Fwiki%2Findex.php%2FLavishScript%3ADeveloping_Top-Level_Objects" title="You are encouraged to log in; however, it is not mandatory [o]" accesskey="o">Log in</a></li>						</ul>
+					</div>
+									<div id="left-navigation">
+										<div id="p-namespaces" role="navigation" class="vectorTabs" aria-labelledby="p-namespaces-label">
+						<h3 id="p-namespaces-label">Namespaces</h3>
+						<ul>
+							<li id="ca-nstab-main" class="selected"><span><a href="LavishScript_Developing_Top-Level_Objects.html" title="View the content page [c]" accesskey="c">Article</a></span></li><li id="ca-talk" class="new"><span><a href="https://www.lavishsoft.com/wiki/index.php?title=Talk:LavishScript:Developing_Top-Level_Objects&amp;action=edit&amp;redlink=1" rel="discussion" title="Discussion about the content page (page does not exist) [t]" accesskey="t">Discussion</a></span></li>						</ul>
+					</div>
+										<div id="p-variants" role="navigation" class="vectorMenu emptyPortlet" aria-labelledby="p-variants-label">
+												<input type="checkbox" class="vectorMenuCheckbox" aria-labelledby="p-variants-label" />
+						<h3 id="p-variants-label">
+							<span>Variants</span>
+						</h3>
+						<ul class="menu">
+													</ul>
+					</div>
+									</div>
+				<div id="right-navigation">
+										<div id="p-views" role="navigation" class="vectorTabs" aria-labelledby="p-views-label">
+						<h3 id="p-views-label">Views</h3>
+						<ul>
+							<li id="ca-view" class="collapsible selected"><span><a href="LavishScript_Developing_Top-Level_Objects.html">Read</a></span></li><li id="ca-viewsource" class="collapsible"><span><a href="https://www.lavishsoft.com/wiki/index.php?title=LavishScript:Developing_Top-Level_Objects&amp;action=edit" title="This page is protected.&#10;You can view its source [e]" accesskey="e">View source</a></span></li><li id="ca-history" class="collapsible"><span><a href="https://www.lavishsoft.com/wiki/index.php?title=LavishScript:Developing_Top-Level_Objects&amp;action=history" title="Past revisions of this page [h]" accesskey="h">View history</a></span></li>						</ul>
+					</div>
+										<div id="p-cactions" role="navigation" class="vectorMenu emptyPortlet" aria-labelledby="p-cactions-label">
+						<input type="checkbox" class="vectorMenuCheckbox" aria-labelledby="p-cactions-label" />
+						<h3 id="p-cactions-label"><span>More</span></h3>
+						<ul class="menu">
+													</ul>
+					</div>
+										<div id="p-search" role="search">
+						<h3>
+							<label for="searchInput">Search</label>
+						</h3>
+						<form action="https://www.lavishsoft.com/wiki/index.php" id="searchform">
+							<div id="simpleSearch">
+								<input type="search" name="search" placeholder="Search Lavish Software Wiki" title="Search Lavish Software Wiki [f]" accesskey="f" id="searchInput"/><input type="hidden" value="Special:Search" name="title"/><input type="submit" name="fulltext" value="Search" title="Search the pages for this text" id="mw-searchButton" class="searchButton mw-fallbackSearchButton"/><input type="submit" name="go" value="Go" title="Go to a page with this exact name if it exists" id="searchButton" class="searchButton"/>							</div>
+						</form>
+					</div>
+									</div>
+			</div>
+			<div id="mw-panel">
+				<div id="p-logo" role="banner"><a class="mw-wiki-logo" href="https://www.lavishsoft.com/wiki/index.php/Main_Page" title="Visit the main page"></a></div>
+						<div class="portal" role="navigation" id="p-navigation" aria-labelledby="p-navigation-label">
+			<h3 id="p-navigation-label">Navigation</h3>
+			<div class="body">
+								<ul>
+					<li id="n-mainpage-description"><a href="https://www.lavishsoft.com/wiki/index.php/Main_Page" title="Visit the main page [z]" accesskey="z">Main page</a></li><li id="n-LavishScript"><a href="https://www.lavishsoft.com/wiki/index.php/LavishScript">LavishScript</a></li><li id="n-LavishGUI"><a href="https://www.lavishsoft.com/wiki/index.php/LavishGUI">LavishGUI</a></li><li id="n-LavishGUI-2"><a href="https://www.lavishsoft.com/wiki/index.php/LavishGUI_2">LavishGUI 2</a></li><li id="n-recentchanges"><a href="https://www.lavishsoft.com/wiki/index.php/Special:RecentChanges" title="A list of recent changes in the wiki [r]" accesskey="r">Recent changes</a></li><li id="n-randompage"><a href="https://www.lavishsoft.com/wiki/index.php/Special:Random" title="Load a random page [x]" accesskey="x">Random page</a></li><li id="n-help"><a href="https://www.lavishsoft.com/wiki/index.php/Help:Contents" title="The place to find out">Help</a></li>				</ul>
+							</div>
+		</div>
+			<div class="portal" role="navigation" id="p-tb" aria-labelledby="p-tb-label">
+			<h3 id="p-tb-label">Toolbox</h3>
+			<div class="body">
+								<ul>
+					<li id="t-whatlinkshere"><a href="https://www.lavishsoft.com/wiki/index.php/Special:WhatLinksHere/LavishScript:Developing_Top-Level_Objects" title="A list of all wiki pages that link here [j]" accesskey="j">What links here</a></li><li id="t-recentchangeslinked"><a href="https://www.lavishsoft.com/wiki/index.php/Special:RecentChangesLinked/LavishScript:Developing_Top-Level_Objects" rel="nofollow" title="Recent changes in pages linked from this page [k]" accesskey="k">Related changes</a></li><li id="t-specialpages"><a href="https://www.lavishsoft.com/wiki/index.php/Special:SpecialPages" title="A list of all special pages [q]" accesskey="q">Special pages</a></li><li id="t-print"><a href="https://www.lavishsoft.com/wiki/index.php?title=LavishScript:Developing_Top-Level_Objects&amp;printable=yes" rel="alternate" title="Printable version of this page [p]" accesskey="p">Printable version</a></li><li id="t-permalink"><a href="https://www.lavishsoft.com/wiki/index.php?title=LavishScript:Developing_Top-Level_Objects&amp;oldid=4567" title="Permanent link to this revision of the page">Permanent link</a></li><li id="t-info"><a href="https://www.lavishsoft.com/wiki/index.php?title=LavishScript:Developing_Top-Level_Objects&amp;action=info" title="More information about this page">Page information</a></li>				</ul>
+							</div>
+		</div>
+				</div>
+		</div>
+				<div id="footer" role="contentinfo">
+						<ul id="footer-info">
+								<li id="footer-info-lastmod"> This page was last edited on 8 September 2005, at 15:09.</li>
+							</ul>
+						<ul id="footer-places">
+								<li id="footer-places-privacy"><a href="https://www.lavishsoft.com/wiki/index.php/Lavish_Software_Wiki:Privacy_policy" title="Lavish Software Wiki:Privacy policy">Privacy policy</a></li>
+								<li id="footer-places-about"><a href="https://www.lavishsoft.com/wiki/index.php/Lavish_Software_Wiki:About" title="Lavish Software Wiki:About">About Lavish Software Wiki</a></li>
+								<li id="footer-places-disclaimer"><a href="https://www.lavishsoft.com/wiki/index.php/Lavish_Software_Wiki:General_disclaimer" title="Lavish Software Wiki:General disclaimer">Disclaimers</a></li>
+							</ul>
+										<ul id="footer-icons" class="noprint">
+										<li id="footer-poweredbyico">
+						<a href="http://www.mediawiki.org/"><img src="https://www.lavishsoft.com/wiki/resources/assets/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" srcset="/wiki/resources/assets/poweredby_mediawiki_132x47.png 1.5x, /wiki/resources/assets/poweredby_mediawiki_176x62.png 2x" width="88" height="31"/></a>					</li>
+									</ul>
+						<div style="clear: both;"></div>
+		</div>
+		
+
+<script>(window.RLQ=window.RLQ||[]).push(function(){mw.config.set({"wgPageParseReport":{"limitreport":{"cputime":"0.020","walltime":"0.022","ppvisitednodes":{"value":71,"limit":1000000},"ppgeneratednodes":{"value":104,"limit":1000000},"postexpandincludesize":{"value":478,"limit":2097152},"templateargumentsize":{"value":0,"limit":2097152},"expansiondepth":{"value":3,"limit":40},"expensivefunctioncount":{"value":0,"limit":100},"unstrip-depth":{"value":0,"limit":20},"unstrip-size":{"value":0,"limit":5000000},"timingprofile":["100.00%    3.724      1 Template:Stub","100.00%    3.724      1 -total"]},"cachereport":{"timestamp":"20250915175524","ttl":86400,"transientcontent":false}}});mw.config.set({"wgBackendResponseTime":967});});</script>
+</body>
+
+<!-- Mirrored from www.lavishsoft.com/wiki/index.php/LavishScript:Developing_Top-Level_Objects by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 16 Sep 2025 16:30:22 GMT -->
+</html>

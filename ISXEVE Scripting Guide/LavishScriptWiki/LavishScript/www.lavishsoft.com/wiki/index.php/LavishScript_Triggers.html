@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html class="client-nojs" lang="en" dir="ltr">
+
+<!-- Mirrored from www.lavishsoft.com/wiki/index.php/LavishScript:Triggers by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 16 Sep 2025 16:30:23 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=UTF-8" /><!-- /Added by HTTrack -->
+<head>
+<meta charset="UTF-8"/>
+<title>LavishScript:Triggers - Lavish Software Wiki</title>
+<script>document.documentElement.className = document.documentElement.className.replace( /(^|\s)client-nojs(\s|$)/, "$1client-js$2" );</script>
+<script>(window.RLQ=window.RLQ||[]).push(function(){mw.config.set({"wgCanonicalNamespace":"","wgCanonicalSpecialPageName":false,"wgNamespaceNumber":0,"wgPageName":"LavishScript:Triggers","wgTitle":"LavishScript:Triggers","wgCurRevisionId":7491,"wgRevisionId":7491,"wgArticleId":2239,"wgIsArticle":true,"wgIsRedirect":false,"wgAction":"view","wgUserName":null,"wgUserGroups":["*"],"wgCategories":["LavishScript"],"wgBreakFrames":false,"wgPageContentLanguage":"en","wgPageContentModel":"wikitext","wgSeparatorTransformTable":["",""],"wgDigitTransformTable":["",""],"wgDefaultDateFormat":"dmy","wgMonthNames":["","January","February","March","April","May","June","July","August","September","October","November","December"],"wgMonthNamesShort":["","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],"wgRelevantPageName":"LavishScript:Triggers","wgRelevantArticleId":2239,"wgRequestId":"7dac568d4e83c69fc135342a","wgCSPNonce":false,"wgIsProbablyEditable":false,"wgRelevantPageIsProbablyEditable":false,"wgRestrictionEdit":[],"wgRestrictionMove":[]});mw.loader.state({"site.styles":"ready","noscript":"ready","user.styles":"ready","user":"ready","user.options":"ready","user.tokens":"loading","mediawiki.legacy.shared":"ready","mediawiki.legacy.commonPrint":"ready","mediawiki.toc.styles":"ready","mediawiki.skinning.interface":"ready","skins.vector.styles":"ready"});mw.loader.implement("user.tokens@0tffind",function($,jQuery,require,module){/*@nomin*/mw.user.tokens.set({"editToken":"+\\","patrolToken":"+\\","watchToken":"+\\","csrfToken":"+\\"});
+});RLPAGEMODULES=["site","mediawiki.page.startup","mediawiki.page.ready","mediawiki.toc","mediawiki.searchSuggest","skins.vector.js"];mw.loader.load(RLPAGEMODULES);});</script>
+<link rel="stylesheet" href="https://www.lavishsoft.com/wiki/load.php?lang=en&amp;modules=mediawiki.legacy.commonPrint%2Cshared%7Cmediawiki.skinning.interface%7Cmediawiki.toc.styles%7Cskins.vector.styles&amp;only=styles&amp;skin=vector"/>
+<script async="" src="https://www.lavishsoft.com/wiki/load.php?lang=en&amp;modules=startup&amp;only=scripts&amp;skin=vector"></script>
+<meta name="ResourceLoaderDynamicStyles" content=""/>
+<meta name="generator" content="MediaWiki 1.33.0"/>
+<link rel="shortcut icon" href="https://www.lavishsoft.com/favicon.ico"/>
+<link rel="search" type="application/opensearchdescription+xml" href="https://www.lavishsoft.com/wiki/opensearch_desc.php" title="Lavish Software Wiki (en)"/>
+<link rel="EditURI" type="application/rsd+xml" href="https://www.lavishsoft.com/wiki/api.php?action=rsd"/>
+<link rel="alternate" type="application/atom+xml" title="Lavish Software Wiki Atom feed" href="https://www.lavishsoft.com/wiki/index.php?title=Special:RecentChanges&amp;feed=atom"/>
+<!--[if lt IE 9]><script src="/wiki/load.php?lang=en&amp;modules=html5shiv&amp;only=scripts&amp;skin=vector&amp;sync=1"></script><![endif]-->
+</head>
+<body class="mediawiki ltr sitedir-ltr mw-hide-empty-elt ns-0 ns-subject page-LavishScript_Triggers rootpage-LavishScript_Triggers skin-vector action-view">
+<div id="mw-page-base" class="noprint"></div>
+<div id="mw-head-base" class="noprint"></div>
+<div id="content" class="mw-body" role="main">
+	<a id="top"></a>
+	
+	<div class="mw-indicators mw-body-content">
+</div>
+
+	<h1 id="firstHeading" class="firstHeading" lang="en">LavishScript:Triggers</h1>
+	
+	<div id="bodyContent" class="mw-body-content">
+		<div id="siteSub" class="noprint">From Lavish Software Wiki</div>
+		<div id="contentSub"></div>
+		
+		
+		
+		<div id="jump-to-nav"></div>
+		<a class="mw-jump-link" href="#mw-head">Jump to navigation</a>
+		<a class="mw-jump-link" href="#p-search">Jump to search</a>
+		<div id="mw-content-text" lang="en" dir="ltr" class="mw-content-ltr"><div class="mw-parser-output"><div id="toc" class="toc"><input type="checkbox" role="button" id="toctogglecheckbox" class="toctogglecheckbox" style="display:none" /><div class="toctitle" lang="en" dir="ltr"><h2>Contents</h2><span class="toctogglespan"><label class="toctogglelabel" for="toctogglecheckbox"></label></span></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#Overview"><span class="tocnumber">1</span> <span class="toctext">Overview</span></a></li>
+<li class="toclevel-1 tocsection-2"><a href="#Trigger_Text_format"><span class="tocnumber">2</span> <span class="toctext">Trigger Text format</span></a></li>
+<li class="toclevel-1 tocsection-3"><a href="#Creating_a_Trigger_in_LavishScript"><span class="tocnumber">3</span> <span class="toctext">Creating a Trigger in LavishScript</span></a></li>
+<li class="toclevel-1 tocsection-4"><a href="#Processing_a_script_command_queue"><span class="tocnumber">4</span> <span class="toctext">Processing a script command queue</span></a></li>
+<li class="toclevel-1 tocsection-5"><a href="#Tips_for_using_triggers"><span class="tocnumber">5</span> <span class="toctext">Tips for using triggers</span></a></li>
+<li class="toclevel-1 tocsection-6"><a href="#See_Also"><span class="tocnumber">6</span> <span class="toctext">See Also</span></a></li>
+</ul>
+</div>
+
+<h2><span class="mw-headline" id="Overview">Overview</span></h2>
+<p>LavishScript uses <a href="https://www.lavishsoft.com/wiki/index.php?title=Blech&amp;action=edit&amp;redlink=1" class="new" title="Blech (page does not exist)">Blech</a>, an open-source solution for picking needles out of a haystack, in order to quickly and easily provide a method of text-based "triggers".  A trigger can cause an action to be immediately executed or placed in a script's command queue, upon receiving a line of text that matches the trigger text.
+</p><p>For example, if a game produced a line of chat that says
+</p>
+<pre>You have entered the kitchen.
+</pre>
+<p>and if that text was filtered through the LavishScript trigger handler (by a LavishScript module, or in the case of Inner Space, a game-specific IS extension), a LavishScript trigger could execute a function when a line matching this general form is found, and even retrieve the variable portions (e.g. "the kitchen") for you.
+</p><p>Note that this does not state nor imply that any given game's text will be filtered through the trigger handler -- it must be explicitly done per game.  Any text that flows through a LavishScript console, however, is automatically filtered through the trigger handler.
+</p>
+<h2><span class="mw-headline" id="Trigger_Text_format">Trigger Text format</span></h2>
+<p>Trigger text must match the ENTIRE line, not just a portion, in order to "hit".  This makes for common mistakes of explicitly allowing unknown portions of text before and after the actual trigger text -- avoid doing so at all costs, as this is not only inefficient, it can also be costly in other ways if someone wants to be malicious.  LavishScript trigger text is case insensiive.
+</p><p>Blech allows for two types of variable portions of any given trigger text, which essentially boils down to <b>known</b>, and <b>unknown</b>.  Known variable portions would be things known during script execution, but not at the time the script developed, <b>and</b> that may change during the lifespan of the trigger.  If the variable portion would not change during the lifespan of the trigger, then it is in fact not variable at all, and would simply be text used as part of the trigger.  Unknown variable portions would be things that simply cannot be determined without having direct access to the game logic -- an amount of damage being done in a hit, the name of a monster, and so on.  LavishScript uses the <b>@</b> symbol for unknown, and <b>%</b> symbol for known.  To use these characters as part of the trigger text instead of an indication of a variable portion of the text, simply use two of the character consecutively, such as @@ or&#160;%%, to mean one instance of that character.
+</p><p>To indicate an unknown variable portion, create a name and place the name between two @ symbols, such as <b>@damage@</b>.  <b>LavishScript ignores the name</b>, so just make it something to do with what the variable portion of the line would contain (note that the same name can be used multiple times in the same line).  <b>The only name that has any special effect is *</b>, such as <b>@*@</b> -- more on that later.
+</p><p>To indicate a known variable portion, place text and escaped data sequences between two&#160;% symbols, such as <b>%\${Target}'s corpse%</b>.  Escaping of course ensures that the data sequence is reduced to text when the trigger is checked, as opposed to when the trigger is created.
+</p>
+<h2><span class="mw-headline" id="Creating_a_Trigger_in_LavishScript">Creating a Trigger in LavishScript</span></h2>
+<p>Triggers can be created in a script using the <a href="https://www.lavishsoft.com/wiki/index.php/Command:AddTrigger" title="Command:AddTrigger">AddTrigger command</a>.  This command requires two parameters, one being the name of a function for when the trigger hits, and the other being the trigger text.  If the function is <i>atomic</i>, the trigger will execute the atom immediately.  Otherwise, a function <a href="https://www.lavishsoft.com/wiki/index.php/Command:Call" title="Command:Call">Call</a> is placed in the script's command queue.  Any number of triggers may use the same function or trigger text.  If multiple triggers hit on the same text, the functions will execute in arbitrary (unspecified) order.  Some order CAN be enforced by using atoms and functions separately for the same trigger text -- the atoms will be executed immediately, while the functions will rely on the script to explicitly process its command queue.
+</p>
+<pre>/* You have entered the kitchen. */
+AddTrigger GotRoom "You have entered @room@."
+/* There is a chef standing here. */
+AddTrigger GotNPC "There is @who@ standing here."
+</pre>
+<p>All trigger functions, atomic or not, must follow the same basic declaration.  First of all, there is always at least one parameter given to the function, and that is the full line that matched the trigger text.  So we start with this:
+</p>
+<pre>function MyTriggerFunction(string Line)
+</pre>
+<p>Next, each unknown variable portion is passed as a parameter, in order from left to right, unless the name <b>*</b> was used in the trigger text (that @*@ mentioned above).  For the first line in the above example, that would be "room", and for the second, that would be "who".  Remember that the names from the trigger text make absolutely no difference except for *, so we do not need to use the same names in our function.
+</p>
+<pre>function GotRoom(string Line, string Room)
+function GotNPC(string Line, string NPC)
+</pre>
+<p>In this case, both of the values are text, so we use a string to receive the parameter.  There are plenty of cases where this is not preferable, such as when dealing with numbers:
+</p>
+<pre>/* You hit a chef for 42 points of damage! */
+/* You hit a butcher for 1 point of damage! */
+AddTrigger YouHit "You hit @who@ for @damage@ point@*@ of damage!"
+/* The point@*@ will hit both "point" and "points", ignoring the s, and covers both "You hit" messages. */
+atom YouHit(string Line, string Who, int Damage)
+</pre>
+<p>In this case, the atom will receive two unknown variables.
+</p>
+<h2><span class="mw-headline" id="Processing_a_script_command_queue">Processing a script command queue</span></h2>
+<p>If non-atomic functions are to be used for triggers, the script's command queue must be explicitly processed.  This ensures that the flow of the script is not disrupted.  
+</p><p>The following loop will process the entire command queue.
+</p>
+<pre>while ${QueuedCommands}
+  ExecuteQueued
+</pre>
+<p>Make sure to process the queue wherever it may be critical within the script.  
+</p><p>It is also possible to process only portions of the queue containing a given substring.  Since a Call is placed in the queue, essentially the same as
+</p>
+<pre>QueueCommand Call GotRoom "You have entered the kitchen." "the kitchen"
+</pre>
+<p>or
+</p>
+<pre>QueueCommand Call GotNPC "There is a chef standing here." "a chef"
+</pre>
+<p>... you may wish to execute any of the room triggers, like so:
+</p>
+<pre>while ${QueuedCommands[Call GotRoom]}
+  ExecuteQueued "Call GotRoom"
+</pre>
+<h2><span class="mw-headline" id="Tips_for_using_triggers">Tips for using triggers</span></h2>
+<ul><li>Blech is highly optimized and extremely simple to use, so use it wisely to retrieve the unknown portions of the text for you if at all possible.  Most games use very simple text output, so it's generally unnecessary to use regular expressions (though you can use the Regex module) or break matched lines down yourself.  If you can possibly get away with it, have Blech do ALL of the parsing for you.  There ARE some cases where it is useful to perform your own processing on the line or portions of the retrieved variables.</li>
+<li>Avoid starting with unknown variable portions if possible.  Blech will be most efficient when the trigger text has a known first portion.  There are plenty of cases where the first part really is unknown, and this is okay -- Soandso says, "Go ahead, make my day" -- but especially avoid using variables where there are none.  For example "Welcome to Such and Such Game!".  This text is fully known in advance, and should NOT be tainted by a trigger text like "@*@Welcome to Such and Such Game!@*@".</li>
+<li>Sometimes, a WaitFor command would be more appropriate to use than a trigger.  WaitFor is very useful for waiting for one of a handful of responses to a given action, or a single known response to a given action.  WaitFor is a case insensitive substring search, which is applied to all trigger checks, after triggers themselves (an important distinction, particularly if you want to wait until the moment a given atomic trigger has executed).</li></ul>
+<h2><span class="mw-headline" id="See_Also">See Also</span></h2>
+<ul><li><a href="https://www.lavishsoft.com/wiki/index.php/Command:AddTrigger" title="Command:AddTrigger">AddTrigger command</a></li>
+<li><a href="https://www.lavishsoft.com/wiki/index.php?title=Command:RemoveTrigger&amp;action=edit&amp;redlink=1" class="new" title="Command:RemoveTrigger (page does not exist)">RemoveTrigger command</a></li>
+<li><a href="https://www.lavishsoft.com/wiki/index.php?title=Command:WaitFor&amp;action=edit&amp;redlink=1" class="new" title="Command:WaitFor (page does not exist)">WaitFor command</a></li>
+<li><a href="https://www.lavishsoft.com/wiki/index.php?title=LavishScript:Command_Queue&amp;action=edit&amp;redlink=1" class="new" title="LavishScript:Command Queue (page does not exist)">Command Queue</a></li></ul>
+<!-- 
+NewPP limit report
+Cached time: 20250916163015
+Cache expiry: 86400
+Dynamic content: false
+CPU time usage: 0.012 seconds
+Real time usage: 0.014 seconds
+Preprocessor visited node count: 22/1000000
+Preprocessor generated node count: 28/1000000
+Post‐expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+Highest expansion depth: 2/40
+Expensive parser function count: 0/100
+Unstrip recursion depth: 0/20
+Unstrip post‐expand size: 0/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00%    0.000      1 -total
+-->
+
+<!-- Saved in parser cache with key lax-wiki_:pcache:idhash:2239-0!canonical and timestamp 20250916163015 and revision id 7491
+ -->
+</div></div>
+		
+		<div class="printfooter">Retrieved from "<a dir="ltr" href="https://www.lavishsoft.com/wiki/index.php?title=LavishScript:Triggers&amp;oldid=7491">https://www.lavishsoft.com/wiki/index.php?title=LavishScript:Triggers&amp;oldid=7491</a>"</div>
+		
+		<div id="catlinks" class="catlinks" data-mw="interface"><div id="mw-normal-catlinks" class="mw-normal-catlinks"><a href="https://www.lavishsoft.com/wiki/index.php/Special:Categories" title="Special:Categories">Category</a>: <ul><li><a href="https://www.lavishsoft.com/wiki/index.php/Category:LavishScript" title="Category:LavishScript">LavishScript</a></li></ul></div></div>
+		
+		<div class="visualClear"></div>
+		
+	</div>
+</div>
+
+		<div id="mw-navigation">
+			<h2>Navigation menu</h2>
+			<div id="mw-head">
+									<div id="p-personal" role="navigation" aria-labelledby="p-personal-label">
+						<h3 id="p-personal-label">Personal tools</h3>
+						<ul>
+							<li id="pt-login"><a href="https://www.lavishsoft.com/forum-x/ucp.php?mode=login&amp;redirect=https%3A%2F%2Fwww.lavishsoft.com%2Fwiki%2Findex.php%2FLavishScript%3ATriggers" title="You are encouraged to log in; however, it is not mandatory [o]" accesskey="o">Log in</a></li>						</ul>
+					</div>
+									<div id="left-navigation">
+										<div id="p-namespaces" role="navigation" class="vectorTabs" aria-labelledby="p-namespaces-label">
+						<h3 id="p-namespaces-label">Namespaces</h3>
+						<ul>
+							<li id="ca-nstab-main" class="selected"><span><a href="LavishScript_Triggers.html" title="View the content page [c]" accesskey="c">Article</a></span></li><li id="ca-talk" class="new"><span><a href="https://www.lavishsoft.com/wiki/index.php?title=Talk:LavishScript:Triggers&amp;action=edit&amp;redlink=1" rel="discussion" title="Discussion about the content page (page does not exist) [t]" accesskey="t">Discussion</a></span></li>						</ul>
+					</div>
+										<div id="p-variants" role="navigation" class="vectorMenu emptyPortlet" aria-labelledby="p-variants-label">
+												<input type="checkbox" class="vectorMenuCheckbox" aria-labelledby="p-variants-label" />
+						<h3 id="p-variants-label">
+							<span>Variants</span>
+						</h3>
+						<ul class="menu">
+													</ul>
+					</div>
+									</div>
+				<div id="right-navigation">
+										<div id="p-views" role="navigation" class="vectorTabs" aria-labelledby="p-views-label">
+						<h3 id="p-views-label">Views</h3>
+						<ul>
+							<li id="ca-view" class="collapsible selected"><span><a href="LavishScript_Triggers.html">Read</a></span></li><li id="ca-viewsource" class="collapsible"><span><a href="https://www.lavishsoft.com/wiki/index.php?title=LavishScript:Triggers&amp;action=edit" title="This page is protected.&#10;You can view its source [e]" accesskey="e">View source</a></span></li><li id="ca-history" class="collapsible"><span><a href="https://www.lavishsoft.com/wiki/index.php?title=LavishScript:Triggers&amp;action=history" title="Past revisions of this page [h]" accesskey="h">View history</a></span></li>						</ul>
+					</div>
+										<div id="p-cactions" role="navigation" class="vectorMenu emptyPortlet" aria-labelledby="p-cactions-label">
+						<input type="checkbox" class="vectorMenuCheckbox" aria-labelledby="p-cactions-label" />
+						<h3 id="p-cactions-label"><span>More</span></h3>
+						<ul class="menu">
+													</ul>
+					</div>
+										<div id="p-search" role="search">
+						<h3>
+							<label for="searchInput">Search</label>
+						</h3>
+						<form action="https://www.lavishsoft.com/wiki/index.php" id="searchform">
+							<div id="simpleSearch">
+								<input type="search" name="search" placeholder="Search Lavish Software Wiki" title="Search Lavish Software Wiki [f]" accesskey="f" id="searchInput"/><input type="hidden" value="Special:Search" name="title"/><input type="submit" name="fulltext" value="Search" title="Search the pages for this text" id="mw-searchButton" class="searchButton mw-fallbackSearchButton"/><input type="submit" name="go" value="Go" title="Go to a page with this exact name if it exists" id="searchButton" class="searchButton"/>							</div>
+						</form>
+					</div>
+									</div>
+			</div>
+			<div id="mw-panel">
+				<div id="p-logo" role="banner"><a class="mw-wiki-logo" href="https://www.lavishsoft.com/wiki/index.php/Main_Page" title="Visit the main page"></a></div>
+						<div class="portal" role="navigation" id="p-navigation" aria-labelledby="p-navigation-label">
+			<h3 id="p-navigation-label">Navigation</h3>
+			<div class="body">
+								<ul>
+					<li id="n-mainpage-description"><a href="https://www.lavishsoft.com/wiki/index.php/Main_Page" title="Visit the main page [z]" accesskey="z">Main page</a></li><li id="n-LavishScript"><a href="https://www.lavishsoft.com/wiki/index.php/LavishScript">LavishScript</a></li><li id="n-LavishGUI"><a href="https://www.lavishsoft.com/wiki/index.php/LavishGUI">LavishGUI</a></li><li id="n-LavishGUI-2"><a href="https://www.lavishsoft.com/wiki/index.php/LavishGUI_2">LavishGUI 2</a></li><li id="n-recentchanges"><a href="https://www.lavishsoft.com/wiki/index.php/Special:RecentChanges" title="A list of recent changes in the wiki [r]" accesskey="r">Recent changes</a></li><li id="n-randompage"><a href="https://www.lavishsoft.com/wiki/index.php/Special:Random" title="Load a random page [x]" accesskey="x">Random page</a></li><li id="n-help"><a href="https://www.lavishsoft.com/wiki/index.php/Help:Contents" title="The place to find out">Help</a></li>				</ul>
+							</div>
+		</div>
+			<div class="portal" role="navigation" id="p-tb" aria-labelledby="p-tb-label">
+			<h3 id="p-tb-label">Toolbox</h3>
+			<div class="body">
+								<ul>
+					<li id="t-whatlinkshere"><a href="https://www.lavishsoft.com/wiki/index.php/Special:WhatLinksHere/LavishScript:Triggers" title="A list of all wiki pages that link here [j]" accesskey="j">What links here</a></li><li id="t-recentchangeslinked"><a href="https://www.lavishsoft.com/wiki/index.php/Special:RecentChangesLinked/LavishScript:Triggers" rel="nofollow" title="Recent changes in pages linked from this page [k]" accesskey="k">Related changes</a></li><li id="t-specialpages"><a href="https://www.lavishsoft.com/wiki/index.php/Special:SpecialPages" title="A list of all special pages [q]" accesskey="q">Special pages</a></li><li id="t-print"><a href="https://www.lavishsoft.com/wiki/index.php?title=LavishScript:Triggers&amp;printable=yes" rel="alternate" title="Printable version of this page [p]" accesskey="p">Printable version</a></li><li id="t-permalink"><a href="https://www.lavishsoft.com/wiki/index.php?title=LavishScript:Triggers&amp;oldid=7491" title="Permanent link to this revision of the page">Permanent link</a></li><li id="t-info"><a href="https://www.lavishsoft.com/wiki/index.php?title=LavishScript:Triggers&amp;action=info" title="More information about this page">Page information</a></li>				</ul>
+							</div>
+		</div>
+				</div>
+		</div>
+				<div id="footer" role="contentinfo">
+						<ul id="footer-info">
+								<li id="footer-info-lastmod"> This page was last edited on 28 December 2010, at 16:44.</li>
+							</ul>
+						<ul id="footer-places">
+								<li id="footer-places-privacy"><a href="https://www.lavishsoft.com/wiki/index.php/Lavish_Software_Wiki:Privacy_policy" title="Lavish Software Wiki:Privacy policy">Privacy policy</a></li>
+								<li id="footer-places-about"><a href="https://www.lavishsoft.com/wiki/index.php/Lavish_Software_Wiki:About" title="Lavish Software Wiki:About">About Lavish Software Wiki</a></li>
+								<li id="footer-places-disclaimer"><a href="https://www.lavishsoft.com/wiki/index.php/Lavish_Software_Wiki:General_disclaimer" title="Lavish Software Wiki:General disclaimer">Disclaimers</a></li>
+							</ul>
+										<ul id="footer-icons" class="noprint">
+										<li id="footer-poweredbyico">
+						<a href="http://www.mediawiki.org/"><img src="https://www.lavishsoft.com/wiki/resources/assets/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" srcset="/wiki/resources/assets/poweredby_mediawiki_132x47.png 1.5x, /wiki/resources/assets/poweredby_mediawiki_176x62.png 2x" width="88" height="31"/></a>					</li>
+									</ul>
+						<div style="clear: both;"></div>
+		</div>
+		
+
+<script>(window.RLQ=window.RLQ||[]).push(function(){mw.config.set({"wgPageParseReport":{"limitreport":{"cputime":"0.012","walltime":"0.014","ppvisitednodes":{"value":22,"limit":1000000},"ppgeneratednodes":{"value":28,"limit":1000000},"postexpandincludesize":{"value":0,"limit":2097152},"templateargumentsize":{"value":0,"limit":2097152},"expansiondepth":{"value":2,"limit":40},"expensivefunctioncount":{"value":0,"limit":100},"unstrip-depth":{"value":0,"limit":20},"unstrip-size":{"value":0,"limit":5000000},"timingprofile":["100.00%    0.000      1 -total"]},"cachereport":{"timestamp":"20250916163015","ttl":86400,"transientcontent":false}}});mw.config.set({"wgBackendResponseTime":1035});});</script>
+</body>
+
+<!-- Mirrored from www.lavishsoft.com/wiki/index.php/LavishScript:Triggers by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 16 Sep 2025 16:30:23 GMT -->
+</html>
