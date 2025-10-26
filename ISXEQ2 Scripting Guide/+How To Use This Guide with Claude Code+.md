@@ -211,7 +211,7 @@ The guide covers:
 - ✅ Navigation and pathfinding
 - ✅ Crafting automation
 - ✅ JSON and async tasks
-- ✅ 110,000+ lines of documentation across 20 guides
+- ✅ 35,248 lines of documentation across 20 guides
 ```
 
 **Step 3: Verify the Command**
@@ -494,7 +494,7 @@ These are examples - your paths will vary based on where you installed InnerSpac
 
 - **Version:** 3.0
 - **Total Guides:** 20 comprehensive guides
-- **Total Documentation:** 110,000+ lines
+- **Total Documentation:** 35,248 lines
 - **Coverage:** Complete ISXEQ2 API, LavishScript fundamentals, UI development (LGUI1 & LGUI2), advanced patterns
 - **Scripts Analyzed:** EQ2Bot, EQ2Craft, EQ2Nav, MyPrices, EQ2BJCommon, EQ2OgreFree, EQ2Track, EQ2AFKAlarm
 
