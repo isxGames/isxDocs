@@ -129,7 +129,7 @@ The complete ISXEQ2 Scripting Guide is located at:
 
 You help users create, debug, and optimize scripts for InnerSpace using the ISXEQ2 extension for EverQuest 2.
 
-# Available Documentation (19 Guides)
+# Available Documentation (20 Guides)
 
 ## Getting Started
 - **00_MASTER_GUIDE.md** - Master reference hub with all APIs organized by category
@@ -149,15 +149,16 @@ You help users create, debug, and optimize scripts for InnerSpace using the ISXE
 - **08_LavishGUI1_UI_Guide.md** - LavishGUI 1 (XML-based, legacy)
 - **09_Advanced_LGUI1_Patterns.md** - Advanced LGUI1 patterns from production scripts
 - **10_LavishGUI2_UI_Guide.md** - LavishGUI 2 (JSON-based, modern - recommended)
-- **11_LavishGUI1_to_LavishGUI2_Migration.md** - Migration guide with limitations
+- **11_LavishGUI1_to_LavishGUI2_Migration.md** - Migration guide with common issues and solutions
+- **12_LGUI2_Scaling_System.md** - Dynamic UI scaling system for LGUI2
 
 ## Advanced Topics
-- **12_JSON_Guide.md** - JSON parsing, serialization, file I/O
-- **13_LavishMachine_Guide.md** - Asynchronous tasks (audio, web requests)
-- **14_Advanced_Scripting_Patterns.md** - Production patterns (multi-threading, LavishSettings, LavishNav)
-- **15_Utility_Script_Patterns.md** - Utility patterns (timers, tracking, validation)
-- **16_Crafting_Script_Patterns.md** - Crafting automation patterns
-- **17_Navigation_Library_Patterns.md** - Navigation and pathfinding patterns
+- **13_JSON_Guide.md** - JSON parsing, serialization, file I/O
+- **14_LavishMachine_Guide.md** - Asynchronous tasks (audio, web requests)
+- **15_Advanced_Scripting_Patterns.md** - Production patterns (multi-threading, LavishSettings, LavishNav)
+- **16_Utility_Script_Patterns.md** - Utility patterns (timers, tracking, validation)
+- **17_Crafting_Script_Patterns.md** - Crafting automation patterns
+- **18_Navigation_Library_Patterns.md** - Navigation and pathfinding patterns
 - **README.md** - Complete guide overview with quick navigation
 
 # Instructions
@@ -203,12 +204,14 @@ The guide covers:
 - ✅ Complete API reference (60+ datatypes, 21 TLOs, 48 events)
 - ✅ LavishScript fundamentals
 - ✅ Working examples for all common tasks
-- ✅ Advanced patterns from production scripts (EQ2Bot, EQ2Craft, EQ2Nav)
+- ✅ Advanced patterns from production scripts (EQ2Bot, EQ2Craft, EQ2Nav, EQ2AFKAlarm)
 - ✅ UI development (both LGUI1 and LGUI2)
+- ✅ LGUI1 to LGUI2 migration guide with 12+ common issues and solutions
+- ✅ Dynamic UI scaling system for LGUI2
 - ✅ Navigation and pathfinding
 - ✅ Crafting automation
 - ✅ JSON and async tasks
-- ✅ 107,000+ lines of documentation across 19 guides
+- ✅ 110,000+ lines of documentation across 20 guides
 ```
 
 **Step 3: Verify the Command**
@@ -489,19 +492,19 @@ These are examples - your paths will vary based on where you installed InnerSpac
 
 ### Documentation Statistics
 
-- **Version:** 2.8
-- **Total Guides:** 19 comprehensive guides
-- **Total Documentation:** 107,000+ lines
-- **Coverage:** Complete ISXEQ2 API, LavishScript fundamentals, UI development, advanced patterns
-- **Scripts Analyzed:** EQ2Bot, EQ2Craft, EQ2Nav, MyPrices, EQ2BJCommon, EQ2OgreFree, EQ2Track
+- **Version:** 3.0
+- **Total Guides:** 20 comprehensive guides
+- **Total Documentation:** 110,000+ lines
+- **Coverage:** Complete ISXEQ2 API, LavishScript fundamentals, UI development (LGUI1 & LGUI2), advanced patterns
+- **Scripts Analyzed:** EQ2Bot, EQ2Craft, EQ2Nav, MyPrices, EQ2BJCommon, EQ2OgreFree, EQ2Track, EQ2AFKAlarm
 
 ---
 
 ## Version Information
 
-**Document Version:** 1.0
-**ISXEQ2 Guide Version:** 2.8
-**Last Updated:** 2025-10-23
+**Document Version:** 1.1
+**ISXEQ2 Guide Version:** 3.0
+**Last Updated:** 2025-10-25
 
 ---
 
