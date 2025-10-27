@@ -344,6 +344,48 @@ Found an error or have an improvement? This documentation was generated using ac
 
 ## Version History
 
+- **3.0** (2025-10-25)
+  - **MAJOR UPDATE:** Scalable Title Bars now standard for all LGUI2 scripts
+  - Discovered correct `onCloseButtonClick` event for window close handling
+  - Documented complete custom title bar pattern (EQ2BotCommander lines 1-88)
+  - Updated all 4 guides with scalable title bar documentation:
+    - 10_LavishGUI2_UI_Guide.md: Added custom titleBar to Window section
+    - 11_LavishGUI1_to_LavishGUI2_Migration.md: Added scalable window pattern
+    - 12_LGUI2_Scaling_System.md: Added "Creating Scalable Title Bars" section (335 lines)
+    - EQ2Bot/UI/LGUI2_MIGRATION_GUIDE.md: Added section 1.2 as recommended default
+  - Established 2x scaling baseline (font 40, padding 12, border 2) as standard
+  - Corrected event documentation: Added 50+ events from DefaultSkin.json analysis
+  - Updated FILE_MANIFEST.md with accurate line counts (35,248 lines total)
+  - Total documentation: 35,248 lines across 20 files
+
+- **2.9** (2025-10-25)
+  - Added LGUI2 Scaling System guide (1,102 lines)
+  - Analyzed EQ2BotCommander LGUI1→LGUI2 migration with scaling implementation
+  - Complete UI scaling patterns: dynamic JSON preprocessing, window position preservation, percentage-to-absolute conversion, button width adjustment (85%), font injection/scaling
+  - Real-world example: EQ2BotCommander scaled 2x (800x800→1600x1600)
+  - Updated 10_LavishGUI2_UI_Guide.md with scaling system references
+  - Updated 11_LavishGUI1_to_LavishGUI2_Migration.md with scaling enhancement section
+  - Renumbered files 13-18 to insert new guide after migration guide
+
+- **2.8** (2025-10-23)
+  - Added Navigation Library Patterns guide (~8,000 lines)
+  - Analyzed EQ2Navigation library: EQ2Nav_Lib.iss (1,187 lines), EQ2NavMapper_Lib.iss, EQ2NavAggressionHandler.iss, EQ2NavObstacleHandler.iss, EQ2NavFaceClass_Lib.iss (~1,200 lines total)
+  - 10 major navigation patterns: LavishNav integration, Dijkstra pathfinding algorithm, region-based navigation, collision detection, stuck detection and recovery, door automation, aggro detection integration, direct vs pathfinding movement, dual precision system, performance optimization
+  - 3 complete working examples: SimpleNav (basic navigation), MultiStop (waypoint navigation), SafeNav (navigation with aggro handling)
+  - Updated README navigation with 10 new navigation pattern links
+  - Updated Advanced LGUI1 Patterns with 8 new patterns from EQ2Bot UI (2,498 line main UI + 39 class UIs)
+  - Updated Advanced LGUI1 Patterns with 14 new patterns from EQ2Craft UI (1,802 line UI)
+  - Total documentation now exceeds 107,000 lines across 19 files
+
+- **2.7** (2025-10-23)
+  - Added Crafting Script Patterns guide (~7,200 lines)
+  - Analyzed EQ2Craft script (~15,000 lines total with includes)
+  - 13 crafting patterns: command-line argument parsing, navigation integration, localization/multi-language support, UI state management, recipe queue management, crafting window monitoring, event-driven crafting loops, device/station targeting, writ automation, durability/quality management, reaction arts system, progress tracking/statistics, file-based configuration
+  - Complete working example: SimpleCraft automation script
+  - Updated README navigation with 10 new crafting pattern links
+  - Updated all navigation and learning paths
+  - Total documentation now exceeds 99,000 lines across 18 files
+
 - **2.6** (2025-10-23) - Utility Script Patterns from EQ2BJCommon
   - Added Utility Script Patterns guide (16_Utility_Script_Patterns.md, ~6,000 lines)
   - Analyzed EQ2BJCommon scripts: bjauction, bjlooter, bjmagic, bjshuffle, bjxpbot (~2,500 lines total)
