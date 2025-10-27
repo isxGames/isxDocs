@@ -1057,8 +1057,8 @@ Nav.TURNRIGHT:Set["d"]
 
 ### Related Documentation
 
-- [14_Advanced_Scripting_Patterns.md](14_Advanced_Scripting_Patterns.md) - LavishSettings patterns
-- [16_Crafting_Script_Patterns.md](16_Crafting_Script_Patterns.md) - Navigation usage examples
+- [15_Advanced_Scripting_Patterns.md](15_Advanced_Scripting_Patterns.md) - LavishSettings patterns
+- [17_Crafting_Script_Patterns.md](17_Crafting_Script_Patterns.md) - Navigation usage examples
 - [03_API_Reference.md](03_API_Reference.md) - Actor, Me datatypes
 
 ---

@@ -35,12 +35,12 @@ Before you begin, ensure you have:
 2. Type the following command and press Enter:
 
 ```
-echo ${ISXEQ2.Version}
+echo ${ISXEQ2(exists)}
 ```
 
-**Expected Result:** You should see a version number like `2023.09.01` or similar.
+**Expected Result:** You should see `TRUE`.
 
-**If you see an error:** ISXEQ2 is not loaded. Load it with:
+**If you see `FALSE`:** ISXEQ2 is not loaded. Load it with:
 
 ```
 extension isxeq2
@@ -198,6 +198,172 @@ Always check if an object exists before accessing its members. This prevents err
 ```
 
 Lines starting with `;` are comments and are ignored by the script engine.
+
+---
+
+## Common First Scripts
+
+### Example 2: Health Monitor
+
+A script that continuously monitors health percentage:
+
+```lavishscript
+; HealthMonitor.iss
+; Monitors health percentage and warns if low
+
+variable bool Running = TRUE
+
+function main()
+{
+    ; Wait for ISXEQ2
+    while !${ISXEQ2.IsReady}
+    {
+        wait 10
+    }
+
+    echo "Health Monitor started"
+    echo "Press End Script to stop"
+
+    ; Main loop
+    while ${Running}
+    {
+        variable float HealthPct = ${Math.Calc[${Me.CurrentHealth}*100/${Me.MaxHealth}]}
+
+        ; Check health levels
+        if ${HealthPct} < 25
+        {
+            echo "WARNING: Health CRITICAL (${HealthPct.Int}%)"
+        }
+        elseif ${HealthPct} < 50
+        {
+            echo "CAUTION: Health LOW (${HealthPct.Int}%)"
+        }
+
+        ; Wait 2 seconds between checks
+        wait 20
+    }
+
+    echo "Health Monitor stopped"
+}
+```
+
+**To stop:** In InnerSpace console, type: `endscript HealthMonitor`
+
+### Example 3: Target Info
+
+Display information about your current target:
+
+```lavishscript
+; TargetInfo.iss
+; Displays information about current target
+
+function main()
+{
+    while !${ISXEQ2.IsReady}
+    {
+        wait 10
+    }
+
+    ; Check if we have a target
+    if !${Target(exists)}
+    {
+        echo "No target selected!"
+        return
+    }
+
+    echo "====================================="
+    echo "TARGET INFORMATION"
+    echo "====================================="
+
+    echo "Name: ${Target.Name}"
+    echo "Level: ${Target.Level}"
+    echo "Type: ${Target.Type}"
+    echo "Distance: ${Target.Distance}"
+    echo "Health: ${Target.Health}%"
+    echo "Con Color: ${Target.ConColor}"
+
+    ; Check if NPC or player
+    if ${Target.IsEpic}
+    {
+        echo "Category: EPIC NPC"
+    }
+    elseif ${Target.Type.Equal["NPC"]}
+    {
+        echo "Category: NPC"
+    }
+    elseif ${Target.Type.Equal["PC"]}
+    {
+        echo "Category: Player Character"
+    }
+
+    ; Aggro status
+    if ${Target.IsAggro}
+    {
+        echo "Status: AGGRESSIVE"
+    }
+    else
+    {
+        echo "Status: Not Aggressive"
+    }
+
+    echo "====================================="
+}
+```
+
+**Usage:**
+1. Target something in game
+2. Run: `run TargetInfo`
+
+### Example 4: Auto-Target Nearest
+
+Automatically target the nearest NPC:
+
+```lavishscript
+; AutoTarget.iss
+; Automatically targets nearest NPC
+
+function main()
+{
+    while !${ISXEQ2.IsReady}
+    {
+        wait 10
+    }
+
+    ; Find nearest actor
+    variable index:actor Actors
+    variable iterator ActorIt
+
+    EQ2:QueryActors[Actors, "Type = NPC"]
+    Actors:GetIterator[ActorIt]
+
+    if !${ActorIt:First(exists)}
+    {
+        echo "No NPCs found nearby"
+        return
+    }
+
+    variable float NearestDistance = 999999
+    variable int NearestID = 0
+
+    ; Find nearest
+    do
+    {
+        if ${ActorIt.Value.Distance} < ${NearestDistance}
+        {
+            NearestDistance:Set[${ActorIt.Value.Distance}]
+            NearestID:Set[${ActorIt.Value.ID}]
+        }
+    }
+    while ${ActorIt:Next(exists)}
+
+    ; Target it
+    if ${NearestID} > 0
+    {
+        echo "Targeting: ${Actor[${NearestID}].Name} (${NearestDistance}m away)"
+        EQ2Execute /target_id ${NearestID}
+    }
+}
+```
 
 ---
 
@@ -414,8 +580,7 @@ Try building these simple scripts to practice:
 ### Exercise 1: Health Monitor
 Create a script that checks your health every 2 seconds and echoes a warning if it drops below 50%.
 
-<details>
-<summary>Click for solution</summary>
+**Solution:**
 
 ```lavishscript
 function main()
@@ -437,13 +602,11 @@ function main()
     }
 }
 ```
-</details>
 
 ### Exercise 2: Target Info
 Create a script that displays detailed information about your current target.
 
-<details>
-<summary>Click for solution</summary>
+**Solution:**
 
 ```lavishscript
 function main()
@@ -471,13 +634,11 @@ function main()
         echo "Status: Neutral"
 }
 ```
-</details>
 
 ### Exercise 3: Inventory Counter
 Create a script that counts how many items you have in your inventory.
 
-<details>
-<summary>Click for solution</summary>
+**Solution:**
 
 ```lavishscript
 function main()
@@ -505,11 +666,75 @@ function main()
     echo "Free slots: ${Me.InventorySlotsFree}"
 }
 ```
-</details>
 
 ---
 
-**Ready for more? Continue to [04_Core_Concepts.md](04_Core_Concepts.md) to deepen your understanding!**
+## Troubleshooting
+
+### Problem: "ISXEQ2 is not defined"
+
+**Solution:**
+```lavishscript
+extension isxeq2
+```
+
+### Problem: Script won't run
+
+**Check:**
+1. File has `.iss` extension
+2. File is in `InnerSpace/Scripts/` directory
+3. Using correct syntax: `run ScriptName` (no `.iss`)
+
+### Problem: "${Me} is NULL" or similar
+
+**Cause:** ISXEQ2 not ready yet
+
+**Solution:** Always check `${ISXEQ2.IsReady}` first:
+```lavishscript
+while !${ISXEQ2.IsReady}
+{
+    wait 10
+}
+```
+
+### Problem: "Object doesn't exist" errors
+
+**Cause:** Trying to access object that doesn't exist
+
+**Solution:** Always check `(exists)`:
+```lavishscript
+if ${Target(exists)}
+{
+    ; Safe to use
+    echo "${Target.Name}"
+}
+```
+
+### Problem: Script locks up/freezes
+
+**Cause:** Infinite loop without `wait`
+
+**Solution:** Always use `wait` in loops:
+```lavishscript
+; WRONG - freezes
+while TRUE
+{
+    call DoStuff
+}
+
+; CORRECT
+while TRUE
+{
+    call DoStuff
+    wait 10  ; CRITICAL!
+}
+```
+
+### Problem: Can't see console output
+
+**Solution:**
+- Open console: Click InnerSpace system tray icon
+- Or check InnerSpace log file
 
 ---
 

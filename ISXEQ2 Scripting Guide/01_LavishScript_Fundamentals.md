@@ -2964,21 +2964,21 @@ Now that you know LavishScript basics, you're ready to learn **ISXEQ2-specific s
    - Basic combat checks
    - Inventory access
 
-2. **[03_Core_Concepts.md](03_Core_Concepts.md)** - ISXEQ2 concepts
+2. **[04_Core_Concepts.md](04_Core_Concepts.md)** - ISXEQ2 concepts
    - Top-Level Objects (TLOs) like `${Me}`, `${Target}`, `${Zone}`
    - ISXEQ2-specific datatypes
    - Query syntax for finding actors and items
    - Asynchronous data loading
    - Event system
 
-3. **[05_Working_Examples.md](05_Working_Examples.md)** - Practical ISXEQ2 code
+3. **[06_Working_Examples.md](06_Working_Examples.md)** - Practical ISXEQ2 code
    - Character stats and abilities
    - Inventory management
    - Combat automation
    - Quest information
    - UI interaction
 
-4. **[01_API_Reference.md](01_API_Reference.md)** - Complete ISXEQ2 API
+4. **[03_API_Reference.md](03_API_Reference.md)** - Complete ISXEQ2 API
    - Detailed reference for all ISXEQ2 datatypes
    - All members and methods
    - Commands and events

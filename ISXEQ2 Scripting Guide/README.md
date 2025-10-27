@@ -412,4 +412,3 @@ This documentation is provided for educational and reference purposes for ISXEQ2
 *Last Updated: 2025-10-25*
 *Documentation Version: 3.0*
 *ISXEQ2 Version: 2023+*
-*LavishScript Fundamentals + LavishGUI 1 & 2 + LGUI2 Scaling with Scalable Title Bars + JSON + LavishMachine + Advanced Production Patterns + Utility Patterns Fully Documented*

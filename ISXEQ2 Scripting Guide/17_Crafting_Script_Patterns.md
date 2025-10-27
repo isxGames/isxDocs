@@ -1721,7 +1721,7 @@ run SimpleCraft "Iron Chainmail Chestguard" 10
 
 ### Related Documentation
 
-- [14_Advanced_Scripting_Patterns.md](14_Advanced_Scripting_Patterns.md) - LavishSettings, Navigation
+- [15_Advanced_Scripting_Patterns.md](15_Advanced_Scripting_Patterns.md) - LavishSettings, Navigation
 - [05_Patterns_And_Best_Practices.md](05_Patterns_And_Best_Practices.md) - General best practices
 - [03_API_Reference.md](03_API_Reference.md) - Recipe, Me, Actor datatypes
 

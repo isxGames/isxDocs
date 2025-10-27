@@ -2,7 +2,6 @@
 
 Complete API reference extracted from official ISXEQ2 documentation. This comprehensive guide documents all datatypes, members, methods, and their relationships for creating, debugging, and updating ISXEQ2 scripts.
 
-**Version:** Based on official ISXEQ2 Reference
 **Last Updated:** 2025-10-20
 
 ---

@@ -373,7 +373,7 @@ When using UI scaling (see [12_LGUI2_Scaling_System.md](12_LGUI2_Scaling_System.
 - ✅ When default skin appearance is acceptable
 - ✅ For quick prototypes or simple tools
 
-See complete example: `C:\Dev\InnerSpace\Scripts\EQ2Bot\UI\EQ2BotCommander.json` (lines 1-88)
+See complete example: [EQ2BotCommander.json](https://github.com/isxGames/isxScripts/blob/master/EverQuest2/Scripts/EQ2Bot/UI/EQ2BotCommander.json) (lines 1-88)
 
 ### TextBlock
 
@@ -3397,7 +3397,7 @@ function ReapplyRunEQ2BotButtonColor()
 }
 ```
 
-**Reference Implementation:** See `C:\Dev\InnerSpace\Scripts\EQ2Bot\UI\EQ2BotCommander.json` and `C:\Dev\InnerSpace\Scripts\EQ2BotCommander.iss` for a complete production example with 11 toggle buttons using this pattern.
+**Reference Implementation:** See [EQ2BotCommander.json](https://github.com/isxGames/isxScripts/blob/master/EverQuest2/Scripts/EQ2Bot/UI/EQ2BotCommander.json) and [EQ2BotCommander.iss](https://github.com/isxGames/isxScripts/blob/master/EverQuest2/Scripts/EQ2BotCommander.iss) for a complete production example with 11 toggle buttons using this pattern.
 
 #### Summary: Dynamic Styles Best Practices
 
@@ -5737,7 +5737,7 @@ function atexit()
 5. **Production tested**: Based on EQ2BotCommander implementation
 
 **Reference Implementation:**
-- `C:\Dev\InnerSpace\Scripts\EQ2BotCommander.iss` (lines 83-133, 548-573)
+- [EQ2BotCommander.iss](https://github.com/isxGames/isxScripts/blob/master/EverQuest2/Scripts/EQ2BotCommander.iss) (lines 83-133, 548-573)
 - Complete working example with window position persistence
 
 #### Other Settings Persistence

@@ -307,7 +307,7 @@ atom(script) Shutdown()
 }
 ```
 
-See complete example: `C:\Dev\InnerSpace\Scripts\EQ2Bot\UI\EQ2BotCommander.json` (lines 1-88)
+See complete example: [EQ2BotCommander.json](https://github.com/isxGames/isxScripts/blob/master/EverQuest2/Scripts/EQ2Bot/UI/EQ2BotCommander.json) (lines 1-88)
 For details on scalable title bars: [12_LGUI2_Scaling_System.md](12_LGUI2_Scaling_System.md#creating-scalable-title-bars)
 
 ### Button
@@ -2194,7 +2194,7 @@ function ReapplyFollowButtonColor()
 }
 ```
 
-**Reference Implementation:** `C:\Dev\InnerSpace\Scripts\EQ2Bot\UI\EQ2BotCommander.json` and `C:\Dev\InnerSpace\Scripts\EQ2BotCommander.iss`
+**Reference Implementation:** [EQ2BotCommander.json](https://github.com/isxGames/isxScripts/blob/master/EverQuest2/Scripts/EQ2Bot/UI/EQ2BotCommander.json) and [EQ2BotCommander.iss](https://github.com/isxGames/isxScripts/blob/master/EverQuest2/Scripts/EQ2BotCommander.iss)
 
 #### Summary: Style-Based Visual Changes
 
@@ -2601,7 +2601,7 @@ function CloseWindow()
 
 **Real-World Example:**
 
-See `C:\Dev\InnerSpace\Scripts\EQ2AFKAlarm\EQ2AFKAlarm.iss` for complete implementation with:
+See [EQ2AFKAlarm.iss](https://github.com/isxGames/isxScripts/blob/master/EverQuest2/Scripts/EQ2AFKAlarm/EQ2AFKAlarm.iss) for complete implementation with:
 - 13 persistent checkboxes (6 trigger channels + 6 TTS options + 1 logging option)
 - Handler function pairs for each checkbox
 - Proper `ExecuteQueued` usage in save function
@@ -2828,7 +2828,7 @@ The example above uses 3x scaling. For 1x (baseline), use these values:
 
 **Real-World Example:**
 
-See `C:\Dev\InnerSpace\Scripts\EQ2AFKAlarm\EQ2AFKAlarm.iss` and `Interface\EQ2AFKAlarm_MessageBox.json` for complete implementation.
+See [EQ2AFKAlarm.iss](https://github.com/isxGames/isxScripts/blob/master/EverQuest2/Scripts/EQ2AFKAlarm/EQ2AFKAlarm.iss) and [EQ2AFKAlarm_MessageBox.json](https://github.com/isxGames/isxScripts/blob/master/EverQuest2/Scripts/EQ2AFKAlarm/Interface/EQ2AFKAlarm_MessageBox.json) for complete implementation.
 
 **Key Differences from LGUI1:**
 

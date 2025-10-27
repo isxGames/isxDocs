@@ -12,7 +12,7 @@
 | File | Status | Lines | Description |
 |------|--------|-------|-------------|
 | **README.md** | ✅ Complete | 415 | Main navigation hub, overview, and getting started guide |
-| **02_Quick_Start_Guide.md** | ✅ Complete | 516 | 5-10 minute tutorial for beginners with working examples |
+| **02_Quick_Start_Guide.md** | ✅ Complete | 751 | 5-10 minute tutorial for beginners with working examples |
 | **FILE_MANIFEST.md** | ✅ Complete | This file | Complete file listing and project statistics |
 
 ### Comprehensive Documentation
@@ -20,16 +20,17 @@
 |------|--------|-------|-------------|
 | **00_MASTER_GUIDE.md** | ✅ Complete | 613 | Master reference with organized links to all APIs, commands, events |
 | **01_LavishScript_Fundamentals.md** | ✅ Complete | 3,045 | Complete LavishScript programming guide (variables, functions, objects, loops, index, webrequest, audio) |
-| **03_API_Reference.md** | ✅ Complete | 3,419 | Complete API documentation (all TLOs, datatypes, commands, events) |
+| **02_Quick_Start_Guide.md** | ✅ Complete | 751 | Quick start tutorial for beginners |
+| **03_API_Reference.md** | ✅ Complete | 3,418 | Complete API documentation (all TLOs, datatypes, commands, events) |
 | **04_Core_Concepts.md** | ✅ Complete | 862 | Essential ISXEQ2 concepts (datatypes, queries, async, inheritance) |
 | **05_Patterns_And_Best_Practices.md** | ✅ Complete | 1,098 | Coding patterns from EQ2Bot analysis |
 | **06_Working_Examples.md** | ✅ Complete | 1,156 | Real-world code examples for common tasks |
 | **07_Advanced_Patterns_And_Examples.md** | ✅ Complete | 1,635 | Advanced patterns (mouse automation, XML config, broker, navigation) |
 | **08_LavishGUI1_UI_Guide.md** | ✅ Complete | 1,305 | LavishGUI 1 UI creation guide (XML-based, legacy) |
 | **09_Advanced_LGUI1_Patterns.md** | ✅ Complete | 1,458 | Real-world LGUI1 patterns from MyPrices script |
-| **10_LavishGUI2_UI_Guide.md** | ✅ Complete | 5,667 | LavishGUI 2 UI creation guide (JSON-based, modern) with scalable title bars |
-| **11_LavishGUI1_to_LavishGUI2_Migration.md** | ✅ Complete | 2,407 | Migration guide from LGUI1 to LGUI2 with scalable title bars and limitations |
-| **12_LGUI2_Scaling_System.md** | ✅ Complete | 1,102 | Dynamic UI scaling system for LGUI2 interfaces with custom title bar patterns |
+| **10_LavishGUI2_UI_Guide.md** | ✅ Complete | 6,321 | LavishGUI 2 UI creation guide (JSON-based, modern) with scalable title bars |
+| **11_LavishGUI1_to_LavishGUI2_Migration.md** | ✅ Complete | 3,542 | Migration guide from LGUI1 to LGUI2 with scalable title bars and limitations |
+| **12_LGUI2_Scaling_System.md** | ✅ Complete | 1,100 | Dynamic UI scaling system for LGUI2 interfaces with custom title bar patterns |
 | **13_JSON_Guide.md** | ✅ Complete | 1,734 | Complete JSON guide (parsing, serialization, file I/O) |
 | **14_LavishMachine_Guide.md** | ✅ Complete | 1,947 | Asynchronous task system (audio, web requests, custom tasks) |
 | **15_Advanced_Scripting_Patterns.md** | ✅ Complete | 3,961 | Production-grade patterns from EQ2OgreFree and EQ2Track (14 patterns total) |
@@ -37,7 +38,7 @@
 | **17_Crafting_Script_Patterns.md** | ✅ Complete | 1,731 | Crafting automation patterns from EQ2Craft (13 patterns: cmd-line, navigation, localization, queue mgmt, writs, etc.) |
 | **18_Navigation_Library_Patterns.md** | ✅ Complete | 1,067 | Navigation and pathfinding patterns from EQ2Nav (10 patterns: LavishNav, Dijkstra, regions, collision, stuck detection, doors, aggro, precision, optimization) |
 
-**Total Documentation:** 35,248 lines across all files
+**Total Documentation:** 40,788 lines across 21 files (19 numbered guides + README + FILE_MANIFEST)
 
 ---
 
@@ -404,12 +405,5 @@ All documentation files are contained within this ISXEQ2 Scripting Guide directo
 
 ---
 
-## Contact
-
-For questions, updates, or contributions related to this documentation, contact your development team or refer to the ISXEQ2 community forums.
-
----
-
 *ISXEQ2 Scripting Guide - Version 3.0 - Generated 2025-10-25*
 *Complete documentation from beginner to advanced topics*
-*Now includes LGUI2 Scaling System with Scalable Title Bars as standard*

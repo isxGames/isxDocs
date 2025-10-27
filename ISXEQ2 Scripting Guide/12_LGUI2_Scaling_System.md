@@ -53,9 +53,7 @@
 
 Place `LGUI2Scaling.iss` in your scripts directory:
 
-```
-C:\InnerSpace\Scripts\LGUI2Scaling.iss
-```
+**GitHub:** [LGUI2Scaling.iss](https://github.com/isxGames/isxScripts/blob/master/EverQuest2/Scripts/LGUI2Scaling.iss)
 
 ### Step 2: Include in Your Script
 
@@ -887,7 +885,7 @@ The `onCloseButtonClick` event handler calls this atom:
 
 ### Complete Working Example: EQ2BotCommander
 
-See `C:\Dev\InnerSpace\Scripts\EQ2Bot\UI\EQ2BotCommander.json` lines 1-88 for a complete, production-ready implementation of a scalable custom title bar.
+See [EQ2BotCommander.json](https://github.com/isxGames/isxScripts/blob/master/EverQuest2/Scripts/EQ2Bot/UI/EQ2BotCommander.json) lines 1-88 for a complete, production-ready implementation of a scalable custom title bar.
 
 **Key features:**
 - Custom title bar with 2x scaled buttons (font 40, padding 12)
