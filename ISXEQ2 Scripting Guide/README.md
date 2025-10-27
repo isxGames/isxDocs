@@ -89,6 +89,7 @@ This comprehensive guide provides complete documentation for creating, debugging
 
 ---
 
+<!-- CLAUDE_SKIP_START -->
 ## Quick Navigation
 
 ### By Task
@@ -191,6 +192,7 @@ This comprehensive guide provides complete documentation for creating, debugging
 | **UI Windows** | [03_API_Reference.md#window-datatypes](03_API_Reference.md#window-datatypes) |
 | **Commands** | [03_API_Reference.md#commands](03_API_Reference.md#commands) |
 | **Events** | [03_API_Reference.md#events](03_API_Reference.md#events) |
+<!-- CLAUDE_SKIP_END -->
 
 ---
 
@@ -270,6 +272,7 @@ ISXEQ2 provides 40+ events you can react to:
 
 ---
 
+<!-- CLAUDE_SKIP_START -->
 ## Source Materials
 
 This guide was created by analyzing:
@@ -289,6 +292,7 @@ This guide was created by analyzing:
 13. **LERN/JSON Examples** - https://github.com/LavishSoftware/LERN/tree/master/JSON (12 example files)
 14. **LERN/LMAC Documentation and Examples** - https://github.com/LavishSoftware/LERN/tree/master/LMAC (8 files: tutorials, audio examples, web request examples)
 15. **LERN/LS Tutorial Series** - https://github.com/LavishSoftware/LERN/tree/master/LS (19 lessons: complete LavishScript programming introduction)
+<!-- CLAUDE_SKIP_END -->
 
 ---
 
@@ -342,6 +346,7 @@ Found an error or have an improvement? This documentation was generated using ac
 
 ---
 
+<!-- CLAUDE_SKIP_START -->
 ## Version History
 
 - **3.0** (2025-10-25)
@@ -438,6 +443,7 @@ Found an error or have an improvement? This documentation was generated using ac
   - Working examples from multiple sources
   - LavishGUI 1 documentation
   - Troubleshooting and best practices
+<!-- CLAUDE_SKIP_END -->
 
 ---
 

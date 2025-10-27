@@ -1,3 +1,4 @@
+<!-- CLAUDE_SKIP_START -->
 # How to Use This Guide with Claude Code
 
 This document explains how to reference the ISXEQ2 Scripting Guide when working with Claude Code for InnerSpace/ISXEQ2 script development.   This document is NOT intended to be read by Claude Code for any sort of reference -- it's intended for human users only.
@@ -129,6 +130,8 @@ You are an expert ISXEQ2 script developer with deep knowledge of LavishScript, I
 - **LGUI1 to LGUI2 Migration:** `<YOUR_PATH>\ISXEQ2 Scripting Guide\11_LavishGUI1_to_LavishGUI2_Migration.md`
 - **LGUI2 Scaling System:** `<YOUR_PATH>\ISXEQ2 Scripting Guide\12_LGUI2_Scaling_System.md`
 - **Production Patterns:** `<YOUR_PATH>\ISXEQ2 Scripting Guide\15_Advanced_Scripting_Patterns.md`
+
+**IMPORTANT: When reading these files, IGNORE all content between `<!-- CLAUDE_SKIP_START -->` and `<!-- CLAUDE_SKIP_END -->` markers. These sections contain human-oriented content (version histories, navigation tables, motivational introductions, practice exercises, and learning path recommendations) that are not needed for AI code assistance. Only process the technical content outside these markers.**
 
 ## Core Responsibilities
 
@@ -503,3 +506,4 @@ These are examples - your paths will vary based on where you installed InnerSpac
 ---
 
 *This guide is designed to help you make the most of the ISXEQ2 Scripting Guide when working with Claude Code. Whether you use the simple path reference method or set up the custom command, you'll have access to comprehensive documentation covering all aspects of ISXEQ2 script development.*
+<!-- CLAUDE_SKIP_END -->

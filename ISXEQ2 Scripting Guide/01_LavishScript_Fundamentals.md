@@ -48,6 +48,7 @@ LavishScript is a **custom scripting language** designed specifically for game a
 - **Direct game memory access** through extensions like ISXEQ2
 - **Event-driven programming** for reactive scripts
 
+<!-- CLAUDE_SKIP_START -->
 ### Why Learn LavishScript First?
 
 ISXEQ2 scripts are written in LavishScript. Understanding LavishScript fundamentals will help you:
@@ -57,6 +58,7 @@ ISXEQ2 scripts are written in LavishScript. Understanding LavishScript fundament
 - Debug errors more effectively
 - Create custom objects and patterns
 - Build complex automation systems
+<!-- CLAUDE_SKIP_END -->
 
 ---
 
@@ -111,11 +113,13 @@ function main() {
 - `echo` outputs text to the console
 - Commands are executed line by line
 
+<!-- CLAUDE_SKIP_START -->
 ### Running Your First Script
 
 1. Save the file as `hello.iss` in your `Scripts` directory
 2. In the InnerSpace console, type: `run hello`
 3. You should see: `Hello World!`
+<!-- CLAUDE_SKIP_END -->
 
 ---
 
@@ -2796,6 +2800,7 @@ For **time-based volume changes** and **async audio control**, see the **LavishM
 
 ---
 
+<!-- CLAUDE_SKIP_START -->
 ## Best Practices Summary
 
 ### 1. Variable and Parameter Naming
@@ -2948,6 +2953,7 @@ objectdef MyObject
     }
 }
 ```
+<!-- CLAUDE_SKIP_END -->
 
 ---
 
@@ -2955,6 +2961,7 @@ objectdef MyObject
 
 Congratulations! You now understand the fundamentals of LavishScript.
 
+<!-- CLAUDE_SKIP_START -->
 ### Where to Go from Here
 
 Now that you know LavishScript basics, you're ready to learn **ISXEQ2-specific scripting**:
@@ -3033,6 +3040,7 @@ Create objectdefs for:
 - **LavishScript Math Operators:** http://www.lavishsoft.com/wiki/index.php/LavishScript:Mathematical_Formulae
 - **InnerSpace Documentation:** http://www.lavishsoft.com/wiki/
 - **LERN Examples:** https://github.com/LavishSoftware/LERN/tree/master
+<!-- CLAUDE_SKIP_END -->
 
 ---
 

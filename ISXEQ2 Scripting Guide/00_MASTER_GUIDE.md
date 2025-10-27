@@ -592,6 +592,7 @@ echo "Type of Target: ${Target.Type}"
 
 ---
 
+<!-- CLAUDE_SKIP_START -->
 ## Resource Files
 
 - **Official Reference:** `..\+ISXEQ2_Reference+.md`
@@ -607,6 +608,7 @@ echo "Type of Target: ${Target.Type}"
 - **Code Examples:** [06_Working_Examples.md](06_Working_Examples.md)
 - **Best Practices:** [05_Patterns_And_Best_Practices.md](05_Patterns_And_Best_Practices.md)
 - **Production Patterns:** [15_Advanced_Scripting_Patterns.md](15_Advanced_Scripting_Patterns.md)
+<!-- CLAUDE_SKIP_END -->
 
 ---
 

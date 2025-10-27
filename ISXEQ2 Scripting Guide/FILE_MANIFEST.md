@@ -1,3 +1,4 @@
+<!-- CLAUDE_SKIP_START -->
 # ISXEQ2 Scripting Guide - File Manifest
 
 **Project:** ISXEQ2 Scripting Guide
@@ -407,3 +408,4 @@ All documentation files are contained within this ISXEQ2 Scripting Guide directo
 
 *ISXEQ2 Scripting Guide - Version 3.0 - Generated 2025-10-25*
 *Complete documentation from beginner to advanced topics*
+<!-- CLAUDE_SKIP_END -->

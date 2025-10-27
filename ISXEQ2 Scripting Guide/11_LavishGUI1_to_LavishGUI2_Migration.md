@@ -22,6 +22,7 @@
 
 ## Migration Overview
 
+<!-- CLAUDE_SKIP_START -->
 ### Why Migrate?
 
 **LavishGUI 2** is the modern, supported UI framework with:
@@ -31,6 +32,7 @@
 - ✅ **Cleaner syntax** - JSON is more readable than XML
 - ✅ **Active development** - LGUI1 is legacy, LGUI2 is the future
 - ✅ **More powerful** - Better event handling, templates, and features
+<!-- CLAUDE_SKIP_END -->
 
 ### Migration Process
 

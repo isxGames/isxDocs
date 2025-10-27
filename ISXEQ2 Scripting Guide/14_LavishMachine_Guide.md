@@ -27,6 +27,7 @@
 
 ## Introduction to LavishMachine
 
+<!-- CLAUDE_SKIP_START -->
 ### What is LavishMachine?
 
 **LavishMachine (LMAC)** is a **Virtual Machine** integrated into LavishScript that handles running **Tasks**. It provides a powerful framework for:
@@ -66,6 +67,7 @@ TaskManager:BeginTask["$$>
 }
 <$$"]
 ```
+<!-- CLAUDE_SKIP_END -->
 
 ### Key Benefits
 

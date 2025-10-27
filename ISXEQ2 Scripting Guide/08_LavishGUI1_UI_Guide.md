@@ -24,6 +24,7 @@ Complete guide to creating custom user interfaces with LavishGUI 1 XML for ISXEQ
 
 ## Introduction to LavishGUI 1
 
+<!-- CLAUDE_SKIP_START -->
 ### What is LavishGUI 1?
 
 **LavishGUI 1** is InnerSpace's original XML-based user interface system. It allows you to:
@@ -32,6 +33,7 @@ Complete guide to creating custom user interfaces with LavishGUI 1 XML for ISXEQ
 - Interface between your LavishScript code and visual elements
 - Save/restore window positions and settings
 - Create themed UIs with skins and templates
+<!-- CLAUDE_SKIP_END -->
 
 ### How LavishGUI 1 Works with Scripts
 

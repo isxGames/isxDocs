@@ -16,6 +16,7 @@ Get up and running with ISXEQ2 scripting in minutes!
 
 ---
 
+<!-- CLAUDE_SKIP_START -->
 ## Prerequisites
 
 Before you begin, ensure you have:
@@ -62,6 +63,7 @@ echo ${Me.CurrentHealth}
 - Third command shows your current health value
 
 If all three work, you're ready to write scripts!
+<!-- CLAUDE_SKIP_END -->
 
 ---
 
@@ -410,6 +412,7 @@ echo "Equipped Chest: ${Me.Equipment[chest].Name}"
 
 ---
 
+<!-- CLAUDE_SKIP_START -->
 ## Common Beginner Mistakes
 
 ### 1. Forgetting NULL Checks
@@ -452,9 +455,11 @@ if !${MyItem.IsItemInfoAvailable}
 
 echo ${MyItem.ToItemInfo.Description}
 ```
+<!-- CLAUDE_SKIP_END -->
 
 ---
 
+<!-- CLAUDE_SKIP_START -->
 ## Next Steps
 
 Congratulations! You've created and run your first ISXEQ2 script. Here's what to explore next:
@@ -501,9 +506,11 @@ Explore specialized guides:
 - **[09_LavishGUI2_UI_Guide.md](09_LavishGUI2_UI_Guide.md)** - Create modern UIs
 - **[11_JSON_Guide.md](11_JSON_Guide.md)** - Work with JSON data
 - **[12_LavishMachine_Guide.md](12_LavishMachine_Guide.md)** - Async task execution
+<!-- CLAUDE_SKIP_END -->
 
 ---
 
+<!-- CLAUDE_SKIP_START -->
 ## Quick Reference Card
 
 ### Essential TLOs
@@ -561,18 +568,22 @@ if ${Object(exists)}
     ; Safe to access
 }
 ```
+<!-- CLAUDE_SKIP_END -->
 
 ---
 
+<!-- CLAUDE_SKIP_START -->
 ## Getting Help
 
 - **Need an example?** Browse [06_Working_Examples.md](06_Working_Examples.md)
 - **API question?** Look up in [00_MASTER_GUIDE.md](00_MASTER_GUIDE.md) or [03_API_Reference.md](03_API_Reference.md)
 - **Need advanced patterns?** Check [07_Advanced_Patterns_And_Examples.md](07_Advanced_Patterns_And_Examples.md)
 - **New to LavishScript?** Read [01_LavishScript_Fundamentals.md](01_LavishScript_Fundamentals.md)
+<!-- CLAUDE_SKIP_END -->
 
 ---
 
+<!-- CLAUDE_SKIP_START -->
 ## Practice Exercises
 
 Try building these simple scripts to practice:
@@ -666,6 +677,7 @@ function main()
     echo "Free slots: ${Me.InventorySlotsFree}"
 }
 ```
+<!-- CLAUDE_SKIP_END -->
 
 ---
 

@@ -27,6 +27,7 @@
 
 ## Introduction to JSON
 
+<!-- CLAUDE_SKIP_START -->
 ### What is JSON?
 
 **JSON (JavaScript Object Notation)** is a lightweight data interchange format that's easy for humans to read and write, and easy for machines to parse and generate. It's the standard format for:
@@ -45,6 +46,7 @@
 4. ✅ **UI Creation** - LavishGUI 2 uses JSON packages
 5. ✅ **API Integration** - Modern web APIs use JSON
 6. ✅ **Structured Data** - Organize complex information clearly
+<!-- CLAUDE_SKIP_END -->
 
 ### JSON in LavishScript
 

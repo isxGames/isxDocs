@@ -39,6 +39,7 @@
 
 ## Introduction to LavishGUI 2
 
+<!-- CLAUDE_SKIP_START -->
 ### What is LavishGUI 2?
 
 **LavishGUI 2** (LGUI2) is the modern UI framework for InnerSpace, replacing the older XML-based LavishGUI 1 system. It provides a powerful, flexible way to create custom user interfaces for your scripts using **JSON package files** instead of XML.
@@ -64,6 +65,7 @@
 - Enables IDE autocomplete and validation via JSON schema
 - More powerful data binding reduces manual UI updates
 - Cleaner event handling with inline definitions
+<!-- CLAUDE_SKIP_END -->
 
 ---
 
