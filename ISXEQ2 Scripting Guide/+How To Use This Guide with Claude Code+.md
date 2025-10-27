@@ -496,20 +496,8 @@ These are examples - your paths will vary based on where you installed InnerSpac
   - Example: `C:\InnerSpace\Scripts\`
   - Example: `D:\Games\InnerSpace\Scripts\`
 
-### Documentation Statistics
-
-- **Version:** 3.0
-- **Total Guides:** 20 comprehensive guides
-- **Total Documentation:** 35,248 lines
-- **Coverage:** Complete ISXEQ2 API, LavishScript fundamentals, UI development (LGUI1 & LGUI2), advanced patterns
-- **Scripts Analyzed:** EQ2Bot, EQ2Craft, EQ2Nav, MyPrices, EQ2BJCommon, EQ2OgreFree, EQ2Track, EQ2AFKAlarm
-
 ---
 
-## Version Information
-
-**Document Version:** 1.1
-**ISXEQ2 Guide Version:** 3.0
 **Last Updated:** 2025-10-25
 
 ---
