@@ -1091,8 +1091,8 @@ uiScale:Set[${LavishSettings[MyScript].Set[UI].GetSetting[ScaleFactor,1.0]}]
 
 - **LavishGUI 2 UI Guide:** [10_LavishGUI2_UI_Guide.md](10_LavishGUI2_UI_Guide.md)
 - **Migration Guide:** [11_LavishGUI1_to_LavishGUI2_Migration.md](11_LavishGUI1_to_LavishGUI2_Migration.md)
-- **Example Implementation:** `EQ2BotCommander_LGUI2.iss`
-- **Scaling Library Source:** `LGUI2Scaling.iss`
+- **Example Implementation:** [EQ2BotCommander.iss](https://github.com/isxGames/isxScripts/blob/master/EverQuest2/Scripts/EQ2BotCommander.iss)
+- **Scaling Library Source:** [LGUI2Scaling.iss](https://github.com/isxGames/isxScripts/blob/master/EverQuest2/Scripts/LGUI2Scaling.iss)
 
 ---
 

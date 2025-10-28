@@ -1,6 +1,6 @@
 # ISXEQ2 Advanced Patterns and Examples
 
-Complete collection of advanced patterns discovered from production ISXEQ2 scripts including EQ2Craft, EQ2Transmute, EQ2Collections, EQ2BuyShineys, EQ2RaidAttendance, and 40+ example scripts.
+Complete collection of advanced patterns discovered from production ISXEQ2 scripts including [EQ2Craft](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2Craft), [EQ2RaidAttendance](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2RaidAttendance), and 40+ example scripts.
 
 ---
 
@@ -32,7 +32,7 @@ Scripts often need to interact with UI elements not directly accessible via ISXE
 
 #### Basic Mouse Clicking
 
-**Source:** collect.iss, EQ2BuyShineys.iss
+**Source:** collect.iss example script
 
 ```lavishscript
 variable int ToClickX
@@ -62,7 +62,7 @@ function ClickStoredPosition()
 
 #### Advanced: Saving Mouse Position to Configuration
 
-**Source:** EQ2BuyShineys.iss
+**Source:** Production script patterns
 
 ```lavishscript
 variable(script) int ToClickX
@@ -168,7 +168,7 @@ LavishSettings provides XML-based configuration storage for persistent data acro
 
 #### Basic XML Import/Export
 
-**Source:** EQ2Collections.iss, EQ2Transmute.iss, EQ2RaidAttendance.iss
+**Source:** [EQ2RaidAttendance](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2RaidAttendance) and production scripts
 
 ```lavishscript
 variable settingsetref Configuration
@@ -204,7 +204,7 @@ function SaveConfiguration()
 
 #### Advanced: Nested Settings with Collections
 
-**Source:** EQ2Collections.iss
+**Source:** Production script patterns
 
 ```lavishscript
 variable settingsetref Collections
@@ -310,7 +310,7 @@ Scripts often need to accept various command-line arguments for flexibility.
 
 #### Basic Argument Parsing
 
-**Source:** EQ2Transmute.iss, EQ2BuyShineys.iss, EQ2RaidAttendance.iss
+**Source:** [EQ2RaidAttendance](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2RaidAttendance) and production scripts
 
 ```lavishscript
 function main(... Args)
@@ -347,7 +347,7 @@ function main(... Args)
 
 #### Advanced: Named Parameters with Values
 
-**Source:** EQ2BuyShineys.iss
+**Source:** Production script patterns
 
 ```lavishscript
 function main(... Args)
@@ -654,7 +654,7 @@ Complex pattern for searching broker and automating purchases.
 
 #### Advanced Broker Automation
 
-**Source:** EQ2BuyShineys.iss
+**Source:** Production script patterns
 
 ```lavishscript
 variable float MinGold
@@ -793,7 +793,7 @@ Examining items to read their properties from the examine window.
 
 #### Examine Window Text Parsing
 
-**Source:** EQ2BuyShineys.iss
+**Source:** Production script patterns
 
 ```lavishscript
 variable int ExamineWaitCounter = 0
@@ -870,7 +870,7 @@ Processing inventory items and adding collectibles to journal.
 
 #### Collection Auto-Add
 
-**Source:** EQ2BuyShineys.iss
+**Source:** Production script patterns
 
 ```lavishscript
 variable string TmpString

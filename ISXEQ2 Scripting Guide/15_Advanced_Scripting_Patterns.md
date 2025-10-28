@@ -1,8 +1,8 @@
 # Advanced ISXEQ2 Scripting Patterns
 
-**Comprehensive guide to production-grade scripting techniques from EQ2OgreFree and professional scripts**
+**Comprehensive guide to production-grade scripting techniques from [EQ2OgreFree](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2OgreFree) and professional scripts**
 
-This guide covers advanced patterns and techniques discovered through analysis of the EQ2OgreFree script suite (https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2OgreFree and https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2OgreCommon). These are production-tested patterns used in complex, multi-threaded automation systems.
+This guide covers advanced patterns and techniques discovered through analysis of the [EQ2OgreFree](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2OgreFree) script suite (including [EQ2OgreCommon](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2OgreCommon)). These are production-tested patterns used in complex, multi-threaded automation systems.
 
 ---
 

@@ -1,6 +1,6 @@
 # ISXEQ2 Patterns and Best Practices
 
-Proven patterns and best practices learned from analyzing production ISXEQ2 scripts, particularly EQ2Bot (7,500+ lines) and its 20+ class routines.
+Proven patterns and best practices learned from analyzing production ISXEQ2 scripts, particularly [EQ2Bot](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2Bot) (7,500+ lines) and its 20+ class routines.
 
 ---
 

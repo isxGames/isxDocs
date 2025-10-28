@@ -1,6 +1,6 @@
 # Navigation Library Patterns
 
-**Advanced pathfinding and navigation from EQ2Nav**
+**Advanced pathfinding and navigation from [EQ2Navigation](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2Navigation)**
 
 ---
 
@@ -23,9 +23,7 @@
 
 ## Overview
 
-EQ2Nav is a production-grade navigation library that provides sophisticated pathfinding and movement automation.
-
-**Source:** https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2Navigation
+[EQ2Navigation](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2Navigation) is a production-grade navigation library that provides sophisticated pathfinding and movement automation.
 
 **Key Features:**
 - LavishNav pathfinding integration

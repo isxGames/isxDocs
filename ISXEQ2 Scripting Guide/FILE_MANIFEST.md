@@ -24,19 +24,19 @@
 | **02_Quick_Start_Guide.md** | ✅ Complete | 751 | Quick start tutorial for beginners |
 | **03_API_Reference.md** | ✅ Complete | 3,418 | Complete API documentation (all TLOs, datatypes, commands, events) |
 | **04_Core_Concepts.md** | ✅ Complete | 862 | Essential ISXEQ2 concepts (datatypes, queries, async, inheritance) |
-| **05_Patterns_And_Best_Practices.md** | ✅ Complete | 1,098 | Coding patterns from EQ2Bot analysis |
+| **05_Patterns_And_Best_Practices.md** | ✅ Complete | 1,098 | Coding patterns from [EQ2Bot](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2Bot) analysis |
 | **06_Working_Examples.md** | ✅ Complete | 1,156 | Real-world code examples for common tasks |
 | **07_Advanced_Patterns_And_Examples.md** | ✅ Complete | 1,635 | Advanced patterns (mouse automation, XML config, broker, navigation) |
 | **08_LavishGUI1_UI_Guide.md** | ✅ Complete | 1,305 | LavishGUI 1 UI creation guide (XML-based, legacy) |
-| **09_Advanced_LGUI1_Patterns.md** | ✅ Complete | 1,458 | Real-world LGUI1 patterns from MyPrices script |
+| **09_Advanced_LGUI1_Patterns.md** | ✅ Complete | 1,458 | Real-world LGUI1 patterns from [MyPrices](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/MyPrices) script |
 | **10_LavishGUI2_UI_Guide.md** | ✅ Complete | 6,321 | LavishGUI 2 UI creation guide (JSON-based, modern) with scalable title bars |
 | **11_LavishGUI1_to_LavishGUI2_Migration.md** | ✅ Complete | 3,542 | Migration guide from LGUI1 to LGUI2 with scalable title bars and limitations |
 | **12_LGUI2_Scaling_System.md** | ✅ Complete | 1,100 | Dynamic UI scaling system for LGUI2 interfaces with custom title bar patterns |
 | **13_JSON_Guide.md** | ✅ Complete | 1,734 | Complete JSON guide (parsing, serialization, file I/O) |
 | **14_LavishMachine_Guide.md** | ✅ Complete | 1,947 | Asynchronous task system (audio, web requests, custom tasks) |
-| **15_Advanced_Scripting_Patterns.md** | ✅ Complete | 3,961 | Production-grade patterns from EQ2OgreFree and EQ2Track (14 patterns total) |
+| **15_Advanced_Scripting_Patterns.md** | ✅ Complete | 3,961 | Production-grade patterns from [EQ2OgreFree](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2OgreFree) and [EQ2Track](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2Track) (14 patterns total) |
 | **16_Utility_Script_Patterns.md** | ✅ Complete | 3,221 | Utility patterns from EQ2BJCommon (18 patterns: timers, tracking, validation, etc.) |
-| **17_Crafting_Script_Patterns.md** | ✅ Complete | 1,731 | Crafting automation patterns from EQ2Craft (13 patterns: cmd-line, navigation, localization, queue mgmt, writs, etc.) |
+| **17_Crafting_Script_Patterns.md** | ✅ Complete | 1,731 | Crafting automation patterns from [EQ2Craft](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2Craft) (13 patterns: cmd-line, navigation, localization, queue mgmt, writs, etc.) |
 | **18_Navigation_Library_Patterns.md** | ✅ Complete | 1,067 | Navigation and pathfinding patterns from EQ2Nav (10 patterns: LavishNav, Dijkstra, regions, collision, stuck detection, doors, aggro, precision, optimization) |
 
 **Total Documentation:** 40,788 lines across 21 files (19 numbered guides + README + FILE_MANIFEST)
@@ -51,12 +51,12 @@
 |--------|------|---------|
 | **Official ISXEQ2 Reference** | 4,715 lines | Complete API reference |
 | **ISXEQ2 Source Code** | ~120,000 lines C++ | Architecture analysis |
-| **EQ2Bot Main Script** | 7,509 lines | Pattern analysis |
-| **EQ2Bot Library** | 2,861 lines | Best practices |
-| **EQ2Bot Class Routines** | 20+ files | Implementation patterns |
+| **EQ2Bot Main Script** | 7,509 lines | Pattern analysis | https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2Bot |
+| **EQ2Bot Library** | 2,861 lines | Best practices | https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2Bot |
+| **EQ2Bot Class Routines** | 20+ files | Implementation patterns | https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2Bot |
 | **MyPrices Script** | 3,937 lines + 3,288 UI | Advanced LGUI1 patterns | https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/MyPrices |
-| **EQ2OgreFree Scripts** | 43 files | Advanced production patterns |
-| **EQ2Track Script** | 3 files | UI patterns, collections, file discovery |
+| **EQ2OgreFree Scripts** | 43 files | Advanced production patterns | https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2OgreFree |
+| **EQ2Track Script** | 3 files | UI patterns, collections, file discovery | https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2Track |
 | **EQ2BJCommon Scripts** | ~2,500 lines (5 utilities) | Utility patterns | https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2BJCommon |
 | **EQ2Craft Script** | ~15,000 lines (main + includes) | Crafting automation patterns | https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2Craft |
 | **EQ2Navigation Library** | ~1,200 lines (5 files) | Pathfinding and navigation | https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2Navigation |
@@ -355,7 +355,7 @@ All documentation files are contained within this ISXEQ2 Scripting Guide directo
 
 - **v2.5 (2025-10-23)**
   - Added Advanced LGUI1 Patterns guide (~700 lines)
-  - Analyzed MyPrices broker script (3,937 lines + 3,288 line UI)
+  - Analyzed [MyPrices](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/MyPrices) broker script (3,937 lines + 3,288 line UI)
   - Real-world patterns: FindChild navigation, alpha-based show/hide, Script:QueueCommand, settings integration, color-coded lists
   - Documented LGUI2 limitation: custom C++ element types not supported
   - Updated migration guide with Known Limitations section about radar migration failure

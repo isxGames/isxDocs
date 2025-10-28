@@ -202,7 +202,7 @@ Follow EQ2Bot conventions:
 
 ## Production Patterns (from Guide v3.0)
 
-The guide includes production-grade patterns from real scripts (EQ2Bot, EQ2Craft, EQ2Nav, EQ2AFKAlarm):
+The guide includes production-grade patterns from real scripts ([EQ2Bot](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2Bot), [EQ2Craft](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2Craft), [EQ2Navigation](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2Navigation), [EQ2AFKAlarm](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2AFKAlarm)):
 - Multi-Threading - Worker threads with cross-script communication
 - LavishSettings - Hierarchical XML configuration
 - LavishNav - Advanced pathfinding and navigation
