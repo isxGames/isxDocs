@@ -1,6 +1,7 @@
+# Working Examples
+
 # Common Code Snippets
 
-> **Part of Layer 9: Reference Materials**
 > Copy-paste ready code snippets for common EVE Online bot operations.
 
 ---
@@ -1997,13 +1998,3 @@ This collection provides **ready-to-use code snippets** for the most common EVE 
 3. **Combine snippets** to create complex behaviors
 4. **Test thoroughly** before live use
 5. **Add error handling** for production
-
----
-
-**Previous Document:** `36_LavishScript_Command_Reference.md` - LavishScript language reference
-
-**Next Document:** `38_Wiki_Navigation_Guide.md` - Final navigation guide
-
----
-
-*Document complete. Common code snippets compiled for community use.*

@@ -1,9 +1,7 @@
-# LavishScript Syntax and Patterns
-## Practical Coding Patterns for EVE Automation
+# Advanced Scripting Patterns
 
-**Purpose**: Practical, real-world coding patterns used in EVE bot development
-**Audience**: AI learning to write effective LavishScript code
-**Prerequisites**: Read files 01-04 first
+**Purpose:** Production-grade patterns for script organization, main loops, state machines, error handling, relay communication, and configuration management
+**Audience:** Intermediate to advanced scripters building complex automation
 
 ---
 
@@ -32,8 +30,7 @@
 ; Script Name: MyBot.iss
 ; Purpose: [Brief description]
 ; Author: [Your name]
-; Version: 1.0
-; Last Modified: 2025-10-04
+; ; Last Modified: 2025-10-04
 ;==============================================================================
 
 ;==============================================================================
@@ -1247,5 +1244,5 @@ if ${Entity.IsLockedTarget}
 
 ---
 
-**END OF FILE**
-**Next File**: 06_Variables_DataTypes_and_Scope.md
+*Last Updated: 2025-10-26*
+*Part of ISXEVE Scripting Guide*

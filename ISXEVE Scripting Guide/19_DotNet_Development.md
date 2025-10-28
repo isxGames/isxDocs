@@ -1,6 +1,7 @@
-# File 32: Scripts vs DotNet Programs
+# DotNet Development
 
-**Layer 8: DotNet Bridge - Part 1 of 3**
+# Scripts vs DotNet Programs
+
 
 ## Table of Contents
 1. [Fundamental Differences](#fundamental-differences)
@@ -18,7 +19,7 @@
 
 ---
 
-## Fundamental Differences <a name="fundamental-differences"></a>
+## Fundamental Differences
 
 ### Scripts (.iss files)
 
@@ -52,12 +53,12 @@
 - **Runtime:** .NET Framework CLR
 
 **Examples:**
-- Metatron (combat/mining) - C# .NET application
+- [Metatron2](https://github.com/spacekoala420/Metatron2) (combat/mining) - C# .NET application
 - Custom utilities and tools
 
 ---
 
-## LavishScript Scripts (.iss files) <a name="lavishscript-scripts"></a>
+## LavishScript Scripts (.iss files)
 
 ### Characteristics
 
@@ -131,7 +132,7 @@ Execution: run EVEBot
 
 ---
 
-## DotNet Programs (.exe/.dll files) <a name="dotnet-programs"></a>
+## DotNet Programs (.exe/.dll files)
 
 ### Characteristics
 
@@ -152,7 +153,7 @@ Execution: run EVEBot
 4. **Longer Iteration** - Edit → Build → Run cycle
 5. **Not Open Source** - Compiled binaries are opaque
 
-### Structure Example (Metatron)
+### Structure Example ([Metatron2](https://github.com/spacekoala420/Metatron2))
 
 ```
 Metatron_spacekoala/
@@ -205,7 +206,7 @@ Execution: dotnet Metatron
 
 ---
 
-## Language Comparison <a name="language-comparison"></a>
+## Language Comparison
 
 ### Type Systems
 
@@ -382,7 +383,7 @@ var result = await LockTargetAsync(targetID);
 
 ---
 
-## Development Workflow <a name="development-workflow"></a>
+## Development Workflow
 
 ### Script Development (LavishScript)
 
@@ -437,7 +438,7 @@ Edit → Save → Build → Copy DLL → Run → Test → Debug (breakpoints) �
 
 ---
 
-## Performance Comparison <a name="performance-comparison"></a>
+## Performance Comparison
 
 ### Execution Speed
 
@@ -505,7 +506,7 @@ Console.WriteLine($".NET: {duration}s");
 
 ---
 
-## Debugging Capabilities <a name="debugging-capabilities"></a>
+## Debugging Capabilities
 
 ### Script Debugging
 
@@ -586,7 +587,7 @@ Shows exact line, full stack, all variables
 
 ---
 
-## Deployment and Distribution <a name="deployment"></a>
+## Deployment and Distribution
 
 ### Script Deployment
 
@@ -653,7 +654,7 @@ Zip and share
 
 ---
 
-## Maintenance and Updates <a name="maintenance"></a>
+## Maintenance and Updates
 
 ### Script Maintenance
 
@@ -737,7 +738,7 @@ public class AutoUpdater
 
 ---
 
-## Hybrid Approaches <a name="hybrid-approaches"></a>
+## Hybrid Approaches
 
 ### Calling .NET from Scripts
 
@@ -808,7 +809,7 @@ public class ScriptCaller
 
 ---
 
-## Migration Strategies <a name="migration"></a>
+## Migration Strategies
 
 ### Script to .NET Migration
 
@@ -909,7 +910,7 @@ namespace Metatron.BehaviorModules
 
 ---
 
-## Decision Matrix <a name="decision-matrix"></a>
+## Decision Matrix
 
 ### When to Use Scripts
 
@@ -1011,7 +1012,7 @@ Fleet coordination: Script relay, .NET processing
 - Easy to share with beginners
 - Performance sufficient
 
-### .NET Example: Metatron (Combat/Mining)
+### .NET Example: [Metatron2](https://github.com/spacekoala420/Metatron2) (Combat/Mining)
 
 **Stats:**
 - **Lines:** 100,000+
@@ -1055,22 +1056,3 @@ Fleet coordination: Script relay, .NET processing
    - Scripts for simple tasks
    - .NET for heavy lifting
    - Best of both worlds
-
-### What's Next?
-
-**File 33:** When to Use DotNet Instead
-- Detailed decision criteria
-- Performance thresholds
-- Feature requirements
-- Migration triggers
-
-**File 34:** Metatron DotNet Architecture Overview
-- Real .NET bot analysis
-- Module architecture
-- Best practices from production code
-
----
-
-*Layer 8 Progress: 1/3 Complete (33%)*
-*Total Documentation Progress: 31/37 Files (83.8%)*
-*ONLY 6 FILES REMAINING!* 🚀💎✨
