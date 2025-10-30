@@ -1,6 +1,6 @@
 # LavishScript Fundamentals
 
-**Purpose:** Complete introduction to LavishScript programming for ISXEVE scripters
+**Purpose:** Complete introduction to LavishScript programming for scripters
 **Audience:** Beginners with little to no LavishScript experience
 
 ---
@@ -35,7 +35,7 @@
 
 ## Introduction
 
-**LavishScript** is the scripting language used by InnerSpace and all InnerSpace extensions, including ISXEVE. Before diving into ISXEVE-specific scripting, it's essential to understand the fundamentals of LavishScript itself.
+**LavishScript** is the scripting language used by InnerSpace and all InnerSpace extensions. Before diving into game-specific scripting, it's essential to understand the fundamentals of LavishScript itself.
 
 ### What is LavishScript?
 
@@ -44,20 +44,8 @@ LavishScript is a **custom scripting language** designed specifically for game a
 - **Object-oriented programming** with inheritance
 - **Strong typing** with built-in and custom types
 - **Atomic execution** for performance-critical code
-- **Direct game memory access** through extensions like ISXEVE
+- **Direct game memory access** through extensions like ISXEQ2, ISXEVE, etc.
 - **Event-driven programming** for reactive scripts
-
-<!-- CLAUDE_SKIP_START -->
-### Why Learn LavishScript First?
-
-ISXEVE scripts are written in LavishScript. Understanding LavishScript fundamentals will help you:
-
-- Understand ISXEVE API documentation
-- Write correct and efficient scripts
-- Debug errors more effectively
-- Create custom objects and patterns
-- Build complex automation systems
-<!-- CLAUDE_SKIP_END -->
 
 ---
 
@@ -3009,16 +2997,15 @@ Shows all registered types in the current session.
 
 ```lavishscript
 ; What type is my ship?
-echo ${MyShip(type)}
-; Output: ship
+echo ${LGUI2(type)}
+; Output: lgui2
 
-; What can I do with a ship?
-lstype ship
-; Shows: Cargo, CapPercent, ShieldPercent, etc.
+; What can I do with this object?
+lstype lgui2
 
 ; Access the members
-echo "Shield: ${MyShip.ShieldPercent}%"
-echo "Cargo: ${MyShip.Cargo.Used}/${MyShip.Cargo.Capacity}"
+echo "Name: ${LGUI2.Name}
+echo "CursorX: ${LGUI2.CursorX}
 ```
 
 ### When to Use Type Inspection
@@ -3030,82 +3017,6 @@ echo "Cargo: ${MyShip.Cargo.Used}/${MyShip.Cargo.Capacity}"
 
 ---
 
-<!-- CLAUDE_SKIP_START -->
-## Next Steps
-
-Congratulations! You now understand the fundamentals of LavishScript.
-
-### Where to Go from Here
-
-Now that you know LavishScript basics, you're ready to learn **ISXEVE-specific scripting**:
-
-1. **[02_Quick_Start_Guide.md](02_Quick_Start_Guide.md)** - Your first ISXEVE script
-   - Access character information
-   - Basic ship status checks
-   - Module and cargo access
-
-2. **[04_Core_Concepts.md](04_Core_Concepts.md)** - ISXEVE concepts
-   - Top-Level Objects (TLOs) like `${Me}`, `${MyShip}`, `${EVE}`
-   - ISXEVE-specific datatypes
-   - Entity system and targeting
-   - Event system
-
-3. **[06_Working_Examples.md](06_Working_Examples.md)** - Practical ISXEVE code
-   - Character and ship stats
-   - Inventory management
-   - Module activation
-   - Entity targeting
-   - UI interaction
-
-4. **[03_API_Reference.md](03_API_Reference.md)** - Complete ISXEVE API
-   - Detailed reference for all ISXEVE datatypes
-   - All members and methods
-   - Commands and events
-
-### Key Differences Between LavishScript and ISXEVE
-
-**LavishScript provides:**
-- Language fundamentals (variables, functions, objects, loops)
-- Core datatypes (string, int, float)
-- Script control (wait, waitframe, call, return)
-
-**ISXEVE adds:**
-- Game-specific TLOs (`${Me}`, `${MyShip}`, `${Entity[...]}`)
-- Game datatypes (pilot, ship, module, entity, item)
-- Game commands (target, dock, undock)
-- Game events (OnFrame, OnActivateModule, etc.)
-
-### Practice Exercises
-
-Before moving to ISXEVE, try these exercises to solidify your LavishScript knowledge:
-
-**Exercise 1: Character Manager**
-```
-Create an objectdef called 'character' with:
-- Variables: Name (string), Level (int), Class (string)
-- Initialize method accepting Name, Level, Class
-- ToText member returning formatted character info
-- LevelUp method to increment Level
-```
-
-**Exercise 2: Inventory Simulator**
-```
-Create a script with:
-- Function to add items to an array/collection
-- Function to remove items
-- Function to list all items
-- while loop in main that accepts user commands
-```
-
-**Exercise 3: Combat Simulator**
-```
-Create objectdefs for:
-- Enemy (Health, Name)
-- Attack result calculator
-- Use a while loop to simulate combat
-- Use if-elseif-else for different attack results
-```
-
 ### Additional Resources
 
 - **LavishScript Wiki:** http://www.lavishsoft.com/wiki/LavishScript
@@ -3116,6 +3027,5 @@ Create objectdefs for:
 ---
 
 *Last Updated: 2025-10-26*
-*Based on LERN/LS Tutorial Series: https://github.com/LavishSoftware/LERN/tree/master/LS (19 lessons)*
-*Part of ISXEVE Scripting Guide*
-<!-- CLAUDE_SKIP_END -->
+*Based on LERN/LS Tutorial Series: https://github.com/LavishSoftware/LERN/tree/master/LS (19 lessons)**
+

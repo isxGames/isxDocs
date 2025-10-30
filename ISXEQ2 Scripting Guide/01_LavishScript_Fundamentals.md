@@ -1,6 +1,6 @@
 # LavishScript Fundamentals
 
-**Purpose:** Complete introduction to LavishScript programming for ISXEQ2 scripters
+**Purpose:** Complete introduction to LavishScript programming for scripters
 **Audience:** Beginners with little to no LavishScript experience
 
 ---
@@ -35,7 +35,7 @@
 
 ## Introduction
 
-**LavishScript** is the scripting language used by InnerSpace and all InnerSpace extensions, including ISXEQ2. Before diving into ISXEQ2-specific scripting, it's essential to understand the fundamentals of LavishScript itself.
+**LavishScript** is the scripting language used by InnerSpace and all InnerSpace extensions. Before diving into game-specific scripting, it's essential to understand the fundamentals of LavishScript itself.
 
 ### What is LavishScript?
 
@@ -44,20 +44,8 @@ LavishScript is a **custom scripting language** designed specifically for game a
 - **Object-oriented programming** with inheritance
 - **Strong typing** with built-in and custom types
 - **Atomic execution** for performance-critical code
-- **Direct game memory access** through extensions like ISXEQ2
+- **Direct game memory access** through extensions like ISXEQ2, ISXEVE, etc.
 - **Event-driven programming** for reactive scripts
-
-<!-- CLAUDE_SKIP_START -->
-### Why Learn LavishScript First?
-
-ISXEQ2 scripts are written in LavishScript. Understanding LavishScript fundamentals will help you:
-
-- Understand ISXEQ2 API documentation
-- Write correct and efficient scripts
-- Debug errors more effectively
-- Create custom objects and patterns
-- Build complex automation systems
-<!-- CLAUDE_SKIP_END -->
 
 ---
 
@@ -2799,83 +2787,6 @@ For **time-based volume changes** and **async audio control**, see the **LavishM
 
 ---
 
-## Type Inspection and Debugging Commands
-
-### Inspecting Object Types
-
-When working with LavishScript and InnerSpace, you'll often need to inspect what members and methods an object has. InnerSpace provides console commands for this:
-
-**Get the type of any object:**
-```lavishscript
-echo ${Object(type)}
-```
-
-**Inspect a type's members and methods:**
-```
-lstype <typename>
-```
-
-**Example - Inspecting LGUI2 layer:**
-```
-echo ${LGUI2.Layer["base"](type)}
-```
-Output: `lgui2layer`
-
-```
-lstype lgui2layer
-```
-Output shows:
-- **Members** - Properties you can access with `.` (dot) notation
-- **Methods** - Actions you can perform with `:` (colon) notation
-- **Static Members** - Type-level members accessed on the type name
-- **Static Methods** - Type-level methods called on the type name
-
-### Common Type Inspection Patterns
-
-**1. Unknown object - find its type:**
-```lavishscript
-echo ${UnknownObject(type)}
-lstype <result>
-```
-
-**2. Check if member exists:**
-```lavishscript
-if ${Object.SomeMember(exists)}
-    echo "${Object.SomeMember}"
-```
-
-**3. List available types:**
-```
-lstype
-```
-Shows all registered types in the current session.
-
-### Practical Example
-
-```lavishscript
-; What type is my character?
-echo ${Me(type)}
-; Output: char
-
-; What can I do with a char?
-lstype char
-; Shows: Name, Level, Health, Power, etc.
-
-; Access the members
-echo "Name: ${Me.Name}"
-echo "Level: ${Me.Level}"
-```
-
-### When to Use Type Inspection
-
-- **Learning the API** - Discover what's available on an object
-- **Debugging** - Verify object types and available members
-- **Documentation** - Understand undocumented or new types
-- **Development** - Find the right method or member for your task
-
----
-
-<!-- CLAUDE_SKIP_START -->
 ## Best Practices Summary
 
 ### 1. Variable and Parameter Naming
@@ -3028,86 +2939,83 @@ objectdef MyObject
     }
 }
 ```
-<!-- CLAUDE_SKIP_END -->
 
 ---
 
-## Next Steps
+## Type Inspection and Debugging Commands
 
-Congratulations! You now understand the fundamentals of LavishScript.
+### Inspecting Object Types
 
-<!-- CLAUDE_SKIP_START -->
-### Where to Go from Here
+When working with LavishScript and InnerSpace, you'll often need to inspect what members and methods an object has. InnerSpace provides console commands for this:
 
-Now that you know LavishScript basics, you're ready to learn **ISXEQ2-specific scripting**:
-
-1. **[QUICK_START_GUIDE.md](QUICK_START_GUIDE.md)** - Your first ISXEQ2 script
-   - Access character information
-   - Basic combat checks
-   - Inventory access
-
-2. **[04_Core_Concepts.md](04_Core_Concepts.md)** - ISXEQ2 concepts
-   - Top-Level Objects (TLOs) like `${Me}`, `${Target}`, `${Zone}`
-   - ISXEQ2-specific datatypes
-   - Query syntax for finding actors and items
-   - Asynchronous data loading
-   - Event system
-
-3. **[06_Working_Examples.md](06_Working_Examples.md)** - Practical ISXEQ2 code
-   - Character stats and abilities
-   - Inventory management
-   - Combat automation
-   - Quest information
-   - UI interaction
-
-4. **[03_API_Reference.md](03_API_Reference.md)** - Complete ISXEQ2 API
-   - Detailed reference for all ISXEQ2 datatypes
-   - All members and methods
-   - Commands and events
-
-### Key Differences Between LavishScript and ISXEQ2
-
-**LavishScript provides:**
-- Language fundamentals (variables, functions, objects, loops)
-- Core datatypes (string, int, float)
-- Script control (wait, waitframe, call, return)
-
-**ISXEQ2 adds:**
-- Game-specific TLOs (`${Me}`, `${Target}`, `${Actor[...]}`)
-- Game datatypes (char, actor, item, ability, quest)
-- Game commands (target, cast, useitem)
-- Game events (OnIncomingChatText, OnIncomingText, etc.)
-
-### Practice Exercises
-
-Before moving to ISXEQ2, try these exercises to solidify your LavishScript knowledge:
-
-**Exercise 1: Character Manager**
-```
-Create an objectdef called 'character' with:
-- Variables: Name (string), Level (int), Class (string)
-- Initialize method accepting Name, Level, Class
-- ToText member returning formatted character info
-- LevelUp method to increment Level
+**Get the type of any object:**
+```lavishscript
+echo ${Object(type)}
 ```
 
-**Exercise 2: Inventory Simulator**
+**Inspect a type's members and methods:**
 ```
-Create a script with:
-- Function to add items to an array/collection
-- Function to remove items
-- Function to list all items
-- while loop in main that accepts user commands
+lstype <typename>
 ```
 
-**Exercise 3: Combat Simulator**
+**Example - Inspecting LGUI2 layer:**
 ```
-Create objectdefs for:
-- Enemy (Health, Name)
-- Attack result calculator
-- Use a while loop to simulate combat
-- Use if-elseif-else for different attack results
+echo ${LGUI2.Layer["base"](type)}
 ```
+Output: `lgui2layer`
+
+```
+lstype lgui2layer
+```
+Output shows:
+- **Members** - Properties you can access with `.` (dot) notation
+- **Methods** - Actions you can perform with `:` (colon) notation
+- **Static Members** - Type-level members accessed on the type name
+- **Static Methods** - Type-level methods called on the type name
+
+### Common Type Inspection Patterns
+
+**1. Unknown object - find its type:**
+```lavishscript
+echo ${UnknownObject(type)}
+lstype <result>
+```
+
+**2. Check if member exists:**
+```lavishscript
+if ${Object.SomeMember(exists)}
+    echo "${Object.SomeMember}"
+```
+
+**3. List available types:**
+```
+lstype
+```
+Shows all registered types in the current session.
+
+### Practical Example
+
+```lavishscript
+; What type is my ship?
+echo ${LGUI2(type)}
+; Output: lgui2
+
+; What can I do with this object?
+lstype lgui2
+
+; Access the members
+echo "Name: ${LGUI2.Name}
+echo "CursorX: ${LGUI2.CursorX}
+```
+
+### When to Use Type Inspection
+
+- **Learning the API** - Discover what's available on an object
+- **Debugging** - Verify object types and available members
+- **Documentation** - Understand undocumented or new types
+- **Development** - Find the right method or member for your task
+
+---
 
 ### Additional Resources
 
@@ -3115,14 +3023,9 @@ Create objectdefs for:
 - **LavishScript Math Operators:** http://www.lavishsoft.com/wiki/index.php/LavishScript:Mathematical_Formulae
 - **InnerSpace Documentation:** http://www.lavishsoft.com/wiki/
 - **LERN Examples:** https://github.com/LavishSoftware/LERN/tree/master
-<!-- CLAUDE_SKIP_END -->
-
----
-
-**You're now ready to begin ISXEQ2 scripting! Proceed to [QUICK_START_GUIDE.md](QUICK_START_GUIDE.md) to get started.**
 
 ---
 
 *Last Updated: 2025-10-26*
-*Based on LERN/LS Tutorial Series: https://github.com/LavishSoftware/LERN/tree/master/LS (19 lessons)*
-*Part of ISXEQ2 Scripting Guide*
+*Based on LERN/LS Tutorial Series: https://github.com/LavishSoftware/LERN/tree/master/LS (19 lessons)**
+
