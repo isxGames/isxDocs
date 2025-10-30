@@ -2,7 +2,7 @@
 
 **System:** LavishGUI 2 (LGUI2)
 **Format:** JSON-based package files
-**Target:** InnerSpace / ISXEQ2 Scripts
+**Target:** InnerSpace Scripts (Game-Agnostic)
 
 ---
 
@@ -39,7 +39,6 @@
 
 ## Introduction to LavishGUI 2
 
-<!-- CLAUDE_SKIP_START -->
 ### What is LavishGUI 2?
 
 **LavishGUI 2** (LGUI2) is the modern UI framework for InnerSpace, replacing the older XML-based LavishGUI 1 system. It provides a powerful, flexible way to create custom user interfaces for your scripts using **JSON package files** instead of XML.
@@ -65,7 +64,34 @@
 - Enables IDE autocomplete and validation via JSON schema
 - More powerful data binding reduces manual UI updates
 - Cleaner event handling with inline definitions
-<!-- CLAUDE_SKIP_END -->
+
+### Authoritative Documentation Sources
+
+When working with LGUI2, always consult these **authoritative sources**:
+
+1. **LavishSoft Wiki** - Official API documentation
+   - https://www.lavishsoft.com/wiki/
+   - Covers LavishScript objects, methods, and members
+   - Search for `lgui2checkbox`, `lgui2element`, `lgui2button`, etc.
+
+2. **DefaultSkin.json** - Reference implementation
+   - Location: `C:\Dev\InnerSpace\Interface\DefaultSkin.json`
+   - Shows how LavishSoft implements UI elements
+   - Contains templates, styles, and event patterns
+   - Best source for understanding element structure
+
+3. **DefaultUplinkUI.json** - Real-world examples
+   - Location: `C:\Dev\InnerSpace\Interface\DefaultUplinkUI.json`
+   - InnerSpace's Uplink UI implementation
+   - Shows practical patterns: data binding, checkboxes, lists
+   - Excellent reference for modern LGUI2 patterns
+
+4. **JSON Schema** - Structure validation
+   - http://www.lavishsoft.com/schema/lgui2Package.json
+   - Defines valid package structure
+   - Does NOT document element-specific properties or events
+
+**IMPORTANT:** Do not rely on unverified sources or assumptions. Always verify against these authoritative sources when implementing LGUI2 features.
 
 ---
 
@@ -473,124 +499,92 @@ Clickable buttons that trigger actions.
 
 Toggleable checkbox control.
 
-**Checkbox with Event Handlers:**
+**Recommended Pattern - Data Binding:**
 
 ```json
 {
     "type": "checkbox",
     "content": "Enable Auto-Attack",
+    "checkedBinding": {
+        "pullFormat": "${Config.AutoAttackEnabled}",
+        "pushFormat": ["Config:SetAutoAttackEnabled[", "]"]
+    }
+}
+```
+
+The checkbox state is **automatically synchronized** with `${Config.AutoAttackEnabled}`. Changes to the variable update the checkbox, and checkbox clicks update the variable.
+
+**Real-World Example (from InnerSpace):**
+
+```json
+{
+    "type": "checkbox",
+    "content": "Notify about development (test) patches",
+    "checkedBinding": {
+        "pullFormat": "${SettingXML[InnerSpace.XML].Set[General].GetInt[Download Unstable Patches]}",
+        "pushFormat": ["SettingXML[InnerSpace.XML].Set[General]:Set[Download Unstable Patches,", "]:Save"]
+    }
+}
+```
+
+**Alternative Pattern - Manual State Management:**
+
+If you need to initialize from config but handle changes manually:
+
+```json
+{
+    "type": "checkbox",
+    "name": "enableFeature",
+    "content": "Enable Feature",
     "eventHandlers": {
-        "onChecked": {
+        "onLoad": {
             "type": "code",
-            "code": "echo Checkbox checked!"
-        },
-        "onUnchecked": {
-            "type": "code",
-            "code": "echo Checkbox unchecked!"
+            "code": "if ${Config.FeatureEnabled}\n{\n\tThis:SetChecked[TRUE]\n}"
         }
     }
 }
 ```
 
-**Checkbox with Data Binding:**
-
-```json
-{
-    "type": "checkbox",
-    "checkedBinding": "MyController.AutoAttackEnabled",
-    "content": "Auto-Attack: ${MyController.AutoAttackEnabled}"
-}
-```
-
-The checkbox state is **automatically synchronized** with `MyController.AutoAttackEnabled`.
-
-**Persistent Checkbox State (Configuration Pattern):**
-
-When checkboxes need to persist their state across sessions (like in configuration windows), use handler functions with `ExecuteQueued`:
-
-```json
-{
-    "type": "checkbox",
-    "name": "Options.AutoLoot",
-    "content": "Enable Auto-Loot",
-    "checked": "${Script[MyScript].Variable[AutoLootEnabled]}",
-    "eventHandlers": {
-        "onChecked": {
-            "type": "code",
-            "code": "Script[MyScript]:QueueCommand[call OnAutoLootChecked]"
-        },
-        "onUnchecked": {
-            "type": "code",
-            "code": "Script[MyScript]:QueueCommand[call OnAutoLootUnchecked]"
-        }
-    }
-}
-```
-
-**Controller Implementation:**
+Then poll the state in your script when needed:
 
 ```lavishscript
-variable bool AutoLootEnabled = FALSE
-
-function OnAutoLootChecked()
-{
-    AutoLootEnabled:Set[TRUE]
-}
-
-function OnAutoLootUnchecked()
-{
-    AutoLootEnabled:Set[FALSE]
-}
-
-function CloseConfigWindow()
-{
-    ; CRITICAL: Execute queued commands BEFORE saving
-    ExecuteQueued
-
-    ; Now save configuration
-    call config_save
-
-    LGUI2:UnloadPackageFile["ConfigUI.json"]
-}
-
-function config_save()
-{
-    Settings:AddSetting[AutoLootEnabled,${AutoLootEnabled}]
-    LavishSettings[MyScript]:Export[${ConfigFile}]
-}
+; Check checkbox state
+if ${LGUI2.Element[enableFeature].Checked}
+    Config:SetFeatureEnabled[TRUE]
+else
+    Config:SetFeatureEnabled[FALSE]
 ```
 
-**Why This Pattern Is Necessary:**
+**Why Data Binding Is Better:**
 
-Event handlers using `QueueCommand` don't execute immediately - commands are queued and execute later. If you save configuration before calling `ExecuteQueued`, variables will still have their old values:
-
-```lavishscript
-// DON'T DO THIS - Variables won't update before save
-function CloseConfigWindow()
-{
-    call config_save    ; BAD - Runs before queued commands execute
-    ExecuteQueued       ; Too late!
-}
-
-// DO THIS - Execute queued commands first
-function CloseConfigWindow()
-{
-    ExecuteQueued       ; Execute queued checkbox handlers
-    call config_save    ; Now variables have correct values
-}
-```
-
-See **11_LavishGUI1_to_LavishGUI2_Migration.md** Issue 11 for complete details and troubleshooting.
+- ✅ **Automatic two-way sync** - No manual polling required
+- ✅ **Less code** - Declarative configuration
+- ✅ **Standard LGUI2 pattern** - Follows LavishSoft conventions
+- ✅ **Cleaner** - No event handler boilerplate
 
 **Checkbox Properties:**
 
 | Property | Type | Description |
 |----------|------|-------------|
 | `type` | string | "checkbox" |
+| `name` | string | Element identifier |
 | `content` | element/string | Checkbox label |
-| `checkedBinding` | string | Data binding for checked state |
-| `checked` | string | Initial checked state (supports variable references) |
-| `eventHandlers` | object | Event handlers (onChecked, onUnchecked) |
+| `checkedBinding` | object | Data binding for checked state (pullFormat/pushFormat) |
+| `eventHandlers` | object | Event handlers (onLoad supported) |
+
+**API Methods:**
+
+From [lgui2checkbox documentation](https://www.lavishsoft.com/wiki/index.php/LGUI2:LS1:lgui2checkbox):
+
+| Method | Description |
+|--------|-------------|
+| `SetChecked[TRUE/FALSE]` | Set checkbox state |
+
+**API Members:**
+
+| Member | Type | Description |
+|--------|------|-------------|
+| `Checked` | bool | TRUE if checked, FALSE if unchecked, NULL if indeterminate |
 
 ### ComboBox (Dropdown)
 
@@ -626,7 +620,7 @@ Drop-down selection control.
 }
 ```
 
-**ComboBox with Data Binding:**
+**ComboBox with Data Binding (Simple Pattern):**
 
 ```json
 {
@@ -644,6 +638,188 @@ Drop-down selection control.
     }
 }
 ```
+
+**ComboBox with Explicit Popup (Advanced Pattern):**
+
+For more control over the dropdown behavior, font sizing, and proper event handling, use an explicit popup structure:
+
+```json
+{
+    "type": "combobox",
+    "name": "CurrentBehavior",
+    "x": 150,
+    "y": 28,
+    "width": 250,
+    "height": 44,
+    "font": {
+        "height": 36,
+        "bold": true
+    },
+    "eventHandlers": {
+        "onSelectionChanged": {
+            "type": "code",
+            "code": "if ${This.SelectedItem.Data.Get[text].NotNULLOrEmpty}\n{\n\tLogger:Log[\"Selection changed to ${This.SelectedItem.Data.Get[text]}\"]\n\tScript[EVEBot].VariableScope.Config.Common:CurrentBehavior[${This.SelectedItem.Data.Get[text]}]\n}"
+        }
+    },
+    "popup": {
+        "type": "popup",
+        "minSize": [0, 200],
+        "content": {
+            "type": "listbox",
+            "width": 250,
+            "height": 60,
+            "font": {
+                "height": 36
+            },
+            "minSize": [0, 200],
+            "itemsBinding": {
+                "pullFormat": "${Script[EVEBot].VariableScope.UI.GetBehaviors}"
+            },
+            "eventHandlers": {
+                "onItemSelected": {
+                    "type": "forward",
+                    "elementType": "combobox",
+                    "event": "onListBoxItemSelected"
+                },
+                "onItemDeselected": {
+                    "type": "forward",
+                    "elementType": "combobox",
+                    "event": "onListBoxItemDeselected"
+                },
+                "onSelectionChanged": {
+                    "type": "forward",
+                    "elementType": "combobox",
+                    "event": "onListBoxSelectionChanged"
+                }
+            }
+        },
+        "contentContainer": {
+            "jsonTemplate": "popup.panel",
+            "width": 250,
+            "height": 60,
+            "minSize": [0, 200],
+            "type": "anchor",
+            "anchorToElement": {
+                "elementType": "combobox",
+                "elementTree": "logical",
+                "flags": "ancestor"
+            },
+            "clipToParent": false,
+            "anchorLocationFactor": [0.0, 1.0]
+        }
+    }
+}
+```
+
+**Key Differences Between Simple and Explicit Popup Patterns:**
+
+| Feature | Simple Pattern | Explicit Popup Pattern |
+|---------|---------------|------------------------|
+| `itemsBinding` location | On combobox | On listbox inside popup.content |
+| Font control | Limited | Full control on both combobox and listbox |
+| Popup size | Automatic | Explicit via minSize and height |
+| Event forwarding | Automatic | Manual via forward event handlers |
+| Item data access | `${This.SelectedItem.Text}` | `${This.SelectedItem.Data.Get[text]}` |
+| Best for | Simple dropdowns | Custom styling, large fonts, precise control |
+
+**When to Use Each Pattern:**
+
+- **Simple Pattern**: Use for basic dropdowns with default styling
+- **Explicit Popup Pattern**: Use when you need:
+  - Custom font sizes (especially large fonts for high-DPI displays)
+  - Precise control over popup dimensions
+  - Custom popup positioning
+  - Integration with complex data binding from script variables
+
+**Programmatically Setting Selection (CRITICAL - Async Pattern Required):**
+
+When using `itemsBinding`, items load **asynchronously**. You CANNOT set the selection immediately after UI loads because items won't exist yet. Use this atom-safe pattern:
+
+**Step 1: Add state variables to your UI object**
+
+```lavishscript
+objectdef obj_MyUI
+{
+    variable bool NeedToSetComboBox = FALSE
+    variable string ComboBoxValueToSet = ""
+```
+
+**Step 2: Create queue method (no wait commands)**
+
+```lavishscript
+    method SetComboBoxWhenReady(string searchFor)
+    {
+        ; Set flags for Pulse to handle (atom-safe, no wait)
+        This.NeedToSetComboBox:Set[TRUE]
+        This.ComboBoxValueToSet:Set["${searchFor}"]
+    }
+```
+
+**Step 3: Add check in Pulse method (runs every frame as atom)**
+
+```lavishscript
+    method Pulse()
+    {
+        ; Check if we need to set the combobox
+        if ${This.NeedToSetComboBox}
+        {
+            if ${LGUI2.Element[MyListbox](exists)} && ${LGUI2.Element[MyListbox].ItemCount} > 0
+            {
+                This:SetComboBox["${This.ComboBoxValueToSet}"]
+                This.NeedToSetComboBox:Set[FALSE]
+            }
+        }
+        ; ... rest of pulse logic
+    }
+```
+
+**Step 4: Implement actual selection logic**
+
+```lavishscript
+    method SetComboBox(string searchFor)
+    {
+        variable jsonvalue ja="${This.GetItems}"
+        variable int i
+
+        for (i:Set[1]; ${i} <= ${ja.Size}; i:Inc)
+        {
+            if ${ja[${i}].Get[text].Equal[${searchFor}]}
+            {
+                LGUI2.Element[MyListbox]:SetItemSelected[${i},TRUE]
+                return
+            }
+        }
+    }
+
+    member:string GetItems()
+    {
+        return "[{\"type\":\"textblock\",\"text\":\"Option1\"},{\"type\":\"textblock\",\"text\":\"Option2\"}]"
+    }
+}
+```
+
+**Step 5: Call from main script**
+
+```lavishscript
+function main()
+{
+    UI:Reload
+    ; ... after behaviors/data loaded
+    UI:SetComboBoxWhenReady["Option1"]
+}
+```
+
+**Why This Pattern:**
+- ❌ **Cannot use wait/waitframe** - Pulse runs as atom, event handlers are atoms
+- ✅ **Flag-based pattern** - Pulse checks every frame until items load
+- ✅ **No blocking** - Doesn't halt script execution
+- ✅ **Atom-safe** - Works in all contexts
+
+**Common Mistakes:**
+- Calling `:SetItemSelected` before items load (ItemCount = 0)
+- Using wait commands in atoms (Pulse, event handlers)
+- Accessing combobox instead of nested listbox for selection
+- Using 0-based indexing (JSON is 0-based, but `:SetItemSelected` uses 1-based)
 
 In the controller:
 
@@ -665,10 +841,30 @@ member:string GetGroupMembers()
 |----------|------|-------------|
 | `type` | string | "combobox" |
 | `name` | string | Element identifier |
-| `items` | array | Static item list |
-| `itemsBinding` | object | Data binding for dynamic items |
+| `items` | array | Static item list (simple pattern) |
+| `itemsBinding` | object | Data binding for dynamic items (simple pattern) |
+| `popup` | object | Explicit popup definition with listbox content (advanced pattern) |
+| `font` | object | Font styling (height, bold, etc.) |
 | `eventHandlers` | object | Event handlers (onSelectionChanged) |
 | `horizontalAlignment` | string | Horizontal alignment |
+
+**Popup Object Structure (for explicit popup pattern):**
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `type` | string | "popup" |
+| `minSize` | array | Minimum size [width, height] for popup |
+| `content` | object | Listbox element containing items |
+| `contentContainer` | object | Anchor configuration for positioning |
+
+**Popup Content (Listbox) Properties:**
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `type` | string | "listbox" |
+| `itemsBinding` | object | Data binding for dynamic items |
+| `eventHandlers` | object | Forward events to parent combobox |
+| `font` | object | Font styling for dropdown items |
 
 ### InputPicker
 
@@ -936,7 +1132,7 @@ Visual indicator showing progress or completion percentage.
 
 Interactive control for selecting numeric values within a range.
 
-**Horizontal Slider:**
+**Horizontal Slider with Data Binding (Recommended):**
 
 ```json
 {
@@ -944,23 +1140,54 @@ Interactive control for selecting numeric values within a range.
     "name": "volumeSlider",
     "width": 200,
     "height": 20,
-    "minValue": 0,
-    "maxValue": 100,
-    "value": 50,
+    "minimum": 0,
+    "maximum": 100,
     "orientation": "horizontal",
     "valueBinding": {
-        "pullFormat": "${Settings.Volume}",
-        "pushFormat": ["Settings:Set[Volume,", "]"]
-    },
+        "pullFormat": "${Script[MyBot].VariableScope.Config.Volume}",
+        "pushFormat": ["Script[MyBot].VariableScope.Config:SetVolume[", "]"]
+    }
+}
+```
+
+**Why Use `valueBinding` Instead of Event Handlers?**
+
+Data binding is the recommended approach for sliders because:
+
+1. **Automatic synchronization** - Value changes in your script automatically update the slider
+2. **Less code** - No need for `onLoad` to initialize or `onValueChanged` to save
+3. **No initialization ordering issues** - Binding handles loading automatically
+4. **LGUI2 standard** - This is the modern, idiomatic pattern
+
+**Alternative: Event Handlers (Legacy Pattern)**
+
+If you need custom logic on value changes, you can use event handlers:
+
+```json
+{
+    "type": "slider",
+    "name": "volumeSlider",
+    "width": 200,
+    "height": 20,
+    "minimum": 0,
+    "maximum": 100,
     "eventHandlers": {
+        "onLoad": {
+            "type": "code",
+            "code": "This:SetValue[${Script[MyBot].VariableScope.Config.Volume}]"
+        },
         "onValueChanged": {
-            "type": "method",
-            "object": "MyController",
-            "method": "OnVolumeChanged"
+            "type": "code",
+            "code": "Script[MyBot].VariableScope.Config:SetVolume[${Int[${This.Value}]}]"
         }
     }
 }
 ```
+
+However, this approach has drawbacks:
+- Requires manual initialization with `onLoad`
+- More verbose
+- Can cause element ordering issues if other UI elements depend on the slider value
 
 **Vertical Slider:**
 
@@ -988,6 +1215,135 @@ Interactive control for selecting numeric values within a range.
 | `valueBinding` | object | Bidirectional value binding |
 | `tickFrequency` | number | Spacing between tick marks |
 | `isSnapToTickEnabled` | boolean | Snap to tick marks |
+| `height` | number | For horizontal sliders, controls track thickness |
+| `width` | number | For vertical sliders, controls track thickness |
+| `borderThickness` | number | Border around slider track |
+| `borderBrush` | string | Border color (brush name) |
+| `handle` | object | Handle configuration (see below) |
+
+**Handle Properties:**
+
+The `handle` property controls the appearance and behavior of the draggable slider thumb:
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `height` | number | Handle height in pixels |
+| `width` | number | Handle width in pixels |
+| `jsonTemplate` | string | Reference to handle template (e.g., "slider.handle") |
+| `borderThickness` | number | Handle border thickness |
+| `borderBrush` | string | Handle border color |
+| `backgroundBrush` | string | Handle fill color |
+
+**Slider Styling:**
+
+Unlike checkboxes which use `contentContainer`, sliders are styled directly on the slider element:
+
+```json
+{
+  "type": "slider",
+  "name": "volumeSlider",
+  "width": 120,
+  "height": 28,
+  "borderThickness": 1,
+  "borderBrush": "slider.borderBrush",
+  "font": {
+    "height": 24
+  },
+  "handle": {
+    "jsonTemplate": "slider.handle",
+    "width": 24,
+    "height": 24
+  },
+  "minimum": 0,
+  "maximum": 100
+}
+```
+
+**Creating a Reusable Slider Template:**
+
+For consistent slider styling across your UI, create a base template:
+
+```json
+{
+  "templates": {
+    "mySlider": {
+      "type": "slider",
+      "borderThickness": 1,
+      "borderBrush": "slider.borderBrush",
+      "handle": {
+        "jsonTemplate": "slider.handle",
+        "width": 24,
+        "height": 24
+      }
+    }
+  }
+}
+```
+
+Then reference it in your sliders (note that `width` and `height` are set on the implementation):
+
+```json
+{
+  "jsonTemplate": "mySlider",
+  "name": "volumeSlider",
+  "x": 10,
+  "y": 30,
+  "width": 120,
+  "height": 28,
+  "minimum": 0,
+  "maximum": 100,
+  "valueBinding": {
+    "pullFormat": "${Script[MyBot].VariableScope.Config.Volume}",
+    "pushFormat": ["Script[MyBot].VariableScope.Config:SetVolume[", "]"]
+  }
+}
+```
+
+**Combining Slider with Label Display:**
+
+A common pattern is to show the slider's value in a textblock. Use data binding for both:
+
+```json
+{
+  "jsonTemplate": "mySlider",
+  "name": "volumeSlider",
+  "x": 10,
+  "y": 30,
+  "width": 120,
+  "height": 28,
+  "minimum": 0,
+  "maximum": 100,
+  "valueBinding": {
+    "pullFormat": "${Script[MyBot].VariableScope.Config.Volume}",
+    "pushFormat": ["Script[MyBot].VariableScope.Config:SetVolume[", "]"]
+  }
+},
+{
+  "type": "textblock",
+  "name": "volumeLabel",
+  "x": 140,
+  "y": 30,
+  "textBinding": {
+    "pullFormat": "Volume: ${Script[MyBot].VariableScope.Config.Volume}%"
+  },
+  "font": {
+    "height": 24
+  }
+}
+```
+
+This approach:
+- ✅ Avoids element initialization ordering issues
+- ✅ Both elements automatically sync with the same config value
+- ✅ No event handlers needed
+- ✅ Changes to the config value update both slider and label automatically
+
+**Important Notes:**
+- The slider's `height` property (for horizontal) or `width` property (for vertical) controls the track thickness
+- The track thickness is controlled by the element's `height`/`width` properties, NOT by `font.height` or a container
+- Always set `borderThickness` and `borderBrush` in the template to make the slider track visible
+- Handle size should typically match the track thickness for good usability
+- Set `width` and `height` on each slider instance, not in the template
 
 **Use Cases:**
 - Volume controls
@@ -1543,6 +1899,162 @@ Grid layout with rows and columns.
 - Each tab's content is only rendered when that tab is active (performance benefit)
 - Tab selection state is managed automatically by the tabcontrol
 
+#### Separating Tab Content Into External Files
+
+For maintainability, you can move large tab content definitions into separate template files. This is especially useful for complex UIs with multiple large tabs.
+
+**CRITICAL PATTERN:** When templating tab content, you must:
+1. Template the **content panel only** (not the entire tab)
+2. Keep the tab definition with `type`, `header`, and `content` reference in the main file
+3. Load template files with `LGUI2:LoadPackageFile` before the main UI file
+
+**Step 1: Create the template file (tabStatus.json):**
+
+```json
+{
+  "$schema": "http://www.lavishsoft.com/schema/lgui2Package.json",
+  "templates": {
+    "tabStatus.content": {
+      "type": "panel",
+      "children": [
+        {
+          "type": "button",
+          "name": "SaveConfig",
+          "x": 1120,
+          "y": 30,
+          "width": 200,
+          "height": 60,
+          "content": "Save Config"
+        },
+        {
+          "type": "textblock",
+          "name": "StatusText",
+          "x": 30,
+          "y": 30,
+          "text": "Status information here..."
+        }
+      ]
+    }
+  }
+}
+```
+
+**Step 2: Reference the template in main UI file (MyUI.json):**
+
+```json
+{
+  "$schema": "http://www.lavishsoft.com/schema/lgui2Package.json",
+  "elements": [
+    {
+      "type": "window",
+      "name": "MyWindow",
+      "content": {
+        "type": "tabcontrol",
+        "tabs": [
+          {
+            "type": "tab",
+            "header": "Status",
+            "content": {
+              "jsonTemplate": "tabStatus.content"
+            }
+          },
+          {
+            "type": "tab",
+            "header": "Settings",
+            "content": {
+              "type": "panel",
+              "children": [...]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
+```
+
+**Step 3: Load files in correct order (MyUI.iss):**
+
+```lavishscript
+objectdef MyUI
+{
+    method Initialize()
+    {
+        ; Load template files BEFORE main UI
+        LGUI2:LoadPackageFile[interface/tabStatus.json]
+        LGUI2:LoadPackageFile[interface/MyUI.json]
+    }
+
+    method Reload()
+    {
+        LGUI2:UnloadPackageFile[interface/MyUI.json]
+        LGUI2:LoadPackageFile[interface/tabStatus.json]
+        LGUI2:LoadPackageFile[interface/MyUI.json]
+    }
+}
+```
+
+**Why This Pattern Works:**
+
+- ✅ **Tab definition stays in main file** - keeps tab structure visible
+- ✅ **Only content is templated** - avoids LGUI2 parsing issues with full tab templates
+- ✅ **Template contains just the panel** - clean separation of concerns
+- ✅ **Load order matters** - templates must be loaded before they're referenced
+
+**Common Mistakes:**
+
+❌ **DON'T template the entire tab:**
+```json
+// WRONG - This causes "headerContainer required" errors
+"templates": {
+  "tabStatus": {
+    "type": "tab",
+    "header": "Status",
+    "content": { ... }
+  }
+}
+```
+
+❌ **DON'T use jsonIncludes for separate package files:**
+```json
+// WRONG - jsonIncludes doesn't work with LGUI2:LoadPackageFile
+{
+  "jsonIncludes": ["tabStatus.json"],  // This won't work
+  "elements": [...]
+}
+```
+
+✅ **DO template just the content panel:**
+```json
+// CORRECT - Template contains only the panel
+"templates": {
+  "tabStatus.content": {
+    "type": "panel",
+    "children": [...]
+  }
+}
+```
+
+**Real-World Example (EVEBot Pattern):**
+
+EVEBot uses this pattern to organize its complex UI across multiple files:
+
+```lavishscript
+; obj_EVEBotUI.iss
+method Initialize()
+{
+    LGUI2:LoadPackageFile[interface/UIElements.json]    ; Common templates
+    LGUI2:LoadPackageFile[interface/tabStatus.json]     ; Status tab content
+    LGUI2:LoadPackageFile[interface/EVEBot.json]        ; Main UI definition
+}
+```
+
+This approach:
+- Keeps each tab's content in its own maintainable file
+- Makes version control merges easier
+- Allows multiple developers to work on different tabs
+- Reduces main UI file size and complexity
+
 ---
 
 ### Dragger
@@ -2084,6 +2596,53 @@ Multiple statements:
     "onPress": {
         "type": "code",
         "code": "echo Starting attack; Me:Target[${Actor[nearest npc]}]; Me.Ability[1]:Use"
+    }
+}
+```
+
+**CRITICAL RESTRICTION: No Wait Commands in Event Handlers**
+
+Event handlers execute as **atoms** (atomic operations). You **CANNOT** use any of the following commands in event handler code:
+
+- ❌ `wait`
+- ❌ `waitframe`
+- ❌ `waitfor`
+- ❌ Any blocking operation
+
+```json
+// BAD - This will fail!
+"eventHandlers": {
+    "onPress": {
+        "type": "code",
+        "code": "echo Starting...; wait 10; echo Done"
+    }
+}
+```
+
+**Why?** Event handlers must execute instantly and return immediately. They cannot pause execution.
+
+**Solution:** Use method event handlers to call script methods that can use wait commands:
+
+```json
+// GOOD - Call a method instead
+"eventHandlers": {
+    "onPress": {
+        "type": "method",
+        "object": "MyController",
+        "method": "OnButtonPressed"
+    }
+}
+```
+
+```lavishscript
+objectdef mycontroller
+{
+    method OnButtonPressed()
+    {
+        ; This is OK - methods can use wait
+        echo Starting...
+        wait 10
+        echo Done
     }
 }
 ```
@@ -3529,6 +4088,79 @@ Access template data:
 }
 ```
 
+### Cross-Package Templates (Shared Templates)
+
+**IMPORTANT:** Templates can be shared across multiple package files by loading them in the correct order. This allows you to modularize your UI by keeping reusable templates in separate files.
+
+**Pattern:**
+
+1. Create a package file with only templates (no elements)
+2. Load the template package first
+3. Load your main package second - it can now use those templates
+
+**Example - UITemplates.json (template library):**
+
+```json
+{
+    "$schema": "http://www.lavishsoft.com/schema/lgui2Package.json",
+    "templates": {
+        "customTitleBar": {
+            "type": "dockpanel",
+            "children": [
+                {
+                    "type": "button",
+                    "content": "Close",
+                    "_dock": "right"
+                }
+            ]
+        }
+    }
+}
+```
+
+**Example - MyApp.json (main UI):**
+
+```json
+{
+    "$schema": "http://www.lavishsoft.com/schema/lgui2Package.json",
+    "elements": [
+        {
+            "type": "window",
+            "name": "MyWindow",
+            "titleBar": {
+                "jsonTemplate": "customTitleBar"
+            }
+        }
+    ]
+}
+```
+
+**Loading in LavishScript:**
+
+```lavishscript
+method Initialize()
+{
+    ; Load template library first
+    LGUI2:LoadPackageFile[UITemplates.json]
+
+    ; Load main UI - can now use templates from UITemplates.json
+    LGUI2:LoadPackageFile[MyApp.json]
+}
+
+method Shutdown()
+{
+    LGUI2:UnloadPackageFile[MyApp.json]
+    LGUI2:UnloadPackageFile[UITemplates.json]
+}
+```
+
+**Key Points:**
+
+- **Load order matters** - Template packages must be loaded before packages that use them
+- **No skins required** - Templates are available across packages without PushSkin/PopSkin
+- **Clean separation** - Keep reusable UI components in separate template files
+- **Production example** - EVEBot uses this pattern to separate titleBar templates from main UI
+
 ### Item View Templates
 
 Define how list items are displayed:
@@ -4930,7 +5562,7 @@ All LGUI2 elements inherit common base properties:
 ```json
 {
     "name": "uniqueName",        // Required for script access
-    "tooltip": "Help text",
+    "tooltip": "Help text",      // Simple string tooltip
     "contextMenu": "menuName",
     "font": {
         "height": 16,
@@ -4939,6 +5571,108 @@ All LGUI2 elements inherit common base properties:
     }
 }
 ```
+
+#### Tooltip Customization
+
+Tooltips can be defined as either a simple string or as a full element object for advanced styling.
+
+**Simple String Tooltip:**
+
+```json
+{
+    "type": "button",
+    "content": "Click Me",
+    "tooltip": "This is a simple tooltip"
+}
+```
+
+**Custom Styled Tooltip (Full Element Object):**
+
+For more control over tooltip appearance, define the tooltip as a complete element object:
+
+```json
+{
+    "type": "button",
+    "content": "Run EVEBot",
+    "tooltip": {
+        "type": "textblock",
+        "text": "Click to start the EVEBot automation",
+        "font": {
+            "face": "Segoe UI Italic",
+            "height": 36
+        },
+        "color": "#FFE4B5"
+    }
+}
+```
+
+**Common Tooltip Customization Properties:**
+
+```json
+{
+    "tooltip": {
+        "type": "textblock",           // Element type (textblock, border, stackpanel, etc.)
+        "text": "Tooltip content",     // The tooltip text
+        "font": {
+            "face": "Arial",           // Font family
+            "height": 24,              // Font size in pixels
+            "bold": true,              // Bold text
+            "italic": true             // Italic text
+        },
+        "color": "#FFFFFF",            // Text color (hex format)
+        "backgroundColor": "#333333",  // Background color
+        "padding": 10,                 // Padding around text
+        "borderThickness": 2,          // Border thickness
+        "borderColor": "#FFD700"       // Border color
+    }
+}
+```
+
+**Advanced Multi-Element Tooltip:**
+
+Tooltips can use any LGUI2 element type, including containers with multiple children:
+
+```json
+{
+    "type": "checkbox",
+    "content": "Enable Feature",
+    "tooltip": {
+        "type": "stackpanel",
+        "backgroundColor": "#2D2D30",
+        "padding": 10,
+        "children": [
+            {
+                "type": "textblock",
+                "text": "Advanced Option",
+                "font": {
+                    "face": "Segoe UI",
+                    "height": 32,
+                    "bold": true
+                },
+                "color": "#00FF00"
+            },
+            {
+                "type": "textblock",
+                "text": "This enables the special feature with enhanced capabilities.",
+                "font": {
+                    "face": "Segoe UI",
+                    "height": 24
+                },
+                "color": "#CCCCCC",
+                "margin": [0, 5, 0, 0]
+            }
+        ]
+    }
+}
+```
+
+**When to Use Custom Tooltips:**
+
+- **Large UIs**: When you need consistent tooltip styling across many elements
+- **Accessibility**: Larger fonts for better readability
+- **Branding**: Match tooltips to your UI theme and color scheme
+- **Information Density**: Multi-line tooltips with formatted content
+- **Visual Hierarchy**: Emphasize important tooltips with custom styling
 
 ### Metadata Properties
 
@@ -5121,6 +5855,26 @@ LGUI2.Element[myCheckbox]:SetChecked[FALSE]
 echo Selected: ${LGUI2.Element[myComboBox].SelectedItem.Index}
 echo Data: ${LGUI2.Element[myComboBox].SelectedItem.Data}
 ```
+
+**Select a tab in a tabcontrol:**
+
+```lavishscript
+; Select tab by index (1-based: 1 = first tab, 2 = second tab, etc.)
+LGUI2.Element[myTabControl]:SelectTab[2]
+```
+
+**Get currently selected tab:**
+
+```lavishscript
+echo Current tab: ${LGUI2.Element[myTabControl].SelectedTab.Name}
+```
+
+**TabControl Selection Notes:**
+
+- **Tab indices are 1-based** - first tab is 1, second tab is 2, etc.
+- Use `:SelectTab[index]` to programmatically switch tabs
+- Use `.SelectedTab.Name` to read the currently selected tab
+- Common use case: Set initial tab on UI load immediately after `LGUI2:LoadPackageFile`
 
 **Programmatically set event handler:**
 
@@ -6279,21 +7033,7 @@ LGUI2.Element[mycheckbox]:SetChecked[TRUE]
 
 ---
 
-## Next Steps
-
-1. **Read the migration guide** - [11_LavishGUI1_to_LavishGUI2_Migration.md](11_LavishGUI1_to_LavishGUI2_Migration.md) if you have existing LGUI1 scripts
-
-2. **Add UI scaling** - See [12_LGUI2_Scaling_System.md](12_LGUI2_Scaling_System.md) to make your UI scale to different screen resolutions
-
-3. **Study complete examples** - See the example scripts in the documentation (e.g., EQ2BotCommander_LGUI2.iss)
-
-4. **Experiment with the schema** - Use an IDE with JSON schema support for autocomplete
-
-5. **Build incrementally** - Start with a simple window and add features one at a time
-
-6. **Review production code** - Study `Object_LGUI2Helper.iss` and other production scripts
-
----
+<!-- CLAUDE_SKIP_START -->
 
 ## Additional Resources
 
@@ -6309,15 +7049,12 @@ LGUI2.Element[mycheckbox]:SetChecked[TRUE]
 - 60+ LERN/LGUI2 example files: https://github.com/LavishSoftware/LERN/tree/master/LGUI2 (.json, .iss, .md)
 - 12 LERN/Game example files: https://github.com/LavishSoftware/LERN/tree/master/Game (canvas, audio, game controller patterns)
 - Official LavishGUI 2 documentation and wiki
-- Production scripts (Object_LGUI2Helper.iss, EQ2BotCommander_LGUI2.iss)
 - Complete coverage of all element types, events, and patterns
 - Real-world migration experience (EQ2BotCommander LGUI1→LGUI2)
-
-**Ready to migrate from LavishGUI 1? See:** [11_LavishGUI1_to_LavishGUI2_Migration.md](11_LavishGUI1_to_LavishGUI2_Migration.md)
-
-**Want to add UI scaling? See:** [12_LGUI2_Scaling_System.md](12_LGUI2_Scaling_System.md)
 
 ---
 
 *Last Updated: 2025-10-25*
 *LavishGUI 2 Version: 2023+*
+
+<!-- CLAUDE_SKIP_END -->
