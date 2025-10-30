@@ -2954,6 +2954,82 @@ objectdef MyObject
 
 ---
 
+## Type Inspection and Debugging Commands
+
+### Inspecting Object Types
+
+When working with LavishScript and InnerSpace, you'll often need to inspect what members and methods an object has. InnerSpace provides console commands for this:
+
+**Get the type of any object:**
+```lavishscript
+echo ${Object(type)}
+```
+
+**Inspect a type's members and methods:**
+```
+lstype <typename>
+```
+
+**Example - Inspecting LGUI2 layer:**
+```
+echo ${LGUI2.Layer["base"](type)}
+```
+Output: `lgui2layer`
+
+```
+lstype lgui2layer
+```
+Output shows:
+- **Members** - Properties you can access with `.` (dot) notation
+- **Methods** - Actions you can perform with `:` (colon) notation
+- **Static Members** - Type-level members accessed on the type name
+- **Static Methods** - Type-level methods called on the type name
+
+### Common Type Inspection Patterns
+
+**1. Unknown object - find its type:**
+```lavishscript
+echo ${UnknownObject(type)}
+lstype <result>
+```
+
+**2. Check if member exists:**
+```lavishscript
+if ${Object.SomeMember(exists)}
+    echo "${Object.SomeMember}"
+```
+
+**3. List available types:**
+```
+lstype
+```
+Shows all registered types in the current session.
+
+### Practical Example
+
+```lavishscript
+; What type is my ship?
+echo ${MyShip(type)}
+; Output: ship
+
+; What can I do with a ship?
+lstype ship
+; Shows: Cargo, CapPercent, ShieldPercent, etc.
+
+; Access the members
+echo "Shield: ${MyShip.ShieldPercent}%"
+echo "Cargo: ${MyShip.Cargo.Used}/${MyShip.Cargo.Capacity}"
+```
+
+### When to Use Type Inspection
+
+- **Learning the API** - Discover what's available on an object
+- **Debugging** - Verify object types and available members
+- **Documentation** - Understand undocumented or new types
+- **Development** - Find the right method or member for your task
+
+---
+
 <!-- CLAUDE_SKIP_START -->
 ## Next Steps
 
@@ -3040,5 +3116,6 @@ Create objectdefs for:
 ---
 
 *Last Updated: 2025-10-26*
+*Based on LERN/LS Tutorial Series: https://github.com/LavishSoftware/LERN/tree/master/LS (19 lessons)*
 *Part of ISXEVE Scripting Guide*
 <!-- CLAUDE_SKIP_END -->
