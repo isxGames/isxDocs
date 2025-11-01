@@ -2078,6 +2078,37 @@ function main()
 2. **Provide `default`** for unexpected values
 3. **Use `case` for constants**, `variablecase` for variables
 4. **Case values are verbatim text** (don't add `:` like in C/C++)
+5. ⚠️ **CRITICAL: Never use quotes around case values!**
+
+### Important: No Quotes in Case Values
+
+**Case values MUST NOT be quoted, even for strings with spaces:**
+
+```lavishscript
+; ❌ WRONG - This will NEVER match!
+switch ${textValue}
+{
+    case "Hello World"        ; Will NOT work!
+        echo "Matched"
+        break
+}
+
+; ✅ CORRECT - No quotes!
+switch ${textValue}
+{
+    case Hello World          ; This works!
+        echo "Matched"
+        break
+}
+```
+
+This applies to **all** case values:
+- Strings with spaces: `case Service Fleet Members`
+- Negative numbers: `case -10`
+- Numbers: `case 42`
+- Any text: `case CorpTicker Time`
+
+**Why this matters:** Adding quotes makes the switch look for the literal text including the quote characters, which will never match your actual values.
 
 ### Complete switch Example
 
