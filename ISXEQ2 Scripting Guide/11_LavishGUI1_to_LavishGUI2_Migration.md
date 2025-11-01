@@ -592,6 +592,134 @@ objectdef obj_MyUI
 - Atoms **CANNOT** use `wait`, `waitframe`, or `waitfor`
 - Solution: Use flags checked in Pulse (runs every frame automatically)
 
+**Special Case: Migrating Numeric Value ComboBoxes**
+
+If your LGUI1 combobox stored numeric values (`<Item Value='1'>Text</Item>`), you need to map between numeric config values and LGUI2's text-based selection.
+
+**LGUI1 Pattern (numeric values):**
+```xml
+<combobox name='cbJetCanName'>
+    <Items>
+        <Item Value='1'>CorpTicker Time</Item>
+        <Item Value='2'>CorpTicker:Time</Item>
+        <Item Value='3'>CorpTicker_Time</Item>
+        ...
+        <Item Value='10'>Do Not Rename</Item>
+    </Items>
+    <OnLoad>This:SetSelection[${Config.JetCanNaming}]</OnLoad>
+    <OnSelect>Config:SetJetCanNaming[${This.SelectedItem.Value}]</OnSelect>
+</combobox>
+```
+
+**LGUI2 Migration (with numeric→text mapping):**
+
+**JSON (tabMiner.json):**
+```json
+{
+    "type": "combobox",
+    "name": "cbJetCanName",
+    "eventHandlers": {
+        "onSelectionChanged": {
+            "type": "code",
+            "code": "variable int Value\nswitch ${This.SelectedItem.Data.Get[text]}\n{\ncase CorpTicker Time\n\tValue:Set[1]\n\tbreak\ncase CorpTicker:Time\n\tValue:Set[2]\n\tbreak\ncase CorpTicker_Time\n\tValue:Set[3]\n\tbreak\n...\ncase Do Not Rename\n\tValue:Set[10]\n\tbreak\n}\nif ${Value}\n\tConfig:SetJetCanNaming[${Value}]"
+        }
+    },
+    "popup": {
+        "content": {
+            "type": "listbox",
+            "name": "cbJetCanNameList",
+            "items": [
+                {"type": "textblock", "text": "CorpTicker Time"},
+                {"type": "textblock", "text": "CorpTicker:Time"},
+                {"type": "textblock", "text": "CorpTicker_Time"},
+                ...
+                {"type": "textblock", "text": "Do Not Rename"}
+            ]
+        }
+    }
+}
+```
+
+**UI Object (obj_EVEBotUI.iss):**
+```lavishscript
+objectdef obj_EVEBotUI
+{
+    variable bool NeedToSetJetCanComboBox = FALSE
+    variable int JetCanComboBoxValueToSet = 0
+
+    method SetJetCanComboBoxWhenReady(int numericValue)
+    {
+        This.NeedToSetJetCanComboBox:Set[TRUE]
+        This.JetCanComboBoxValueToSet:Set[${numericValue}]
+    }
+
+    method Pulse()
+    {
+        if ${This.NeedToSetJetCanComboBox}
+        {
+            if ${LGUI2.Element[cbJetCanNameList](exists)} && ${LGUI2.Element[cbJetCanNameList].ItemCount} > 0
+            {
+                This:SetJetCanComboBox[${This.JetCanComboBoxValueToSet}]
+                This.NeedToSetJetCanComboBox:Set[FALSE]
+            }
+        }
+    }
+
+    method SetJetCanComboBox(int numericValue)
+    {
+        variable string SelectedText
+
+        switch ${numericValue}
+        {
+            case 1
+                SelectedText:Set["CorpTicker Time"]
+                break
+            case 2
+                SelectedText:Set["CorpTicker:Time"]
+                break
+            ; ... remaining mappings
+            case 10
+                SelectedText:Set["Do Not Rename"]
+                break
+        }
+
+        if ${SelectedText.NotNULLOrEmpty}
+        {
+            variable int i
+            for (i:Set[1]; ${i} <= ${LGUI2.Element[cbJetCanNameList].ItemCount}; i:Inc)
+            {
+                if ${LGUI2.Element[cbJetCanNameList].Item[${i}].Data.Get[text].Equal[${SelectedText}]}
+                {
+                    LGUI2.Element[cbJetCanNameList]:SetItemSelected[${i},TRUE]
+                    return
+                }
+            }
+        }
+    }
+}
+```
+
+**Main Script (EVEBot.iss):**
+```lavishscript
+function main()
+{
+    ; After UI loads
+    UI:SetJetCanComboBoxWhenReady[${Config.Miner.JetCanNaming}]
+}
+```
+
+**Migration Checklist for Numeric ComboBoxes:**
+1. ✅ Convert `<Item Value='N'>` to static items array in LGUI2
+2. ✅ Add `onSelectionChanged` with text→numeric switch mapping
+3. ✅ Create `SetComboBoxWhenReady()` method with numeric parameter
+4. ✅ Create `SetComboBox()` method with numeric→text switch mapping
+5. ✅ Add flag variables (`NeedToSet`, `ValueToSet`) to UI object
+6. ✅ Add check in `Pulse()` method
+7. ✅ Call `SetComboBoxWhenReady()` from main script after UI loads
+8. ✅ Remove `OnLoad` handler from JSON (initialization handled by Pulse)
+
+This pattern maintains backward compatibility with numeric configs while working correctly with LGUI2's text-based selection.
+
 ### TabControl
 
 **CRITICAL:** LGUI2 has native tabcontrol support - use it!
@@ -1093,9 +1221,94 @@ UIElement[mywindow]:Hide
 **LGUI2:**
 
 ```lavishscript
+; For windows - :Show and :Hide methods work
 LGUI2.Element[mywindow]:Show
 LGUI2.Element[mywindow]:Hide
+
+; For other element types (tabcontrol, panel, etc.) - use :SetVisibility with capitalized enum values
+LGUI2.Element[myTabControl]:SetVisibility[Visible]
+LGUI2.Element[myTabControl]:SetVisibility[Hidden]      ; Hidden but takes up layout space
+LGUI2.Element[myTabControl]:SetVisibility[Collapsed]   ; Hidden and no layout space
 ```
+
+**Important Notes:**
+
+- **:Show** and **:Hide** methods work on **window elements only**
+- For other element types (panel, tabcontrol, stackpanel, etc.), use **:SetVisibility[]**
+- :SetVisibility requires **capitalized** enum values: `Visible`, `Hidden`, `Collapsed`
+- **Hidden** vs **Collapsed**: `Hidden` hides the element but reserves layout space, `Collapsed` removes it from layout entirely
+
+**Common Pattern - Window Minimize/Maximize:**
+
+When creating minimize/maximize functionality for windows:
+
+```json
+{
+    "evebotTitleBar": {
+        "type": "dockpanel",
+        "name": "MyTitleBar",
+        "height": 80,
+        "children": [
+            {
+                "type": "button",
+                "content": "-",
+                "eventHandlers": {
+                    "onPress": {
+                        "type": "code",
+                        "code": "Script[MyScript].VariableScope.UI:MinimizeWindow[]"
+                    }
+                }
+            },
+            {
+                "type": "button",
+                "content": "^",
+                "eventHandlers": {
+                    "onPress": {
+                        "type": "code",
+                        "code": "Script[MyScript].VariableScope.UI:MaximizeWindow[]"
+                    }
+                }
+            }
+        ]
+    }
+}
+```
+
+```lavishscript
+; In your UI object:
+variable int SavedWindowWidth = 800
+variable int SavedWindowHeight = 600
+
+method MinimizeWindow()
+{
+    ; Save current window size
+    This.SavedWindowWidth:Set[${LGUI2.Element[MyWindow].Width}]
+    This.SavedWindowHeight:Set[${LGUI2.Element[MyWindow].Height}]
+
+    ; Hide the main content
+    LGUI2.Element[MyMainContent]:SetVisibility[Collapsed]
+
+    ; Resize window to just the title bar height
+    variable int titleBarHeight = ${LGUI2.Element[MyTitleBar].Height}
+    LGUI2.Element[MyWindow]:SetSize[${LGUI2.Element[MyWindow].Width}, ${titleBarHeight}]
+}
+
+method MaximizeWindow()
+{
+    ; Show the main content
+    LGUI2.Element[MyMainContent]:SetVisibility[Visible]
+
+    ; Restore window to saved size
+    LGUI2.Element[MyWindow]:SetSize[${This.SavedWindowWidth}, ${This.SavedWindowHeight}]
+}
+```
+
+**Key Takeaways:**
+
+1. Define explicit `height` on your titleBar in JSON so you can read it from script
+2. Give your titleBar a `name` property so you can access it via `LGUI2.Element[]`
+3. Use `:SetVisibility[Collapsed]` to hide content without leaving empty space
+4. Save window dimensions before minimizing so you can restore them properly
 
 ### Setting Text
 
@@ -1144,6 +1357,195 @@ variable bool FeatureEnabled = TRUE
 ; In JSON
 "checkedBinding": "MyController.FeatureEnabled"
 ```
+
+### Tab Navigation Between Form Controls
+
+**LGUI1:**
+
+LGUI1 did not have built-in tab navigation support. If implemented, it required manual keyboard event handling.
+
+**LGUI2:**
+
+LGUI2 supports tab navigation through the `onTabPress` event, but **requires manual implementation** - there is no automatic tab order like HTML's `tabIndex`.
+
+**Implementation Pattern:**
+
+Each textbox must:
+1. Enable keyboard focus with `acceptsKeyboardFocus: true`
+2. Handle the `onTabPress` event
+3. Manually set focus to the next element using `:KeyboardFocus`
+
+**Example - Form with 3 Textboxes:**
+
+```json
+{
+    "type": "panel",
+    "children": [
+        {
+            "type": "textbox",
+            "name": "firstName",
+            "acceptsKeyboardFocus": true,
+            "eventHandlers": {
+                "onTabPress": {
+                    "type": "code",
+                    "code": "LGUI2.Element[lastName]:KeyboardFocus"
+                }
+            }
+        },
+        {
+            "type": "textbox",
+            "name": "lastName",
+            "acceptsKeyboardFocus": true,
+            "eventHandlers": {
+                "onTabPress": {
+                    "type": "code",
+                    "code": "LGUI2.Element[email]:KeyboardFocus"
+                }
+            }
+        },
+        {
+            "type": "textbox",
+            "name": "email",
+            "acceptsKeyboardFocus": true,
+            "eventHandlers": {
+                "onTabPress": {
+                    "type": "code",
+                    "code": "LGUI2.Element[firstName]:KeyboardFocus"
+                }
+            }
+        }
+    ]
+}
+```
+
+**Setting Focus from Script:**
+
+```lavishscript
+; Give focus to a specific textbox
+LGUI2.Element[firstName]:KeyboardFocus
+
+; Remove focus (focus the screen)
+LGUI2.Element[screen]:KeyboardFocus
+```
+
+**Visual Feedback:**
+
+Use styles to highlight the focused element:
+
+```json
+{
+    "type": "textbox",
+    "name": "myTextbox",
+    "acceptsKeyboardFocus": true,
+    "styles": {
+        "gotKeyboardFocus": {
+            "borderBrush": { "color": "#00FF00" }
+        },
+        "lostKeyboardFocus": {
+            "borderBrush": { "color": "#FFFFFF" }
+        }
+    }
+}
+```
+
+**Key Points:**
+
+- **No automatic tab order** - each textbox must specify the next element
+- **Circular navigation** - the last textbox can loop back to the first
+- **Event name:** `onTabPress` (not `onTab` or `onKeyPress`)
+- **Method name:** `:KeyboardFocus` (no arguments needed)
+- **Checkbox support** - may work with checkboxes but needs testing
+
+### Detecting Enter and Escape Keys in Textboxes
+
+**LGUI1:**
+
+LGUI1 did not have a standard pattern for detecting Enter or Escape key presses in textboxes. If implemented, it required custom keyboard event handling.
+
+**LGUI2:**
+
+LGUI2 provides keyboard key detection through the `hooks` property using the `onButtonMove` event.
+
+**Important:** Must use `hooks`, not `eventHandlers` for keyboard key detection.
+
+**Pattern:**
+
+```json
+{
+    "type": "textbox",
+    "name": "myTextbox",
+    "hooks": {
+        "onButtonMove": {
+            "event": "onButtonMove",
+            "flags": "self",
+            "eventHandler": {
+                "type": "code",
+                "code": [
+                    "if ${Context.Args[controlName].Equals[ESC]} && !${Context.Args[position]}",
+                        "This:SetText[\"\"]",
+                    "if ${Context.Args[controlName].Equals[ENTER]} && !${Context.Args[position]}",
+                        "LGUI2.Element[screen]:KeyboardFocus"
+                ]
+            }
+        }
+    }
+}
+```
+
+**Example - Login Form with Enter to Submit:**
+
+```json
+{
+    "type": "textbox",
+    "name": "passwordBox",
+    "password": true,
+    "acceptsKeyboardFocus": true,
+    "eventHandlers": {
+        "onTextChanged": {
+            "type": "code",
+            "code": "LoginController:SetPassword[${This.Text}]"
+        }
+    },
+    "hooks": {
+        "onButtonMove": {
+            "event": "onButtonMove",
+            "flags": "self",
+            "eventHandler": {
+                "type": "code",
+                "code": [
+                    "if ${Context.Args[controlName].Equals[ENTER]} && !${Context.Args[position]}",
+                        "LoginController:SubmitLogin[]",
+                    "if ${Context.Args[controlName].Equals[ESC]} && !${Context.Args[position]}",
+                        "This:SetText[\"\"]"
+                ]
+            }
+        }
+    }
+}
+```
+
+**How It Works:**
+
+- **`Context.Args[controlName]`** - The name of the key pressed ("ENTER", "ESC", "TAB", "SPACE", etc.)
+- **`Context.Args[position]`** - True when key is pressed, false when released
+- **`!${Context.Args[position]}`** - Ensures action only happens on key release (prevents double-triggering)
+
+**Common Key Names:**
+
+| Key | controlName Value |
+|-----|-------------------|
+| Enter/Return | `ENTER` |
+| Escape | `ESC` |
+| Tab | `TAB` |
+| Space | `SPACE` |
+
+**Key Points:**
+
+- **Use `hooks`** - keyboard detection does not work with `eventHandlers`
+- **`flags: "self"`** - only listen to events from this specific textbox
+- **Check key release** - use `!${Context.Args[position]}` to prevent double execution
+- **Multiple keys** - handle multiple keys in the same hook
+- **Combine with other features** - works alongside `onTextChanged`, `onTabPress`, etc.
 
 ### Moving Windows
 
