@@ -1658,6 +1658,35 @@ function ConsoleEcho(string textString)
 }
 ```
 
+**Console Echo with Line Limiting (Production Pattern):**
+
+For long-running applications (bots, monitors, etc.), you should limit the number of lines in the console to prevent unbounded memory growth:
+
+```lavishscript
+function ConsoleEcho(string msg)
+{
+    variable string currentText = "${LGUI2.Element[StatusConsole].Text}"
+    variable int lineCount = ${currentText.Count["\n"]}
+
+    ; Limit to 100 lines - remove oldest line when limit is reached
+    if ${lineCount} > 100
+    {
+        ; Remove first line
+        variable int firstNewline = ${currentText.Find["\n"]}
+        currentText:Set["${currentText.Right[-${Math.Calc[${firstNewline}+1]}]}"]
+    }
+
+    LGUI2.Element[StatusConsole]:SetText["${currentText}\n${msg}"]
+}
+```
+
+**Key Points:**
+- Use `.Count["\n"]` to track number of lines in the textbox
+- Remove oldest line when threshold is exceeded (100 lines recommended)
+- Use `.Find["\n"]` to locate the first newline
+- Use `.Right[-${offset}]` to efficiently trim from the beginning
+- This prevents memory issues during extended bot sessions
+
 #### Getting Actual Element Dimensions
 
 **LGUI1:**
