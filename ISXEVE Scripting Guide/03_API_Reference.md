@@ -1202,6 +1202,18 @@ if ${CharSelect.CharExists["MyAlt"]}
 
 ### ISXEVE Object
 
+The `ISXEVE` TLO provides access to the ISXEVE extension itself and utility methods.
+
+**Members:**
+
+| Member | Return Type | Description |
+|--------|-------------|-------------|
+| `Version` | string | ISXEVE extension version |
+| `IsReady` | bool | TRUE if ISXEVE is fully loaded and ready to use |
+| `IsNumeric[string]` | bool | TRUE if the string is a valid number (can include decimal point or negative sign) |
+
+**Examples:**
+
 ```lavish
 ; Extension info
 echo "ISXEVE Version: ${ISXEVE.Version}"
@@ -1215,6 +1227,22 @@ else
 {
     echo "ERROR: ISXEVE not loaded!"
     return
+}
+
+; Validate numeric input
+if ${ISXEVE.IsNumeric["123.45"]}
+{
+    echo "Valid number: 123.45"
+}
+
+if ${ISXEVE.IsNumeric["-50"]}
+{
+    echo "Valid negative number: -50"
+}
+
+if !${ISXEVE.IsNumeric["abc"]}
+{
+    echo "Invalid: abc is not a number"
 }
 ```
 
@@ -1231,6 +1259,24 @@ function main()
 
     ; Safe to proceed
     echo "ISXEVE ${ISXEVE.Version} loaded"
+}
+```
+
+**Common Pattern - Validate User Input**:
+```lavish
+function SetConfigValue(string value)
+{
+    ; Validate numeric input
+    if !${ISXEVE.IsNumeric[${value}]}
+    {
+        echo "ERROR: '${value}' is not a valid number"
+        return FALSE
+    }
+
+    ; Convert and use
+    variable int numValue = ${value}
+    Config:SetSetting[${numValue}]
+    return TRUE
 }
 ```
 
