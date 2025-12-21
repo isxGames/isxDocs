@@ -179,7 +179,7 @@ echo "Health: ${Me.CurrentHealth} / ${Me.MaxHealth}"
 ```
 
 - `${Me}` is a **Top-Level Object (TLO)** that represents your character
-- `.Name`, `.Level`, `.CurrentHealth` are **members** of the `char` datatype
+- `.Name`, `.Level`, `.CurrentHealth` are **members** of the `character` datatype
 - `${...}` syntax evaluates the expression and returns the value
 
 ### NULL Checks
@@ -517,7 +517,7 @@ Explore specialized guides:
 
 | TLO | Returns | Description |
 |-----|---------|-------------|
-| `${Me}` | char | Your character |
+| `${Me}` | character | Your character |
 | `${Target}` | actor | Current target |
 | `${Zone}` | zone | Current zone |
 | `${Actor[name]}` | actor | Actor by name |

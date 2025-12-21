@@ -29,9 +29,9 @@ In ISXEQ2, every piece of game data has a specific **datatype** that defines wha
 Think of a datatype as a blueprint or template:
 
 ```lavishscript
-; ${Me} is a "char" datatype
-echo ${Me.Name}          ; char has a Name member
-echo ${Me.Level}         ; char has a Level member
+; ${Me} is a "character" datatype
+echo ${Me.Name}          ; character has a Name member
+echo ${Me.Level}         ; character has a Level member
 
 ; ${Target} is an "actor" datatype
 echo ${Target.Name}      ; actor has a Name member
@@ -46,7 +46,7 @@ echo ${Me.Inventory[5].Quantity}  ; item has a Quantity member
 
 | Datatype | Represents | Example |
 |----------|------------|---------|
-| **char** | Your character | `${Me}` |
+| **character** | Your character | `${Me}` |
 | **actor** | Any NPC, PC, or object in the world | `${Target}`, `${Actor[Gnoll]}` |
 | **item** | Inventory item | `${Me.Inventory[5]}` |
 | **ability** | Spell or combat art | `${Me.Ability[1]}` |
@@ -65,7 +65,7 @@ echo ${Me.Inventory[5].Quantity}  ; item has a Quantity member
 ### Essential TLOs
 
 ```lavishscript
-${Me}                    ; Your character (char datatype)
+${Me}                    ; Your character (character datatype)
 ${Target}                ; Current target (actor datatype)
 ${Zone}                  ; Current zone (zone datatype)
 ${Actor[name/id]}        ; Specific actor (actor datatype)
@@ -106,9 +106,9 @@ Many datatypes **inherit** from other datatypes, gaining all their members and m
 ### Inheritance Hierarchy
 
 ```
-char inherits from actor
+character inherits from actor
   ↓
-char has all actor members PLUS its own character-specific members
+character has all actor members PLUS its own character-specific members
 ```
 
 **Example:**
@@ -119,22 +119,22 @@ ${Target.Name}      ; actor member
 ${Target.Health}    ; actor member
 ${Target.Level}     ; actor member
 
-; "char" inherits from "actor", so ${Me} has all actor members:
+; "character" inherits from "actor", so ${Me} has all actor members:
 ${Me.Name}          ; inherited from actor
 ${Me.Health}        ; inherited from actor
 ${Me.Level}         ; inherited from actor
 
-; Plus char-specific members:
-${Me.Platinum}      ; only char has this
-${Me.Inventory[5]}  ; only char has this
-${Me.Ability[1]}    ; only char has this
+; Plus character-specific members:
+${Me.Platinum}      ; only character has this
+${Me.Inventory[5]}  ; only character has this
+${Me.Ability[1]}    ; only character has this
 ```
 
 ### Common Inheritance Patterns
 
 | Datatype | Inherits From | Meaning |
 |----------|---------------|---------|
-| **char** | **actor** | Characters have all actor properties plus inventory, abilities, etc. |
+| **character** | **actor** | Characters have all actor properties plus inventory, abilities, etc. |
 | **groupmember** | **actor** | Group members have all actor properties plus group-specific data |
 | **eq2clonewindow** | **eq2window** | Clone windows have all window properties plus clone-specific features |
 | **eq2button** | **eq2widget** → **eq2baseobject** | Buttons have widget properties, which have base object properties |

@@ -41,7 +41,7 @@ This document provides comprehensive reference documentation for all datatypes a
 
 Many datatypes inherit from other datatypes, gaining all the members and methods of their parent type. Common inheritance patterns:
 
-- **char** inherits from **actor** - All actor members/methods are available on char objects
+- **character** inherits from **actor** - All actor members/methods are available on character objects
 - **groupmember** inherits from **actor** - Group members have all actor capabilities
 - **raidmember** inherits from **groupmember** (and **actor**) - Raid members have all group and actor capabilities
 - **eq2widget** inherits from **eq2baseobject** - All widgets have base object properties
@@ -50,7 +50,7 @@ Many datatypes inherit from other datatypes, gaining all the members and methods
 
 **Inheritance Chain Examples:**
 ```
-char → actor
+character → actor
 groupmember → actor
 raidmember → groupmember → actor
 eq2button → eq2widget → eq2baseobject
@@ -62,7 +62,7 @@ lootwindow → eq2clonewindow → eq2window
 DataTypes are accessed through Top-Level Objects (TLOs) or through members of other datatypes. For example:
 
 ```lavishscript
-${Me}                           ; TLO returning 'char' datatype
+${Me}                           ; TLO returning 'character' datatype
 ${Me.Target}                    ; Member returning 'actor' datatype
 ${Me.Inventory[5]}              ; Member returning 'item' datatype
 ${EQ2UIPage[MapWindow]}         ; TLO with parameter returning 'eq2uipage' datatype
@@ -145,7 +145,7 @@ Top-Level Objects (TLOs) are the entry points for accessing game data. They can 
 | TLO | DataType | Parameters | Description |
 |-----|----------|------------|-------------|
 | **EQ2** | [eq2](#eq2) | - | Main game information and utilities |
-| **Me** | [char](#char) | - | Player character |
+| **Me** | [character](#character) | - | Player character |
 | **Target** | [actor](#actor) | - | Current target |
 | **Zone** | [zone](#zone) | - | Current zone information |
 | **Actor** | [actor](#actor) | id / name | Access specific actor by ID or name |
@@ -202,7 +202,7 @@ Core datatypes that provide fundamental game information and utilities.
 Datatypes representing actors (characters, NPCs, objects) in the game world.
 
 - [actor](#actor) - Base datatype for all actors
-- [char](#char) - Player character (inherits from actor)
+- [character](#character) - Player character (inherits from actor)
 - [groupmember](#groupmember) - Group member (inherits from actor)
 - [raidmember](#raidmember) - Raid member (inherits from groupmember → actor)
 - [moveableobject](#moveableobject) - Moveable house object
@@ -606,7 +606,7 @@ Base datatype for all actors (NPCs, PCs, objects) in the game world.
 
 **Access:** `${Target}`, `${Actor[id/name]}`, `${CustomActor[index]}`, `${Me.Target}`, etc.
 
-**Inherited By:** [char](#char), [groupmember](#groupmember), [raidmember](#raidmember)
+**Inherited By:** [character](#character), [groupmember](#groupmember), [raidmember](#raidmember)
 
 #### Members - Identity
 
@@ -792,7 +792,7 @@ if ${Target.Distance} < 5
 
 ---
 
-### char
+### character
 
 Player character datatype. Inherits all members and methods from [actor](#actor).
 
@@ -905,7 +905,7 @@ Player character datatype. Inherits all members and methods from [actor](#actor)
 
 | Member | Type | Description |
 |--------|------|-------------|
-| InGameWorld | bool | TRUE if in game world (not char select) |
+| InGameWorld | bool | TRUE if in game world (not character select) |
 | AtCharSelect | bool | TRUE if at character select |
 | CastingSpell | bool | TRUE if currently casting |
 | AutoAttackOn | bool | TRUE if auto-attack enabled |
@@ -3405,7 +3405,7 @@ This comprehensive API reference documents all datatypes, members, methods, and 
 
 1. Always check for NULL with `${Object(exists)}`
 2. Check async availability before accessing detailed info (IsItemInfoAvailable, IsAbilityInfoAvailable, etc.)
-3. Understand inheritance chains (char → actor, groupmember → actor, etc.)
+3. Understand inheritance chains (character → actor, groupmember → actor, etc.)
 4. Use GetGameData for experience, vitality, pet info, and bank coins
 5. All TLOs are case-insensitive
 6. Query syntax supports complex filtering with operators

@@ -19,7 +19,7 @@ Complete quick reference for ISXEQ2 scripting. For detailed information, see the
 
 | TLO | Type | Common Usage |
 |-----|------|--------------|
-| `${Me}` | char | `${Me.Name}`, `${Me.Level}`, `${Me.CurrentHealth}` |
+| `${Me}` | character | `${Me.Name}`, `${Me.Level}`, `${Me.CurrentHealth}` |
 | `${Target}` | actor | `${Target.Name}`, `${Target.Distance}`, `${Target.Health}` |
 | `${Zone}` | zone | `${Zone.Name}`, `${Zone.ID}` |
 | `${Actor[name]}` | actor | `${Actor[Gnoll].ID}`, `${Actor[ID,12345].Name}` |
@@ -484,7 +484,7 @@ Understanding inheritance helps you know what members are available:
 
 ```
 actor
-  ├─ char (Me)
+  ├─ character (Me)
   └─ groupmember (Me.Group[1])
 
 eq2window

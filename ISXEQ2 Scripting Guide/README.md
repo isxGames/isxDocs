@@ -102,7 +102,7 @@ This comprehensive guide provides complete documentation for creating, debugging
 | **Understand inheritance** | [04_Core_Concepts.md#datatype-inheritance](04_Core_Concepts.md#datatype-inheritance) |
 | **Query inventory/actors** | [04_Core_Concepts.md#query-syntax](04_Core_Concepts.md#query-syntax) |
 | **Handle events** | [06_Working_Examples.md#event-driven-scripting](06_Working_Examples.md#event-driven-scripting) |
-| **Access character stats** | [03_API_Reference.md#char](03_API_Reference.md#char) |
+| **Access character stats** | [03_API_Reference.md#character](03_API_Reference.md#character) |
 | **Cast abilities** | [06_Working_Examples.md#abilities-and-casting](06_Working_Examples.md#abilities-and-casting) |
 | **Interact with UI** | [06_Working_Examples.md#ui-interaction](06_Working_Examples.md#ui-interaction) |
 | **Use advanced patterns** | [07_Advanced_Patterns_And_Examples.md](07_Advanced_Patterns_And_Examples.md) |
@@ -181,7 +181,7 @@ This comprehensive guide provides complete documentation for creating, debugging
 
 | Category | Documentation |
 |----------|---------------|
-| **Character (Me)** | [03_API_Reference.md#char](03_API_Reference.md#char) |
+| **Character (Me)** | [03_API_Reference.md#character](03_API_Reference.md#character) |
 | **Actors/NPCs** | [03_API_Reference.md#actor](03_API_Reference.md#actor) |
 | **Items/Inventory** | [03_API_Reference.md#item](03_API_Reference.md#item) |
 | **Abilities/Spells** | [03_API_Reference.md#ability](03_API_Reference.md#ability) |
@@ -246,7 +246,7 @@ TLOs are your entry points into the game's data. The most important ones are:
 
 ISXEQ2 uses a strongly-typed system where each object has a specific datatype:
 
-- `${Me}` returns a **char** datatype
+- `${Me}` returns a **character** datatype
 - `${Me.Inventory[5]}` returns an **item** datatype
 - `${Me.Ability[1]}` returns an **ability** datatype
 
@@ -256,7 +256,7 @@ Each datatype has **members** (properties) and **methods** (actions).
 
 Many datatypes inherit from others:
 
-- **char** inherits from **actor**, so `${Me}` has all actor members plus character-specific ones
+- **character** inherits from **actor**, so `${Me}` has all actor members plus character-specific ones
 - **eq2button** inherits from **eq2widget** and **eq2baseobject**, gaining all their members
 
 ### Events
