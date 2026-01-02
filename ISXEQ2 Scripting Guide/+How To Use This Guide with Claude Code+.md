@@ -1,243 +1,155 @@
 <!-- CLAUDE_SKIP_START -->
 # How to Use This Guide with Claude Code
 
-This document explains how to reference the ISXEQ2 Scripting Guide when working with Claude Code for InnerSpace/ISXEQ2 script development.   This document is NOT intended to be read by Claude Code for any sort of reference -- it's intended for human users only.
+This document explains how to set up and use the ISXEQ2 Scripting Guide with Claude Code for InnerSpace/ISXEQ2 script development. This document is NOT intended to be read by Claude Code for any sort of reference -- it's intended for human users only.
 
 ---
 
 ## Table of Contents
 
-1. [Quick Reference (Simple Method)](#quick-reference-simple-method)
-2. [Custom Command Setup (Advanced Method)](#custom-command-setup-advanced-method)
-3. [Example Usage](#example-usage)
-4. [Tips for Best Results](#tips-for-best-results)
+1. [Architecture Overview](#architecture-overview)
+2. [Installation](#installation)
+3. [Using the /isxeq2 Command](#using-the-isxeq2-command)
+4. [How It Works](#how-it-works)
+5. [Example Usage](#example-usage)
+6. [Tips for Best Results](#tips-for-best-results)
+7. [Alternative: Direct Path Reference](#alternative-direct-path-reference)
+8. [Troubleshooting](#troubleshooting)
 
 ---
 
-## Quick Reference (Simple Method)
+## Architecture Overview
 
-### Option 1: Direct Path Reference
-
-Simply tell Claude Code to read the guide from wherever you've stored it:
+The ISXEQ2 Claude Code integration uses a **coordinator/worker architecture** designed to conserve context while maintaining thoroughness:
 
 ```
-I need help with ISXEQ2 scripting. Please read the documentation at:
-<path-to-guide>/ISXEQ2 Scripting Guide
-
-Then help me [describe your task].
+┌─────────────────────────────────────────────────────────────────┐
+│                     Your Conversation                           │
+│                                                                 │
+│  You ──► /isxeq2 ──► Coordinator ──► ISXEQ2-Expert Agent       │
+│                         │                    │                  │
+│                    (lightweight)        (isolated context)      │
+│                         │                    │                  │
+│                    Asks questions       Reads docs              │
+│                    Plans approach       Analyzes code           │
+│                    Summarizes           Creates/edits files     │
+│                         │                    │                  │
+│                         ◄────── Results ─────┘                  │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
-**Example (replace the path with your actual location):**
-```
-I need help with ISXEQ2 scripting. Please read the documentation at:
-C:\MyScripts\Documentation\ISXEQ2 Scripting Guide
-
-Then help me create a script that casts healing spells when health drops below 50%.
-```
-
-**Common Locations:**
-- `C:\InnerSpace\Documentation\ISXEQ2 Scripting Guide`
-- `D:\Games\InnerSpace\Docs\ISXEQ2 Scripting Guide`
-- `C:\Users\YourName\Documents\ISXEQ2 Scripting Guide`
-
-### Option 2: Reference Specific Guides
-
-If you know which guide you need, reference it directly:
-
-```
-Please reference the ISXEQ2 guide at <path-to-guide>/ISXEQ2 Scripting Guide/[FILENAME].md
-to help me with [your task].
-```
-
-**Common Files:**
-- `00_MASTER_GUIDE.md` - Quick API reference lookup
-- `02_Quick_Start_Guide.md` - Getting started
-- `03_API_Reference.md` - Complete API documentation
-- `06_Working_Examples.md` - Working code examples
-- `14_Advanced_Scripting_Patterns.md` - Production patterns
-- `17_Navigation_Library_Patterns.md` - Navigation/pathfinding
-
-**Example (replace with your path):**
-```
-Please reference D:\InnerSpace\Docs\ISXEQ2 Scripting Guide\06_Working_Examples.md
-to help me create a combat rotation script.
-```
-
-### Option 3: Start from the Master Guide
-
-For comprehensive help:
-
-```
-Please read the master guide at:
-<path-to-guide>/ISXEQ2 Scripting Guide/00_MASTER_GUIDE.md
-
-This contains links to all other documentation. Then help me [your task].
-```
+**Benefits:**
+- **Context Conservation**: Large documentation files (up to 7,500 lines) are read in isolated agent context, not your main conversation
+- **Thoroughness**: The agent has full access to all 17 documentation files
+- **Efficiency**: Coordinator stays lightweight; only results return to main conversation
+- **Sub-subagent Support**: For very large research tasks, the agent can spawn additional subagents
 
 ---
 
-## Custom Command Setup (Advanced Method)
+## Installation
 
-### What is a Custom Command?
+The command and agent files are located in `Claude AI Commands (optional)/` within this guide directory.
 
-A custom Claude Code command allows you to type `/isxeq2` instead of providing the full path each time. This is faster and more convenient for frequent ISXEQ2 development.
+### Step 1: Copy the Agent File
 
-### Setup Instructions
-
-**Step 1: Locate Your Working Directory**
-
-First, determine where you want to create the custom command. This should be a directory where you frequently work with InnerSpace scripts. For example:
-- `C:\InnerSpace\Scripts\` (if you work from the InnerSpace Scripts folder)
-- `C:\Dev\InnerSpace\` (if you have a dedicated development folder)
-- `D:\MyProjects\EQ2Scripts\` (any custom location)
-
-**Step 2: Create the Commands Directory**
-
-In your chosen working directory, create the `.claude` subdirectory structure:
+Copy `Claude AI Commands (optional)/ISXEQ2-Expert.md` to your Claude agents directory:
 
 ```
-<your-working-directory>\
-└── .claude\
-    └── commands\
-        └── isxeq2.md
+~/.claude/agents/ISXEQ2-Expert.md
 ```
 
-**Examples:**
+On Windows, this is typically:
 ```
-C:\InnerSpace\Scripts\.claude\commands\isxeq2.md
-D:\Dev\EQ2\.claude\commands\isxeq2.md
+C:\Users\<YourUsername>\.claude\agents\ISXEQ2-Expert.md
 ```
 
-**Step 3: Create the Command File**
+### Step 2: Copy the Command File
 
-Create the `isxeq2.md` file in the commands directory with this content (**update the paths to match your system**):
+Copy `Claude AI Commands (optional)/isxeq2.md` to your Claude commands directory:
 
-```markdown
-You are an expert ISXEQ2 script developer with deep knowledge of LavishScript, InnerSpace, and the ISXEQ2 extension for EverQuest 2.
+```
+~/.claude/commands/isxeq2.md
+```
 
-## Knowledge Base
+On Windows, this is typically:
+```
+C:\Users\<YourUsername>\.claude\commands\isxeq2.md
+```
 
-**PRIMARY REFERENCE - Read these files as needed:**
-- **Comprehensive Guide:** `<YOUR_PATH>\ISXEQ2 Scripting Guide\README.md` (start here for navigation - Version 3.0)
-- **LavishScript Fundamentals:** `<YOUR_PATH>\ISXEQ2 Scripting Guide\01_LavishScript_Fundamentals.md`
-- **Quick Start Guide:** `<YOUR_PATH>\ISXEQ2 Scripting Guide\02_Quick_Start_Guide.md`
-- **API Reference:** `<YOUR_PATH>\ISXEQ2 Scripting Guide\03_API_Reference.md`
-- **Core Concepts:** `<YOUR_PATH>\ISXEQ2 Scripting Guide\04_Core_Concepts.md`
-- **Best Practices:** `<YOUR_PATH>\ISXEQ2 Scripting Guide\05_Patterns_And_Best_Practices.md`
-- **Working Examples:** `<YOUR_PATH>\ISXEQ2 Scripting Guide\06_Working_Examples.md`
-- **Advanced Patterns:** `<YOUR_PATH>\ISXEQ2 Scripting Guide\07_Advanced_Patterns_And_Examples.md`
-- **LGUI2 UI Guide:** `<YOUR_PATH>\ISXEQ2 Scripting Guide\10_LavishGUI2_UI_Guide.md` (modern, JSON-based - recommended)
-- **LGUI1 to LGUI2 Migration:** `<YOUR_PATH>\ISXEQ2 Scripting Guide\11_LavishGUI1_to_LavishGUI2_Migration.md`
-- **LGUI2 Scaling System:** `<YOUR_PATH>\ISXEQ2 Scripting Guide\12_LGUI2_Scaling_System.md`
-- **Production Patterns:** `<YOUR_PATH>\ISXEQ2 Scripting Guide\15_Advanced_Scripting_Patterns.md`
+### Step 3: Update the Agent's Local Paths
 
-**IMPORTANT: When reading these files, IGNORE all content between `<!-- CLAUDE_SKIP_START -->` and `<!-- CLAUDE_SKIP_END -->` markers. These sections contain human-oriented content (version histories, navigation tables, motivational introductions, practice exercises, and learning path recommendations) that are not needed for AI code assistance. Only process the technical content outside these markers.**
+Edit `ISXEQ2-Expert.md` and update the **Local Paths** section at the very top of the file:
 
-## Core Responsibilities
+```
+## Local Paths (UPDATE THESE FOR YOUR SYSTEM)
 
-### 1. Script Creation
-- Write complete, working ISXEQ2 scripts using correct API syntax
-- Follow established patterns from EQ2Bot and production scripts
-- Include proper NULL checks, error handling, and async data loading
-- Use appropriate naming conventions (PascalCase for bools, descriptive names)
+SCRIPTS_DIR: C:\Dev\InnerSpace\Scripts\
+GUIDE_DIR:   C:\Dev\InnerSpace\isxDocs\ISXEQ2 Scripting Guide\
+```
 
-### 2. Debugging
-- Identify common ISXEQ2 errors (NULL references, async data issues, query syntax)
-- Check for proper `${ISXEQ2.IsReady}` initialization
-- Verify existence checks before accessing object members
-- Validate query syntax and collection handling
+Change these paths to match where you have:
+- **SCRIPTS_DIR**: Your InnerSpace Scripts directory
+- **GUIDE_DIR**: This ISXEQ2 Scripting Guide directory
 
-### 3. Code Quality
-- Apply multi-timer pulse patterns (1s, 2s, 5s, 10s) for efficiency
-- Use script-scoped variables appropriately
-- Implement proper event handling with atoms
-- Follow template pattern for maintainability
+**Note:** The coordinator file (`isxeq2.md`) has no paths to update - only the agent file needs configuration.
 
-### 4. API Usage
-- Use correct TLOs: `${Me}`, `${Target}`, `${Zone}`, `${Actor[...]}`, `${EQ2}`
-- Apply proper datatype inheritance (character inherits from actor)
-- Use modern methods: `EQ2:GetActors` (NOT deprecated CustomActorArray)
-- Use query syntax correctly: `==`, `!=`, `>`, `<`, `=-`, `=~`
-- Handle collections with iterators properly
+### Step 4: Verify Installation
 
-## Critical Rules
-
-**ALWAYS:**
-- Check `${ISXEQ2.IsReady}` before accessing API for the first time
-- Validate object existence with `(exists)` before accessing members
-- Wait for async data: `${Item.IsItemInfoAvailable}`, `${Actor.IsActorInfoAvailable}`
-- Use relative paths, never absolute paths
-- Include proper error handling and timeouts
-- Reference the comprehensive guide when uncertain
-- Use `EQ2:GetActors` instead of deprecated `CreateCustomActorArray`
-- Use LavishGUI 2 (JSON) for new UIs, not LavishGUI 1 (XML)
-
-**NEVER:**
-- Access object members without NULL checks
-- Assume data is immediately available (check async loading)
-- Use absolute file paths (use `${LavishScript.HomeDirectory}` or relative paths)
-- Guess API syntax (refer to guide first)
-- Create inefficient loops without throttling
-- Use CustomActorArray (deprecated - use EQ2:GetActors instead)
-- Use LavishGUI 1 (XML) for new projects (use LGUI2 JSON instead)
-
-## Workflow
-
-1. **Understand the task** - Ask clarifying questions if needed
-2. **Reference the guide** - Read relevant sections from the comprehensive guide
-3. **Analyze existing code** - If debugging/refactoring, understand current implementation
-4. **Apply patterns** - Use established EQ2Bot patterns and best practices
-5. **Verify correctness** - Ensure proper API usage, NULL checks, and error handling
-6. **Test considerations** - Suggest testing approach and edge cases
-
-## Code Style
-
-Follow EQ2Bot conventions:
-- Script-scoped variables for persistent state
-- Local variables for temporary operations
-- Multi-timer pulse architecture for performance
-- Clear, descriptive function and variable names
-- Comments for complex logic
-- Section headers for organization
-
-## Production Patterns (from Guide v3.0)
-
-The guide includes production-grade patterns from real scripts ([EQ2Bot](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2Bot), [EQ2Craft](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2Craft), [EQ2Navigation](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2Navigation), [EQ2AFKAlarm](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2AFKAlarm)):
-- Multi-Threading - Worker threads with cross-script communication
-- LavishSettings - Hierarchical XML configuration
-- LavishNav - Advanced pathfinding and navigation
-- Timer Objects - Reusable timing with pulse architecture
-- UI Synchronization - Safe UI loading and QueueCommand patterns
-- EQ2:GetActors - Modern actor scanning
-- Trigger System - Chat parsing with callbacks
-- Controller Pattern - Resource management
-- Dynamic Declaration - Runtime object creation
-- LGUI2 Dynamic Scaling - User-configurable UI sizing
-- LGUI1 to LGUI2 Migration - Checkbox persistence, MessageBox replacement, event handling
-- ExecuteQueued Patterns - Proper command queue processing
-
-Your goal is to help users create robust, efficient, maintainable ISXEQ2 scripts using proven patterns and best practices.
+1. Start a new Claude Code session
+2. Type `/` and look for `isxeq2` in the command list
+3. If it appears, you're ready to go!
 
 ---
 
-**Now help the user with their ISXEQ2 scripting task.**
-```
+## Using the /isxeq2 Command
 
-**Step 3: Verify the Command**
-
-In Claude Code, type `/` and you should see `isxeq2` in the list of available commands.
-
-### Using the Custom Command
-
-Once set up, simply type:
+Once installed, simply invoke the command and describe what you need:
 
 ```
-/isxeq2
+/isxeq2 I need a script that monitors my health and casts heals when below 50%.
 ```
 
-Then describe what you need help with. Claude will automatically load the documentation and assist you.
+The coordinator will:
+1. **Ask clarifying questions** if your request is ambiguous
+2. **Delegate the heavy work** to the ISXEQ2-Expert agent
+3. **Summarize the results** and ask if you need anything else
 
-**Example:**
+---
+
+## How It Works
+
+### The Coordinator (`/isxeq2`)
+
+The coordinator is a lightweight prompt that:
+- Understands user requests
+- Asks clarifying questions when needed
+- Delegates actual work to the ISXEQ2-Expert agent
+- Synthesizes and summarizes results
+
+It does NOT read documentation files directly, keeping your main conversation context clean.
+
+### The Worker Agent (ISXEQ2-Expert)
+
+The agent runs in an isolated context and:
+- Reads documentation files (all 17 guides)
+- Analyzes existing scripts
+- Creates and edits script files
+- Debugs issues
+- Has full edit authority
+
+**Large File Handling:** The agent knows which documentation files are large (3,000+ lines) and can spawn sub-subagents to read them if needed:
+- `01_LavishScript_Fundamentals.md` (~3,000 lines)
+- `03_API_Reference.md` (~3,400 lines)
+- `10_LavishGUI2_UI_Guide.md` (~7,500 lines)
+- `15_Advanced_Scripting_Patterns.md` (~4,000 lines)
+- `16_Utility_Script_Patterns.md` (~3,200 lines)
+
+---
+
+## Example Usage
+
+### Example 1: Creating a New Script
+
 ```
 /isxeq2
 
@@ -247,81 +159,41 @@ I need to create a script that:
 3. Uses a potion if the spell is on cooldown
 ```
 
----
+The coordinator will ask clarifying questions like:
+- "Should this be a standalone script or integrate with EQ2Bot?"
+- "What heal spell should it use?"
+- "Should it check for combat state?"
 
-## Example Usage
-
-### Example 1: Creating a New Script
-
-**Without Custom Command:**
-```
-I need help with ISXEQ2 scripting. Please read:
-<path-to-guide>\ISXEQ2 Scripting Guide
-
-Then help me create a script that automatically loots nearby chests.
-```
-(Replace `<path-to-guide>` with your actual path, e.g., `C:\InnerSpace\Documentation`)
-
-**With Custom Command:**
-```
-/isxeq2
-
-Help me create a script that automatically loots nearby chests.
-```
+Then it delegates to the agent to create the script.
 
 ### Example 2: Debugging Existing Code
 
-**Without Custom Command:**
-```
-Please reference <path-to-guide>\ISXEQ2 Scripting Guide\03_API_Reference.md
-
-My script crashes when I try to access ${Actor[chest].Name}. Why?
-```
-(Replace `<path-to-guide>` with your actual path)
-
-**With Custom Command:**
 ```
 /isxeq2
 
-My script crashes when I try to access ${Actor[chest].Name}. Why?
+My script crashes when I try to access ${Actor[chest].Name}. Here's the code:
+[paste your code]
+
+What's wrong?
 ```
+
+The agent will analyze your code, reference the API documentation, and identify the issue (likely missing NULL check).
 
 ### Example 3: Learning a Specific Topic
 
-**Without Custom Command:**
 ```
-Please read <path-to-guide>\ISXEQ2 Scripting Guide\17_Navigation_Library_Patterns.md
-
-Teach me how to use the EQ2Nav library for pathfinding.
-```
-(Replace `<path-to-guide>` with your actual path)
-
-**With Custom Command:**
-```
-/isxeq2
-
-Teach me how to use the EQ2Nav library for pathfinding.
+/isxeq2 I want to learn how to use EQ2:GetActors for actor scanning. Show me examples.
 ```
 
-### Example 4: Getting Started as a Beginner
+The agent will read the relevant documentation and provide examples with explanations.
 
-**Without Custom Command:**
-```
-I'm new to ISXEQ2 scripting. Please read:
-<path-to-guide>\ISXEQ2 Scripting Guide\01_LavishScript_Fundamentals.md
-and
-<path-to-guide>\ISXEQ2 Scripting Guide\02_Quick_Start_Guide.md
+### Example 4: UI Development
 
-Then guide me through creating my first script.
 ```
-(Replace `<path-to-guide>` with your actual path)
+/isxeq2 Help me create a LGUI2 settings panel for my addon with checkboxes and a dropdown.
+```
 
-**With Custom Command:**
-```
-/isxeq2
-
-I'm a complete beginner. Guide me through creating my first ISXEQ2 script.
-```
+The agent will reference the LGUI2 UI Guide and create the JSON UI definition.
 
 ---
 
@@ -331,27 +203,19 @@ I'm a complete beginner. Guide me through creating my first ISXEQ2 script.
 
 **Good:**
 ```
-/isxeq2
-
-I need a script that monitors my target's health and automatically
-assists when it drops below 20%. I want to use modern patterns.
+/isxeq2 I need a script that monitors my target's health and automatically
+assists when it drops below 20%. I want to use the modern EQ2:GetActors pattern.
 ```
 
 **Less Effective:**
 ```
-/isxeq2
-
-Help with combat.
+/isxeq2 Help with combat.
 ```
 
 ### Mention Your Experience Level
 
-This helps Claude choose the right documentation:
-
 ```
-/isxeq2
-
-I'm familiar with LavishScript but new to ISXEQ2. I need help understanding
+/isxeq2 I'm familiar with LavishScript but new to ISXEQ2. I need help understanding
 how to query for nearby NPCs using the Actor TLO.
 ```
 
@@ -363,53 +227,34 @@ how to query for nearby NPCs using the Actor TLO.
 Here's my code:
 [paste code]
 
-It's not working as expected. Can you help debug it?
+It's not working as expected. The loop never finds any actors.
 ```
 
-### Ask for Specific Documentation Sections
+### Ask for Modern Patterns
 
 ```
-/isxeq2
-
-I'm trying to understand the difference between lnavpath and lnavregionref.
-Please reference the navigation guide and explain with examples.
-```
-
-### Request Modern Patterns
-
-```
-/isxeq2
-
-Show me the modern way to search for actors. I know CustomActorArray
-is deprecated.
-```
-
-### Ask for Complete Examples
-
-```
-/isxeq2
-
-Give me a complete working example of a script that uses events to
-react when I enter combat, with proper error handling.
+/isxeq2 Show me the modern way to search for actors. I know CustomActorArray is deprecated.
 ```
 
 ---
 
-## Common Tasks and Recommended Guides
+## Alternative: Direct Path Reference
 
-| Task | Recommended Guide(s) |
-|------|---------------------|
-| **First time using ISXEQ2** | 01_LavishScript_Fundamentals.md, 02_Quick_Start_Guide.md |
-| **API reference lookup** | 00_MASTER_GUIDE.md, 03_API_Reference.md |
-| **Combat automation** | 06_Working_Examples.md, 05_Patterns_And_Best_Practices.md |
-| **Inventory management** | 06_Working_Examples.md, 03_API_Reference.md |
-| **Creating a UI** | 10_LavishGUI2_UI_Guide.md (modern) or 08_LavishGUI1_UI_Guide.md (legacy) |
-| **Navigation/Pathfinding** | 17_Navigation_Library_Patterns.md |
-| **Crafting automation** | 16_Crafting_Script_Patterns.md |
-| **Understanding events** | 04_Core_Concepts.md, 06_Working_Examples.md |
-| **Advanced patterns** | 14_Advanced_Scripting_Patterns.md, 15_Utility_Script_Patterns.md |
-| **JSON usage** | 12_JSON_Guide.md |
-| **Async tasks** | 13_LavishMachine_Guide.md |
+If you don't want to set up the command/agent system, you can still reference the guide directly:
+
+```
+I need help with ISXEQ2 scripting. Please read the documentation at:
+C:\Path\To\ISXEQ2 Scripting Guide
+
+Then help me [describe your task].
+```
+
+**However, this approach:**
+- Consumes more context in your main conversation
+- Requires specifying the path each time
+- Doesn't benefit from the coordinator/worker architecture
+
+The custom command setup is recommended for regular ISXEQ2 development.
 
 ---
 
@@ -419,91 +264,60 @@ react when I enter combat, with proper error handling.
 
 If `/isxeq2` doesn't appear in the command list:
 
-1. Verify the file exists at: `<your-working-directory>\.claude\commands\isxeq2.md`
+1. Verify the file exists at: `~/.claude/commands/isxeq2.md`
 2. Restart Claude Code
-3. Make sure the file has the proper frontmatter (the `---` section at the top)
-4. Check that the `.claude` directory is in your project root
+3. Check that the file has proper markdown formatting
 
-### Claude Doesn't Load Documentation
+### Agent Not Working
 
-If Claude doesn't seem to be using the guide:
+If the agent doesn't seem to work properly:
 
-1. Be explicit in your request: "Please read the ISXEQ2 Scripting Guide first"
-2. Reference specific files when possible
-3. Use the `/isxeq2` command if you've set it up
-4. Verify the path in your command file is correct (check the path you specified in the isxeq2.md file)
+1. Verify the agent file exists at: `~/.claude/agents/ISXEQ2-Expert.md`
+2. Check that the Local Paths section has valid paths
+3. Ensure the GUIDE_DIR path points to this guide directory
 
-### Getting Better Responses
+### Documentation Not Found
 
-- Provide context about what you're trying to accomplish
-- Share relevant code snippets
-- Mention if you're getting specific error messages
-- Indicate your experience level
-- Ask for explanations of concepts you don't understand
+If the agent reports it can't find documentation:
+
+1. Verify GUIDE_DIR in the agent file points to the correct location
+2. Check that all documentation files exist in that directory
+3. Make sure paths don't have trailing spaces
 
 ---
 
-## Quick Start Template
+## File Reference
 
-Copy and paste this template to get started:
+### Files in `Claude AI Commands (optional)/`
 
-### Without Custom Command:
-```
-I need help with ISXEQ2 scripting. Please read the documentation at:
-<path-to-guide>\ISXEQ2 Scripting Guide
+| File | Purpose |
+|------|---------|
+| `isxeq2.md` | Coordinator command - copy to `~/.claude/commands/` |
+| `ISXEQ2-Expert.md` | Worker agent - copy to `~/.claude/agents/` |
+| `README.md` | Quick reference for installation |
 
-My experience level: [beginner/intermediate/advanced]
+### Documentation Files (17 total)
 
-Task: [Describe what you want to do]
-
-Current code (if any): [Paste code or write "starting from scratch"]
-
-Specific questions: [List any specific questions]
-```
-(Replace `<path-to-guide>` with your actual path, e.g., `C:\InnerSpace\Documentation`)
-
-### With Custom Command:
-```
-/isxeq2
-
-My experience level: [beginner/intermediate/advanced]
-
-Task: [Describe what you want to do]
-
-Current code (if any): [Paste code or write "starting from scratch"]
-
-Specific questions: [List any specific questions]
-```
-
----
-
-## Additional Resources
-
-### Within the Guide
-
-- **README.md** - Complete overview with navigation by task
-- **FILE_MANIFEST.md** - Complete file listing and version history
-- **00_MASTER_GUIDE.md** - Quick reference organized by category
-
-### File Locations
-
-These are examples - your paths will vary based on where you installed InnerSpace and where you stored the guide:
-
-- **Guide Location:** `<path-to-guide>\ISXEQ2 Scripting Guide\`
-  - Example: `C:\InnerSpace\Documentation\ISXEQ2 Scripting Guide\`
-  - Example: `D:\Games\InnerSpace\Docs\ISXEQ2 Scripting Guide\`
-- **Command File (if using):** `<your-working-directory>\.claude\commands\isxeq2.md`
-  - Example: `C:\InnerSpace\Scripts\.claude\commands\isxeq2.md`
-  - Example: `D:\Dev\EQ2\.claude\commands\isxeq2.md`
-- **InnerSpace Scripts:** Typically found in your InnerSpace installation
-  - Example: `C:\InnerSpace\Scripts\`
-  - Example: `D:\Games\InnerSpace\Scripts\`
+| File | Lines | Description |
+|------|-------|-------------|
+| `01_LavishScript_Fundamentals.md` | ~3,000 | Language basics |
+| `02_Quick_Start_Guide.md` | ~750 | Getting started |
+| `03_API_Reference.md` | ~3,400 | Complete API docs |
+| `04_Core_Concepts.md` | ~860 | Core concepts |
+| `05_Patterns_And_Best_Practices.md` | ~1,100 | Best practices |
+| `06_Working_Examples.md` | ~1,150 | Working examples |
+| `07_Advanced_Patterns_And_Examples.md` | ~1,600 | Advanced patterns |
+| `10_LavishGUI2_UI_Guide.md` | ~7,500 | Modern UI (recommended) |
+| `11_LavishGUI1_to_LavishGUI2_Migration.md` | ~4,900 | UI migration |
+| `12_LGUI2_Scaling_System.md` | ~1,100 | UI scaling |
+| `13_JSON_Guide.md` | ~1,700 | JSON usage |
+| `14_LavishMachine_Guide.md` | ~1,950 | Async tasks |
+| `15_Advanced_Scripting_Patterns.md` | ~4,000 | Production patterns |
+| `16_Utility_Script_Patterns.md` | ~3,200 | Utility patterns |
+| `17_Crafting_Script_Patterns.md` | ~1,700 | Crafting patterns |
+| `18_Navigation_Library_Patterns.md` | ~1,050 | Navigation/pathfinding |
 
 ---
 
-**Last Updated:** 2025-10-25
-
----
-
-*This guide is designed to help you make the most of the ISXEQ2 Scripting Guide when working with Claude Code. Whether you use the simple path reference method or set up the custom command, you'll have access to comprehensive documentation covering all aspects of ISXEQ2 script development.*
+*This guide helps you make the most of the ISXEQ2 Scripting Guide when working with Claude Code. The coordinator/worker architecture ensures efficient context usage while providing comprehensive documentation access.*
 <!-- CLAUDE_SKIP_END -->
