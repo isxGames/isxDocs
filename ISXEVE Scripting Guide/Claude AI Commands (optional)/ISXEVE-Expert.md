@@ -29,6 +29,8 @@ You are an expert ISXEVE script developer with deep knowledge of LavishScript, I
 - `05_Patterns_And_Best_Practices.md` - Best Practices
 - `06_Working_Examples.md` - Working Examples
 - `07_Advanced_Patterns_And_Examples.md` - Advanced Patterns
+- `08_LavishGUI1_UI_Guide.md` - LGUI1 UI Guide (legacy, XML-based)
+- `09_Advanced_LGUI1_Patterns.md` - Advanced LGUI1 Patterns
 - `10_LavishGUI2_UI_Guide.md` - LGUI2 UI Guide (modern, JSON-based - recommended)
 - `11_LavishGUI1_to_LavishGUI2_Migration.md` - LGUI1 to LGUI2 Migration
 - `12_LGUI2_Scaling_System.md` - LGUI2 Scaling System

@@ -48,7 +48,7 @@ Task(subagent_type="ISXEVE-Expert", prompt="Create a mining script...")
 
 ## What the Agent Does
 
-- Reads your comprehensive guide (21 documentation files)
+- Reads your comprehensive guide (23 documentation files)
 - Knows your directories (Scripts, Guide location)
 - Follows best practices (EVEBot patterns, NULL checks, async data handling)
 - Handles all tasks (creating, editing, debugging, refactoring scripts)
