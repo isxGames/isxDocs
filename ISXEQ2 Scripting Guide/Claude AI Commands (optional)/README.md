@@ -48,7 +48,7 @@ Task(subagent_type="ISXEQ2-Expert", prompt="Create a health monitoring script...
 
 ## What the Agent Does
 
-- Reads your comprehensive guide (17 documentation files)
+- Reads your comprehensive guide (19 documentation files)
 - Knows your directories (Scripts, Guide location)
 - Follows best practices (EQ2Bot patterns, NULL checks, async data handling)
 - Handles all tasks (creating, editing, debugging, refactoring scripts)

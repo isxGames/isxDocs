@@ -40,7 +40,7 @@ The ISXEQ2 Claude Code integration uses a **coordinator/worker architecture** de
 
 **Benefits:**
 - **Context Conservation**: Large documentation files (up to 7,500 lines) are read in isolated agent context, not your main conversation
-- **Thoroughness**: The agent has full access to all 17 documentation files
+- **Thoroughness**: The agent has full access to all 19 documentation files
 - **Efficiency**: Coordinator stays lightweight; only results return to main conversation
 - **Sub-subagent Support**: For very large research tasks, the agent can spawn additional subagents
 
@@ -131,7 +131,7 @@ It does NOT read documentation files directly, keeping your main conversation co
 ### The Worker Agent (ISXEQ2-Expert)
 
 The agent runs in an isolated context and:
-- Reads documentation files (all 17 guides)
+- Reads documentation files (all 19 guides)
 - Analyzes existing scripts
 - Creates and edits script files
 - Debugs issues
@@ -296,7 +296,7 @@ If the agent reports it can't find documentation:
 | `ISXEQ2-Expert.md` | Worker agent - copy to `~/.claude/agents/` |
 | `README.md` | Quick reference for installation |
 
-### Documentation Files (17 total)
+### Documentation Files (19 total)
 
 | File | Lines | Description |
 |------|-------|-------------|
@@ -307,6 +307,8 @@ If the agent reports it can't find documentation:
 | `05_Patterns_And_Best_Practices.md` | ~1,100 | Best practices |
 | `06_Working_Examples.md` | ~1,150 | Working examples |
 | `07_Advanced_Patterns_And_Examples.md` | ~1,600 | Advanced patterns |
+| `08_LavishGUI1_UI_Guide.md` | ~1,300 | Legacy UI (XML-based) |
+| `09_Advanced_LGUI1_Patterns.md` | ~1,450 | Advanced LGUI1 patterns |
 | `10_LavishGUI2_UI_Guide.md` | ~7,500 | Modern UI (recommended) |
 | `11_LavishGUI1_to_LavishGUI2_Migration.md` | ~4,900 | UI migration |
 | `12_LGUI2_Scaling_System.md` | ~1,100 | UI scaling |
