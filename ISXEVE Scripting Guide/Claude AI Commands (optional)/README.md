@@ -20,8 +20,9 @@ This conserves context in the main conversation while maintaining thoroughness.
 3. Edit `ISXEVE-Expert.md` and update the **Local Paths** section at the top:
    - `SCRIPTS_DIR`: Your InnerSpace Scripts directory
    - `GUIDE_DIR`: Your ISXEVE Scripting Guide directory
-
-> **Note:** The coordinator (`isxeve.md`) has no paths - only the agent needs updating.
+4. Edit `isxeve.md` and update the **User Configuration** table at the top:
+   - **Scripts Directory**: Your InnerSpace Scripts directory
+   - **Guide Directory**: Your ISXEVE Scripting Guide directory
 
 ---
 

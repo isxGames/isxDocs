@@ -20,8 +20,9 @@ This conserves context in the main conversation while maintaining thoroughness.
 3. Edit `ISXEQ2-Expert.md` and update the **Local Paths** section at the top:
    - `SCRIPTS_DIR`: Your InnerSpace Scripts directory
    - `GUIDE_DIR`: Your ISXEQ2 Scripting Guide directory
-
-> **Note:** The coordinator (`isxeq2.md`) has no paths - only the agent needs updating.
+4. Edit `isxeq2.md` and update the **User Configuration** table at the top:
+   - **Scripts Directory**: Your InnerSpace Scripts directory
+   - **Guide Directory**: Your ISXEQ2 Scripting Guide directory
 
 ---
 
