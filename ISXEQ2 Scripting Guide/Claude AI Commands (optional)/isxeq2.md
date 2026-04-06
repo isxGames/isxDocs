@@ -103,6 +103,8 @@ When reviewing scripts over ~200 lines:
 - Always validate existence with `(exists)` before accessing members
 - Use `EQ2:GetActors` not deprecated `CreateCustomActorArray`
 - Use LavishGUI 2 (JSON) for new UIs, not LavishGUI 1 (XML)
+- After adding/removing/renaming guide files: update ALL cross-references across all files
+- After substantive guide changes: check if `00_MASTER_GUIDE.md`, `FILE_MANIFEST.md`, `README.md`, `+How To Use+.md`, `ISXEQ2_QuickReference.md`, and the Claude AI command/agent files need updating
 
 ## Workflow
 
