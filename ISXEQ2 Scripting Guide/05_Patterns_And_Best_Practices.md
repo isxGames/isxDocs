@@ -684,8 +684,9 @@ atom OnLootWindow(uint WindowID)
     ; Process loot
     if ${LootWindow.NumItems} > 0
     {
+        variable int ItemCount = ${LootWindow.NumItems}
         LootWindow:LootAll
-        echo "Looted ${LootWindow.NumItems} items"
+        echo "Looted ${ItemCount} items"
     }
 
     ; Close window
