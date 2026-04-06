@@ -1149,8 +1149,3 @@ function ReturnToSavedLocation()
 ---
 
 **All examples in this guide are complete, tested patterns from real ISXEQ2 scripts. Modify them as needed for your specific requirements.**
-
----
-
-*Part of ISXEQ2 Scripting Guide*
-*Source References: ..\+ISXEQ2_Reference+.md*

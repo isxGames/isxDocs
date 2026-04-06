@@ -1629,7 +1629,3 @@ function main()
 - **Best Practices:** [04_Patterns_And_Best_Practices.md](04_Patterns_And_Best_Practices.md)
 - **Working Examples:** [05_Working_Examples.md](05_Working_Examples.md)
 - **API Reference:** [01_API_Reference.md](01_API_Reference.md)
-
----
-
-*Part of ISXEQ2 Scripting Guide*

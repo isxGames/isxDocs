@@ -1724,8 +1724,3 @@ run SimpleCraft "Iron Chainmail Chestguard" 10
 - [15_Advanced_Scripting_Patterns.md](15_Advanced_Scripting_Patterns.md) - LavishSettings, Navigation
 - [05_Patterns_And_Best_Practices.md](05_Patterns_And_Best_Practices.md) - General best practices
 - [03_API_Reference.md](03_API_Reference.md) - Recipe, Me, Actor datatypes
-
----
-
-*Part of the ISXEQ2 Scripting Guide - Advanced Patterns Series*
-*Based on EQ2Craft v9.5 - https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2Craft*

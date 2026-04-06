@@ -1,6 +1,5 @@
 # ISXEQ2 Scripting Guide
 
-**Version:** 3.0
 **Language:** LavishScript
 **Extension:** ISXEQ2 for InnerSpace
 **Target Game:** EverQuest 2
@@ -443,20 +442,9 @@ Found an error or have an improvement? This documentation was generated using ac
   - Working examples from multiple sources
   - LavishGUI 1 documentation
   - Troubleshooting and best practices
-<!-- CLAUDE_SKIP_END -->
-
----
-
-## License
-
-This documentation is provided for educational and reference purposes for ISXEQ2 script development. ISXEQ2, InnerSpace, and EverQuest 2 are properties of their respective owners.
 
 ---
 
 **Ready to start? Head to [QUICK_START_GUIDE.md](QUICK_START_GUIDE.md) now!**
 
----
-
-*Last Updated: 2025-10-25*
-*Documentation Version: 3.0*
-*ISXEQ2 Version: 2023+*
+<!-- CLAUDE_SKIP_END -->

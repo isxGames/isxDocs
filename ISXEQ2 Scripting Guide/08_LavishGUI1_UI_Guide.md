@@ -1083,7 +1083,7 @@ function main()
    ```xml
    <!-- Good -->
    <checkbox Name='EnableAutoLoot'>
-
+   
    <!-- Bad -->
    <checkbox Name='cb1'>
    ```
@@ -1126,7 +1126,7 @@ function main()
    <OnLeftClick>
      ; Update script variable
      Script[MyScript].Variable[Setting]:Set[${This.Checked}]
-
+   
      ; Save to LavishSettings
      LavishSettings[MyScript]:AddSetting[Setting,${This.Checked}]
      LavishSettings[MyScript]:Export[file.xml]
@@ -1301,7 +1301,3 @@ Show/hide elements based on class, level, etc.:
 - **API Reference:** [01_API_Reference.md](01_API_Reference.md)
 
 **Official Documentation:** https://www.lavishsoft.com/wiki/index.php/LavishGUI
-
----
-
-*Part of ISXEQ2 Scripting Guide*

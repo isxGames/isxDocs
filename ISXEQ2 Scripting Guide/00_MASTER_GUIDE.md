@@ -589,27 +589,3 @@ echo "Type of Target: ${Target.Type}"
 | Variable always empty | Check variable scope (script vs local) |
 | Event not firing | Verify event name and attach syntax |
 | Ability won't cast | Check `IsReady` and existence |
-
----
-
-<!-- CLAUDE_SKIP_START -->
-## Resource Files
-
-- **Official Reference:** `..\+ISXEQ2_Reference+.md`
-- **Example Scripts:** https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts
-- **EQ2Bot:** https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2Bot
-
----
-
-## For More Information
-
-- **Getting Started:** [02_Quick_Start_Guide.md](02_Quick_Start_Guide.md)
-- **Fundamental Concepts:** [04_Core_Concepts.md](04_Core_Concepts.md)
-- **Code Examples:** [06_Working_Examples.md](06_Working_Examples.md)
-- **Best Practices:** [05_Patterns_And_Best_Practices.md](05_Patterns_And_Best_Practices.md)
-- **Production Patterns:** [15_Advanced_Scripting_Patterns.md](15_Advanced_Scripting_Patterns.md)
-<!-- CLAUDE_SKIP_END -->
-
----
-
-*Part of ISXEQ2 Scripting Guide*

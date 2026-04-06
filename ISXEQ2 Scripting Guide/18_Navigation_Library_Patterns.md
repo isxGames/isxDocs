@@ -1058,8 +1058,3 @@ Nav.TURNRIGHT:Set["d"]
 - [15_Advanced_Scripting_Patterns.md](15_Advanced_Scripting_Patterns.md) - LavishSettings patterns
 - [17_Crafting_Script_Patterns.md](17_Crafting_Script_Patterns.md) - Navigation usage examples
 - [03_API_Reference.md](03_API_Reference.md) - Actor, Me datatypes
-
----
-
-*Part of the ISXEQ2 Scripting Guide - Advanced Patterns Series*
-*Based on EQ2Nav v2.x - https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2Navigation*

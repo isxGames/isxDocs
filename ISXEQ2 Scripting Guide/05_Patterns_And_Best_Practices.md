@@ -1091,8 +1091,3 @@ function Shutdown()
 8. **✅ Handle errors** gracefully with timeouts
 9. **✅ Use templates** for consistency
 10. **✅ Document** with version history and comments
-
----
-
-*Part of ISXEQ2 Scripting Guide*
-*Analysis based on EQ2Bot: https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2Bot*

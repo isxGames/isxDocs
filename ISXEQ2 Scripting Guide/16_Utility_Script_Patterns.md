@@ -3202,20 +3202,3 @@ The EQ2BJCommon scripts demonstrate 18 essential utility patterns:
 16. **Progressive XP Tracking** - Handle level-ups across ADV/AA/TS
 17. **Script Existence Checking** - Prevent duplicates, manage dependencies
 18. **ExecuteQueued Loops** - Handle UI and inter-script commands
-
-These patterns provide the foundation for building robust, user-friendly utility scripts for EverQuest 2.
-
----
-
-**Next Steps:**
-- Study [05_Patterns_And_Best_Practices.md](05_Patterns_And_Best_Practices.md) for EQ2Bot patterns
-- Review [14_Advanced_Scripting_Patterns.md](14_Advanced_Scripting_Patterns.md) for production patterns
-- Check [06_Working_Examples.md](06_Working_Examples.md) for more code samples
-- Reference [03_API_Reference.md](03_API_Reference.md) for API details
-
----
-
-*ISXEQ2 Scripting Guide - Utility Patterns from EQ2BJCommon*
-*Version: 2.6*
-*Last Updated: 2025-10-23*
-*Source: https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2BJCommon*

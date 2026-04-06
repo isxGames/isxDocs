@@ -847,16 +847,3 @@ atom OnInventoryChanged()
 8. **Queries** - Powerful filtering with operators (==, !=, =-, etc.)
 9. **Collections** - Results stored in collections, accessed via iterators
 10. **Events** - React to game actions with atom handlers
-
----
-
-## Next Steps
-
-- **Practice:** Try the examples in this guide
-- **Reference:** Use [01_API_Reference.md](01_API_Reference.md) to look up specific datatypes
-- **Examples:** Study [05_Working_Examples.md](05_Working_Examples.md) for real-world code
-- **Patterns:** Read [04_Patterns_And_Best_Practices.md](04_Patterns_And_Best_Practices.md) for best practices
-
----
-
-*Part of ISXEQ2 Scripting Guide*

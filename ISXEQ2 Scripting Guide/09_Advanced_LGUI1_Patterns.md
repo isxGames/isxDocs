@@ -2,6 +2,7 @@
 
 **Purpose:** Real-world patterns from production scripts
 **Sources:**
+
 - [MyPrices](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/MyPrices) broker script (3,937 lines + 3,288 line UI)
 - [EQ2Craft](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2Craft) automation script (1,802 line UI)
 - [EQ2Bot](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2Bot) combat bot (7,509 lines + 2,498 line main UI + 39 class UIs)
@@ -1439,20 +1440,3 @@ These advanced patterns from the [MyPrices](https://github.com/isxGames/isxScrip
 - Visual feedback improves user experience
 - Settings backups are essential
 - Use the right pattern for the job (@ vs FindChild, Show vs Alpha)
-
----
-
-## Additional Resources
-
-**Script Source:**
-- https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/MyPrices
-
-**Related Guides:**
-- [LavishGUI 1 UI Guide](08_LavishGUI1_UI_Guide.md)
-- [Advanced Scripting Patterns](13_Advanced_Scripting_Patterns.md)
-- [LavishSettings Guide](01_LavishScript_Fundamentals.md)
-
----
-
-*Last Updated: 2025-10-23*
-*Source: MyPrices v0.15d analysis*

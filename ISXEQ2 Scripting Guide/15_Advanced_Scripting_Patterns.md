@@ -3574,7 +3574,7 @@ function DiscoverAllConfigs()
    ; Good
    ${LavishScript.HomeDirectory}/Scripts/MyScript/Configs/
    ${Script.CurrentDirectory}/Configs/
-
+   
    ; Bad
    C:\Program Files\InnerSpace\Scripts\MyScript\Configs/
    ```
@@ -3889,10 +3889,10 @@ atom(script) EQ2_FinishedZoning(string TimeInSeconds)
    ```lavishscript
    ; Zone configs use ${Zone.ShortName}
    ; antonica.xml, commonlands.xml, etc.
-
+   
    ; Character-specific: zonename_charactername.xml
    ; antonica_mychar.xml
-
+   
    ; Class-specific: zonename_classname.xml
    ; antonica_guardian.xml
    ```
@@ -3907,7 +3907,7 @@ atom(script) EQ2_FinishedZoning(string TimeInSeconds)
    ```lavishscript
    ; Always provide way to disable auto-load
    variable bool AutoLoadConfigOnZoning = TRUE
-
+   
    ; Checkbox in UI to toggle
    ```
 
@@ -3955,7 +3955,3 @@ This guide covered 14 production-grade patterns found in professional ISXEQ2 scr
 14. ✅ **Zone-Aware Auto-Config** - Automatic zone-specific settings
 
 These patterns represent the state-of-the-art in ISXEQ2 scripting and are used in complex, production automation systems. Master these to create professional-grade scripts!
-
----
-
-*Part of ISXEQ2 Scripting Guide*

@@ -7588,8 +7588,6 @@ LGUI2.Element[mycheckbox]:SetChecked[TRUE]
 
 ---
 
-<!-- CLAUDE_SKIP_START -->
-
 ## Additional Resources
 
 - **LGUI2 Scaling System:** [12_LGUI2_Scaling_System.md](12_LGUI2_Scaling_System.md) - Add dynamic UI scaling
@@ -7600,16 +7598,14 @@ LGUI2.Element[mycheckbox]:SetChecked[TRUE]
 
 ---
 
+<!-- CLAUDE_SKIP_START -->
+
 **This guide was created through comprehensive analysis of:**
+
 - 60+ LERN/LGUI2 example files: https://github.com/LavishSoftware/LERN/tree/master/LGUI2 (.json, .iss, .md)
 - 12 LERN/Game example files: https://github.com/LavishSoftware/LERN/tree/master/Game (canvas, audio, game controller patterns)
 - Official LavishGUI 2 documentation and wiki
 - Complete coverage of all element types, events, and patterns
 - Real-world migration experience (EQ2BotCommander LGUI1→LGUI2)
-
----
-
-*Last Updated: 2025-10-25*
-*LavishGUI 2 Version: 2023+*
 
 <!-- CLAUDE_SKIP_END -->

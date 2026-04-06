@@ -4120,37 +4120,6 @@ function main()
 
 **Real Example:** `EQ2BotCommander_LGUI2.iss` implements full UI scaling.
 
-<!-- CLAUDE_SKIP_START -->
-### Next Steps
-
-1. Start with a simple UI to practice migration
-2. Review the [LavishGUI 2 UI Guide](10_LavishGUI2_UI_Guide.md) for complete reference
-3. Migrate one UI at a time
-4. Test thoroughly before removing old XML files
-5. **Consider adding UI scaling** - See [LGUI2 Scaling System](12_LGUI2_Scaling_System.md)
-6. Use version control to track changes
-
----
-
-## Additional Resources
-
-- **LavishGUI 2 UI Guide:** [10_LavishGUI2_UI_Guide.md](10_LavishGUI2_UI_Guide.md)
-- **LGUI2 Scaling System:** [12_LGUI2_Scaling_System.md](12_LGUI2_Scaling_System.md)
-- **LavishGUI 1 Reference:** [08_LavishGUI1_UI_Guide.md](08_LavishGUI1_UI_Guide.md)
-- **Official LGUI2 Wiki:** https://www.lavishsoft.com/wiki/index.php/LavishGUI_2
-- **LERN Examples:** https://github.com/LavishSoftware/LERN/tree/master/LGUI2
-- **Example Implementation:** EQ2BotCommander LGUI1→LGUI2 migration with scaling
-
----
-
-**This migration guide was created through analysis of both LavishGUI 1 and LavishGUI 2 systems, including:**
-- Complete LGUI1 documentation and examples
-- 60+ LGUI2 example files
-- Production migration patterns
-- Real-world conversion experiences
-
-**Good luck with your migration!**
-
 ## Known Limitations
 
 ### Custom C++ Element Types Not Supported
@@ -4971,9 +4940,20 @@ The `slider.handle` template from DefaultSkin.json provides:
 
 Sliders use **direct styling** and **templates at the element level**, NOT `contentContainer` like checkboxes. Always include `borderThickness` and `borderBrush` to make the slider track visible.
 
+<!-- CLAUDE_SKIP_START -->
+## Next Steps
+1. Start with a simple UI to practice migration
+2. Review the [LavishGUI 2 UI Guide](10_LavishGUI2_UI_Guide.md) for complete reference
+3. Migrate one UI at a time
+4. Test thoroughly before removing old XML files
+5. **Consider adding UI scaling** - See [LGUI2 Scaling System](12_LGUI2_Scaling_System.md)
+6. Use version control to track changes
+
 ---
+## Additional Resources
 
-*Last Updated: 2025-10-30*
-*Covers: LavishGUI 1 → LavishGUI 2 migration*
-
+- **LavishGUI 2 UI Guide:** [10_LavishGUI2_UI_Guide.md](10_LavishGUI2_UI_Guide.md)
+- **LGUI2 Scaling System:** [12_LGUI2_Scaling_System.md](12_LGUI2_Scaling_System.md)
+- **Official LGUI2 Wiki:** https://www.lavishsoft.com/wiki/index.php/LavishGUI_2
+- **LERN Examples:** https://github.com/LavishSoftware/LERN/tree/master/LGUI2
 <!-- CLAUDE_SKIP_END -->
