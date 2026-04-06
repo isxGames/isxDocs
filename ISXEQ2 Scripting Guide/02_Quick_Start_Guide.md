@@ -362,7 +362,7 @@ function main()
     if ${NearestID} > 0
     {
         echo "Targeting: ${Actor[${NearestID}].Name} (${NearestDistance}m away)"
-        EQ2Execute /target_id ${NearestID}
+        Actor[${NearestID}]:DoTarget
     }
 }
 ```
