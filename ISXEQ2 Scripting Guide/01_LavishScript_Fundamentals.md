@@ -856,12 +856,12 @@ function main()
     ; As a command (recommended for actions)
     MyFruit:SetName["Banana"]
 
-    ; In a Data Sequence (unnecessary)
+    ; In a Data Sequence (calls SetName, then echoes the object's string value)
     echo "${MyFruit:SetName["Banana"]}"
 }
 ```
 
-**Best practice:** Use methods as commands when you're performing an action, not retrieving a value.
+**Best practice:** Use methods as commands when you're performing an action, not retrieving a value. Using a method inside `${}` will execute the method AND output the object's string representation, which is usually not the intent.
 
 ### Method Chaining
 
