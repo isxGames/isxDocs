@@ -1071,7 +1071,7 @@ function main()
 
 ```xml
 <!-- MyBotUI.xml -->
-<LGUI2Package>
+<ISUI>
     <Script>
         <![CDATA[
         function OnLoad()
@@ -1091,7 +1091,7 @@ function main()
     <window name="MyBotWindow">
         <!-- UI elements here -->
     </window>
-</LGUI2Package>
+</ISUI>
 ```
 
 ### Complete Example: Settings Synchronization
@@ -1198,7 +1198,7 @@ function ApplyNewSettings()
 ;===========================================
 /**
 <?xml version='1.0' encoding='UTF-8'?>
-<LGUI2Package>
+<ISUI>
     <Script>
         <![CDATA[
         variable(global) int ChkAutoLootID
@@ -1257,7 +1257,7 @@ function ApplyNewSettings()
             <OnChange>OnSettingChanged</OnChange>
         </textentry>
     </window>
-</LGUI2Package>
+</ISUI>
 **/
 ```
 
@@ -2622,7 +2622,7 @@ function InjectAllTabs()
 ;===========================================
 /**
 <?xml version='1.0' encoding='UTF-8'?>
-<LGUI2Package>
+<ISUI>
     <Script>
         <![CDATA[
         variable(global) int MainTabsID
@@ -2652,7 +2652,7 @@ function InjectAllTabs()
             <OnLeftClick>Script:End</OnLeftClick>
         </button>
     </window>
-</LGUI2Package>
+</ISUI>
 **/
 
 ;===========================================
@@ -2701,7 +2701,7 @@ function main(int ParentTabControlID, int Position)
 ;===========================================
 /**
 <?xml version='1.0' encoding='UTF-8'?>
-<LGUI2Package>
+<ISUI>
     <Script>
         <![CDATA[
         variable(global) int StatusTabPanelID
@@ -2732,7 +2732,7 @@ function main(int ParentTabControlID, int Position)
         <text x='10' y='85'>Level:</text>
         <text name='TxtLevel' x='100' y='85'></text>
     </panel>
-</LGUI2Package>
+</ISUI>
 **/
 ```
 
