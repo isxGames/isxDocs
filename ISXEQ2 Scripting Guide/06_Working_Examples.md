@@ -1135,12 +1135,12 @@ function ReturnToSavedLocation()
 
     echo "Returning to saved location..."
 
-    ; Face the saved location
-    Me:Face[${SavedX},${SavedY},${SavedZ}]
+    ; Face the saved location (face command accepts X Y Z coordinates)
+    face ${SavedX} ${SavedY} ${SavedZ}
     wait 5
 
-    ; Create waypoint
-    Me:WaypointTo[${SavedX},${SavedY},${SavedZ}]
+    ; Create waypoint to the saved coordinates
+    EQ2Execute /waypoint ${SavedX},${SavedY},${SavedZ}
 
     echo "Waypoint created to saved location"
 }
