@@ -624,7 +624,7 @@ function SmartNavigate(float X, float Y, float Z)
 
 ```lavishscript
 ;===========================================
-; OgreNav_Lib.inc - Complete Navigation Library (from EQ2OgreFree, not modern-day Ogre)
+; Navigation Library Example (inspired by OgreNav_Lib.inc from EQ2OgreFree)
 ;===========================================
 variable dijkstrapathfinder PathFinder
 variable lnavregionref ZoneRegion
