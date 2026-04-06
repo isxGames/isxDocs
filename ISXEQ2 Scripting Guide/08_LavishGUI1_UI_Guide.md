@@ -1296,8 +1296,8 @@ Show/hide elements based on class, level, etc.:
 
 ## Cross-References
 
-- **Core Concepts:** [03_Core_Concepts.md](03_Core_Concepts.md)
-- **Advanced Patterns:** [06_Advanced_Patterns_And_Examples.md](06_Advanced_Patterns_And_Examples.md)
-- **API Reference:** [01_API_Reference.md](01_API_Reference.md)
+- **Core Concepts:** [04_Core_Concepts.md](04_Core_Concepts.md)
+- **Advanced Patterns:** [07_Advanced_Patterns_And_Examples.md](07_Advanced_Patterns_And_Examples.md)
+- **API Reference:** [03_API_Reference.md](03_API_Reference.md)
 
 **Official Documentation:** https://www.lavishsoft.com/wiki/index.php/LavishGUI
