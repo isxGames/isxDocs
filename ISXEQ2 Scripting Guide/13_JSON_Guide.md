@@ -1435,7 +1435,7 @@ objectdef target_manager
         Targets:Clear
 
         variable index:actor nearbyActors
-        EQ2:QueryActors[nearbyActors, "Type = NPC && Distance < 50"]
+        EQ2:QueryActors[nearbyActors, Type =- "NPC" && Distance < 50]
 
         variable iterator iter
         nearbyActors:GetIterator[iter]
