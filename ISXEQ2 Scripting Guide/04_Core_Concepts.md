@@ -730,7 +730,7 @@ function MyFunctionWithParams(string name, int level)
     echo "Name: ${name}, Level: ${level}"
 }
 
-function MyFunctionWithReturn() returns int
+function MyFunctionWithReturn()
 {
     return 42
 }
@@ -738,8 +738,9 @@ function MyFunctionWithReturn() returns int
 ; Calling functions
 call MyFunction
 call MyFunctionWithParams "Bob" 120
+call MyFunctionWithReturn
 variable int result
-result:Set[${MyFunctionWithReturn}]
+result:Set[${Return}]
 ```
 
 ---
