@@ -703,11 +703,11 @@ UIElement[StatusLabel]:SetText["Status: Running"]
 UIElement[Title@TitleBar@MyWindow]:SetText["MyScript - ${Me.Name}"]
 ```
 
-#### SetChecked / UnCheck - Checkboxes
+#### SetChecked / UnsetChecked - Checkboxes
 
 ```lavishscript
 UIElement[AutoLoot]:SetChecked
-UIElement[AutoLoot]:UnCheck
+UIElement[AutoLoot]:UnsetChecked
 ```
 
 #### Show / Hide - Visibility
