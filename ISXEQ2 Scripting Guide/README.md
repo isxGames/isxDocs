@@ -411,27 +411,27 @@ Found an error or have an improvement? This documentation was generated using ac
   - Replaced deprecated CustomActorArray with modern EQ2:GetActors throughout all guides
   - Updated navigation and learning paths
 - **2.3** (2025-10-21) - LavishScript Fundamentals addition
-  - Added complete LavishScript Fundamentals guide (00_LavishScript_Fundamentals.md)
+  - Added complete LavishScript Fundamentals guide (01_LavishScript_Fundamentals.md)
   - Analyzed 19 LERN/LS tutorial lessons
   - Covers all LavishScript basics: variables, functions, objects, members, methods, inheritance, loops, conditionals, atoms, wait commands
   - Prerequisite for beginners new to LavishScript
   - Updated navigation and learning paths
 - **2.2** (2025-10-21) - LavishMachine (LMAC) documentation expansion
-  - Added complete LavishMachine guide (11_LavishMachine_Guide.md)
+  - Added complete LavishMachine guide (14_LavishMachine_Guide.md)
   - Analyzed 8 LERN/LMAC tutorial and example files
   - Covers task managers, built-in task types, custom task types, controller pattern
   - Audio tasks, web request tasks, chain tasks, error handling
   - Complete working examples for animations, audio, and web requests
   - Updated navigation and learning paths
 - **2.1** (2025-10-21) - JSON documentation expansion
-  - Added complete JSON guide (10_JSON_Guide.md)
+  - Added complete JSON guide (13_JSON_Guide.md)
   - Analyzed 12 LERN/JSON tutorial and example files
   - Covers jsonvalue, jsonvalueref, serialization, deserialization
   - Complete examples for configuration management
   - Updated navigation and learning paths
 - **2.0** (2025-10-21) - LavishGUI 2 expansion
-  - Added complete LavishGUI 2 UI guide (08_LavishGUI2_UI_Guide.md)
-  - Added LGUI1 to LGUI2 migration guide (09_LavishGUI1_to_LavishGUI2_Migration.md)
+  - Added complete LavishGUI 2 UI guide (10_LavishGUI2_UI_Guide.md)
+  - Added LGUI1 to LGUI2 migration guide (11_LavishGUI1_to_LavishGUI2_Migration.md)
   - Analyzed 60+ LERN/LGUI2 example files
   - Updated navigation and learning paths
   - Marked LavishGUI 1 as legacy
