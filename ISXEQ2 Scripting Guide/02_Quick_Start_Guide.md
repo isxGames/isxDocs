@@ -335,7 +335,7 @@ function main()
     variable index:actor Actors
     variable iterator ActorIt
 
-    EQ2:QueryActors[Actors, "Type = NPC"]
+    EQ2:QueryActors[Actors, Type =- "NPC"]
     Actors:GetIterator[ActorIt]
 
     if !${ActorIt:First(exists)}
@@ -747,7 +747,3 @@ while TRUE
 **Solution:**
 - Open console: Click InnerSpace system tray icon
 - Or check InnerSpace log file
-
----
-
-*Part of ISXEQ2 Scripting Guide*
