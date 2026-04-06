@@ -12,9 +12,10 @@
 ### Core Navigation
 | File | Status | Lines | Description |
 |------|--------|-------|-------------|
-| **README.md** | ✅ Complete | 415 | Main navigation hub, overview, and getting started guide |
-| **02_Quick_Start_Guide.md** | ✅ Complete | 751 | 5-10 minute tutorial for beginners with working examples |
+| **README.md** | ✅ Complete | 450 | Main navigation hub, overview, and getting started guide |
+| **02_Quick_Start_Guide.md** | ✅ Complete | 749 | 5-10 minute tutorial for beginners with working examples |
 | **FILE_MANIFEST.md** | ✅ Complete | This file | Complete file listing and project statistics |
+| **+How To Use This Guide with Claude Code+.md** | ✅ Complete | 325 | Human-readable instructions for using the guide with Claude Code |
 
 ### Comprehensive Documentation
 | File | Status | Lines | Description |
