@@ -7,7 +7,7 @@
 
 ## Table of Contents
 
-1. [Introduction to LavishMachine](#introduction-to-lavish machine)
+1. [Introduction to LavishMachine](#introduction-to-lavishmachine)
 2. [Core Concepts](#core-concepts)
 3. [Task Managers](#task-managers)
 4. [Built-in Task Types](#built-in-task-types)
