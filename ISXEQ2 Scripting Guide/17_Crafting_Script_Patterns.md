@@ -1471,28 +1471,24 @@ function main(string recipename, int quantity)
         Script:End
     }
 
-    ; Get recipe info
-    variable recipe myrecipe
-    myrecipe:Set[${Me.Recipe[${recipename}]}]
-
     ; Wait for recipe info
-    if !${myrecipe.IsRecipeInfoAvailable}
+    if !${Me.Recipe[${recipename}].IsRecipeInfoAvailable}
     {
         echo "Loading recipe info..."
-        wait 50 ${myrecipe.IsRecipeInfoAvailable}
+        wait 50 ${Me.Recipe[${recipename}].IsRecipeInfoAvailable}
     }
 
-    if !${myrecipe.IsRecipeInfoAvailable}
+    if !${Me.Recipe[${recipename}].IsRecipeInfoAvailable}
     {
         echo "Failed to load recipe info!"
         Script:End
     }
 
     ; Navigate to device
-    call NavigateToDevice "${myrecipe.ToRecipeInfo.Device}"
+    call NavigateToDevice "${Me.Recipe[${recipename}].ToRecipeInfo.Device}"
 
     ; Load skills
-    craftingknowledge:Set[${myrecipe.Knowledge}]
+    craftingknowledge:Set[${Me.Recipe[${recipename}].Knowledge}]
     call LoadSkills
 
     ; Craft the items
@@ -1500,7 +1496,7 @@ function main(string recipename, int quantity)
     for (i:Set[1]; ${i} <= ${quantity}; i:Inc)
     {
         echo "Crafting ${i}/${quantity}..."
-        call CraftOne ${myrecipe.ID}
+        call CraftOne ${Me.Recipe[${recipename}].ID}
 
         ; Wait between combines
         wait 20
