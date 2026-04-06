@@ -642,8 +642,8 @@ Base datatype for all actors (NPCs, PCs, objects) in the game world.
 
 | Member | Type | Description |
 |--------|------|-------------|
-| Health | int | Current health percentage |
-| Power | int | Current power/mana percentage |
+| Health | int | Current health percentage (0-100). For actual health value, use `Me.CurrentHealth` |
+| Power | int | Current power/mana percentage (0-100). For actual power value, use `Me.CurrentPower` |
 | Difficulty | int | Difficulty arrows (up arrows) |
 | EncounterSize | int | Number of mobs in encounter |
 | Faction | int | Faction value (negative = hostile) |
