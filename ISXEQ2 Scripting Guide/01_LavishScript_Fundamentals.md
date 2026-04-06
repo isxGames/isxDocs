@@ -882,7 +882,7 @@ function main()
 
 ### Method Return Values
 
-Methods typically return the same object (for chaining). To indicate failure or destruction, return `FALSE`:
+In a Data Sequence, a method call retains the original object, allowing further chaining. A method may `return FALSE` to indicate failure or destruction, which causes the sequence to result in `NULL`:
 
 ```lavishscript
 method Destroy()
