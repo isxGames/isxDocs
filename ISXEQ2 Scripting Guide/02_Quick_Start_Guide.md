@@ -609,7 +609,7 @@ function main()
         if ${HealthPercent} < 50
             echo "WARNING: Health at ${HealthPercent.Int}%!"
 
-        wait 2000
+        wait 20
     }
 }
 ```
