@@ -530,7 +530,7 @@ echo <text>                  ; Output to console
 EQ2Execute <command>         ; Execute EQ2 command
 Target <name/type>           ; Target an actor
 Face                         ; Face target
-wait <ms>                    ; Wait milliseconds
+wait <deciseconds>           ; Wait (10 = 1 second)
 run <script>                 ; Run a script
 ```
 
