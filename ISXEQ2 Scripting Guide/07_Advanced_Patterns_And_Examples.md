@@ -1625,7 +1625,7 @@ function main()
 
 ## Cross-References
 
-- **Core Concepts:** [03_Core_Concepts.md](03_Core_Concepts.md)
-- **Best Practices:** [04_Patterns_And_Best_Practices.md](04_Patterns_And_Best_Practices.md)
-- **Working Examples:** [05_Working_Examples.md](05_Working_Examples.md)
-- **API Reference:** [01_API_Reference.md](01_API_Reference.md)
+- **Core Concepts:** [04_Core_Concepts.md](04_Core_Concepts.md)
+- **Best Practices:** [05_Patterns_And_Best_Practices.md](05_Patterns_And_Best_Practices.md)
+- **Working Examples:** [06_Working_Examples.md](06_Working_Examples.md)
+- **API Reference:** [03_API_Reference.md](03_API_Reference.md)
