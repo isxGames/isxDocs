@@ -468,7 +468,7 @@ if ${ActorIt:First(exists)}
 echo "Total actors found: ${Actors.Used}"
 ```
 
-**Key Point:** `EQ2:GetActors` is the modern, recommended method. See [13_Advanced_Scripting_Patterns.md](13_Advanced_Scripting_Patterns.md#modern-eq2getactors-usage) for comprehensive usage.
+**Key Point:** `EQ2:GetActors` is the modern, recommended method. See [15_Advanced_Scripting_Patterns.md](15_Advanced_Scripting_Patterns.md#modern-eq2getactors-usage) for comprehensive usage.
 
 ---
 
