@@ -126,11 +126,11 @@ This comprehensive guide provides complete documentation for creating, debugging
 | **Data binding (LGUI2)** | [10_LavishGUI2_UI_Guide.md#data-binding](10_LavishGUI2_UI_Guide.md#data-binding) |
 | **Event handlers (LGUI2)** | [10_LavishGUI2_UI_Guide.md#event-handling](10_LavishGUI2_UI_Guide.md#event-handling) |
 | **Script-UI interaction (LGUI2)** | [10_LavishGUI2_UI_Guide.md#script-to-ui-interaction](10_LavishGUI2_UI_Guide.md#script-to-ui-interaction) |
-| **Work with JSON** | [11_JSON_Guide.md](11_JSON_Guide.md) |
-| **Parse JSON files** | [11_JSON_Guide.md#reading-and-writing-json-files](11_JSON_Guide.md#reading-and-writing-json-files) |
-| **Serialize objects to JSON** | [11_JSON_Guide.md#object-serialization-asjson](11_JSON_Guide.md#object-serialization-asjson) |
-| **Load objects from JSON** | [11_JSON_Guide.md#object-deserialization-fromjson](11_JSON_Guide.md#object-deserialization-fromjson) |
-| **Save/load configuration** | [11_JSON_Guide.md#complete-examples](11_JSON_Guide.md#complete-examples) |
+| **Work with JSON** | [13_JSON_Guide.md](13_JSON_Guide.md) |
+| **Parse JSON files** | [13_JSON_Guide.md#reading-and-writing-json-files](13_JSON_Guide.md#reading-and-writing-json-files) |
+| **Serialize objects to JSON** | [13_JSON_Guide.md#object-serialization-asjson](13_JSON_Guide.md#object-serialization-asjson) |
+| **Load objects from JSON** | [13_JSON_Guide.md#object-deserialization-fromjson](13_JSON_Guide.md#object-deserialization-fromjson) |
+| **Save/load configuration** | [13_JSON_Guide.md#complete-examples](13_JSON_Guide.md#complete-examples) |
 | **Use asynchronous tasks** | [14_LavishMachine_Guide.md](14_LavishMachine_Guide.md) |
 | **Create task managers** | [14_LavishMachine_Guide.md#task-managers](14_LavishMachine_Guide.md#task-managers) |
 | **Play audio from scripts** | [14_LavishMachine_Guide.md#audio-tasks](14_LavishMachine_Guide.md#audio-tasks) |
