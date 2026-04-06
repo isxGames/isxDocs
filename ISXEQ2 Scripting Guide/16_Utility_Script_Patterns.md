@@ -952,7 +952,7 @@ function TryUsePotion()
 ```lavishscript
 variable bool ScriptPaused=FALSE
 
-atom(script) EQ2_onIncomingText(string Message)
+atom(script) EQ2_onIncomingChatText(int ChatType, string Message, string Speaker, string sTarget, string SpeakerIsNPC, string ChannelName)
 {
 	; Detect group member commands
 	if ${ChatType} == 15  ; Group chat
