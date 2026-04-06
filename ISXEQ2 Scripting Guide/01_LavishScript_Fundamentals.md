@@ -1325,7 +1325,7 @@ Hello Bob!
 | Can use waitframe | Yes | No |
 | Can use wait | Yes | No |
 | Can run for minutes | Yes | No |
-| Can be used as command | No | Yes |
+| Can be used as named command (without `call`) | No | Yes |
 | Blocks game | No | Yes |
 
 ### The atexit Atom
