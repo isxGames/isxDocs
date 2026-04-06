@@ -631,26 +631,36 @@ call CastSpellRange 322 0 1 0 ${KillTarget}         ; Position-specific
 
 ### Chat Trigger Pattern
 
+Triggers match incoming text and queue function calls automatically. Use `AddTrigger` to register patterns and `ExecuteQueued` to process matches. See [07_Advanced_Patterns_And_Examples.md](07_Advanced_Patterns_And_Examples.md) for a complete working example.
+
 ```lavishscript
-; Define triggers (in initialization)
+; Register triggers -- when text matches, the named function is queued
 AddTrigger AutoFollowTank "\\aPC @*@ @*@:@sender@\\/a tells@*@Follow Me@*@"
 AddTrigger ReceivedTell "\\aPC @*@ @*@:@Sender@\\/a tells you,@Message@"
 
-; Attach event
-Event[EQ2_onIncomingChatText]:AttachAtom[ChatText]
-
-; Event atom handler
-atom ChatText(string line, string Sender, string Message)
+; Trigger handler functions (called via ExecuteQueued when pattern matches)
+function AutoFollowTank(string Line, string sender)
 {
-    ; Check if line matches trigger patterns
-    if ${ReceivedTell.Matches[${line}]}
-    {
-        call ReceivedTell "${line}" "${Sender}" "${Message}"
-    }
+    echo "Following ${sender}"
+    Actor[${sender}]:DoFace
+    EQ2Execute /follow
+}
 
-    if ${AutoFollowTank.Matches[${line}]}
+function ReceivedTell(string Line, string Sender, string Message)
+{
+    echo "${Sender} said: ${Message}"
+}
+
+; In your main loop, periodically process queued triggers
+function Check_Triggers()
+{
+    if ${QueuedCommands}
     {
-        call StartFollowing "${Sender}"
+        do
+        {
+            ExecuteQueued
+        }
+        while ${QueuedCommands}
     }
 }
 ```
