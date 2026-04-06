@@ -29,8 +29,8 @@
 | **07_Advanced_Patterns_And_Examples.md** | ✅ Complete | 1,635 | Advanced patterns (mouse automation, XML config, broker, navigation) |
 | **08_LavishGUI1_UI_Guide.md** | ✅ Complete | 1,305 | LavishGUI 1 UI creation guide (XML-based, legacy) |
 | **09_Advanced_LGUI1_Patterns.md** | ✅ Complete | 1,458 | Real-world LGUI1 patterns from [MyPrices](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/MyPrices) script |
-| **10_LavishGUI2_UI_Guide.md** | ✅ Complete | 6,321 | LavishGUI 2 UI creation guide (JSON-based, modern) with scalable title bars |
-| **11_LavishGUI1_to_LavishGUI2_Migration.md** | ✅ Complete | 3,542 | Migration guide from LGUI1 to LGUI2 with scalable title bars and limitations |
+| **10_LavishGUI2_UI_Guide.md** | ✅ Complete | 7,611 | LavishGUI 2 UI creation guide (JSON-based, modern) with scalable title bars |
+| **11_LavishGUI1_to_LavishGUI2_Migration.md** | ✅ Complete | 4,959 | Migration guide from LGUI1 to LGUI2 with scalable title bars and limitations |
 | **12_LGUI2_Scaling_System.md** | ✅ Complete | 1,100 | Dynamic UI scaling system for LGUI2 interfaces with custom title bar patterns |
 | **13_JSON_Guide.md** | ✅ Complete | 1,734 | Complete JSON guide (parsing, serialization, file I/O) |
 | **14_LavishMachine_Guide.md** | ✅ Complete | 1,947 | Asynchronous task system (audio, web requests, custom tasks) |
