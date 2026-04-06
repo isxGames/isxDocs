@@ -138,7 +138,7 @@ variable string Message    ; No initial value
 |------|-------------|----------------|
 | `string` | Text data | `"Hello"`, `"Bob"` |
 | `int` | 32-bit signed integer | `-1`, `0`, `100`, `2147483647` |
-| `uint` | 32-bit unsigned integer | `0`, `100`, `4294967296` |
+| `uint` | 32-bit unsigned integer | `0`, `100`, `4294967295` |
 | `float` | Floating-point number | `1.5`, `-3.14`, `0.001` |
 | `bool` | Boolean (TRUE/FALSE) | `TRUE`, `FALSE` |
 
@@ -149,7 +149,7 @@ variable string Message    ; No initial value
 - Can be positive or negative
 
 **Unsigned Integer (`uint`):**
-- Range: 0 to 4,294,967,296
+- Range: 0 to 4,294,967,295
 - Cannot be negative (more room for positive values)
 
 ### Using Variables
