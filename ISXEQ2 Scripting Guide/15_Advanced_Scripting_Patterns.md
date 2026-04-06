@@ -489,6 +489,8 @@ LavishNav is InnerSpace's powerful pathfinding system that uses pre-mapped zone 
 
 ```lavishscript
 variable dijkstrapathfinder PathFinder
+variable lnavregionref ZoneRegion
+variable lnavregionref DestZoneRegion
 variable lnavregionref CurrentRegion
 variable lnavregionref DestinationRegion
 variable lnavpath Path
@@ -502,8 +504,17 @@ function NavigateToLocation(float X, float Y, float Z)
     DestY:Set[${Y}]
     DestZ:Set[${Z}]
 
-    ; Calculate path
-    PathFinder:GeneratePath[${Me.X},${Me.Y},${Me.Z},${DestX},${DestY},${DestZ},Path]
+    ; Clear previous path
+    Path:Clear
+
+    ; Find regions containing start and destination points
+    ZoneRegion:SetRegion[${LNavRegion[${Zone.ShortName}]}]
+    DestZoneRegion:SetRegion[${LavishNav.FindRegion[${Zone.ShortName}]}]
+    CurrentRegion:SetRegion[${ZoneRegion.BestContainer[${Me.Loc}].ID}]
+    DestinationRegion:SetRegion[${DestZoneRegion.BestContainer[${DestX},${Math.Calc[${DestY}+1]},${DestZ}].ID}]
+
+    ; Calculate path using region FQNs
+    PathFinder:SelectPath[${CurrentRegion.FQN},${DestinationRegion.FQN},Path]
 
     if ${Path.Hops}
     {
@@ -523,15 +534,11 @@ function FollowPath()
 
     while ${CurrentHop} <= ${Path.Hops}
     {
-        ; Get current waypoint
-        variable point3f Waypoint
-        Path.Hop[${CurrentHop}]:GetPosition[Waypoint]
-
-        ; Move to waypoint
-        while ${Math.Distance[${Me.X},${Me.Y},${Me.Z},${Waypoint.X},${Waypoint.Y},${Waypoint.Z}]} > 1.5
+        ; Move to waypoint using region center point
+        while ${Math.Distance[${Me.X},${Me.Y},${Me.Z},${Path.Region[${CurrentHop}].CenterPoint.X},${Path.Region[${CurrentHop}].CenterPoint.Y},${Path.Region[${CurrentHop}].CenterPoint.Z}]} > 1.5
         {
             press -hold ${Forward}
-            face ${Waypoint.X} ${Waypoint.Z}
+            face ${Path.Region[${CurrentHop}].CenterPoint.X} ${Path.Region[${CurrentHop}].CenterPoint.Z}
             wait 10
         }
 
@@ -688,24 +695,26 @@ function MoveToLoc(float X, float Y, float Z)
 
 function OgrePath(float X, float Y, float Z)
 {
-    ; Generate path using LavishNav
-    PathFinder:GeneratePath[${Me.X},${Me.Y},${Me.Z},${X},${Y},${Z},Path]
+    ; Find regions and calculate path using LavishNav
+    Path:Clear
+    ZoneRegion:SetRegion[${LNavRegion[${Zone.ShortName}]}]
+    DestZoneRegion:SetRegion[${LavishNav.FindRegion[${Zone.ShortName}]}]
+    CurrentRegion:SetRegion[${ZoneRegion.BestContainer[${Me.Loc}].ID}]
+    DestinationRegion:SetRegion[${DestZoneRegion.BestContainer[${X},${Math.Calc[${Y}+1]},${Z}].ID}]
+    PathFinder:SelectPath[${CurrentRegion.FQN},${DestinationRegion.FQN},Path]
 }
 
 function OgreMove()
 {
     variable int CurrentHop = 1
-    variable point3f Waypoint
 
     StuckCounter:Set[0]
     LastLoc:Set[${Me.Loc}]
 
     while ${CurrentHop} <= ${Path.Hops}
     {
-        Path.Hop[${CurrentHop}]:GetPosition[Waypoint]
-
-        ; Move to this waypoint
-        while ${Math.Distance[${Me.X},${Me.Y},${Me.Z},${Waypoint.X},${Waypoint.Y},${Waypoint.Z}]} > ${Precision}
+        ; Move to this waypoint using region center point
+        while ${Math.Distance[${Me.X},${Me.Y},${Me.Z},${Path.Region[${CurrentHop}].CenterPoint.X},${Path.Region[${CurrentHop}].CenterPoint.Y},${Path.Region[${CurrentHop}].CenterPoint.Z}]} > ${Precision}
         {
             ; Stuck check
             if ${Math.Distance[${Me.X},${Me.Y},${Me.Z},${LastLoc.X},${LastLoc.Y},${LastLoc.Z}]} < 0.5
@@ -725,7 +734,7 @@ function OgreMove()
             }
 
             press -hold ${Forward}
-            face ${Waypoint.X} ${Waypoint.Z}
+            face ${Path.Region[${CurrentHop}].CenterPoint.X} ${Path.Region[${CurrentHop}].CenterPoint.Z}
             wait 10
         }
 
