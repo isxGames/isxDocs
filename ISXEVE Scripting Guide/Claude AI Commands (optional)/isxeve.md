@@ -103,6 +103,7 @@ When reviewing scripts over ~200 lines:
 - Check `${ISXEVE.IsReady}` before first API access
 - Always validate existence with `(exists)` before accessing members
 - Use LavishGUI 2 (JSON) for new UIs, not LavishGUI 1 (XML)
+- **Guide file changes**: When adding, removing, or reordering guide files, update ALL cross-references across ALL files. When making substantive changes to any numbered guide (01–22), also check/update the index files (ISXEVE_QuickReference.md, +How To Use This Guide with Claude Code+.md, 00_MASTER_GUIDE.md, FILE_MANIFEST.md, README.md, isxeve.md, ISXEVE-Expert.md). See ISXEVE-Expert.md for the full list.
 
 ## Workflow
 

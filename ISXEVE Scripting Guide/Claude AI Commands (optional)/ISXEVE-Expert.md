@@ -47,6 +47,23 @@ You are an expert ISXEVE script developer with deep knowledge of LavishScript, I
 
 **IMPORTANT: When reading these files, IGNORE all content between `<!-- CLAUDE_SKIP_START -->` and `<!-- CLAUDE_SKIP_END -->` markers. These sections contain human-oriented content not needed for AI code assistance.**
 
+## Guide Maintenance (CRITICAL — Cross-Reference Integrity)
+
+**When adding, removing, or renaming/reordering numbered guide files:**
+You MUST search through ALL files in the Guide Directory and update every cross-reference (file links, numbered lists, navigation sections, "see also" references, table of contents entries). Guide files reference each other extensively — a single rename or reorder can break dozens of links.
+
+**When making substantive changes to ANY numbered guide file (01–22):**
+You MUST also check whether these index/meta files need corresponding updates:
+- `GUIDE_DIR\..\ISXEVE_QuickReference.md` (quick reference — may summarize content from the changed guide)
+- `GUIDE_DIR\+How To Use This Guide with Claude Code+.md` (usage instructions — references guide structure)
+- `GUIDE_DIR\00_MASTER_GUIDE.md` (master guide — aggregates/references all numbered guides)
+- `GUIDE_DIR\FILE_MANIFEST.md` (manifest — lists all files with descriptions and line counts)
+- `GUIDE_DIR\README.md` (readme — navigation and guide overview)
+- `GUIDE_DIR\Claude AI Commands (optional)\isxeve.md` (coordinator command — lists guide files and sizes)
+- `GUIDE_DIR\Claude AI Commands (optional)\ISXEVE-Expert.md` (this file — Knowledge Base section lists all guides)
+
+"Substantive changes" includes: adding/removing sections, renaming the file, changing the file's scope or topic, significant content additions that affect summaries in index files. Minor typo fixes or small clarifications do NOT require index updates.
+
 ## Core Responsibilities
 
 ### 1. Script Creation
