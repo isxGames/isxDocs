@@ -193,6 +193,28 @@ These defaults match the pattern used in EQ2BotCommander and other EQ2Bot UI fil
 | `OnLoad` | `eventHandlers.onLoad` |
 | `OnUnload` | `eventHandlers.onCloseButtonClick` (see note below) |
 
+**CRITICAL: `onMouseClick` DOES NOT EXIST in LGUI2!**
+
+A common migration mistake is using `onMouseClick` instead of `onPress` for button clicks. **`onMouseClick` is NOT a valid LGUI2 event handler and will silently fail** (the button won't work).
+
+```json
+// ❌ WRONG - This will NOT work!
+"eventHandlers": {
+    "onMouseClick": {
+        "type": "code",
+        "code": "echo Clicked"
+    }
+}
+
+// ✅ CORRECT - Use onPress instead
+"eventHandlers": {
+    "onPress": {
+        "type": "code",
+        "code": "echo Clicked"
+    }
+}
+```
+
 **Note on OnUnload:** LGUI2 does not have an `onUnload` event. Use `onCloseButtonClick` to handle window close button clicks. See the "OnLoad / OnUnload Events" section for details.
 
 ### Case Sensitivity
@@ -1500,11 +1522,9 @@ LGUI2 provides keyboard key detection through the `hooks` property using the `on
     "name": "passwordBox",
     "password": true,
     "acceptsKeyboardFocus": true,
-    "eventHandlers": {
-        "onTextChanged": {
-            "type": "code",
-            "code": "LoginController:SetPassword[${This.Text}]"
-        }
+    "textBinding": {
+        "pullFormat": "${LoginController.Password}",
+        "pushFormat": ["LoginController:SetPassword[", "]"]
     },
     "hooks": {
         "onButtonMove": {
@@ -2305,7 +2325,57 @@ function main()
 
 ## Common Migration Issues
 
-### Issue 1: JSON Syntax Errors
+### Issue 1: Buttons Not Working - Using `onMouseClick` Instead of `onPress`
+
+**Problem:**
+
+Buttons in your UI don't respond to clicks. No errors appear in the console.
+
+**Root Cause:**
+
+**`onMouseClick` is NOT a valid LGUI2 event handler.** It doesn't exist and will silently fail. This is a very common migration mistake.
+
+**Fix:**
+
+Use `onPress` for button clicks (equivalent to LGUI1's `OnLeftClick`):
+
+```json
+// ❌ WRONG - Button won't work!
+{
+    "type": "button",
+    "content": "Click Me",
+    "eventHandlers": {
+        "onMouseClick": {
+            "type": "code",
+            "code": "echo Clicked"
+        }
+    }
+}
+
+// ✅ CORRECT
+{
+    "type": "button",
+    "content": "Click Me",
+    "eventHandlers": {
+        "onPress": {
+            "type": "code",
+            "code": "echo Clicked"
+        }
+    }
+}
+```
+
+**Valid Button Event Handlers:**
+- `onPress` - Left mouse button click (most common)
+- `onRightPress` - Right mouse button click
+- `onMouseEnter` - Mouse cursor enters button
+- `onMouseLeave` - Mouse cursor leaves button
+
+**Remember:** There is NO `onMouseClick`, `onClick`, `onLeftClick`, or `onButtonClick` in LGUI2. Use `onPress`.
+
+---
+
+### Issue 2: JSON Syntax Errors
 
 **Problem:**
 

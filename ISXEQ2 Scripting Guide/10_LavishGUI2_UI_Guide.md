@@ -4793,15 +4793,11 @@ LGUI2.Element[screen]:KeyboardFocus
             "type": "textbox",
             "name": "username",
             "acceptsKeyboardFocus": true,
+            "textBinding": {
+                "pullFormat": "${Config.Username}",
+                "pushFormat": ["Config:SetUsername[", "]"]
+            },
             "eventHandlers": {
-                "onLoad": {
-                    "type": "code",
-                    "code": "This:SetText[${Config.Username}]"
-                },
-                "onTextChanged": {
-                    "type": "code",
-                    "code": "Config:SetUsername[${This.Text}]"
-                },
                 "onTabPress": {
                     "type": "code",
                     "code": "LGUI2.Element[password]:KeyboardFocus"
@@ -4813,15 +4809,11 @@ LGUI2.Element[screen]:KeyboardFocus
             "name": "password",
             "password": true,
             "acceptsKeyboardFocus": true,
+            "textBinding": {
+                "pullFormat": "${Config.Password}",
+                "pushFormat": ["Config:SetPassword[", "]"]
+            },
             "eventHandlers": {
-                "onLoad": {
-                    "type": "code",
-                    "code": "This:SetText[${Config.Password}]"
-                },
-                "onTextChanged": {
-                    "type": "code",
-                    "code": "Config:SetPassword[${This.Text}]"
-                },
                 "onTabPress": {
                     "type": "code",
                     "code": "LGUI2.Element[username]:KeyboardFocus"
@@ -6804,6 +6796,100 @@ function main()
        return "${Me.Health}/${Me.MaxHealth} (${Math.Calc[${Me.Health}*100/${Me.MaxHealth}]}%)"
    }
    ```
+
+### Textbox Data Binding
+
+**CRITICAL BEST PRACTICE:** Use `textBinding` instead of `onLoad` + `onTextChanged` event handlers for textboxes.
+
+**BAD - Old pattern with event handlers:**
+```json
+{
+    "type": "textbox",
+    "name": "warpRange",
+    "eventHandlers": {
+        "onLoad": {
+            "type": "code",
+            "code": "This:SetText[${Script[EVEBot].VariableScope.Config.Combat.WarpRange}]"
+        },
+        "onTextChanged": {
+            "type": "code",
+            "code": "if ${This.Text.Length} > 0\n{\n\tScript[EVEBot].VariableScope.Config.Combat:SetWarpRange[${Int[${This.Text}]}]\n}\nelse\n{\n\tScript[EVEBot].VariableScope.Config.Combat:SetWarpRange[0]\n}"
+        }
+    }
+}
+```
+
+**GOOD - Modern pattern with textBinding:**
+```json
+{
+    "type": "textbox",
+    "name": "warpRange",
+    "textBinding": {
+        "pullFormat": "${Script[EVEBot].VariableScope.Config.Combat.WarpRange}",
+        "pushFormat": ["Script[EVEBot].VariableScope.Config.Combat:SetWarpRange[", "]"]
+    }
+}
+```
+
+**Why textBinding is better:**
+
+1. **Less code** - 3 lines instead of 10+ lines
+2. **Automatic updates** - Textbox updates automatically when config value changes
+3. **Bidirectional sync** - Pull reads value, push writes value
+4. **No manual event handling** - Framework handles the data flow
+5. **Cleaner JSON** - More readable and maintainable
+6. **Validation** - Can add validation in the setter method itself
+
+**With validation:**
+```json
+{
+    "type": "textbox",
+    "name": "droneCount",
+    "textBinding": {
+        "pullFormat": "${Config.Combat.MinimumDronesInSpace}",
+        "pushFormat": ["Config.Combat:SetMinimumDronesInSpace[", "]"]
+    }
+}
+```
+
+```lavishscript
+// In your config objectdef
+method SetMinimumDronesInSpace(string value)
+{
+    ; Validation happens in the setter
+    if !${ISXEVE.IsNumeric[${value}]}
+    {
+        echo "Invalid drone count: ${value}"
+        return
+    }
+
+    variable int droneCount = ${Int[${value}]}
+    if ${droneCount} < 0 || ${droneCount} > 5
+    {
+        echo "Drone count must be 0-5"
+        return
+    }
+
+    This.CombatRef:AddSetting[MinimumDronesInSpace, ${droneCount}]
+}
+```
+
+**When to use onTextChanged (rare cases):**
+
+Only use `onTextChanged` for special cases like live search filtering:
+
+```json
+{
+    "type": "textbox",
+    "name": "searchBox",
+    "eventHandlers": {
+        "onTextChanged": {
+            "type": "code",
+            "code": "SearchController:FilterResults[${This.Text}]"
+        }
+    }
+}
+```
 
 ### Event Handlers
 

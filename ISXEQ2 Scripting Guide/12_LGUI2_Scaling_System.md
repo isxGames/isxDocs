@@ -1,7 +1,6 @@
 # LavishGUI 2 UI Scaling System
 
 **Purpose:** Add dynamic UI scaling to LGUI2-based scripts
-**Created:** 2025-10-25
 **Pattern:** Reusable library for consistent UI scaling across scripts
 
 ---
@@ -1076,6 +1075,7 @@ uiScale:Set[${LavishSettings[MyScript].Set[UI].GetSetting[ScaleFactor,1.0]}]
 
 ---
 
+<!-- CLAUDE_SKIP_START -->
 ## Next Steps
 
 1. **Copy** `LGUI2Scaling.iss` to your scripts directory
@@ -1085,16 +1085,4 @@ uiScale:Set[${LavishSettings[MyScript].Set[UI].GetSetting[ScaleFactor,1.0]}]
 5. **Adjust** hard-coded window dimensions if needed
 6. **Enable** debug mode if troubleshooting issues
 
----
-
-## Additional Resources
-
-- **LavishGUI 2 UI Guide:** [10_LavishGUI2_UI_Guide.md](10_LavishGUI2_UI_Guide.md)
-- **Migration Guide:** [11_LavishGUI1_to_LavishGUI2_Migration.md](11_LavishGUI1_to_LavishGUI2_Migration.md)
-- **Example Implementation:** [EQ2BotCommander.iss](https://github.com/isxGames/isxScripts/blob/master/EverQuest2/Scripts/EQ2BotCommander.iss)
-- **Scaling Library Source:** [LGUI2Scaling.iss](https://github.com/isxGames/isxScripts/blob/master/EverQuest2/Scripts/LGUI2Scaling.iss)
-
----
-
-*Last Updated: 2025-10-25*
-*Created during EQ2BotCommander LGUI1→LGUI2 migration*
+<!-- CLAUDE_SKIP_END -->
