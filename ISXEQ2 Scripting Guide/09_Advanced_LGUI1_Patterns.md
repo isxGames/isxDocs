@@ -1073,7 +1073,7 @@ else
 
 ---
 
-###OnRender for Dynamic Window Sizing
+### OnRender for Dynamic Window Sizing
 
 **Pattern:** Adjust window height based on active tab
 
