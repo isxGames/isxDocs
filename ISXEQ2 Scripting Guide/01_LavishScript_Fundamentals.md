@@ -1073,7 +1073,7 @@ objectdef person
 
 **Why `This.FirstName` instead of just `FirstName`?**
 
-Inside a member, you **must** use `This` to access variables/members/methods of the same object. Variables without `This` refer to local or global variables.
+Inside an objectdef, `This` refers to the current object instance. Variables defined in the objectdef **can** be accessed directly by name (e.g., `FirstName:Set[...]`), but members and methods **must** be accessed through an object reference like `This` (e.g., `This:SetName[...]`). Using `This.VariableName` for variables is optional but recommended for clarity and forward-compatibility.
 
 ---
 
