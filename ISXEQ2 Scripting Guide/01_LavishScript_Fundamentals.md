@@ -3035,8 +3035,8 @@ echo ${LGUI2(type)}
 lstype lgui2
 
 ; Access the members
-echo "Name: ${LGUI2.Name}
-echo "CursorX: ${LGUI2.CursorX}
+echo "Name: ${LGUI2.Name}"
+echo "CursorX: ${LGUI2.CursorX}"
 ```
 
 ### When to Use Type Inspection
