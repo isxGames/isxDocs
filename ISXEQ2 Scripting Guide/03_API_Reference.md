@@ -804,10 +804,10 @@ Player character datatype. Inherits all members and methods from [actor](#actor)
 
 | Member | Type | Description |
 |--------|------|-------------|
-| CurrentHealth / Health | int | Current health |
-| MaxHealth | int | Maximum health |
-| CurrentPower / Power | int | Current power |
-| MaxPower | int | Maximum power |
+| CurrentHealth | int64 | Current health value (see Note A) |
+| MaxHealth | int64 | Maximum health value |
+| CurrentPower | int64 | Current power value (see Note A) |
+| MaxPower | int64 | Maximum power value |
 | UsedConc | int | Used concentration |
 | MaxConc | int | Maximum concentration |
 | Strength | int | Strength stat (with buffs) |
@@ -820,6 +820,8 @@ Player character datatype. Inherits all members and methods from [actor](#actor)
 | BaseAgility | int | Base agility (no buffs) |
 | BaseWisdom | int | Base wisdom (no buffs) |
 | BaseIntelligence | int | Base intelligence (no buffs) |
+
+> **Note A:** `CurrentHealth` and `CurrentPower` (character members) return the **actual value** as int64. Do not confuse with `Health` and `Power` (inherited from actor), which return **percentages** (0-100) as int. For example, `Me.Health` returns `85` (percent) while `Me.CurrentHealth` returns `142857` (actual HP).
 
 #### Members - Resistances
 
