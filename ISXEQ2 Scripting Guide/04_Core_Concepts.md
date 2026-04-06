@@ -712,7 +712,7 @@ ${Math.Rand[100]:Inc}          ; Random 1-100
 ### Wait Commands
 
 ```lavishscript
-wait 1000                      ; Wait 1 second (1000ms)
+wait 10                        ; Wait 1 second (10 deciseconds)
 wait 50 ${Condition}           ; Wait up to 5 seconds for condition
 waitframe                      ; Wait one frame (~16ms)
 ```
