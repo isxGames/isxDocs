@@ -223,9 +223,9 @@ This documentation set is specifically designed to serve as a knowledge base for
 4. **Use 03_API_Reference.md** for API lookups
 5. **Use 04_Core_Concepts.md** for explaining ISXEQ2 fundamentals
 6. **Use 06_Working_Examples.md** for code generation
-7. **Use 11_JSON_Guide.md** for JSON operations
-8. **Use 12_LavishMachine_Guide.md** for async tasks
-9. **Use 13_Advanced_Scripting_Patterns.md** for production-grade patterns (multi-threading, navigation, modern APIs)
+7. **Use 13_JSON_Guide.md** for JSON operations
+8. **Use 14_LavishMachine_Guide.md** for async tasks
+9. **Use 15_Advanced_Scripting_Patterns.md** for production-grade patterns (multi-threading, navigation, modern APIs)
 
 ### For Human Developers
 
