@@ -39,7 +39,7 @@
 | **17_Crafting_Script_Patterns.md** | ✅ Complete | 1,731 | Crafting automation patterns from [EQ2Craft](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2Craft) (13 patterns: cmd-line, navigation, localization, queue mgmt, writs, etc.) |
 | **18_Navigation_Library_Patterns.md** | ✅ Complete | 1,067 | Navigation and pathfinding patterns from EQ2Nav (10 patterns: LavishNav, Dijkstra, regions, collision, stuck detection, doors, aggro, precision, optimization) |
 
-**Total Documentation:** 40,788 lines across 21 files (19 numbered guides + README + FILE_MANIFEST)
+**Total Documentation:** 43,743 lines across 22 files (19 numbered guides + README + FILE_MANIFEST + How To Use Guide)
 
 ---
 
@@ -292,8 +292,8 @@ This documentation set is specifically designed to serve as a knowledge base for
 
 All documentation files are contained within this ISXEQ2 Scripting Guide directory:
 
-- 20 total markdown files (README + FILE_MANIFEST + 18 numbered guides)
-- 35,248 lines of comprehensive documentation
+- 22 total markdown files (19 numbered guides + README + FILE_MANIFEST + How To Use Guide)
+- 43,743 lines of comprehensive documentation
 - Covers beginner to advanced topics
 - Includes LavishScript fundamentals through production-grade patterns
 - Now includes LGUI2 scaling system with scalable title bars for dynamic UI resizing
@@ -313,8 +313,8 @@ All documentation files are contained within this ISXEQ2 Scripting Guide directo
     - EQ2Bot/UI/LGUI2_MIGRATION_GUIDE.md: Added section 1.2 as recommended default
   - Established 2x scaling baseline (font 40, padding 12, border 2) as standard
   - Corrected event documentation: Added 50+ events from DefaultSkin.json analysis
-  - Updated FILE_MANIFEST.md with accurate line counts (35,248 lines total)
-  - Total documentation: 35,248 lines across 20 files
+  - Updated FILE_MANIFEST.md with accurate line counts
+  - Total documentation: 43,743 lines across 22 files
 
 - **v2.9 (2025-10-25)**
   - Added LGUI2 Scaling System guide (1,102 lines)
