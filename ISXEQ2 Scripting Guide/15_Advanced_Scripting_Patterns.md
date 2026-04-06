@@ -557,14 +557,17 @@ variable lnavregionref ZoneRegion
 
 function LoadZoneMap()
 {
-    ; Load navigation map for current zone
-    LNavRegion[${Zone.Name}]:Load
-    ZoneRegion:Set[${LNavRegion[${Zone.Name}]}]
+    ; Load navigation map for current zone via Import
+    variable lnavregionref LoadedZoneRegion
+    LoadedZoneRegion:SetRegion[${LavishNav.FindRegion[${Zone.ShortName}]}]
+    LoadedZoneRegion:Import["${Script.CurrentDirectory}/Zones/${Zone.ShortName}.xml"]
+
+    ZoneRegion:SetRegion[${LNavRegion[${Zone.ShortName}]}]
 
     if ${ZoneRegion(exists)}
-        echo "Navigation map loaded for ${Zone.Name}"
+        echo "Navigation map loaded for ${Zone.ShortName}"
     else
-        echo "WARNING: No navigation map available for ${Zone.Name}"
+        echo "WARNING: No navigation map available for ${Zone.ShortName}"
 }
 
 function MoveToRegion(string RegionName)
