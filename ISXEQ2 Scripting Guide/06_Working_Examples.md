@@ -376,7 +376,7 @@ function CombatPulse()
 
     ; Auto-attack if no abilities ready
     if !${Me.AutoAttackOn}
-        EQ2Execute /auto_attack
+        EQ2Execute /toggleautoattack
 }
 
 function TryCastAbility(string abilityName)
@@ -473,7 +473,7 @@ function AttackNearestEnemy()
 
     ; Start auto-attack
     if !${Me.AutoAttackOn}
-        EQ2Execute /auto_attack
+        EQ2Execute /toggleautoattack
 
     ; Face the target
     Me:DoFace
