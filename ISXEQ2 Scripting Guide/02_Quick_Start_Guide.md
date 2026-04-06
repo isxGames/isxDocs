@@ -661,7 +661,7 @@ function main()
     variable iterator ItemIt
     variable int ItemCount = 0
 
-    Me:QueryInventory[Items,"Location == \"Inventory\""]
+    Me:QueryInventory[Items, Location == "Inventory"]
     Items:GetIterator[ItemIt]
 
     if ${ItemIt:First(exists)}
