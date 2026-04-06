@@ -445,6 +445,6 @@ Found an error or have an improvement? This documentation was generated using ac
 
 ---
 
-**Ready to start? Head to [QUICK_START_GUIDE.md](QUICK_START_GUIDE.md) now!**
+**Ready to start? Head to [02_Quick_Start_Guide.md](02_Quick_Start_Guide.md) now!**
 
 <!-- CLAUDE_SKIP_END -->
