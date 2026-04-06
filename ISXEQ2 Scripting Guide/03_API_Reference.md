@@ -42,8 +42,7 @@ This document provides comprehensive reference documentation for all datatypes a
 Many datatypes inherit from other datatypes, gaining all the members and methods of their parent type. Common inheritance patterns:
 
 - **character** inherits from **actor** - All actor members/methods are available on character objects
-- **groupmember** inherits from **actor** - Group members have all actor capabilities
-- **raidmember** inherits from **groupmember** (and **actor**) - Raid members have all group and actor capabilities
+- **groupmember** inherits from **actor** - Group members have all actor capabilities. Raid members use this same type (there is no separate raidmember type); `Me.Raid[index]` returns a groupmember object.
 - **eq2widget** inherits from **eq2baseobject** - All widgets have base object properties
 - **eq2window** provides base functionality for all window types
 - **eq2clonewindow** inherits from **eq2window** - Clone windows have window functionality
@@ -51,8 +50,7 @@ Many datatypes inherit from other datatypes, gaining all the members and methods
 **Inheritance Chain Examples:**
 ```
 character → actor
-groupmember → actor
-raidmember → groupmember → actor
+groupmember → actor (also used for raid members)
 eq2button → eq2widget → eq2baseobject
 lootwindow → eq2clonewindow → eq2window
 ```
@@ -204,7 +202,7 @@ Datatypes representing actors (characters, NPCs, objects) in the game world.
 - [actor](#actor) - Base datatype for all actors
 - [character](#character) - Player character (inherits from actor)
 - [groupmember](#groupmember) - Group member (inherits from actor)
-- [raidmember](#raidmember) - Raid member (inherits from groupmember → actor)
+- [raidmember](#raidmember) - Raid member (uses groupmember type, inherits from actor)
 - [moveableobject](#moveableobject) - Moveable house object
 - [equipmentappearance](#equipmentappearance) - Equipment appearance information
 
@@ -1107,13 +1105,13 @@ echo ${Me.Group[1].ToActor.Distance}
 
 ### raidmember
 
-Raid member datatype. Same as [groupmember](#groupmember) - inherits all members and methods from [groupmember](#groupmember) and [actor](#actor).
+Raid members use the same underlying datatype as [groupmember](#groupmember). There is no separate raidmember type — `Me.Raid[index]` returns a groupmember object populated with raid member data. All groupmember and actor members/methods are available.
 
 **Access:** `${Me.Raid[index]}`
 
 **Inherits From:** [groupmember](#groupmember) → [actor](#actor)
 
-**Note:** When in a raid, both `${Me.Group[index]}` and `${Me.Raid[index]}` return this datatype.
+**Note:** Both `${Me.Group[index]}` and `${Me.Raid[index]}` return the same groupmember datatype.
 
 **Example Usage:**
 ```lavishscript
