@@ -301,7 +301,7 @@ declare MyInt int local 100              ; Integer
 declare MyFloat float local 3.14         ; Floating point
 declare MyString string local "Hello"    ; String
 declare MyBool bool local TRUE           ; Boolean
-declare MyItem item local                ; Object (uninitialized)
+declare MyCounter int local               ; Integer (uninitialized, defaults to 0)
 ```
 
 ### Variable Assignment
