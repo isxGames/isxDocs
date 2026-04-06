@@ -582,12 +582,8 @@ function MoveToRegion(string RegionName)
     variable lnavregionref DestRegion
     DestRegion:Set[${ZoneRegion.ChildRegion[${RegionName}]}]
 
-    ; Get center point of region
-    variable point3f CenterPoint
-    DestRegion:GetCenterPoint[CenterPoint]
-
-    ; Navigate there
-    call NavigateToLocation ${CenterPoint.X} ${CenterPoint.Y} ${CenterPoint.Z}
+    ; Navigate to the region's center point
+    call NavigateToLocation ${DestRegion.CenterPoint.X} ${DestRegion.CenterPoint.Y} ${DestRegion.CenterPoint.Z}
 }
 ```
 
