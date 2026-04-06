@@ -627,7 +627,7 @@ objectdef EQ2Craft
     }
 }
 
-atom OnIncomingText(string Text, string ChannelName, string SpeakerName)
+atom OnIncomingText(string Text)
 {
     ; Detect crafting events from game text
     if ${Text.Find["You have created"]}
@@ -1637,7 +1637,7 @@ function CastArt(int tier, int slot)
         wait 1
 }
 
-atom OnIncomingText(string Text, string ChannelName, string SpeakerName)
+atom OnIncomingText(string Text)
 {
     ; Detect round start
     if ${Text.Find["The round has started"]}
