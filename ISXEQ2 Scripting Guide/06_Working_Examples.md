@@ -86,7 +86,7 @@ function main()
     while ${Monitoring}
     {
         call CheckVitals
-        wait 1000
+        wait 20
     }
 }
 
@@ -346,7 +346,7 @@ function main()
     while ${CombatRunning}
     {
         call CombatPulse
-        wait 500
+        wait 5
     }
 }
 
@@ -426,7 +426,7 @@ function main()
     while ${AutoAttacking}
     {
         call AttackNearestEnemy
-        wait 1000
+        wait 10
     }
 }
 
