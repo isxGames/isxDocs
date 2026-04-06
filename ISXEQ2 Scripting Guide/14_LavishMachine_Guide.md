@@ -1774,11 +1774,10 @@ Error parsing task definition
 
 **Fix:**
 ```lavishscript
-; BAD - Missing escaped quotes
-TaskManager:BeginTask["{\"type\":\"ls1.echo\",\"output\":\"Hello\"}"]
-                                                        ; ^ Missing escape
+; BAD - Missing escaped quote before Hello
+TaskManager:BeginTask["{\"type\":\"ls1.echo\",\"output\":Hello\"}"]
 
-; GOOD
+; GOOD - All quotes properly escaped
 TaskManager:BeginTask["{\"type\":\"ls1.echo\",\"output\":\"Hello\"}"]
 
 ; BETTER - Use $$><$$
