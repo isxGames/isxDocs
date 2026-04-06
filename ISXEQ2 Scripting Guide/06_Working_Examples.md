@@ -904,15 +904,15 @@ function BuyFromMerchant(string itemName, int quantity)
 
     ; Find item in merchant window
     variable int i
-    for (i:Set[1]; ${i} <= ${MerchantWindow.NumItems}; i:Inc)
+    for (i:Set[1]; ${i} <= ${MerchantWindow.NumMerchantItemsForSale}; i:Inc)
     {
-        if ${MerchantWindow.Item[${i}].Name.Equal["${itemName}"]}
+        if ${MerchantWindow.MerchantInventory[${i}].Name.Equal["${itemName}"]}
         {
             echo "Found ${itemName}"
-            echo "Price: ${MerchantWindow.Item[${i}].PriceString}"
+            echo "Price: ${MerchantWindow.MerchantInventory[${i}].PriceString}"
 
             ; Buy the item
-            MerchantWindow.Item[${i}]:Buy[${quantity}]
+            MerchantWindow.MerchantInventory[${i}]:Buy[${quantity}]
             echo "Purchased ${quantity}x ${itemName}"
             return
         }
