@@ -295,7 +295,7 @@ TaskManager:BeginTask["$$>
 ; Pan to left (left=1.0, right=0.1)
 TaskManager:BeginTask["{\"type\":\"audio.setvolume\",\"duration\":3.0,\"voiceName\":\"music\",\"volume\":[1.0,0.1]}"]
 
-; Wait for completion, then pan to right
+; Wait for completion, then pan to right (wait 30 = 3 seconds in deciseconds)
 wait 30
 TaskManager:BeginTask["{\"type\":\"audio.setvolume\",\"duration\":3.0,\"voiceName\":\"music\",\"volume\":[0.1,1.0]}"]
 ```
