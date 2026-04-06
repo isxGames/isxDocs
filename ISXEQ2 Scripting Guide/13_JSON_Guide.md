@@ -1361,7 +1361,10 @@ objectdef player_stats
         echo Kills: ${TotalKills}
         echo Deaths: ${TotalDeaths}
         echo Damage: ${TotalDamage}
-        echo K/D Ratio: ${Math.Calc[${TotalKills}/${TotalDeaths}]}
+        if ${TotalDeaths} > 0
+            echo K/D Ratio: ${Math.Calc[${TotalKills}/${TotalDeaths}]}
+        else
+            echo K/D Ratio: ${TotalKills}:0
     }
 }
 
