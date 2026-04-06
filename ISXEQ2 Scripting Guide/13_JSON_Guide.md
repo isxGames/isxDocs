@@ -36,7 +36,7 @@
 - Data storage
 - API communication
 - Inter-script data exchange
-- **LavishGUI 2 UI packages** (covered in [08_LavishGUI2_UI_Guide.md](08_LavishGUI2_UI_Guide.md))
+- **LavishGUI 2 UI packages** (covered in [10_LavishGUI2_UI_Guide.md](10_LavishGUI2_UI_Guide.md))
 
 ### Why Use JSON in ISXEQ2 Scripts?
 
