@@ -548,7 +548,7 @@ function MaintainBuffs()
 function CheckBuff(string buffName, float minDuration)
 {
     variable int buffIndex
-    variable bool hasBuffefficient = FALSE
+    variable bool hasBuff = FALSE
 
     ; Check if we have the buff
     for (buffIndex:Set[1]; ${buffIndex} <= ${Me.CountMaintained}; buffIndex:Inc)
