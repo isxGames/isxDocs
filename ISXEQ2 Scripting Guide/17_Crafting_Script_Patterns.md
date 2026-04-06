@@ -576,7 +576,7 @@ Detect when UI is stuck in preparation screen:
 ```lavishscript
 objectdef EQ2Craft
 {
-    method CheckPageStuck() returns bool
+    member:bool CheckPageStuck()
     {
         ; Check if we're stuck on the prep page
         if ${EQ2UIPage[Tradeskills,Tradeskills].Child[text,TradeSkills.TabPages.Craft.prepare.summarypage.pccount].GetProperty[LocalText](exists)}
