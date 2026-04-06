@@ -426,8 +426,8 @@ Main game information and utilities.
 | Method | Parameters | Description |
 |--------|-----------|-------------|
 | CreateCustomActorArray | sortby, range, type | **DEPRECATED** - Use EQ2:GetActors instead |
-| GetActors | index, searchparams | **MODERN METHOD** - Populates index with actor objects |
-| QueryActors | index, query | Populates index with actors matching query |
+| GetActors | index, searchparams | **MODERN METHOD** - Populates index with actors using keyword search params (e.g., `Range,50,NPC`) |
+| QueryActors | index, query | Populates index with actors matching a LavishScript query expression (e.g., `Type =- "NPC" && Distance <= 50`) |
 | SetMasterVolume | volume | Sets master volume (0-100) |
 | AcceptPendingQuest | - | Accepts pending quest offer |
 | DeclinePendingQuest | - | Declines pending quest offer |
