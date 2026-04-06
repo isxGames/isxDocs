@@ -485,7 +485,7 @@ function CastBuff()
 if ${Me.CurrentHealth} < 5000
 {
     echo "Health: ${Me.CurrentHealth}"
-    call Emergency  Heal ${Me.CurrentHealth}
+    call EmergencyHeal ${Me.CurrentHealth}
 }
 
 ; GOOD - Cache the value
