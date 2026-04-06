@@ -503,9 +503,9 @@ Read **[05_Patterns_And_Best_Practices.md](05_Patterns_And_Best_Practices.md)** 
 ### 6. Advanced Topics
 Explore specialized guides:
 - **[07_Advanced_Patterns_And_Examples.md](07_Advanced_Patterns_And_Examples.md)** - Advanced patterns
-- **[09_LavishGUI2_UI_Guide.md](09_LavishGUI2_UI_Guide.md)** - Create modern UIs
-- **[11_JSON_Guide.md](11_JSON_Guide.md)** - Work with JSON data
-- **[12_LavishMachine_Guide.md](12_LavishMachine_Guide.md)** - Async task execution
+- **[10_LavishGUI2_UI_Guide.md](10_LavishGUI2_UI_Guide.md)** - Create modern UIs
+- **[13_JSON_Guide.md](13_JSON_Guide.md)** - Work with JSON data
+- **[14_LavishMachine_Guide.md](14_LavishMachine_Guide.md)** - Async task execution
 <!-- CLAUDE_SKIP_END -->
 
 ---
