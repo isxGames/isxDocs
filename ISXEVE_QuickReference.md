@@ -3842,7 +3842,3 @@ ISXEVE maintains backward compatibility for deprecated members and methods for a
 **Description:** Login TLO removed as in-game login hasn't been supported by EVE in years.
 
 **Removed:** June 4, 2020 [20200604.0001]
-
----
-
-*This reference documentation is maintained for ISXEVE. For the latest updates and changes, refer to ISXEVEChanges.txt.*

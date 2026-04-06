@@ -1065,10 +1065,3 @@ DB2:Set[${SQLite.OpenDB["MyDB2","./file2.db"]}]  ; ✓ Correct
 ; This would fail or cause conflicts:
 ; DB3:Set[${SQLite.OpenDB["MyDB","./file3.db"]}]  ; ✗ Name already used
 ```
-
-### Version Information
-
-This reference is based on isxSQLite version 20200812 (August 12, 2020), which includes:
-- SQLite 3.32.3
-- Visual Studio 2019 with v140 toolchain
-- Fixed x64 build support

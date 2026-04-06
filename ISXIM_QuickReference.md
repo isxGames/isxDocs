@@ -1266,6 +1266,3 @@ All Yahoo-related events were removed:
 - `Yahoo_onBuzz`
 
 **Reason:** Yahoo Messenger was discontinued.
-
----
-
