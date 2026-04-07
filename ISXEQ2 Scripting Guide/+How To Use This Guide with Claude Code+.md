@@ -156,7 +156,7 @@ The agent runs in an isolated context and:
 
 **Large File Handling:** The agent knows which documentation files are large (3,000+ lines) and can spawn sub-subagents to read them if needed:
 - `01_LavishScript_Fundamentals.md` (~3,000 lines)
-- `03_API_Reference.md` (~3,400 lines)
+- `03_API_Reference.md` (~3,600 lines)
 - `10_LavishGUI2_UI_Guide.md` (~7,500 lines)
 - `15_Advanced_Scripting_Patterns.md` (~4,000 lines)
 - `16_Utility_Script_Patterns.md` (~3,200 lines)
