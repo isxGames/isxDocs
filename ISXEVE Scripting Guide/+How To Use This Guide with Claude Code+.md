@@ -39,7 +39,7 @@ The ISXEVE Claude Code integration uses a **coordinator/worker architecture** de
 ```
 
 **Benefits:**
-- **Context Conservation**: Large documentation files (up to 11,500 lines) are read in isolated agent context, not your main conversation
+- **Context Conservation**: Large documentation files are read in isolated agent context, not your main conversation
 - **Thoroughness**: The agent has full access to all 23 documentation files
 - **Efficiency**: Coordinator stays lightweight; only results return to main conversation
 - **Sub-subagent Support**: For very large research tasks, the agent can spawn additional subagents
@@ -85,6 +85,7 @@ Edit `ISXEVE-Expert.md` and update the **Local Paths** section at the very top o
 
 SCRIPTS_DIR: C:\Dev\InnerSpace\Scripts\
 GUIDE_DIR:   C:\Dev\InnerSpace\isxDocs\ISXEVE Scripting Guide\
+CHANGES_FILE: C:\Dev\InnerSpace\ISXEVE\Install\x64\Extensions\ISXDK35\ISXEVEChanges.txt
 ```
 
 Change these paths to match where you have:
@@ -137,17 +138,17 @@ The agent runs in an isolated context and:
 - Debugs issues
 - Has full edit authority
 
-**Large File Handling:** The agent knows which documentation files are large (3,000+ lines) and can spawn sub-subagents to read them if needed:
-- `03_API_Reference.md` (~11,500 lines)
-- `10_LavishGUI2_UI_Guide.md` (~7,600 lines)
-- `05_Patterns_And_Best_Practices.md` (~7,500 lines)
-- `07_Advanced_Patterns_And_Examples.md` (~7,000 lines)
-- `17_Fleet_Operations.md` (~5,900 lines)
-- `11_LavishGUI1_to_LavishGUI2_Migration.md` (~5,000 lines)
-- `16_Mining_And_Hauling.md` (~4,000 lines)
-- `18_Bot_Architecture_Analysis.md` (~3,800 lines)
-- `20_Debugging_And_Troubleshooting.md` (~3,500 lines)
-- `01_LavishScript_Fundamentals.md` (~3,000 lines)
+**Large File Handling:** The agent knows which documentation files are large and can spawn sub-subagents to read them if needed:
+- `03_API_Reference.md`
+- `10_LavishGUI2_UI_Guide.md`
+- `05_Patterns_And_Best_Practices.md`
+- `07_Advanced_Patterns_And_Examples.md`
+- `17_Fleet_Operations.md`
+- `11_LavishGUI1_to_LavishGUI2_Migration.md`
+- `16_Mining_And_Hauling.md`
+- `18_Bot_Architecture_Analysis.md`
+- `20_Debugging_And_Troubleshooting.md`
+- `01_LavishScript_Fundamentals.md`
 
 ---
 
@@ -293,47 +294,4 @@ If the agent reports it can't find documentation:
 1. Verify GUIDE_DIR in the agent file points to the correct location
 2. Check that all documentation files exist in that directory
 3. Make sure paths don't have trailing spaces
-
----
-
-## File Reference
-
-### Files in `Claude AI Commands (optional)/`
-
-| File | Purpose |
-|------|---------|
-| `isxeve.md` | Coordinator command - copy to `~/.claude/commands/` |
-| `ISXEVE-Expert.md` | Worker agent - copy to `~/.claude/agents/` |
-| `README.md` | Quick reference for installation |
-
-### Documentation Files (23 total)
-
-| File | Lines | Description |
-|------|-------|-------------|
-| `01_LavishScript_Fundamentals.md` | ~3,000 | Language basics |
-| `02_Quick_Start_Guide.md` | ~750 | Getting started |
-| `03_API_Reference.md` | ~11,500 | Complete API docs |
-| `04_Core_Concepts.md` | ~860 | Core concepts |
-| `05_Patterns_And_Best_Practices.md` | ~7,500 | Best practices |
-| `06_Working_Examples.md` | ~1,150 | Working examples |
-| `07_Advanced_Patterns_And_Examples.md` | ~7,000 | Advanced patterns |
-| `08_LavishGUI1_UI_Guide.md` | ~1,090 | Legacy UI (XML-based) |
-| `09_Advanced_LGUI1_Patterns.md` | ~910 | Advanced LGUI1 patterns |
-| `10_LavishGUI2_UI_Guide.md` | ~7,600 | Modern UI (recommended) |
-| `11_LavishGUI1_to_LavishGUI2_Migration.md` | ~5,000 | UI migration |
-| `12_LGUI2_Scaling_System.md` | ~1,100 | UI scaling |
-| `13_JSON_Guide.md` | ~1,700 | JSON usage |
-| `14_LavishMachine_Guide.md` | ~1,950 | Async tasks |
-| `15_Combat_Automation.md` | ~2,900 | Combat patterns |
-| `16_Mining_And_Hauling.md` | ~4,000 | Mining patterns |
-| `17_Fleet_Operations.md` | ~5,900 | Fleet coordination |
-| `18_Bot_Architecture_Analysis.md` | ~3,800 | Bot analysis |
-| `19_DotNet_Development.md` | ~1,050 | .NET development |
-| `20_Debugging_And_Troubleshooting.md` | ~3,500 | Debugging |
-| `21_Advanced_Scripting_Patterns.md` | ~2,500 | Production patterns |
-| `22_Utility_Script_Patterns.md` | ~800 | Utility patterns |
-
----
-
-*This guide helps you make the most of the ISXEVE Scripting Guide when working with Claude Code. The coordinator/worker architecture ensures efficient context usage while providing comprehensive documentation access.*
-<!-- CLAUDE_SKIP_END -->
+   <!-- CLAUDE_SKIP_END -->
