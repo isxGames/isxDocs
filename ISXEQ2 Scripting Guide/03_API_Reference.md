@@ -771,7 +771,7 @@ Base datatype for all actors (NPCs, PCs, objects) in the game world.
 | RequestEffectsInfo | - | Requests effects information from server |
 | GetActiveStates | - | Gets active states |
 | Resize | scale | Resizes actor (visual only) |
-| Move | x, y, z | Moves actor to coordinates (housing items) |
+| Move | - | Picks up a moveable housing object for repositioning |
 | Set | actorID | Sets actor reference by ID |
 
 **Example Usage:**
