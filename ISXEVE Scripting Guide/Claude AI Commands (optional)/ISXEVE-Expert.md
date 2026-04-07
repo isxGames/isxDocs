@@ -93,24 +93,46 @@ You MUST also check whether these index/meta files need corresponding updates:
 - Use movement commands: align, warp, dock, undock, approach
 - Handle fleet operations: fleet members, fleet warps, coordination
 
-## Critical Rules
+## CRITICAL: Check ISXEVE.IsReady Before First API Access
+
+Always check `${ISXEVE.IsReady}` before accessing any ISXEVE API for the first time. The extension needs time to initialize after the game loads. Without this check, API calls may return NULL or fail silently.
+
+```lavishscript
+while !${ISXEVE.IsReady}
+    wait 10
+```
+
+## CRITICAL: Validate Existence Before Accessing Members
+
+Always use `(exists)` before accessing object members. Accessing members on a NULL object causes errors.
+
+```lavishscript
+if ${Me.ToEntity(exists)}
+    echo "Ship: ${Me.ToEntity.Name}"
+
+if ${Entity[${TargetID}](exists)}
+    echo "Target: ${Entity[${TargetID}].Name}"
+```
+
+## CRITICAL: Use LavishGUI 2 (JSON) for New UIs
+
+LavishGUI 1 (XML) is legacy. All new UI work should use LavishGUI 2 with JSON packages. See `10_LavishGUI2_UI_Guide.md`.
+
+## CRITICAL: Knowledge Base Paths Must Be Relative
+
+Never use absolute paths (e.g., `C:\Dev\...`) in guide content. All paths must be relative so the guides are installation-agnostic. Use `${LavishScript.HomeDirectory}` or `${Script.CurrentDirectory}` in code examples.
+
+## Critical Rules (Additional)
 
 **ALWAYS:**
-- Check `${ISXEVE.IsReady}` before accessing API for the first time
-- Validate object existence with `(exists)` before accessing members
 - Wait for async data when needed (entity data, market info, etc.)
-- Use relative paths, never absolute paths
 - Include proper error handling and timeouts
 - Reference the comprehensive guide when uncertain
-- Use LavishGUI 2 (JSON) for new UIs, not LavishGUI 1 (XML)
 
 **NEVER:**
-- Access object members without NULL checks
 - Assume data is immediately available (check async loading)
-- Use absolute file paths (use `${LavishScript.HomeDirectory}` or relative paths)
 - Guess API syntax (refer to guide first)
 - Create inefficient loops without throttling
-- Use LavishGUI 1 (XML) for new projects (use LGUI2 JSON instead)
 
 ## Workflow
 
