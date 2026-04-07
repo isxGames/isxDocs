@@ -85,15 +85,31 @@ Edit `ISXEQ2-Expert.md` and update the **Local Paths** section at the very top o
 
 SCRIPTS_DIR: C:\Dev\InnerSpace\Scripts\
 GUIDE_DIR:   C:\Dev\InnerSpace\isxDocs\ISXEQ2 Scripting Guide\
+CHANGES_FILE: C:\Dev\InnerSpace\ISXEQ2\Install\x64\Extensions\ISXDK35\ISXEQ2Changes.txt
 ```
 
 Change these paths to match where you have:
 - **SCRIPTS_DIR**: Your InnerSpace Scripts directory
 - **GUIDE_DIR**: This ISXEQ2 Scripting Guide directory
 
-**Note:** The coordinator file (`isxeq2.md`) has no paths to update - only the agent file needs configuration.
+### Step 4: Update the Coordinator's Paths
 
-### Step 4: Verify Installation
+Edit `isxeq2.md` and update the **User Configuration** table at the very top of the file:
+
+```
+| Setting | Path |
+|---------|------|
+| **Scripts Directory** | `C:\Dev\InnerSpace\Scripts` |
+| **Guide Directory** | `C:\Dev\InnerSpace\isxDocs\ISXEQ2 Scripting Guide` |
+| **Changes File** | `C:\Dev\InnerSpace\ISXEQ2\Install\x64\Extensions\ISXDK35\ISXEQ2Changes.txt` |
+```
+
+Change these paths to match where you have:
+- **Scripts Directory**: Your InnerSpace Scripts directory
+- **Guide Directory**: This ISXEQ2 Scripting Guide directory
+- **Changes File**: The ISXEQ2Changes.txt file from your ISXEQ2 installation
+
+### Step 5: Verify Installation
 
 1. Start a new Claude Code session
 2. Type `/` and look for `isxeq2` in the command list
@@ -281,45 +297,9 @@ If the agent doesn't seem to work properly:
 If the agent reports it can't find documentation:
 
 1. Verify GUIDE_DIR in the agent file points to the correct location
+
 2. Check that all documentation files exist in that directory
+
 3. Make sure paths don't have trailing spaces
 
----
-
-## File Reference
-
-### Files in `Claude AI Commands (optional)/`
-
-| File | Purpose |
-|------|---------|
-| `isxeq2.md` | Coordinator command - copy to `~/.claude/commands/` |
-| `ISXEQ2-Expert.md` | Worker agent - copy to `~/.claude/agents/` |
-| `README.md` | Quick reference for installation |
-
-### Documentation Files (19 total)
-
-| File | Lines | Description |
-|------|-------|-------------|
-| `01_LavishScript_Fundamentals.md` | ~3,000 | Language basics |
-| `02_Quick_Start_Guide.md` | ~750 | Getting started |
-| `03_API_Reference.md` | ~3,400 | Complete API docs |
-| `04_Core_Concepts.md` | ~860 | Core concepts |
-| `05_Patterns_And_Best_Practices.md` | ~1,100 | Best practices |
-| `06_Working_Examples.md` | ~1,150 | Working examples |
-| `07_Advanced_Patterns_And_Examples.md` | ~1,600 | Advanced patterns |
-| `08_LavishGUI1_UI_Guide.md` | ~1,300 | Legacy UI (XML-based) |
-| `09_Advanced_LGUI1_Patterns.md` | ~1,450 | Advanced LGUI1 patterns |
-| `10_LavishGUI2_UI_Guide.md` | ~7,500 | Modern UI (recommended) |
-| `11_LavishGUI1_to_LavishGUI2_Migration.md` | ~4,900 | UI migration |
-| `12_LGUI2_Scaling_System.md` | ~1,100 | UI scaling |
-| `13_JSON_Guide.md` | ~1,700 | JSON usage |
-| `14_LavishMachine_Guide.md` | ~1,950 | Async tasks |
-| `15_Advanced_Scripting_Patterns.md` | ~4,000 | Production patterns |
-| `16_Utility_Script_Patterns.md` | ~3,200 | Utility patterns |
-| `17_Crafting_Script_Patterns.md` | ~1,700 | Crafting patterns |
-| `18_Navigation_Library_Patterns.md` | ~1,050 | Navigation/pathfinding |
-
----
-
-*This guide helps you make the most of the ISXEQ2 Scripting Guide when working with Claude Code. The coordinator/worker architecture ensures efficient context usage while providing comprehensive documentation access.*
-<!-- CLAUDE_SKIP_END -->
+   <!-- CLAUDE_SKIP_END -->
