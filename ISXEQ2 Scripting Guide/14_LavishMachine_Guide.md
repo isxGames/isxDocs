@@ -432,7 +432,7 @@ method Task_Echo()
     switch ${Context.TaskState}
     {
     case Start
-        echo ${Context.Task.Args[output]~}
+        echo "${Context.Task.Args[output].Escape}"
         Context.Task:Stop
     break
     case Continue
