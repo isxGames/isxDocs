@@ -769,8 +769,7 @@ UIElement[...]:Show  ; Re-show button
 ```
 
 **Key Techniques:**
-- `<AutoTooltip>` for single-line tooltips
-- `<Autotooltip>` (lowercase 't') for multi-line tooltips
+- `<AutoTooltip>` works for both single-line and multi-line tooltips (LavishGUI 1 XML element names are case-insensitive)
 - No script code needed
 - Great for user help
 
