@@ -92,9 +92,24 @@ Change these paths to match where you have:
 - **SCRIPTS_DIR**: Your InnerSpace Scripts directory
 - **GUIDE_DIR**: This ISXEVE Scripting Guide directory
 
-**Note:** The coordinator file (`isxeve.md`) has no paths to update - only the agent file needs configuration.
+### Step 4: Update the Coordinator's Paths
 
-### Step 4: Verify Installation
+Edit `isxeve.md` and update the **User Configuration** table at the very top of the file:
+
+```
+| Setting | Path |
+|---------|------|
+| **Scripts Directory** | `C:\Dev\InnerSpace\Scripts` |
+| **Guide Directory** | `C:\Dev\InnerSpace\isxDocs\ISXEVE Scripting Guide` |
+| **Changes File** | `C:\Dev\InnerSpace\ISXEVE\Install\x64\Extensions\ISXDK35\ISXEVEChanges.txt` |
+```
+
+Change these paths to match where you have:
+- **Scripts Directory**: Your InnerSpace Scripts directory
+- **Guide Directory**: This ISXEVE Scripting Guide directory
+- **Changes File**: The ISXEVEChanges.txt file from your ISXEVE installation
+
+### Step 5: Verify Installation
 
 1. Start a new Claude Code session
 2. Type `/` and look for `isxeve` in the command list
