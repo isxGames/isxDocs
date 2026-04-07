@@ -1107,12 +1107,15 @@ function main()
    </OnRender>
    ```
 
-2. **Use Efficient Element Access**
+2. **Only Update UI When Values Change**
    ```lavishscript
-   ; Cache element reference
-   variable object StatusText
-   StatusText:Set[${UIElement[StatusText]}]
-   StatusText:SetText["New status"]
+   ; Cache the value and only update UI when it changes
+   variable string LastStatus
+   if !${LastStatus.Equal["${NewStatus}"]}
+   {
+       UIElement[StatusText]:SetText["${NewStatus}"]
+       LastStatus:Set["${NewStatus}"]
+   }
    ```
 
 3. **Don't Populate ComboBoxes on OnLoad**
