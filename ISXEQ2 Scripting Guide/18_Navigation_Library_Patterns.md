@@ -757,12 +757,12 @@ method Pulse()
 
 **Usage in Main Loop:**
 ```lavishscript
-; With wait 0.5 in loop
+; With wait 1 in loop
 Nav.SkipNavTime:Set[50]
 do
 {
     Nav:Pulse
-    wait 0.5
+    wait 1
 }
 while ${Nav.Moving}
 
@@ -852,7 +852,7 @@ function main(string regionname)
     do
     {
         Nav:Pulse
-        wait 0.5
+        wait 1
     }
     while ${Nav.Moving}
 
@@ -922,7 +922,7 @@ function main()
         do
         {
             Nav:Pulse
-            wait 0.5
+            wait 1
         }
         while ${Nav.Moving}
 
@@ -991,7 +991,7 @@ function main(string destination)
             }
         }
 
-        wait 0.5
+        wait 1
     }
     while ${Nav.Moving}
 
