@@ -23,7 +23,7 @@
 | **00_MASTER_GUIDE.md** | ✅ Complete | 613 | Master reference with organized links to all APIs, commands, events |
 | **01_LavishScript_Fundamentals.md** | ✅ Complete | 3,045 | Complete LavishScript programming guide (variables, functions, objects, loops, index, webrequest, audio) |
 | **02_Quick_Start_Guide.md** | ✅ Complete | 751 | Quick start tutorial for beginners |
-| **03_API_Reference.md** | ✅ Complete | 3,418 | Complete API documentation (all TLOs, datatypes, commands, events) |
+| **03_API_Reference.md** | ✅ Complete | 3,559 | Complete API documentation (all TLOs, datatypes, commands, 43 events) |
 | **04_Core_Concepts.md** | ✅ Complete | 862 | Essential ISXEQ2 concepts (datatypes, queries, async, inheritance) |
 | **05_Patterns_And_Best_Practices.md** | ✅ Complete | 1,098 | Coding patterns from [EQ2Bot](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2Bot) analysis |
 | **06_Working_Examples.md** | ✅ Complete | 1,156 | Real-world code examples for common tasks |

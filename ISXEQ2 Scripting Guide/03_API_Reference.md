@@ -1,8 +1,8 @@
 # ISXEQ2 API Reference
 
-Complete API reference extracted from official ISXEQ2 documentation. This comprehensive guide documents all datatypes, members, methods, and their relationships for creating, debugging, and updating ISXEQ2 scripts.
+Complete API reference extracted from official ISXEQ2 documentation. This comprehensive guide documents all datatypes, members, methods, events, and their relationships for creating, debugging, and updating ISXEQ2 scripts.
 
-**Last Updated:** 2025-10-20
+**Last Updated:** 2026-04-06
 
 ---
 
@@ -30,6 +30,7 @@ Complete API reference extracted from official ISXEQ2 documentation. This compre
   - [Window DataTypes](#window-datatypes)
   - [Widget/UI DataTypes](#widgetui-datatypes)
 - [Complete DataType Reference](#complete-datatype-reference)
+- [Events Reference (43 Events)](#events-reference-43-events)
 
 ---
 
@@ -3397,9 +3398,150 @@ echo ${EQ2UIPage[MainHUD].Child[iconbank,Abilities].NumIcons}
 
 ---
 
+## Events Reference (43 Events)
+
+ISXEQ2 fires events that scripts can react to using atoms. Attach an atom to an event with:
+
+```lavishscript
+Event[EventName]:AttachAtom[AtomName]
+```
+
+Detach when done (e.g., in atexit):
+
+```lavishscript
+Event[EventName]:DetachAtom[AtomName]
+```
+
+### Actor Events
+
+Events related to actor spawning, despawning, and state changes. `EQ2_ActorSpawned` and `EQ2_ActorDespawned` fire automatically. The remaining five require `EQ2:EnableActorEvents` and only fire for actors within the configured range (default 35m, set via `EQ2:SetActorEventsRange[distance]`).
+
+| Event | Parameters | Description |
+|-------|-----------|-------------|
+| EQ2_ActorSpawned | string ID, string Name, string Level, string Type | Any actor spawns in zone |
+| EQ2_ActorDespawned | string ID, string Name | Any actor despawns from zone |
+| EQ2_ActorTargetChange | string ActorID, string ActorName, string ActorType, string OldTargetID, string NewTargetID, string Distance, string IsInGroup, string IsInRaid | Nearby actor changes target. TargetID "-1" = no target. **Requires EnableActorEvents** |
+| EQ2_ActorStanceChange | string ActorID, string ActorName, string ActorType, string OldStance, string NewStance, string TargetID, string Distance, string IsInGroup, string IsInRaid | Nearby actor changes stance (IN_COMBAT, AT_PEACE, DEAD). **Requires EnableActorEvents** |
+| EQ2_ActorHealthChange | string ActorID, string ActorName, string ActorType, string OldHealth, string NewHealth, string Distance, string IsInGroup, string IsInRaid | Nearby actor health percentage changes. **Requires EnableActorEvents** |
+| EQ2_ActorPowerChange | string ActorID, string ActorName, string ActorType, string OldPower, string NewPower, string Distance, string IsInGroup, string IsInRaid | Nearby actor power percentage changes. **Requires EnableActorEvents** |
+| EQ2_ActorAnimationChanged | string ActorID, string ActorName, string ActorType, string OldAnimation, string NewAnimation, string Distance, string IsInGroup, string IsInRaid | Nearby actor animation changes. **Requires EnableActorEvents** |
+
+**Example:**
+```lavishscript
+EQ2:EnableActorEvents
+EQ2:SetActorEventsRange[50]
+
+atom(script) EQ2_ActorSpawned(string ID, string Name, string Level, string Type)
+{
+    echo "Spawned: ${Name} (${Type}, Level ${Level})"
+}
+```
+
+### Chat and Text Events
+
+| Event | Parameters | Description |
+|-------|-----------|-------------|
+| EQ2_onIncomingChatText | int ChatType, string Message, string Speaker, string Target, string SpeakerIsNPC, string ChannelName, int SpeakerID, int TargetID, string UnknownString | All chat-channel text. SpeakerIsNPC is "TRUE"/"FALSE". 9 parameters total |
+| EQ2_onIncomingText | string Text, int Type | ALL incoming text including system messages, combat feedback, popups. Also fires for chat text. Use EQ2_onIncomingChatText for chat-specific handling |
+| EQ2_onAnnouncement | string Text, string SoundType, float Timer | On-screen announcement/popup message appears. Color codes are stripped from Text |
+
+**Example:**
+```lavishscript
+atom(script) EQ2_onIncomingChatText(int ChatType, string Message, string Speaker, string Target, string SpeakerIsNPC, string ChannelName)
+{
+    if ${ChatType} == 15
+        echo "Group chat from ${Speaker}: ${Message}"
+}
+```
+
+### Affliction Events
+
+Affliction events require `EQ2:EnableAfflictionEvents` and only fire while in combat. A count of -1 means the counter is unknown.
+
+| Event | Parameters | Description |
+|-------|-----------|-------------|
+| EQ2_onMeAfflicted | int TraumaCount, int ArcaneCount, int NoxiousCount, int ElementalCount, int CursedCount | Your character's affliction counts change |
+| EQ2_onGroupMemberAfflicted | int ActorID, int TraumaCount, int ArcaneCount, int NoxiousCount, int ElementalCount, int CursedCount | A group member's affliction counts change |
+| EQ2_OnRaidMemberAfflicted | int ActorID, int TraumaCount, int ArcaneCount, int NoxiousCount, int ElementalCount, int CursedCount | A raid member's affliction counts change |
+
+### UI Window Events
+
+These events fire when game windows appear. The ID parameter is used with the corresponding TLO (e.g., `${LootWindow[ID]}`).
+
+| Event | Parameters | Description |
+|-------|-----------|-------------|
+| EQ2_onLootWindowAppeared | uint ID | Loot window appears with items. Use `${LootWindow[ID]}` |
+| EQ2_ReplyDialogAppeared | uint ID | NPC conversation window appears. Use `${ReplyDialog[ID]}` |
+| EQ2_onChoiceWindowAppeared | uint ID | Yes/No dialog appears. Use `${ChoiceWindow[ID]}` |
+| EQ2_onRewardWindowAppeared | uint ID | Quest reward window appears. Use `${RewardWindow[ID]}` |
+| EQ2_onContainerWindowAppeared | uint ID | Container window appears (chest, box). Use `${ContainerWindow[ID]}` |
+| EQ2_ExamineItemWindowAppeared | string ItemName, uint ID | Examine item window appears. Use `${ExamineItemWindow[ID]}` |
+
+**Example:**
+```lavishscript
+atom(script) EQ2_onLootWindowAppeared(uint ID)
+{
+    wait 5
+    if ${LootWindow[${ID}](exists)}
+        LootWindow[${ID}]:LootAll
+}
+```
+
+### Game State Events
+
+| Event | Parameters | Description |
+|-------|-----------|-------------|
+| EQ2_StartedZoning | *(none)* | Player begins zoning (loading screen appears) |
+| EQ2_FinishedZoning | string TimeInSeconds | Player finishes zoning. Time formatted as e.g., "12.34" |
+| EQ2_onInventoryUpdate | *(none)* | Player inventory changes. Clears internal caches |
+| EQ2_onQuestUpdate | string ID, string Name, string CurrentZone, string Category, string Description, ...ProgressText | Quest journal entry updates. Variable number of ProgressText params |
+| EQ2_onQuestOffered | string Name, string Description, int Level, int StatusReward | NPC offers a quest |
+| EQ2_onCharacterSheetUpdate | *(none)* | Character sheet data updated by server. Fires frequently (~every second) |
+| EQ2_onLevelChange | int OldLevel, int NewLevel | Player gains or loses an adventure level |
+| EQ2_onAbilityGained | string Name, int Tier | Player gains a new ability or spell |
+
+### Group and Raid Events
+
+| Event | Parameters | Description |
+|-------|-----------|-------------|
+| EQ2_onGroupMembershipChange | int PreviousGroupCount, int NewGroupCount | Group composition changes. Solo player = count of 1 |
+| EQ2_onRaidMembershipChange | int PreviousRaidCount, int NewRaidCount | Raid composition changes |
+
+### Item and Commerce Events
+
+| Event | Parameters | Description |
+|-------|-----------|-------------|
+| EQ2_onDestroyItem | int ItemID, string ItemName | Player deletes an item from inventory |
+| EQ2_onSellItem | string ItemName, int Quantity, int LinkID | Player sells an item to NPC merchant |
+| EQ2_onDeleteQuest | string Param1, string Param2 | Player deletes a quest from journal |
+| EQ2_ItemAddedToAltarForSacrifice | int ItemIndex | Item added to deity altar for sacrifice |
+| EQ2_ExamineAchievement | string ID, string Type | Player examines an achievement |
+
+### Crafting Events
+
+| Event | Parameters | Description |
+|-------|-----------|-------------|
+| EQ2_onCraftRoundResult | string Message, int Result, int Quality, int Progress, int ProgressMod, int Durability, int DurabilityMod, int MainIconID, int BackdropIconID | Fires after each crafting round. Values also accessible via `${Crafting}` TLO |
+
+### Heroic Opportunity Events
+
+| Event | Parameters | Description |
+|-------|-----------|-------------|
+| EQ2_OnHOWindowStateChange | string HOName, string HODescription, string HOWindowState, string HOTimeLimit, string HOTimeElapsed, string HOTimeRemaining, string HOCurrentWheelSlot, string HOWheelState, string HOIconID1-6 | HO window state changes. 14 parameters total |
+
+### Other Events
+
+| Event | Parameters | Description |
+|-------|-----------|-------------|
+| EQ2_onMenderRepairAll | int TargetID | Player uses "repair all" at a mender NPC |
+| EQ2_onSoundEffect | string EffectName | A sound effect plays in the game client |
+| isxGames_onHTTPResponse | int Size, string URL, string IPAddress, int ResponseCode, float TransferTime, string ResponseText, string ParsedBody | Response received from GetURL/PostURL command |
+
+---
+
 ## End of API Reference
 
-This comprehensive API reference documents all datatypes, members, methods, and relationships available in the ISXEQ2 extension for EverQuest 2. For command reference, event documentation, and usage examples, please refer to the official ISXEQ2 Reference document.
+This comprehensive API reference documents all datatypes, members, methods, events, and relationships available in the ISXEQ2 extension for EverQuest 2.
 
 **Key Points to Remember:**
 
@@ -3410,9 +3552,9 @@ This comprehensive API reference documents all datatypes, members, methods, and 
 5. All TLOs are case-insensitive
 6. Query syntax supports complex filtering with operators
 7. Events require registration via LavishScript Event system
+8. Some events (actor, affliction) require explicit enabling before they fire
 
 **For Additional Information:**
 - Commands: See Commands section in official reference
-- Events: See Events section in official reference
 - Usage Examples: See Usage Examples section in official reference
 - Deprecated Features: See Deprecated Features section in official reference
