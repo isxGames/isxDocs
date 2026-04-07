@@ -552,16 +552,23 @@ Achievement information.
 
 | Member | Type | Description |
 |--------|------|-------------|
-| Name | string | Achievement name |
 | ID | int | Achievement ID |
+| Name | string | Achievement name |
 | Description | string | Achievement description |
-| Points | int | Achievement points value |
-| IsComplete | bool | TRUE if achievement is complete |
+| Level | int | Current achievement level |
+| MaxLevel | int | Maximum achievement level |
+| PointCostPerLevel | int | Point cost per level |
+| ReqLevelToBuy | int | Required character level to purchase |
+| ToAbility | [abilityinfo](#abilityinfo) | Associated ability info |
+
+| Method | Parameters | Description |
+|--------|-----------|-------------|
+| Examine | - | Examine the achievement |
 
 **Example Usage:**
 ```lavishscript
-echo ${Achievement[123].Name}
-echo ${Achievement["Explorer"].IsComplete}
+echo ${Achievement[Exploration,123].Name}
+echo ${Achievement[Exploration,123].Level}
 ```
 
 ---
