@@ -1397,8 +1397,8 @@ function UseItemSafely(string ItemName, string ExpectedBuff)
 		return FALSE
 	}
 
-	; Wait for cast to complete
-	wait ${Me.CastingSpell.CastingTime}
+	; Wait for cast to complete (up to 5 seconds)
+	wait 50 !${Me.CastingSpell}
 	wait 20
 
 	; Verify buff applied
