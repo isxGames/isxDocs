@@ -200,9 +200,14 @@ All essential documentation files have been completed:
 14. **13_JSON_Guide.md** - ✅ Complete JSON guide
 15. **14_LavishMachine_Guide.md** - ✅ Complete async task guide
 16. **15_Advanced_Scripting_Patterns.md** - ✅ Complete production patterns guide
+17. **16_Utility_Script_Patterns.md** - ✅ Complete utility patterns from EQ2BJCommon
+18. **17_Crafting_Script_Patterns.md** - ✅ Complete crafting automation patterns from EQ2Craft
+19. **18_Navigation_Library_Patterns.md** - ✅ Complete navigation and pathfinding patterns from EQ2Nav
 
-### Recent Additions (Version 2.0-2.5)
+### Recent Additions (Version 2.0-3.0)
 
+- **Version 3.0**: Utility, Crafting, and Navigation pattern guides (files 16-18)
+- **Version 2.9**: LGUI2 Scaling System guide
 - **Version 2.5**: Advanced LGUI1 Patterns and LGUI2 limitations documentation
 - **Version 2.4**: Advanced Scripting Patterns from EQ2OgreFree analysis
 - **Version 2.3**: LavishScript Fundamentals with index, webrequest, and audio
