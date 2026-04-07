@@ -3418,7 +3418,7 @@ Event[EventName]:DetachAtom[AtomName]
 
 ### Actor Events
 
-Events related to actor spawning, despawning, and state changes. `EQ2_ActorSpawned` and `EQ2_ActorDespawned` fire automatically. The remaining five require `EQ2:EnableActorEvents` and only fire for actors within the configured range (default 35m, set via `EQ2:SetActorEventsRange[distance]`).
+Events related to actor spawning, despawning, and state changes. `EQ2_ActorSpawned` and `EQ2_ActorDespawned` fire automatically. The remaining five require `ISXEQ2:EnableActorEvents` and only fire for actors within the configured range (default 35m, set via `ISXEQ2:SetActorEventsRange[distance]`).
 
 | Event | Parameters | Description |
 |-------|-----------|-------------|
@@ -3432,8 +3432,8 @@ Events related to actor spawning, despawning, and state changes. `EQ2_ActorSpawn
 
 **Example:**
 ```lavishscript
-EQ2:EnableActorEvents
-EQ2:SetActorEventsRange[50]
+ISXEQ2:EnableActorEvents
+ISXEQ2:SetActorEventsRange[50]
 
 atom(script) EQ2_ActorSpawned(string ID, string Name, string Level, string Type)
 {
