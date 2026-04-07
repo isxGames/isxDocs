@@ -749,7 +749,7 @@ Base datatype for all actors (NPCs, PCs, objects) in the game world.
 | UpdatesMyQuest | bool | TRUE if updates player's quest |
 | UpdatesGroupMemberQuest | bool | TRUE if updates group member quest |
 | ActiveStateExists | bool | TRUE if has active states |
-| OffersQuest | bool | TRUE if offers a quest |
+| OffersQuest | string | Quest type offered ("normal", "repeatable", "tradeskill", "gray", "storyline") or NULL if none |
 | CheckCollision[x,y,z] | bool | TRUE if collision exists to specified point |
 
 #### Methods
