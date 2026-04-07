@@ -866,7 +866,7 @@ Parse incoming game text to detect events and automatically adjust script behavi
 ### Pattern
 
 ```lavishscript
-atom(script) EQ2_onIncomingText(string Message)
+atom(script) EQ2_onIncomingText(string Message, int Type)
 {
 	; ChatType values:
 	; 15=group, 16=raid, 28=tell, 8=say
@@ -897,7 +897,7 @@ function main()
 variable(global) TimerObject PotionTimer
 variable int PotionCooldown=600000  ; 10 minutes default
 
-atom(script) EQ2_onIncomingText(string Message)
+atom(script) EQ2_onIncomingText(string Message, int Type)
 {
 	; Detect potion failure message
 	if ${Message.Find["You can only have one experience potion active at a time."](exists)}
@@ -2723,7 +2723,7 @@ variable int PotionCooldown=600000  ; 10 minutes default
 variable settingsetref Settings
 variable settingsetref _ref
 
-atom(script) EQ2_onIncomingText(string Message)
+atom(script) EQ2_onIncomingText(string Message, int Type)
 {
 	if ${Message.Find["You can only have one experience potion active at a time."](exists)}
 	{
