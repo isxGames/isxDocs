@@ -212,7 +212,7 @@ function main()
             }
         }
 
-        wait 500  ; Scan every half second
+        wait 5  ; Scan every half second
     }
 }
 
