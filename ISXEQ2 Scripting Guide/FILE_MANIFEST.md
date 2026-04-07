@@ -77,7 +77,7 @@
 #### ISXEQ2 Extension Architecture
 - **Total Source Files:** 100+ C++ files
 - **Datatypes Defined:** 60+ datatypes
-- **Events Available:** 48 events
+- **Events Available:** 43 events
 - **Commands Implemented:** 15+ commands
 - **Top-Level Objects:** 21 TLOs
 
@@ -153,7 +153,7 @@
 ### Architecture Insights
 
 1. **Detour-Based Monitoring**: ISXEQ2 hooks game functions non-invasively to monitor state
-2. **Event-Driven Design**: 48 events cover all major game activities
+2. **Event-Driven Design**: 43 events cover all major game activities
 3. **Typed Object System**: Strong typing with inheritance hierarchies
 4. **Async Data Loading**: Many detailed info objects require async loading
 5. **Modular Organization**: Clear separation between datatypes, commands, events, and utilities
