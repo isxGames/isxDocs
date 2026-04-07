@@ -8,6 +8,7 @@
 |---------|------|
 | **Scripts Directory** | `C:\Dev\InnerSpace\Scripts` |
 | **Guide Directory** | `C:\Dev\InnerSpace\isxDocs\ISXEVE Scripting Guide` |
+| **Changes File** | `C:\Dev\InnerSpace\ISXEVE\Install\x64\Extensions\ISXDK35\ISXEVEChanges.txt` |
 
 ---
 
@@ -91,6 +92,9 @@ When reviewing scripts over ~200 lines:
 
 ## Quick Reference (for simple questions only)
 
+**DEFINITIVE API SOURCE:**
+- Changes File (~5,600 lines) — THE authoritative source for all ISXEVE API documentation. When delegating API-related tasks, remind the subagent to verify against CHANGES_FILE.
+
 **LARGE DOCUMENTATION FILES** (delegate reading to subagent):
 - API Reference (~11,500 lines)
 - LGUI2 UI Guide (~7,600 lines)
@@ -103,6 +107,7 @@ When reviewing scripts over ~200 lines:
 - Check `${ISXEVE.IsReady}` before first API access
 - Always validate existence with `(exists)` before accessing members
 - Use LavishGUI 2 (JSON) for new UIs, not LavishGUI 1 (XML)
+- Verify API details against CHANGES_FILE — it is the definitive source
 - **Guide file changes**: When adding, removing, or reordering guide files, update ALL cross-references across ALL files. When making substantive changes to any numbered guide (01–22), also check/update the index files (ISXEVE_QuickReference.md, +How To Use This Guide with Claude Code+.md, 00_MASTER_GUIDE.md, FILE_MANIFEST.md, README.md, isxeve.md, ISXEVE-Expert.md). See ISXEVE-Expert.md for the full list.
 
 ## Workflow
