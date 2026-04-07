@@ -576,8 +576,7 @@ Quest/loot reward.
 
 | Member | Type | Description |
 |--------|------|-------------|
-| Name | string | Reward item name |
-| LinkID | int | Item link ID |
+| LinkID | uint | Item link ID |
 | ToLink | string | Creates clickable chat link |
 | Type | string | Reward type |
 | IsItemInfoAvailable | bool | TRUE if item info is available |
