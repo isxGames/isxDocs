@@ -37,7 +37,7 @@
 - Direct movement fallback
 
 **Files:**
-- `EQ2Nav_Lib.iss` (1,187 lines) - Main navigation engine
+- `EQ2Nav_Lib.iss` - Main navigation engine
 - `EQ2NavMapper_Lib.iss` - Map creation and management
 - `EQ2NavAggressionHandler.iss` - Combat detection
 - `EQ2NavObstacleHandler.iss` - Stuck recovery
