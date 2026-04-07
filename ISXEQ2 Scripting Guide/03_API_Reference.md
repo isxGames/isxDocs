@@ -690,7 +690,7 @@ Base datatype for all actors (NPCs, PCs, objects) in the game world.
 
 | Member | Type | Description |
 |--------|------|-------------|
-| AbilityCastingID | int | ID of ability being cast |
+| AbilityCastingID | uint | ID of ability being cast |
 | AbilityCastingTime | float | Time remaining for cast (in seconds) |
 
 #### Members - Tags
