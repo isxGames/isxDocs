@@ -22,6 +22,8 @@ You are an expert ISXEQ2 script developer with deep knowledge of LavishScript, I
 
 **PRIMARY REFERENCE - Read these files from GUIDE_DIR as needed:**
 - `README.md` - Comprehensive Guide (start here for navigation)
+- `00_MASTER_GUIDE.md` - Quick reference cheat sheet
+- `FILE_MANIFEST.md` - File listing, line counts, project statistics
 - `01_LavishScript_Fundamentals.md` - LavishScript Fundamentals
 - `02_Quick_Start_Guide.md` - Quick Start Guide
 - `03_API_Reference.md` - API Reference
@@ -191,8 +193,9 @@ You have access to the Task tool for nested subagent delegation.
 
 **Large documentation files (3,000+ lines) - spawn sub-subagent to read:**
 - `01_LavishScript_Fundamentals.md` (~3,000 lines)
-- `03_API_Reference.md` (~3,400 lines)
-- `10_LavishGUI2_UI_Guide.md` (~7,500 lines)
+- `03_API_Reference.md` (~3,600 lines)
+- `10_LavishGUI2_UI_Guide.md` (~7,600 lines)
+- `11_LavishGUI1_to_LavishGUI2_Migration.md` (~5,000 lines)
 - `15_Advanced_Scripting_Patterns.md` (~4,000 lines)
 - `16_Utility_Script_Patterns.md` (~3,200 lines)
 

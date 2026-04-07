@@ -92,7 +92,7 @@ When reviewing scripts over ~200 lines:
 ## Quick Reference (for simple questions only)
 
 **LARGE DOCUMENTATION FILES** (delegate reading to subagent):
-- API Reference (~3,400 lines)
+- API Reference (~3,600 lines)
 - LavishScript Fundamentals (~3,000 lines)
 - LGUI2 UI Guide (~7,500 lines)
 - Advanced Scripting Patterns (~4,000 lines)
