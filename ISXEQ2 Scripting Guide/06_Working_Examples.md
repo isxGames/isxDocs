@@ -367,7 +367,7 @@ function CombatPulse()
 
     ; Face target
     if !${Me.IsMoving}
-        Me:DoFace
+        Target:DoFace
 
     ; Cast abilities in priority order
     call TryCastAbility "Heroic Strike"
@@ -476,7 +476,7 @@ function AttackNearestEnemy()
         EQ2Execute /toggleautoattack
 
     ; Face the target
-    Me:DoFace
+    Target:DoFace
 }
 ```
 
