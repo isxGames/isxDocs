@@ -1098,7 +1098,8 @@ function CastAndTrackBuff(string BuffName)
 		echo Actually casting: ${LastBuffCast}
 
 		; Wait for cast to complete
-		wait ${Me.CastingSpell.CastingTime}
+		while ${Me.CastingSpell}
+			wait 2
 		wait 20
 
 		; Get buff duration
