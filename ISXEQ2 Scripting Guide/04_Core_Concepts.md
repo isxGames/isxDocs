@@ -173,7 +173,7 @@ LootWindow:LootAll              ; Loot everything
 ```lavishscript
 Me:Face[180]                     ; Face heading 180
 Me:BankDeposit[c,1000]          ; Deposit 1000 copper
-MerchantWindow.Item[1]:Buy[5]   ; Buy 5 of item 1
+MerchantWindow.MerchantInventory[1]:Buy[5]  ; Buy 5 of item 1
 ```
 
 **Syntax Summary:**
