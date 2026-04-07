@@ -300,9 +300,7 @@ If the agent doesn't seem to work properly:
 If the agent reports it can't find documentation:
 
 1. Verify GUIDE_DIR in the agent file points to the correct location
-
 2. Check that all documentation files exist in that directory
-
 3. Make sure paths don't have trailing spaces
 
-   <!-- CLAUDE_SKIP_END -->
+<!-- CLAUDE_SKIP_END -->
