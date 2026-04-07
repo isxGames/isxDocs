@@ -150,7 +150,7 @@ Top-Level Objects (TLOs) are the entry points for accessing game data. They can 
 | **Radar** | [radar](#radar) | - | Radar functionality |
 | **EQ2Loc** | [eq2location](#eq2location) | x,y,z | Create location object |
 | **Crafting** | [crafting](#crafting) | - | Crafting session information |
-| **Achievement** | [achievement](#achievement) | id / name | Access achievement data |
+| **Achievement** | [achievement](#achievement) | type,id / id / name | Access achievement data |
 | **StripTags** | string | text | Removes EQ2 formatting tags from text |
 | **EQ2DataSourceContainer** | [eq2datasourcecontainer](#eq2datasourcecontainer) | name | Access UI data source (deprecated - use ${Me.GetGameData} instead) |
 
@@ -546,7 +546,7 @@ echo ${Me.Ability[1].ToAbilityInfo.Class[1].Name}
 
 Achievement information.
 
-**Access:** `${Achievement[id/name]}` or via `${Me.Achievement[index/name]}`
+**Access:** `${Achievement[type,id]}`, `${Achievement[id]}`, or `${Achievement[name]}` — also via `${Me.Achievement[index/name]}`
 
 #### Members
 
