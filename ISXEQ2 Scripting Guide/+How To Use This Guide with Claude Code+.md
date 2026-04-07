@@ -39,7 +39,7 @@ The ISXEQ2 Claude Code integration uses a **coordinator/worker architecture** de
 ```
 
 **Benefits:**
-- **Context Conservation**: Large documentation files (up to 7,500 lines) are read in isolated agent context, not your main conversation
+- **Context Conservation**: Large documentation files are read in isolated agent context, not your main conversation
 - **Thoroughness**: The agent has full access to all 21 documentation files
 - **Efficiency**: Coordinator stays lightweight; only results return to main conversation
 - **Sub-subagent Support**: For very large research tasks, the agent can spawn additional subagents
@@ -154,12 +154,14 @@ The agent runs in an isolated context and:
 - Debugs issues
 - Has full edit authority
 
-**Large File Handling:** The agent knows which documentation files are large (3,000+ lines) and can spawn sub-subagents to read them if needed:
-- `01_LavishScript_Fundamentals.md` (~3,000 lines)
-- `03_API_Reference.md` (~3,600 lines)
-- `10_LavishGUI2_UI_Guide.md` (~7,500 lines)
-- `15_Advanced_Scripting_Patterns.md` (~4,000 lines)
-- `16_Utility_Script_Patterns.md` (~3,200 lines)
+**Large File Handling:** The agent knows which documentation files are large and can spawn sub-subagents to read them if needed:
+- `ISXEQ2Changes.txt`
+- `01_LavishScript_Fundamentals.md`
+- `03_API_Reference.md`
+- `10_LavishGUI2_UI_Guide.md`
+- `11_LavishGUI1_to_LavishGUI2_Migration.md`
+- `15_Advanced_Scripting_Patterns.md`
+- `16_Utility_Script_Patterns.md`
 
 ---
 
