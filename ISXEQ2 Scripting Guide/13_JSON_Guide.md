@@ -559,9 +559,9 @@ fruits:ForEach["echo [\${ForEach.Key}] = \${ForEach.Value~}"]
 ```lavishscript
 variable jsonvalue players="$$>
 [
-    {\"name\":\"Warrior\",\"level\":50},
-    {\"name\":\"Mage\",\"level\":48},
-    {\"name\":\"Priest\",\"level\":52}
+    {"name":"Warrior","level":50},
+    {"name":"Mage","level":48},
+    {"name":"Priest","level":52}
 ]
 <$$"
 
@@ -925,9 +925,9 @@ function main()
     ; JSON array input
     variable jsonvalue jaPersons="$$>
     [
-        {\"first_name\":\"John\",\"last_name\":\"Doe\"},
-        {\"first_name\":\"Jane\",\"last_name\":\"Doe\"},
-        {\"first_name\":\"John\",\"last_name\":\"Public\"}
+        {"first_name":"John","last_name":"Doe"},
+        {"first_name":"Jane","last_name":"Doe"},
+        {"first_name":"John","last_name":"Public"}
     ]
     <$$"
 
@@ -951,8 +951,8 @@ function main()
 
     variable jsonvalue jaPersons="$$>
     [
-        {\"first_name\":\"John\",\"last_name\":\"Doe\"},
-        {\"first_name\":\"Jane\",\"last_name\":\"Doe\"}
+        {"first_name":"John","last_name":"Doe"},
+        {"first_name":"Jane","last_name":"Doe"}
     ]
     <$$"
 
@@ -1117,10 +1117,10 @@ variable jsonvalue data="{\"a\":1,\"b\":{\"c\":2,\"d\":3}}"
 ; GOOD - Clean and readable
 variable jsonvalue data="$$>
 {
-    \"a\": 1,
-    \"b\": {
-        \"c\": 2,
-        \"d\": 3
+    "a": 1,
+    "b": {
+        "c": 2,
+        "d": 3
     }
 }
 <$$"
