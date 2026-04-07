@@ -235,11 +235,11 @@ This documentation set is specifically designed to serve as a knowledge base for
 
 ### For Human Developers
 
-1. **Complete Beginners**: Start with 01_LavishScript_Fundamentals.md to learn the language
-2. **ISXEQ2 Beginners**: Start with 02_Quick_Start_Guide.md, then read 04_Core_Concepts.md
-3. **Intermediate**: Focus on 05_Patterns_And_Best_Practices.md, then 06_Working_Examples.md
-4. **Advanced**: Study 07_Advanced_Patterns_And_Examples.md, 13_Advanced_Scripting_Patterns.md, and specialized guides (JSON, LMAC, LGUI2)
-5. **All Levels**: Bookmark 00_MASTER_GUIDE.md and 03_API_Reference.md for quick lookups
+1. **Complete Beginners**: Start with [01_LavishScript_Fundamentals.md](01_LavishScript_Fundamentals.md) to learn the language
+2. **ISXEQ2 Beginners**: Start with [02_Quick_Start_Guide.md](02_Quick_Start_Guide.md), then read [04_Core_Concepts.md](04_Core_Concepts.md)
+3. **Intermediate**: Focus on [05_Patterns_And_Best_Practices.md](05_Patterns_And_Best_Practices.md), then [06_Working_Examples.md](06_Working_Examples.md)
+4. **Advanced**: Study [07_Advanced_Patterns_And_Examples.md](07_Advanced_Patterns_And_Examples.md), [15_Advanced_Scripting_Patterns.md](15_Advanced_Scripting_Patterns.md), and specialized guides (JSON, LMAC, LGUI2)
+5. **All Levels**: Bookmark [00_MASTER_GUIDE.md](00_MASTER_GUIDE.md) and [03_API_Reference.md](03_API_Reference.md) for quick lookups
 
 ---
 
