@@ -91,6 +91,7 @@ CHANGES_FILE: C:\Dev\InnerSpace\ISXEQ2\Install\x64\Extensions\ISXDK35\ISXEQ2Chan
 Change these paths to match where you have:
 - **SCRIPTS_DIR**: Your InnerSpace Scripts directory
 - **GUIDE_DIR**: This ISXEQ2 Scripting Guide directory
+- **CHANGES_FILE**: The ISXEQ2Changes.txt file from your ISXEQ2 installation
 
 ### Step 4: Update the Coordinator's Paths
 
