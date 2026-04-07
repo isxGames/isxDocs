@@ -8,6 +8,7 @@
 |---------|------|
 | **Scripts Directory** | `C:\Dev\InnerSpace\Scripts` |
 | **Guide Directory** | `C:\Dev\InnerSpace\isxDocs\ISXEQ2 Scripting Guide` |
+| **Changes File** | `C:\Dev\InnerSpace\ISXEQ2\Install\x64\Extensions\ISXDK35\ISXEQ2Changes.txt` |
 
 ---
 
@@ -91,6 +92,9 @@ When reviewing scripts over ~200 lines:
 
 ## Quick Reference (for simple questions only)
 
+**DEFINITIVE API SOURCE:**
+- Changes File (~7,700 lines) — THE authoritative source for all ISXEQ2 API documentation. When delegating API-related tasks, remind the subagent to verify against CHANGES_FILE.
+
 **LARGE DOCUMENTATION FILES** (delegate reading to subagent):
 - API Reference (~3,600 lines)
 - LavishScript Fundamentals (~3,000 lines)
@@ -103,6 +107,7 @@ When reviewing scripts over ~200 lines:
 - Always validate existence with `(exists)` before accessing members
 - Use `EQ2:GetActors` not deprecated `CreateCustomActorArray`
 - Use LavishGUI 2 (JSON) for new UIs, not LavishGUI 1 (XML)
+- Verify API details against CHANGES_FILE — it is the definitive source
 - After adding/removing/renaming guide files: update ALL cross-references across all files
 - After substantive guide changes: check if `00_MASTER_GUIDE.md`, `FILE_MANIFEST.md`, `README.md`, `+How To Use+.md`, `ISXEQ2_QuickReference.md`, and the Claude AI command/agent files need updating
 
