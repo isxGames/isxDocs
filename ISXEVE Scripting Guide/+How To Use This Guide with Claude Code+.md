@@ -91,6 +91,7 @@ CHANGES_FILE: C:\Dev\InnerSpace\ISXEVE\Install\x64\Extensions\ISXDK35\ISXEVEChan
 Change these paths to match where you have:
 - **SCRIPTS_DIR**: Your InnerSpace Scripts directory
 - **GUIDE_DIR**: This ISXEVE Scripting Guide directory
+- **CHANGES_FILE**: The ISXEVEChanges.txt file from your ISXEVE installation
 
 ### Step 4: Update the Coordinator's Paths
 
