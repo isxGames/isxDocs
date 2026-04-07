@@ -48,7 +48,7 @@ The ISXEQ2 Claude Code integration uses a **coordinator/worker architecture** de
 
 ## Installation
 
-The command and agent files are located in `Claude AI Commands (optional)/` within this guide directory.
+The command and agent files are located in `Claude AI Commands (optional)/` within this guide directory. See `README.md` in that directory for a quick-start summary.
 
 ### Step 1: Copy the Agent File
 
