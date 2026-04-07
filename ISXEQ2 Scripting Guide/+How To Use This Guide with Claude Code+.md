@@ -40,7 +40,7 @@ The ISXEQ2 Claude Code integration uses a **coordinator/worker architecture** de
 
 **Benefits:**
 - **Context Conservation**: Large documentation files (up to 7,500 lines) are read in isolated agent context, not your main conversation
-- **Thoroughness**: The agent has full access to all 19 documentation files
+- **Thoroughness**: The agent has full access to all 21 documentation files
 - **Efficiency**: Coordinator stays lightweight; only results return to main conversation
 - **Sub-subagent Support**: For very large research tasks, the agent can spawn additional subagents
 
@@ -148,7 +148,7 @@ It does NOT read documentation files directly, keeping your main conversation co
 ### The Worker Agent (ISXEQ2-Expert)
 
 The agent runs in an isolated context and:
-- Reads documentation files (all 19 guides)
+- Reads documentation files (all 21 guides)
 - Analyzes existing scripts
 - Creates and edits script files
 - Debugs issues
