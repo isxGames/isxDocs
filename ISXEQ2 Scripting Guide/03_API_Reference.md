@@ -748,7 +748,7 @@ Base datatype for all actors (NPCs, PCs, objects) in the game world.
 | OnFlyingMount | bool | TRUE if on flying mount |
 | UpdatesMyQuest | bool | TRUE if updates player's quest |
 | UpdatesGroupMemberQuest | bool | TRUE if updates group member quest |
-| ActiveStateExists | bool | TRUE if has active states |
+| ActiveStateExists["state"] | bool | TRUE if actor has the specified active state |
 | OffersQuest | string | Quest type offered ("normal", "repeatable", "tradeskill", "gray", "storyline") or NULL if none |
 | CheckCollision[x,y,z] | bool | TRUE if collision exists to specified point |
 
