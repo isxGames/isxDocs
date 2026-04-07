@@ -701,11 +701,8 @@ function ProcessLootItems()
 
     for (i:Set[1]; ${i} <= ${LootWindow.NumItems}; i:Inc)
     {
-        ; Wait for item info to load
-        if !${LootWindow.Item[${i}].IsItemInfoAvailable}
-            wait 10 ${LootWindow.Item[${i}].IsItemInfoAvailable}
-
-        if ${LootWindow.Item[${i}].IsItemInfoAvailable}
+        ; LootWindow.Item[#] returns iteminfo directly
+        if ${LootWindow.Item[${i}](exists)}
         {
             variable string ItemName = "${LootWindow.Item[${i}].Name}"
             echo "Looting: ${ItemName}"
@@ -728,12 +725,10 @@ function LootByQuality()
 
     for (i:Set[1]; ${i} <= ${LootWindow.NumItems}; i:Inc)
     {
-        if !${LootWindow.Item[${i}].IsItemInfoAvailable}
-            wait 10 ${LootWindow.Item[${i}].IsItemInfoAvailable}
-
-        if ${LootWindow.Item[${i}].IsItemInfoAvailable}
+        ; LootWindow.Item[#] returns iteminfo directly
+        if ${LootWindow.Item[${i}](exists)}
         {
-            variable string Tier = "${LootWindow.Item[${i}].ToItemInfo.Tier}"
+            variable string Tier = "${LootWindow.Item[${i}].Tier}"
 
             ; Only loot Legendary or better
             if ${Tier.Find["Legendary"]} || ${Tier.Find["Fabled"]} || ${Tier.Find["Mythical"]}
