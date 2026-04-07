@@ -112,7 +112,7 @@ ${Actor.Heading}            ; Heading
 ```lavishscript
 ${Actor.IsDead}             ; TRUE if dead
 ${Actor.IsAggro}            ; TRUE if aggressive
-${Actor.InCombat}           ; TRUE if in combat
+${Actor.InCombatMode}       ; TRUE if in combat mode
 ${Actor.IsCamping}          ; TRUE if camping out
 ${Actor.IsMoving}           ; TRUE if moving
 ```
