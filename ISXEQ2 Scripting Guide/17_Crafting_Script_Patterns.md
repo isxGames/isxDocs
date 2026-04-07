@@ -547,22 +547,22 @@ variable int CurrentDurability = 0
 variable string CurrentReactive
 
 ; Check if we're in crafting mode
-if ${EQ2UIPage[Tradeskills,Tradeskills].Child[text,Tradeskills.TabPages.Craft.Create.RecipeName](exists)}
+if ${EQ2UIPage[Tradeskills,Tradeskills].Child["Tradeskills.TabPages.Craft.Create.RecipeName"](exists)}
 {
     ; We're on the crafting page
-    craftingrecipe:Set[${EQ2UIPage[Tradeskills,Tradeskills].Child[text,Tradeskills.TabPages.Craft.Create.RecipeName].GetProperty[LocalText]}]
+    craftingrecipe:Set[${EQ2UIPage[Tradeskills,Tradeskills].Child["Tradeskills.TabPages.Craft.Create.RecipeName"].GetProperty[LocalText]}]
     craftingknowledge:Set[${Me.Recipe[${craftingrecipe}].Knowledge}]
 }
 
 ; Check if crafting has started
-if ${EQ2UIPage[Tradeskills,Tradeskills].Child[button,Tradeskills.TabPages.Craft.Create.Stop](exists)}
+if ${EQ2UIPage[Tradeskills,Tradeskills].Child["Tradeskills.TabPages.Craft.Create.Stop"](exists)}
 {
     ; Stop button exists = crafting is active
     roundstart:Set[TRUE]
 }
 
 ; Check for completion
-if ${EQ2UIPage[Tradeskills,Tradeskills].Child[button,Tradeskills.TabPages.Craft.Create.Repeat](exists)}
+if ${EQ2UIPage[Tradeskills,Tradeskills].Child["Tradeskills.TabPages.Craft.Create.Repeat"](exists)}
 {
     ; Repeat button exists = crafting is complete
     complete:Set[TRUE]
@@ -579,13 +579,13 @@ objectdef EQ2Craft
     member:bool CheckPageStuck()
     {
         ; Check if we're stuck on the prep page
-        if ${EQ2UIPage[Tradeskills,Tradeskills].Child[text,TradeSkills.TabPages.Craft.prepare.summarypage.pccount].GetProperty[LocalText](exists)}
+        if ${EQ2UIPage[Tradeskills,Tradeskills].Child["TradeSkills.TabPages.Craft.prepare.summarypage.pccount"].GetProperty[LocalText](exists)}
         {
             variable string pText
             variable int currentqty
             variable int maxqty
 
-            pText:Set[${EQ2UIPage[Tradeskills,Tradeskills].Child[text,TradeSkills.TabPages.Craft.prepare.summarypage.pccount].GetProperty[LocalText]}]
+            pText:Set[${EQ2UIPage[Tradeskills,Tradeskills].Child["TradeSkills.TabPages.Craft.prepare.summarypage.pccount"].GetProperty[LocalText]}]
 
             ; Text format: "current / max"
             currentqty:Set[${pText.Token[1,/]}]
@@ -880,9 +880,9 @@ function GetWrit()
     wait 15
 
     ; Navigate conversation
-    if !${EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[1].GetProperty[LocalText].Left[12].Equal[${WritInitialConvo}]}
+    if !${EQ2UIPage[ProxyActor,Conversation].Child["replies"].Child[1].GetProperty[LocalText].Left[12].Equal[${WritInitialConvo}]}
     {
-        EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[1]:LeftClick
+        EQ2UIPage[ProxyActor,Conversation].Child["replies"].Child[1]:LeftClick
         wait 6
         Target:DoubleClick
         wait 15
@@ -892,7 +892,7 @@ function GetWrit()
     if ${Tier} <= 0
         Tier:Set[1]
 
-    EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[${Tier}]:LeftClick
+    EQ2UIPage[ProxyActor,Conversation].Child["replies"].Child[${Tier}]:LeftClick
     wait 10
 
     ; Accept quest
@@ -912,9 +912,9 @@ function GetWrit()
     wait 15
 
     ; Close conversation
-    EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[1]:LeftClick
+    EQ2UIPage[ProxyActor,Conversation].Child["replies"].Child[1]:LeftClick
     wait 15
-    EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[1]:LeftClick
+    EQ2UIPage[ProxyActor,Conversation].Child["replies"].Child[1]:LeftClick
     wait 6
 
     ; Move to invoice desk
@@ -948,16 +948,16 @@ function GetWrit()
 
 function AcceptQuest()
 {
-    if ${RewardWindow.Child[text,Title].GetProperty[localtext].Find["New Quest"]}
+    if ${RewardWindow.Child["Title"].GetProperty[localtext].Find["New Quest"]}
     {
-        if ${EQ2UIPage[PopUp,RewardPack].Child[button,RewardPack.ButtonComposite.Accept](exists)}
-            EQ2UIPage[PopUp,RewardPack].Child[button,RewardPack.ButtonComposite.Accept]:LeftClick
+        if ${EQ2UIPage[PopUp,RewardPack].Child["RewardPack.ButtonComposite.Accept"](exists)}
+            EQ2UIPage[PopUp,RewardPack].Child["RewardPack.ButtonComposite.Accept"]:LeftClick
         else
-            EQ2UIPage[PopUp,RewardPack].Child[button,RewardPack.Accept]:LeftClick
+            EQ2UIPage[PopUp,RewardPack].Child["RewardPack.Accept"]:LeftClick
     }
     else
     {
-        echo "ERROR - Expected 'New Quest' title but got '${RewardWindow.Child[text,Title].GetProperty[localtext]}'"
+        echo "ERROR - Expected 'New Quest' title but got '${RewardWindow.Child["Title"].GetProperty[localtext]}'"
     }
 }
 ```
@@ -1074,7 +1074,7 @@ while ${CurrentQuality} < ${QualityResult}
 ; Stop the craft when quality is achieved
 if !${complete} && ${CurrentQuality}
 {
-    EQ2UIPage[Tradeskills,Tradeskills].Child[button,Tradeskills.TabPages.Craft.Create.Stop]:LeftClick
+    EQ2UIPage[Tradeskills,Tradeskills].Child["Tradeskills.TabPages.Craft.Create.Stop"]:LeftClick
     wait 15
 }
 ```
@@ -1562,9 +1562,9 @@ function CraftOne(int64 recipeID)
     wait 15
 
     ; Click Begin
-    if ${EQ2UIPage[Tradeskills,Tradeskills].Child[button,Tradeskills.TabPages.Craft.Create.Begin](exists)}
+    if ${EQ2UIPage[Tradeskills,Tradeskills].Child["Tradeskills.TabPages.Craft.Create.Begin"](exists)}
     {
-        EQ2UIPage[Tradeskills,Tradeskills].Child[button,Tradeskills.TabPages.Craft.Create.Begin]:LeftClick
+        EQ2UIPage[Tradeskills,Tradeskills].Child["Tradeskills.TabPages.Craft.Create.Begin"]:LeftClick
         wait 10
     }
 
@@ -1604,9 +1604,9 @@ function CraftOne(int64 recipeID)
     ; Stop when quality reached
     if ${CurrentQuality} >= ${TargetQuality} && !${complete}
     {
-        if ${EQ2UIPage[Tradeskills,Tradeskills].Child[button,Tradeskills.TabPages.Craft.Create.Stop](exists)}
+        if ${EQ2UIPage[Tradeskills,Tradeskills].Child["Tradeskills.TabPages.Craft.Create.Stop"](exists)}
         {
-            EQ2UIPage[Tradeskills,Tradeskills].Child[button,Tradeskills.TabPages.Craft.Create.Stop]:LeftClick
+            EQ2UIPage[Tradeskills,Tradeskills].Child["Tradeskills.TabPages.Craft.Create.Stop"]:LeftClick
             wait 10
         }
     }
