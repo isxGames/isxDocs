@@ -529,13 +529,14 @@ call Greet "Bob" 120
 
 ### Function with Return
 ```lavishscript
-function GetHealth() returns int
+function GetHealth()
 {
     return ${Me.CurrentHealth}
 }
 
+call GetHealth
 variable int HP
-HP:Set[${GetHealth}]
+HP:Set[${Return}]
 ```
 
 ---
