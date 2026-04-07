@@ -424,7 +424,7 @@ ISXEQ2 provides powerful query capabilities to filter and search collections.
 ```lavishscript
 ; Find actors within 50 meters at level 120
 variable index:actor NearbyActors
-EQ2:GetActors[NearbyActors,"Distance < 50 && Level == 120"]
+EQ2:QueryActors[NearbyActors, Distance < 50 && Level == 120]
 
 ; Find inventory items containing "Potion"
 variable index:item Potions

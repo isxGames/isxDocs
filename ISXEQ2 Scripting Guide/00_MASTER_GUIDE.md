@@ -231,7 +231,7 @@ Radar                       ; Show all actors on radar
 ### Examples
 ```lavishscript
 ; Find actors
-EQ2:GetActors[Index,"Distance < 50 && Level == 120"]
+EQ2:QueryActors[Index, Distance < 50 && Level == 120]
 
 ; Find inventory items
 Me:QueryInventory[Items,"Name =- \"Potion\" && Quantity > 1"]
