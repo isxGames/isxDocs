@@ -981,7 +981,7 @@ atom(script) EQ2_onIncomingChatText(int ChatType, string Message, string Speaker
 
 function main()
 {
-	Event[EQ2_onIncomingText]:AttachAtom[EQ2_onIncomingText]
+	Event[EQ2_onIncomingChatText]:AttachAtom[EQ2_onIncomingChatText]
 
 	echo Listening for group commands: !pause, !resume, !status
 
