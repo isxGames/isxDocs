@@ -3445,7 +3445,7 @@ atom(script) EQ2_ActorSpawned(string ID, string Name, string Level, string Type)
 
 | Event | Parameters | Description |
 |-------|-----------|-------------|
-| EQ2_onIncomingChatText | int ChatType, string Message, string Speaker, string Target, string SpeakerIsNPC, string ChannelName, int SpeakerID, int TargetID, string UnknownString | All chat-channel text. SpeakerIsNPC is "TRUE"/"FALSE". 9 parameters total |
+| EQ2_onIncomingChatText | int ChatType, string Message, string Speaker, string Target, string SpeakerIsNPC, string ChannelName, int SpeakerID, int TargetID | All chat-channel text. SpeakerIsNPC is "TRUE"/"FALSE". 8 parameters total |
 | EQ2_onIncomingText | string Text, int Type | ALL incoming text including system messages, combat feedback, popups. Also fires for chat text. Use EQ2_onIncomingChatText for chat-specific handling |
 | EQ2_onAnnouncement | string Text, string SoundType, float Timer | On-screen announcement/popup message appears. Color codes are stripped from Text |
 

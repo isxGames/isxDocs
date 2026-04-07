@@ -1046,7 +1046,7 @@ function RegisterEvents()
     Event[EQ2_FinishedZoning]:AttachAtom[OnZoneEnd]
 }
 
-atom OnChat(int ChatType, string Message, string Speaker, string Target, string SpeakerIsNPC, string ChannelName, int SpeakerID, int TargetID, string UnkString1)
+atom OnChat(int ChatType, string Message, string Speaker, string Target, string SpeakerIsNPC, string ChannelName, int SpeakerID, int TargetID)
 {
     ; Handle chat events
 }

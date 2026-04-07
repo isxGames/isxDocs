@@ -392,7 +392,7 @@ function TryCastAbility(string abilityName)
     }
 }
 
-atom OnCombatText(int ChatType, string Message, string Speaker, string Target, string SpeakerIsNPC, string ChannelName, int SpeakerID, int TargetID, string UnkString1)
+atom OnCombatText(int ChatType, string Message, string Speaker, string Target, string SpeakerIsNPC, string ChannelName, int SpeakerID, int TargetID)
 {
     ; Detect combat messages
     if ${Message.Find["You are being attacked"]}
@@ -1050,7 +1050,7 @@ function main()
     Event[EQ2_onIncomingChatText]:DetachAtom[OnChat]
 }
 
-atom OnChat(int ChatType, string Message, string Speaker, string Target, string SpeakerIsNPC, string ChannelName, int SpeakerID, int TargetID, string UnkString1)
+atom OnChat(int ChatType, string Message, string Speaker, string Target, string SpeakerIsNPC, string ChannelName, int SpeakerID, int TargetID)
 {
     ; Only process tells (ChatType 7)
     if ${ChatType} != 7

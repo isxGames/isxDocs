@@ -577,7 +577,7 @@ function main()
 }
 
 ; Chat event handler
-atom OnChat(int ChatType, string Message, string Speaker, string Target, string SpeakerIsNPC, string ChannelName, int SpeakerID, int TargetID, string UnkString1)
+atom OnChat(int ChatType, string Message, string Speaker, string Target, string SpeakerIsNPC, string ChannelName, int SpeakerID, int TargetID)
 {
     ; React to tells
     if ${ChatType} == 7  ; Tell
