@@ -964,8 +964,8 @@ Player character datatype. Inherits all members and methods from [actor](#actor)
 | Achievement[index/name] | [achievement](#achievement) | Get achievement by index or name |
 | IsInPVP | bool | TRUE if in PVP zone |
 | IsHated | bool | TRUE if hated |
-| PowerRegen | float | Power regeneration rate |
-| HealthRegen | float | Health regeneration rate |
+| PowerRegen | int64 | Power regeneration rate |
+| HealthRegen | int64 | Health regeneration rate |
 | InZone | bool | TRUE if fully loaded in zone |
 | CameraPitch | float | Camera pitch angle |
 
