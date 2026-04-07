@@ -1941,11 +1941,4 @@ TM:Destroy
 - LERN/LMAC audio documentation and examples (audio-1.md, audio-1.iss)
 - LERN/LMAC web request documentation and examples (webrequest-1.md, webrequest-1.iss)
 - Complete coverage of task types, task managers, custom tasks, and patterns
-
----
-
-*Last Updated: 2025-10-21*
-*LavishMachine (LMAC) - Complete Coverage*
-
-*Part of ISXEVE Scripting Guide*
 <!-- CLAUDE_SKIP_END -->

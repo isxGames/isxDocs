@@ -11508,8 +11508,3 @@ This reference covers **the most commonly used ~20 ISXEVE datatypes** in EVE Onl
 - ❌ Don't use deprecated cargo API (`MyShip:GetCargo[]`)
 - ❌ Don't iterate all entities manually
 - ❌ Don't query entities every frame
-
----
-
-*Last Updated: 2025-10-26*
-*Part of ISXEVE Scripting Guide*

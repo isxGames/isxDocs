@@ -1241,8 +1241,3 @@ if ${Entity.IsLockedTarget}
 - Assuming instant actions
 - No error handling
 - Magic numbers (use constants)
-
----
-
-*Last Updated: 2025-10-26*
-*Part of ISXEVE Scripting Guide*

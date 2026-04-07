@@ -4970,10 +4970,4 @@ The `slider.handle` template from DefaultSkin.json provides:
 **Key Takeaway:**
 
 Sliders use **direct styling** and **templates at the element level**, NOT `contentContainer` like checkboxes. Always include `borderThickness` and `borderBrush` to make the slider track visible.
-
----
-
-*Last Updated: 2025-10-30*
-*Covers: LavishGUI 1 → LavishGUI 2 migration*
-
 <!-- CLAUDE_SKIP_END -->

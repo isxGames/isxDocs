@@ -767,8 +767,4 @@ You've completed the ISXEVE Quick Start Guide! You now know how to:
 - ✓ Use TLOs and object members
 - ✓ Handle existence checking
 - ✓ Run and debug scripts
-
----
-
-*Last Updated: 2025-10-26*
 <!-- CLAUDE_SKIP_END -->

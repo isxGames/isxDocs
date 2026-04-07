@@ -469,13 +469,4 @@ if ${Item:First(exists)}
 | **.NET Development** | [19_DotNet_Development.md](19_DotNet_Development.md) |
 | **Advanced Patterns** | [22_Advanced_Scripting_Patterns.md](22_Advanced_Scripting_Patterns.md) |
 | **Utility Patterns** | [23_Utility_Script_Patterns.md](23_Utility_Script_Patterns.md) |
-
 ---
-
-<!-- CLAUDE_SKIP_START -->
----
-
-*Last Updated: 2025-10-26*
-
-*Master Guide for Quick API Reference*
-<!-- CLAUDE_SKIP_END -->

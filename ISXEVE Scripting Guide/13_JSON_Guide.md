@@ -1728,11 +1728,4 @@ method FromJSON(jsonvalueref jo)
 - LERN/JSON serialization examples (serialize-1 through serialize-4)
 - Complete coverage of jsonvalue, jsonvalueref, jsonobject, jsonarray
 - Real-world use cases and patterns
-
----
-
-*Last Updated: 2025-10-21*
-*LavishScript JSON API - Complete Coverage*
-
-*Part of ISXEVE Scripting Guide*
 <!-- CLAUDE_SKIP_END -->

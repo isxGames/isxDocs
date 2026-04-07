@@ -1085,16 +1085,4 @@ uiScale:Set[${LavishSettings[MyScript].Set[UI].GetSetting[ScaleFactor,1.0]}]
 5. **Adjust** hard-coded window dimensions if needed
 6. **Enable** debug mode if troubleshooting issues
 
----
-
-## Additional Resources
-
-- **Example Implementation:** [EQ2BotCommander_LGUI2.iss](https://github.com/isxGames/isxScripts/blob/master/EverQuest2/Scripts/EQ2BotCommander_LGUI2.iss)
-- **Scaling Library Source:** [LGUI2Scaling.iss](https://github.com/isxGames/isxScripts/blob/master/EverQuest2/Scripts/LGUI2Scaling.iss)
-
----
-
-*Last Updated: 2025-10-25*
-
-*Part of ISXEVE Scripting Guide*
 <!-- CLAUDE_SKIP_END -->

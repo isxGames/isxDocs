@@ -796,8 +796,3 @@ These utility patterns form the foundation of robust ISXEVE scripts:
 15. **ExecuteQueued** - UI-safe queued operations
 
 Use these patterns as building blocks for your ISXEVE automation projects.
-
----
-
-*Last Updated: 2025-10-26*
-*Part of ISXEVE Scripting Guide*

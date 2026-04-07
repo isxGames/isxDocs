@@ -390,15 +390,4 @@ Found an error or have an improvement? This documentation was generated using ac
   - Comprehensive coverage of ISXEVE API
   - Analysis of [EVEBot](https://github.com/CyberTech/EVEBot/tree/master/Branches/Stable), [Yamfa](https://github.com/isxGames/isxScripts/tree/master/EVE-Online/Scripts/Yamfa), [Tehbot](https://github.com/isxGames/Tehbot) architectures
   - LavishScript fundamentals and patterns
-  <!-- CLAUDE_SKIP_END -->
-
----
-
-## License
-
-This documentation is provided for educational and reference purposes for ISXEVE script development. ISXEVE, InnerSpace, and EVE Online are properties of their respective owners.
-
----
-
-*Last Updated: 2025-10-26*
-*Comprehensive ISXEVE Scripting Reference*
+<!-- CLAUDE_SKIP_END -->

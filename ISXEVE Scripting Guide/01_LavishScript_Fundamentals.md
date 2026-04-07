@@ -3056,7 +3056,5 @@ echo "CursorX: ${LGUI2.CursorX}
 - **LERN Examples:** https://github.com/LavishSoftware/LERN/tree/master
 
 ---
-
-*Last Updated: 2025-10-26*
 *Based on LERN/LS Tutorial Series: https://github.com/LavishSoftware/LERN/tree/master/LS (19 lessons)**
 
