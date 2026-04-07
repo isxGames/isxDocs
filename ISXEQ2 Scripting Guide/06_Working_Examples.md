@@ -874,8 +874,8 @@ function SellJunkItems()
                 {
                     echo "Selling: ${ItemIt.Value.Name} (${ItemIt.Value.Quantity})"
 
-                    ; Sell the item to the merchant
-                    ItemIt.Value:Sell[${ItemIt.Value.Quantity}]
+                    ; Sell via MerchantWindow.MyInventory (merchandise type has :Sell)
+                    MerchantWindow.MyInventory["${ItemIt.Value.Name}"]:Sell[${ItemIt.Value.Quantity}]
                     soldCount:Inc
                     wait 5
                 }
