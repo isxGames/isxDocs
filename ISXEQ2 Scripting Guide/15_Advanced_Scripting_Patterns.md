@@ -140,7 +140,8 @@ function main()
     if !${Script[HarvestMover](exists)}
         runscript "${LavishScript.HomeDirectory}/Scripts/HarvestMover"
 
-    wait ${Script[HarvestScanner](exists)} && ${Script[HarvestMover](exists)}
+    ; Wait for both threads to start (up to 5 seconds)
+    wait 50 ${Script[HarvestScanner](exists)} && ${Script[HarvestMover](exists)}
 
     echo "Harvest bot started - all threads running"
 
