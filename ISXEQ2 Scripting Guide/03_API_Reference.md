@@ -466,7 +466,7 @@ Zone information.
 | Name | string | Zone full name |
 | ShortName | string | Zone short name |
 | ID | uint | Zone ID |
-| Description | string | Zone description |
+| RoomID | uint | Room ID within the zone |
 
 **Example Usage:**
 ```lavishscript
