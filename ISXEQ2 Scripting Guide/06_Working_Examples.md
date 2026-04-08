@@ -767,19 +767,24 @@ function ListActiveQuests()
     variable int numQuests = ${QuestJournalWindow.NumActiveQuests}
     echo "=== Active Quests (${numQuests}) ==="
 
-    variable int i
-    for (i:Set[1]; ${i} <= ${numQuests}; i:Inc)
-    {
-        variable quest CurrentQuest
-        CurrentQuest:Set[${QuestJournalWindow.ActiveQuest[${i}]}]
+    ; Populate an index with all active quests
+    variable index:quest ActiveQuests
+    variable iterator QuestIt
+    QuestJournalWindow:GetActiveQuests[ActiveQuests]
+    ActiveQuests:GetIterator[QuestIt]
 
-        if ${CurrentQuest(exists)}
+    variable int count = 1
+    if ${QuestIt:First(exists)}
+    {
+        do
         {
-            echo "${i}. ${CurrentQuest.Name}"
-            echo "   Level: ${CurrentQuest.Level}"
-            echo "   Category: ${CurrentQuest.Category}"
-            echo "   Zone: ${CurrentQuest.CurrentZone}"
+            echo "${count}. ${QuestIt.Value.Name}"
+            echo "   Level: ${QuestIt.Value.Level}"
+            echo "   Category: ${QuestIt.Value.Category}"
+            echo "   Zone: ${QuestIt.Value.CurrentZone}"
+            count:Inc
         }
+        while ${QuestIt:Next(exists)}
     }
 }
 ```
