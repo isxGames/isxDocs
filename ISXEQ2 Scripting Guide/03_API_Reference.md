@@ -583,21 +583,10 @@ Quest/loot reward.
 | Member | Type | Description |
 |--------|------|-------------|
 | LinkID | uint | Item link ID |
-| ToLink | string | Creates clickable chat link |
-| Type | string | Reward type |
-| IsItemInfoAvailable | bool | TRUE if item info is available |
-| ToItemInfo | [iteminfo](#iteminfo) | Converts to detailed iteminfo datatype |
-
-#### Methods
-
-| Method | Parameters | Description |
-|--------|-----------|-------------|
-| Examine | - | Examines the reward |
 
 **Example Usage:**
 ```lavishscript
-echo ${RewardWindow.Reward[1].Name}
-RewardWindow.Reward[1]:Examine
+echo ${RewardWindow.Reward[1].LinkID}
 ```
 
 ---
