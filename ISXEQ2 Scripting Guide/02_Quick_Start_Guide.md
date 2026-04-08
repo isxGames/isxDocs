@@ -390,6 +390,8 @@ Add this to show your first few abilities:
 ```lavishscript
 echo ""
 echo "First 5 Abilities:"
+; Note: ToAbilityInfo loads asynchronously. In production scripts,
+; check IsAbilityInfoAvailable before accessing ToAbilityInfo members.
 variable int i
 for (i:Set[1]; ${i} <= 5 && ${i} <= ${Me.NumAbilities}; i:Inc)
 {
