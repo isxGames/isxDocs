@@ -755,7 +755,8 @@ Base datatype for all actors (NPCs, PCs, objects) in the game world.
 | UpdatesGroupMemberQuest | bool | TRUE if updates group member quest |
 | ActiveStateExists["state"] | bool | TRUE if actor has the specified active state |
 | OffersQuest | string | Quest type offered ("normal", "repeatable", "tradeskill", "gray", "storyline") or NULL if none |
-| CheckCollision[x,y,z] | bool | TRUE if collision exists to specified point |
+| CheckCollision | bool | TRUE if collision exists between player and this actor |
+| CheckCollision[x,y,z] | bool | TRUE if collision exists between this actor and specified point |
 
 #### Methods
 
