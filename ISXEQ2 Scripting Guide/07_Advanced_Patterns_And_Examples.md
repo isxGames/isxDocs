@@ -553,8 +553,9 @@ function main()
     do
     {
         call Check_Triggers
+        waitframe
     }
-    while 1  ; Loop endlessly
+    while 1
 }
 
 ; Harvest function called when trigger matches
