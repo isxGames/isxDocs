@@ -2920,13 +2920,30 @@ Item reforge window. Inherits from [eq2window](#eq2window).
 
 | Member | Type | Description |
 |--------|------|-------------|
-| Item | [iteminfo](#iteminfo) | Item being reforged |
+| ItemName | eq2text | Item name text element |
+| StatsText | eq2text | Stats display text element |
+| SourceDiff | eq2text | Source stat difference text |
+| DestDiff | eq2text | Destination stat difference text |
+| ReforgeItemNameAndPrice | eq2text | Reforge item name and price text |
+| DecorationName | eq2text | Decoration name text |
+| Copper | eq2text | Copper cost text |
+| Silver | eq2text | Silver cost text |
+| Gold | eq2text | Gold cost text |
+| Platinum | eq2text | Platinum cost text |
+| AttributeSlider | eq2sliderbar | Attribute selection slider |
+| ReforgeItemIcon | eq2icon | Reforge item icon |
+| DecorationSlot | eq2icon | Decoration slot icon |
+| ReforgeButton | eq2button | Reforge confirmation button |
+| CancelReforgeButton | eq2button | Cancel reforge button |
+| SourceDropdown | eq2dropdownbox | Source stat dropdown |
+| DestDropdown | eq2dropdownbox | Destination stat dropdown |
 
 Plus all members from [eq2window](#eq2window)
 
 **Example Usage:**
 ```lavishscript
-echo ${ReforgeWindow.Item.Name}
+echo ${ReforgeWindow.ItemName.GetProperty[LocalText]}
+echo ${ReforgeWindow.StatsText.GetProperty[LocalText]}
 ```
 
 ---
