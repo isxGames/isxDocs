@@ -336,7 +336,7 @@ Extension information and utilities.
 | Version | string | ISXEQ2 version string |
 | APIVersion | string | API version string |
 | IsReady | bool | TRUE if extension is ready for use |
-| EQ2LocsCount[allzones] | int | Number of saved locations (pass TRUE for all zones) |
+| EQ2LocsCount[AllZones] | int | Number of saved locations (pass AllZones for all zones, omit for current zone only) |
 | IsValidEQ2PressKey[keyname] | bool | TRUE if key name is valid for EQ2 |
 | AfflictionEventsOn | bool | TRUE if affliction events are enabled |
 | GetCustomVariable[name,type] | variable | Gets custom variable value |
