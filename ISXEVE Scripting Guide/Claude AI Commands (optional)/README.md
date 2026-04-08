@@ -68,4 +68,4 @@ The architecture is designed to conserve context:
 - Large script analysis happens in agent context
 - Only results/summaries return to main conversation
 
-ISXEVE has 10 large files (3,000+ lines) that the agent will delegate to sub-subagents when needed, including the massive API Reference (~11,500 lines).
+ISXEVE has several large files that the agent will delegate to sub-subagents when needed, including the massive API Reference.

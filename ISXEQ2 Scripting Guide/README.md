@@ -57,7 +57,7 @@ This comprehensive guide provides complete documentation for creating, debugging
    Complete guide to creating custom user interfaces with XML (LavishGUI 1). Learn windows, buttons, checkboxes, tabs, events, script-to-UI interaction, templates, and skinning. **Note:** LavishGUI 1 is legacy - use LavishGUI 2 for new scripts.
 
 10. **[09_Advanced_LGUI1_Patterns.md](09_Advanced_LGUI1_Patterns.md)** - Advanced LavishGUI 1 Patterns
-    Real-world patterns from production scripts. Deep UI navigation with FindChild, alpha-based show/hide, Script:QueueCommand communication, settings integration, color-coded lists, dynamic element visibility, and production patterns. Analyzed from [MyPrices](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/MyPrices) broker script (3937 lines).
+    Real-world patterns from production scripts. Deep UI navigation with FindChild, alpha-based show/hide, Script:QueueCommand communication, settings integration, color-coded lists, dynamic element visibility, and production patterns. Analyzed from [MyPrices](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/MyPrices) broker script.
 
 11. **[10_LavishGUI2_UI_Guide.md](10_LavishGUI2_UI_Guide.md)** - LavishGUI 2 UI Creation (Modern)
     Complete guide to creating custom user interfaces with JSON (LavishGUI 2). Covers all element types, data binding, event handlers, templates, styling, and advanced features. **Recommended for all new scripts.**
@@ -84,7 +84,7 @@ This comprehensive guide provides complete documentation for creating, debugging
     Advanced patterns for tradeskill automation from [EQ2Craft](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2Craft). Covers command-line argument parsing, navigation integration, localization support, UI state management, recipe queue management, crafting window monitoring, event-driven crafting loops, device targeting, writ automation, durability/quality management, reaction arts system, progress tracking, and file-based configuration. 13 complete patterns with full working example.
 
 19. **[18_Navigation_Library_Patterns.md](18_Navigation_Library_Patterns.md)** - Navigation and Pathfinding
-    Production-grade navigation patterns from EQ2Nav library (1,187 lines). Covers LavishNav integration, Dijkstra pathfinding, region-based navigation, collision detection, stuck detection/recovery, door automation, aggro detection integration, direct vs pathfinding movement, dual precision system, and performance optimization. 10 major patterns with 3 complete working examples (simple nav, waypoints, aggro handling).
+    Production-grade navigation patterns from EQ2Nav library. Covers LavishNav integration, Dijkstra pathfinding, region-based navigation, collision detection, stuck detection/recovery, door automation, aggro detection integration, direct vs pathfinding movement, dual precision system, and performance optimization. 10 major patterns with 3 complete working examples (simple nav, waypoints, aggro handling).
 
 ---
 
@@ -276,13 +276,13 @@ ISXEQ2 provides 38+ events you can react to:
 
 This guide was created by analyzing:
 
-1. **Official ISXEQ2 Reference** - ISXEQ2Changes.txt (7,661 lines)
-2. **ISXEQ2 Source Code** - (100+ files, ~120,000 lines of C++)
-3. **EQ2Bot Scripts** - https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2Bot (7,509 lines main script + 20+ class routines + 39 UI files)
-4. **MyPrices Script** - https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/MyPrices (3,937 lines main script + 3,288 line UI file)
+1. **Official ISXEQ2 Reference** - ISXEQ2Changes.txt
+2. **ISXEQ2 Source Code** - (100+ C++ files)
+3. **EQ2Bot Scripts** - https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2Bot (main script + 20+ class routines + 39 UI files)
+4. **MyPrices Script** - https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/MyPrices (main script + UI file)
 5. **EQ2OgreFree Scripts** - https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2OgreFree - Old production scripts with advanced patterns (multi-threading, LavishNav, LavishSettings, modern APIs)
 6. **EQ2Track Script** - https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2Track - Actor tracking utility demonstrating UI patterns, collections, file discovery, zone-aware configuration
-7. **EQ2BJCommon Scripts** - https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2BJCommon (bjauction, bjlooter, bjmagic, bjshuffle, bjxpbot - ~2,500 lines of utility scripts)
+7. **EQ2BJCommon Scripts** - https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2BJCommon (bjauction, bjlooter, bjmagic, bjshuffle, bjxpbot)
 8. **Production Scripts** - [EQ2Craft](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2Craft), [EQ2RaidAttendance](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2RaidAttendance)
 9. **Example Scripts** - https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts (45+ example scripts)
 10. **LavishGUI 1 Documentation** - https://www.lavishsoft.com/wiki/index.php/LavishGUI
@@ -355,15 +355,13 @@ Found an error or have an improvement? This documentation was generated using ac
   - Updated all 4 guides with scalable title bar documentation:
     - 10_LavishGUI2_UI_Guide.md: Added custom titleBar to Window section
     - 11_LavishGUI1_to_LavishGUI2_Migration.md: Added scalable window pattern
-    - 12_LGUI2_Scaling_System.md: Added "Creating Scalable Title Bars" section (335 lines)
+    - 12_LGUI2_Scaling_System.md: Added "Creating Scalable Title Bars" section
     - EQ2Bot/UI/LGUI2_MIGRATION_GUIDE.md: Added section 1.2 as recommended default
   - Established 2x scaling baseline (font 40, padding 12, border 2) as standard
   - Corrected event documentation: Added 50+ events from DefaultSkin.json analysis
-  - Updated FILE_MANIFEST.md with accurate line counts (35,248 lines total)
-  - Total documentation: 35,248 lines across 20 files
 
 - **2.9** (2025-10-25)
-  - Added LGUI2 Scaling System guide (1,102 lines)
+  - Added LGUI2 Scaling System guide
   - Analyzed EQ2BotCommander LGUI1→LGUI2 migration with scaling implementation
   - Complete UI scaling patterns: dynamic JSON preprocessing, window position preservation, percentage-to-absolute conversion, button width adjustment (85%), font injection/scaling
   - Real-world example: EQ2BotCommander scaled 2x (800x800→1600x1600)
@@ -372,40 +370,39 @@ Found an error or have an improvement? This documentation was generated using ac
   - Renumbered files 13-18 to insert new guide after migration guide
 
 - **2.8** (2025-10-23)
-  - Added Navigation Library Patterns guide (~8,000 lines)
-  - Analyzed EQ2Navigation library: EQ2Nav_Lib.iss (1,187 lines), EQ2NavMapper_Lib.iss, EQ2NavAggressionHandler.iss, EQ2NavObstacleHandler.iss, EQ2NavFaceClass_Lib.iss (~1,200 lines total)
+  - Added Navigation Library Patterns guide
+  - Analyzed EQ2Navigation library: EQ2Nav_Lib.iss, EQ2NavMapper_Lib.iss, EQ2NavAggressionHandler.iss, EQ2NavObstacleHandler.iss, EQ2NavFaceClass_Lib.iss
   - 10 major navigation patterns: LavishNav integration, Dijkstra pathfinding algorithm, region-based navigation, collision detection, stuck detection and recovery, door automation, aggro detection integration, direct vs pathfinding movement, dual precision system, performance optimization
   - 3 complete working examples: SimpleNav (basic navigation), MultiStop (waypoint navigation), SafeNav (navigation with aggro handling)
   - Updated README navigation with 10 new navigation pattern links
-  - Updated Advanced LGUI1 Patterns with 8 new patterns from EQ2Bot UI (2,498 line main UI + 39 class UIs)
-  - Updated Advanced LGUI1 Patterns with 14 new patterns from EQ2Craft UI (1,802 line UI)
-  - Total documentation now exceeds 107,000 lines across 19 files
+  - Updated Advanced LGUI1 Patterns with 8 new patterns from EQ2Bot UI (main UI + 39 class UIs)
+  - Updated Advanced LGUI1 Patterns with 14 new patterns from EQ2Craft UI
 
 - **2.7** (2025-10-23)
-  - Added Crafting Script Patterns guide (~7,200 lines)
-  - Analyzed EQ2Craft script (~15,000 lines total with includes)
+  - Added Crafting Script Patterns guide
+  - Analyzed EQ2Craft script (main + includes)
   - 13 crafting patterns: command-line argument parsing, navigation integration, localization/multi-language support, UI state management, recipe queue management, crafting window monitoring, event-driven crafting loops, device/station targeting, writ automation, durability/quality management, reaction arts system, progress tracking/statistics, file-based configuration
   - Complete working example: SimpleCraft automation script
   - Updated README navigation with 10 new crafting pattern links
   - Updated all navigation and learning paths
-  - Total documentation now exceeds 99,000 lines across 18 files
+
 
 - **2.6** (2025-10-23) - Utility Script Patterns from EQ2BJCommon
-  - Added Utility Script Patterns guide (16_Utility_Script_Patterns.md, ~6,000 lines)
-  - Analyzed EQ2BJCommon scripts: bjauction, bjlooter, bjmagic, bjshuffle, bjxpbot (~2,500 lines total)
+  - Added Utility Script Patterns guide (16_Utility_Script_Patterns.md)
+  - Analyzed EQ2BJCommon scripts: bjauction, bjlooter, bjmagic, bjshuffle, bjxpbot
   - 18 utility patterns: custom timers, time calculations, currency tracking, position tracking, character-specific configs, dynamic file loading, prioritized items, event parsing, EQ2DataSourceContainer, randomized movement, item verification, ApplyVerb, ReplyDialog, audio alerts, input validation, XP tracking, script existence checking, ExecuteQueued loops
   - Complete working examples for auto-potion scripts, treasure hunting, and XP tracking
   - Updated navigation, learning paths, and source materials
 - **2.5** (2025-10-23) - Advanced LavishGUI 1 Patterns and LGUI2 Limitations
   - Added Advanced LGUI1 Patterns guide (09_Advanced_LGUI1_Patterns.md)
-  - Analyzed MyPrices broker script (3,937 lines + 3,288 line UI)
+  - Analyzed MyPrices broker script
   - Real-world patterns: FindChild navigation, alpha-based show/hide, Script:QueueCommand, settings integration, color-coded lists
   - Documented LGUI2 limitation: custom C++ element types not supported (radar migration failed)
   - Updated migration guide with Known Limitations section
   - Renumbered files to insert new guide after LGUI1 guide
   - Updated navigation and learning paths
 - **2.4** (2025-10-21) - Advanced Scripting Patterns from EQ2OgreFree and EQ2Track
-  - Added production-grade patterns guide (15_Advanced_Scripting_Patterns.md, ~3,961 lines)
+  - Added production-grade patterns guide (15_Advanced_Scripting_Patterns.md)
   - Analyzed EQ2OgreFree scripts (43 files) and EQ2Track script
   - 14 patterns total: multi-threading, LavishSettings, LavishNav, timer objects, UI sync, modern EQ2:GetActors, triggers, controller pattern, dynamic variables, injectable UI, UI initialization guards, collection-based exclusion, file-based discovery, zone-aware auto-configuration
   - Replaced deprecated CustomActorArray with modern EQ2:GetActors throughout all guides

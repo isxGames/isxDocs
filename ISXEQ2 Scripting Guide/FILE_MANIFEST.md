@@ -10,37 +10,37 @@
 ## Documentation Files Created
 
 ### Core Navigation
-| File | Status | Lines | Description |
-|------|--------|-------|-------------|
-| **README.md** | ✅ Complete | 450 | Main navigation hub, overview, and getting started guide |
-| **02_Quick_Start_Guide.md** | ✅ Complete | 749 | 5-10 minute tutorial for beginners with working examples |
-| **FILE_MANIFEST.md** | ✅ Complete | This file | Complete file listing and project statistics |
-| **+How To Use This Guide with Claude Code+.md** | ✅ Complete | 325 | Human-readable instructions for using the guide with Claude Code |
+| File | Status | Description |
+|------|--------|-------------|
+| **README.md** | ✅ Complete | Main navigation hub, overview, and getting started guide |
+| **02_Quick_Start_Guide.md** | ✅ Complete | 5-10 minute tutorial for beginners with working examples |
+| **FILE_MANIFEST.md** | ✅ Complete | Complete file listing and project statistics |
+| **+How To Use This Guide with Claude Code+.md** | ✅ Complete | Human-readable instructions for using the guide with Claude Code |
 
 ### Comprehensive Documentation
-| File | Status | Lines | Description |
-|------|--------|-------|-------------|
-| **00_MASTER_GUIDE.md** | ✅ Complete | 613 | Master reference with organized links to all APIs, commands, events |
-| **01_LavishScript_Fundamentals.md** | ✅ Complete | 3,045 | Complete LavishScript programming guide (variables, functions, objects, loops, index, webrequest, audio) |
-| **02_Quick_Start_Guide.md** | ✅ Complete | 751 | Quick start tutorial for beginners |
-| **03_API_Reference.md** | ✅ Complete | 3,559 | Complete API documentation (all TLOs, datatypes, commands, 38 events) |
-| **04_Core_Concepts.md** | ✅ Complete | 862 | Essential ISXEQ2 concepts (datatypes, queries, async, inheritance) |
-| **05_Patterns_And_Best_Practices.md** | ✅ Complete | 1,098 | Coding patterns from [EQ2Bot](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2Bot) analysis |
-| **06_Working_Examples.md** | ✅ Complete | 1,156 | Real-world code examples for common tasks |
-| **07_Advanced_Patterns_And_Examples.md** | ✅ Complete | 1,635 | Advanced patterns (mouse automation, XML config, broker, navigation) |
-| **08_LavishGUI1_UI_Guide.md** | ✅ Complete | 1,305 | LavishGUI 1 UI creation guide (XML-based, legacy) |
-| **09_Advanced_LGUI1_Patterns.md** | ✅ Complete | 1,458 | Real-world LGUI1 patterns from [MyPrices](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/MyPrices) script |
-| **10_LavishGUI2_UI_Guide.md** | ✅ Complete | 7,611 | LavishGUI 2 UI creation guide (JSON-based, modern) with scalable title bars |
-| **11_LavishGUI1_to_LavishGUI2_Migration.md** | ✅ Complete | 4,959 | Migration guide from LGUI1 to LGUI2 with scalable title bars and limitations |
-| **12_LGUI2_Scaling_System.md** | ✅ Complete | 1,100 | Dynamic UI scaling system for LGUI2 interfaces with custom title bar patterns |
-| **13_JSON_Guide.md** | ✅ Complete | 1,734 | Complete JSON guide (parsing, serialization, file I/O) |
-| **14_LavishMachine_Guide.md** | ✅ Complete | 1,947 | Asynchronous task system (audio, web requests, custom tasks) |
-| **15_Advanced_Scripting_Patterns.md** | ✅ Complete | 3,961 | Production-grade patterns from [EQ2OgreFree](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2OgreFree) and [EQ2Track](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2Track) (14 patterns total) |
-| **16_Utility_Script_Patterns.md** | ✅ Complete | 3,221 | Utility patterns from EQ2BJCommon (18 patterns: timers, tracking, validation, etc.) |
-| **17_Crafting_Script_Patterns.md** | ✅ Complete | 1,731 | Crafting automation patterns from [EQ2Craft](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2Craft) (13 patterns: cmd-line, navigation, localization, queue mgmt, writs, etc.) |
-| **18_Navigation_Library_Patterns.md** | ✅ Complete | 1,067 | Navigation and pathfinding patterns from EQ2Nav (10 patterns: LavishNav, Dijkstra, regions, collision, stuck detection, doors, aggro, precision, optimization) |
+| File | Status | Description |
+|------|--------|-------------|
+| **00_MASTER_GUIDE.md** | ✅ Complete | Master reference with organized links to all APIs, commands, events |
+| **01_LavishScript_Fundamentals.md** | ✅ Complete | Complete LavishScript programming guide (variables, functions, objects, loops, index, webrequest, audio) |
+| **02_Quick_Start_Guide.md** | ✅ Complete | Quick start tutorial for beginners |
+| **03_API_Reference.md** | ✅ Complete | Complete API documentation (all TLOs, datatypes, commands, 38 events) |
+| **04_Core_Concepts.md** | ✅ Complete | Essential ISXEQ2 concepts (datatypes, queries, async, inheritance) |
+| **05_Patterns_And_Best_Practices.md** | ✅ Complete | Coding patterns from [EQ2Bot](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2Bot) analysis |
+| **06_Working_Examples.md** | ✅ Complete | Real-world code examples for common tasks |
+| **07_Advanced_Patterns_And_Examples.md** | ✅ Complete | Advanced patterns (mouse automation, XML config, broker, navigation) |
+| **08_LavishGUI1_UI_Guide.md** | ✅ Complete | LavishGUI 1 UI creation guide (XML-based, legacy) |
+| **09_Advanced_LGUI1_Patterns.md** | ✅ Complete | Real-world LGUI1 patterns from [MyPrices](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/MyPrices) script |
+| **10_LavishGUI2_UI_Guide.md** | ✅ Complete | LavishGUI 2 UI creation guide (JSON-based, modern) with scalable title bars |
+| **11_LavishGUI1_to_LavishGUI2_Migration.md** | ✅ Complete | Migration guide from LGUI1 to LGUI2 with scalable title bars and limitations |
+| **12_LGUI2_Scaling_System.md** | ✅ Complete | Dynamic UI scaling system for LGUI2 interfaces with custom title bar patterns |
+| **13_JSON_Guide.md** | ✅ Complete | Complete JSON guide (parsing, serialization, file I/O) |
+| **14_LavishMachine_Guide.md** | ✅ Complete | Asynchronous task system (audio, web requests, custom tasks) |
+| **15_Advanced_Scripting_Patterns.md** | ✅ Complete | Production-grade patterns from [EQ2OgreFree](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2OgreFree) and [EQ2Track](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2Track) (14 patterns total) |
+| **16_Utility_Script_Patterns.md** | ✅ Complete | Utility patterns from EQ2BJCommon (18 patterns: timers, tracking, validation, etc.) |
+| **17_Crafting_Script_Patterns.md** | ✅ Complete | Crafting automation patterns from [EQ2Craft](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2Craft) (13 patterns: cmd-line, navigation, localization, queue mgmt, writs, etc.) |
+| **18_Navigation_Library_Patterns.md** | ✅ Complete | Navigation and pathfinding patterns from EQ2Nav (10 patterns: LavishNav, Dijkstra, regions, collision, stuck detection, doors, aggro, precision, optimization) |
 
-**Total Documentation:** 43,743 lines across 22 files (19 numbered guides + README + FILE_MANIFEST + How To Use Guide)
+**Total Documentation:** 22 files (19 numbered guides + README + FILE_MANIFEST + How To Use Guide)
 
 ---
 
@@ -48,29 +48,29 @@
 
 ### Primary Sources
 
-| Source | Size | Purpose |
-|--------|------|---------|
-| **Official ISXEQ2 Reference** | 4,715 lines | Complete API reference |
-| **ISXEQ2 Source Code** | ~120,000 lines C++ | Architecture analysis |
-| **EQ2Bot Main Script** | 7,509 lines | Pattern analysis | https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2Bot |
-| **EQ2Bot Library** | 2,861 lines | Best practices | https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2Bot |
-| **EQ2Bot Class Routines** | 20+ files | Implementation patterns | https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2Bot |
-| **MyPrices Script** | 3,937 lines + 3,288 UI | Advanced LGUI1 patterns | https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/MyPrices |
-| **EQ2OgreFree Scripts** | 43 files | Advanced production patterns | https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2OgreFree |
-| **EQ2Track Script** | 3 files | UI patterns, collections, file discovery | https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2Track |
-| **EQ2BJCommon Scripts** | ~2,500 lines (5 utilities) | Utility patterns | https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2BJCommon |
-| **EQ2Craft Script** | ~15,000 lines (main + includes) | Crafting automation patterns | https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2Craft |
-| **EQ2Navigation Library** | ~1,200 lines (5 files) | Pathfinding and navigation | https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2Navigation |
-| **Example Scripts** | 50+ scripts | Usage examples |
-| **LavishGUI 1 Documentation** | Web resource | Legacy UI system |
-| **LavishGUI 2 Documentation** | Web resource | Modern UI system |
-| **LERN/LGUI2 Examples** | 60+ files | LGUI2 patterns | https://github.com/LavishSoftware/LERN/tree/master/LGUI2 |
-| **LERN/JSON Examples** | 12 files | JSON usage | https://github.com/LavishSoftware/LERN/tree/master/JSON |
-| **LERN/LMAC Documentation** | 8 files | Async tasks | https://github.com/LavishSoftware/LERN/tree/master/LMAC |
-| **LERN/LS Tutorial Series** | 19 lessons | LavishScript fundamentals | https://github.com/LavishSoftware/LERN/tree/master/LS |
-| **LERN/Lists Examples** | 5 files | Index type usage | https://github.com/LavishSoftware/LERN/tree/master/Lists |
-| **LERN/Web Examples** | 2 files | Web request patterns | https://github.com/LavishSoftware/LERN/tree/master/Web |
-| **LERN/Audio Examples** | 2 files | Audio system usage | https://github.com/LavishSoftware/LERN/tree/master/Audio |
+| Source | Purpose |
+|--------|---------|
+| **Official ISXEQ2 Reference** | Complete API reference |
+| **ISXEQ2 Source Code** | Architecture analysis |
+| **[EQ2Bot](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2Bot) Main Script** | Pattern analysis |
+| **[EQ2Bot](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2Bot) Library** | Best practices |
+| **[EQ2Bot](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2Bot) Class Routines** | Implementation patterns |
+| **[MyPrices](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/MyPrices) Script** | Advanced LGUI1 patterns |
+| **[EQ2OgreFree](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2OgreFree) Scripts** | Advanced production patterns |
+| **[EQ2Track](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2Track) Script** | UI patterns, collections, file discovery |
+| **[EQ2BJCommon](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2BJCommon) Scripts** | Utility patterns |
+| **[EQ2Craft](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2Craft) Script** | Crafting automation patterns |
+| **[EQ2Navigation](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2Navigation) Library** | Pathfinding and navigation |
+| **Example Scripts** | Usage examples |
+| **LavishGUI 1 Documentation** | Legacy UI system |
+| **LavishGUI 2 Documentation** | Modern UI system |
+| **[LERN/LGUI2](https://github.com/LavishSoftware/LERN/tree/master/LGUI2) Examples** | LGUI2 patterns |
+| **[LERN/JSON](https://github.com/LavishSoftware/LERN/tree/master/JSON) Examples** | JSON usage |
+| **[LERN/LMAC](https://github.com/LavishSoftware/LERN/tree/master/LMAC) Documentation** | Async tasks |
+| **[LERN/LS](https://github.com/LavishSoftware/LERN/tree/master/LS) Tutorial Series** | LavishScript fundamentals |
+| **[LERN/Lists](https://github.com/LavishSoftware/LERN/tree/master/Lists) Examples** | Index type usage |
+| **[LERN/Web](https://github.com/LavishSoftware/LERN/tree/master/Web) Examples** | Web request patterns |
+| **[LERN/Audio](https://github.com/LavishSoftware/LERN/tree/master/Audio) Examples** | Audio system usage |
 
 ### Source Code Analysis Results
 
@@ -299,7 +299,6 @@ This documentation set is specifically designed to serve as a knowledge base for
 All documentation files are contained within this ISXEQ2 Scripting Guide directory:
 
 - 22 total markdown files (19 numbered guides + README + FILE_MANIFEST + How To Use Guide)
-- 43,743 lines of comprehensive documentation
 - Covers beginner to advanced topics
 - Includes LavishScript fundamentals through production-grade patterns
 - Now includes LGUI2 scaling system with scalable title bars for dynamic UI resizing
@@ -315,15 +314,13 @@ All documentation files are contained within this ISXEQ2 Scripting Guide directo
   - Updated all 4 guides with scalable title bar documentation:
     - 10_LavishGUI2_UI_Guide.md: Added custom titleBar to Window section
     - 11_LavishGUI1_to_LavishGUI2_Migration.md: Added scalable window pattern
-    - 12_LGUI2_Scaling_System.md: Added "Creating Scalable Title Bars" section (335 lines)
+    - 12_LGUI2_Scaling_System.md: Added "Creating Scalable Title Bars" section
     - EQ2Bot/UI/LGUI2_MIGRATION_GUIDE.md: Added section 1.2 as recommended default
   - Established 2x scaling baseline (font 40, padding 12, border 2) as standard
   - Corrected event documentation: Added 50+ events from DefaultSkin.json analysis
-  - Updated FILE_MANIFEST.md with accurate line counts
-  - Total documentation: 43,743 lines across 22 files
 
 - **v2.9 (2025-10-25)**
-  - Added LGUI2 Scaling System guide (1,102 lines)
+  - Added LGUI2 Scaling System guide
   - Analyzed EQ2BotCommander LGUI1→LGUI2 migration with scaling implementation
   - Complete UI scaling patterns: dynamic JSON preprocessing, window position preservation, percentage-to-absolute conversion, button width adjustment (85%), font injection/scaling
   - Real-world example: EQ2BotCommander scaled 2x (800x800→1600x1600)
@@ -332,36 +329,33 @@ All documentation files are contained within this ISXEQ2 Scripting Guide directo
   - Renumbered files 13-18 to insert new guide after migration guide
 
 - **v2.8 (2025-10-23)**
-  - Added Navigation Library Patterns guide (~8,000 lines)
-  - Analyzed EQ2Navigation library: EQ2Nav_Lib.iss (1,187 lines), EQ2NavMapper_Lib.iss, EQ2NavAggressionHandler.iss, EQ2NavObstacleHandler.iss, EQ2NavFaceClass_Lib.iss (~1,200 lines total)
+  - Added Navigation Library Patterns guide
+  - Analyzed EQ2Navigation library: EQ2Nav_Lib.iss, EQ2NavMapper_Lib.iss, EQ2NavAggressionHandler.iss, EQ2NavObstacleHandler.iss, EQ2NavFaceClass_Lib.iss
   - 10 major navigation patterns: LavishNav integration, Dijkstra pathfinding algorithm, region-based navigation, collision detection, stuck detection and recovery, door automation, aggro detection integration, direct vs pathfinding movement, dual precision system, performance optimization
   - 3 complete working examples: SimpleNav (basic navigation), MultiStop (waypoint navigation), SafeNav (navigation with aggro handling)
   - Updated README navigation with 10 new navigation pattern links
-  - Updated Advanced LGUI1 Patterns with 8 new patterns from EQ2Bot UI (2,498 line main UI + 39 class UIs)
-  - Updated Advanced LGUI1 Patterns with 14 new patterns from EQ2Craft UI (1,802 line UI)
-  - Total documentation now exceeds 107,000 lines across 19 files
+  - Updated Advanced LGUI1 Patterns with 8 new patterns from EQ2Bot UI (main UI + 39 class UIs)
+  - Updated Advanced LGUI1 Patterns with 14 new patterns from EQ2Craft UI
 
 - **v2.7 (2025-10-23)**
-  - Added Crafting Script Patterns guide (~7,200 lines)
-  - Analyzed EQ2Craft script (~15,000 lines total with includes)
+  - Added Crafting Script Patterns guide
+  - Analyzed EQ2Craft script (main + includes)
   - 13 crafting patterns: command-line argument parsing, navigation integration, localization/multi-language support, UI state management, recipe queue management, crafting window monitoring, event-driven crafting loops, device/station targeting, writ automation, durability/quality management, reaction arts system, progress tracking/statistics, file-based configuration
   - Complete working example: SimpleCraft automation script
   - Updated README navigation with 10 new crafting pattern links
   - Updated all navigation and learning paths
-  - Total documentation now exceeds 99,000 lines across 18 files
 
 - **v2.6 (2025-10-23)**
-  - Added Utility Script Patterns guide (~6,000 lines)
-  - Analyzed EQ2BJCommon scripts: bjauction, bjlooter, bjmagic, bjshuffle, bjxpbot (~2,500 lines total)
+  - Added Utility Script Patterns guide
+  - Analyzed EQ2BJCommon scripts: bjauction, bjlooter, bjmagic, bjshuffle, bjxpbot
   - 18 utility patterns: custom timer objects, time calculations, currency tracking, position tracking, character-specific configs, dynamic file loading, prioritized item lists, event-based text parsing, EQ2DataSourceContainer, randomized movement, item verification, ApplyVerb, ReplyDialog, audio alerts, input validation, progressive XP tracking, script existence checking, ExecuteQueued loops
   - Complete working examples: auto-potion script, treasure chest hunter, multi-type XP tracker
   - Updated README navigation with 18 new utility pattern links
   - Updated all navigation and learning paths
-  - Total documentation now exceeds 92,000 lines across 17 files
 
 - **v2.5 (2025-10-23)**
-  - Added Advanced LGUI1 Patterns guide (~700 lines)
-  - Analyzed [MyPrices](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/MyPrices) broker script (3,937 lines + 3,288 line UI)
+  - Added Advanced LGUI1 Patterns guide
+  - Analyzed [MyPrices](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/MyPrices) broker script
   - Real-world patterns: FindChild navigation, alpha-based show/hide, Script:QueueCommand, settings integration, color-coded lists
   - Documented LGUI2 limitation: custom C++ element types not supported
   - Updated migration guide with Known Limitations section about radar migration failure
@@ -369,7 +363,7 @@ All documentation files are contained within this ISXEQ2 Scripting Guide directo
   - Updated all navigation and learning paths
 
 - **v2.4 (2025-10-21)**
-  - Added Advanced Scripting Patterns guide (~3,961 lines)
+  - Added Advanced Scripting Patterns guide
   - Analyzed 43 EQ2OgreFree script files and EQ2Track script
   - 14 patterns total: multi-threading, LavishSettings, LavishNav, timer objects, UI sync, modern EQ2:GetActors, triggers, controller pattern, dynamic variables, injectable UI, UI initialization guards, collection-based exclusion, file-based discovery, zone-aware auto-configuration
   - Replaced deprecated CustomActorArray with EQ2:GetActors throughout all guides
@@ -377,28 +371,28 @@ All documentation files are contained within this ISXEQ2 Scripting Guide directo
   - Updated all navigation and learning paths
 
 - **v2.3 (2025-10-21)**
-  - Added LavishScript Fundamentals guide (~22,000 lines)
+  - Added LavishScript Fundamentals guide
   - Analyzed 19 LERN/LS tutorial lessons (https://github.com/LavishSoftware/LERN/tree/master/LS)
   - Added Collections/Lists (index), Web Requests, and Audio sections
   - Prerequisite guide for complete beginners
   - Updated all navigation and learning paths
 
 - **v2.2 (2025-10-21)**
-  - Added LavishMachine (LMAC) guide (~6,800 lines)
+  - Added LavishMachine (LMAC) guide
   - Analyzed 8 LERN/LMAC files (https://github.com/LavishSoftware/LERN/tree/master/LMAC)
   - Task managers, custom tasks, controller pattern
   - Audio and web request tasks
   - Complete async task examples
 
 - **v2.1 (2025-10-21)**
-  - Added JSON guide (~3,800 lines)
+  - Added JSON guide
   - Analyzed 12 LERN/JSON files (https://github.com/LavishSoftware/LERN/tree/master/JSON)
   - Serialization/deserialization
   - File I/O and configuration management
 
 - **v2.0 (2025-10-21)**
-  - Added LavishGUI 2 guide (~6,800 lines)
-  - Added LGUI1 to LGUI2 migration guide (~3,200 lines)
+  - Added LavishGUI 2 guide
+  - Added LGUI1 to LGUI2 migration guide
   - Analyzed 60+ LERN/LGUI2 files (https://github.com/LavishSoftware/LERN/tree/master/LGUI2)
   - Modern JSON-based UI development
 

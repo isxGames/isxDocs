@@ -3,9 +3,9 @@
 **Purpose:** Real-world patterns from production scripts
 **Sources:**
 
-- [MyPrices](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/MyPrices) broker script (3,937 lines + 3,288 line UI)
-- [EQ2Craft](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2Craft) automation script (1,802 line UI)
-- [EQ2Bot](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2Bot) combat bot (7,509 lines + 2,498 line main UI + 39 class UIs)
+- [MyPrices](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/MyPrices) broker script
+- [EQ2Craft](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2Craft) automation script
+- [EQ2Bot](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2Bot) combat bot (main script + main UI + 39 class UIs)
 **Target Audience:** Advanced script developers
 
 ---

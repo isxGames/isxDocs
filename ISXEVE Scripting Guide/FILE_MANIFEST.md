@@ -10,39 +10,37 @@
 ## Documentation Files
 
 ### Core Navigation
-| File | Status | Lines | Description |
-|------|--------|-------|-------------|
-| **README.md** | ✅ Complete | 404 | Main navigation hub, overview, and getting started guide |
-| **FILE_MANIFEST.md** | ✅ Complete | 364 | Complete file listing and project statistics (this file) |
+| File | Status | Description |
+|------|--------|-------------|
+| **README.md** | ✅ Complete | Main navigation hub, overview, and getting started guide |
+| **FILE_MANIFEST.md** | ✅ Complete | Complete file listing and project statistics (this file) |
 
 ### Comprehensive Documentation
-| File | Status | Lines | Description |
-|------|--------|-------|-------------|
-| **00_MASTER_GUIDE.md** | ✅ Complete | 481 | Master reference with organized links to all APIs and commands |
-| **01_LavishScript_Fundamentals.md** | ✅ Complete | 3,044 | Beginner-friendly LavishScript programming guide |
-| **02_Quick_Start_Guide.md** | ✅ Complete | 774 | Quick start tutorial for beginners |
-| **03_API_Reference.md** | ✅ Complete | 11,469 | Complete API documentation for all TLOs and datatypes |
-| **04_Core_Concepts.md** | ✅ Complete | 2,882 | Essential ISXEVE concepts and architecture |
-| **05_Patterns_And_Best_Practices.md** | ✅ Complete | 7,526 | Coding patterns and best practices |
-| **06_Working_Examples.md** | ✅ Complete | 2,000 | Real-world code examples |
-| **07_Advanced_Patterns_And_Examples.md** | ✅ Complete | 6,971 | Advanced patterns for complex automation |
-| **08_LavishGUI1_UI_Guide.md** | ✅ Complete | 1,090 | LavishGUI 1 UI creation guide (game-agnostic) |
-| **09_Advanced_LGUI1_Patterns.md** | ✅ Complete | 914 | Advanced LavishGUI 1 patterns (game-agnostic) |
-| **10_LavishGUI2_UI_Guide.md** | ✅ Complete | 6,305 | LavishGUI 2 UI creation guide (game-agnostic) |
-| **11_LavishGUI1_to_LavishGUI2_Migration.md** | ✅ Complete | 3,546 | LGUI1 to LGUI2 migration guide (game-agnostic) |
-| **12_LGUI2_Scaling_System.md** | ✅ Complete | 1,100 | UI scaling system guide (game-agnostic) |
-| **13_JSON_Guide.md** | ✅ Complete | 1,738 | JSON in LavishScript guide (game-agnostic) |
-| **14_LavishMachine_Guide.md** | ✅ Complete | 1,951 | LavishMachine (LMAC) guide (game-agnostic) |
-| **15_Combat_Automation.md** | ✅ Complete | 2,773 | Combat bot patterns and analysis |
-| **16_Mining_And_Hauling.md** | ✅ Complete | 3,974 | Mining and hauling automation |
-| **17_Fleet_Operations.md** | ✅ Complete | 5,860 | Fleet coordination patterns |
-| **18_Bot_Architecture_Analysis.md** | ✅ Complete | 3,848 | Analysis of EVEBot, Yamfa, and Tehbot architectures |
-| **19_DotNet_Development.md** | ✅ Complete | 1,058 | Scripts vs .NET development |
-| **20_Debugging_And_Troubleshooting.md** | ✅ Complete | 3,551 | Debugging and problem solving |
-| **21_Advanced_Scripting_Patterns.md** | ✅ Complete | 1,248 | Production-grade script patterns and organization |
-| **22_Utility_Script_Patterns.md** | ✅ Complete | 803 | Essential utility patterns for robust scripts |
-
-**Total Documentation:** 74,873 lines across 25 files (23 numbered guides + README + FILE_MANIFEST)
+| File | Status | Description |
+|------|--------|-------------|
+| **00_MASTER_GUIDE.md** | ✅ Complete | Master reference with organized links to all APIs and commands |
+| **01_LavishScript_Fundamentals.md** | ✅ Complete | Beginner-friendly LavishScript programming guide |
+| **02_Quick_Start_Guide.md** | ✅ Complete | Quick start tutorial for beginners |
+| **03_API_Reference.md** | ✅ Complete | Complete API documentation for all TLOs and datatypes |
+| **04_Core_Concepts.md** | ✅ Complete | Essential ISXEVE concepts and architecture |
+| **05_Patterns_And_Best_Practices.md** | ✅ Complete | Coding patterns and best practices |
+| **06_Working_Examples.md** | ✅ Complete | Real-world code examples |
+| **07_Advanced_Patterns_And_Examples.md** | ✅ Complete | Advanced patterns for complex automation |
+| **08_LavishGUI1_UI_Guide.md** | ✅ Complete | LavishGUI 1 UI creation guide (game-agnostic) |
+| **09_Advanced_LGUI1_Patterns.md** | ✅ Complete | Advanced LavishGUI 1 patterns (game-agnostic) |
+| **10_LavishGUI2_UI_Guide.md** | ✅ Complete | LavishGUI 2 UI creation guide (game-agnostic) |
+| **11_LavishGUI1_to_LavishGUI2_Migration.md** | ✅ Complete | LGUI1 to LGUI2 migration guide (game-agnostic) |
+| **12_LGUI2_Scaling_System.md** | ✅ Complete | UI scaling system guide (game-agnostic) |
+| **13_JSON_Guide.md** | ✅ Complete | JSON in LavishScript guide (game-agnostic) |
+| **14_LavishMachine_Guide.md** | ✅ Complete | LavishMachine (LMAC) guide (game-agnostic) |
+| **15_Combat_Automation.md** | ✅ Complete | Combat bot patterns and analysis |
+| **16_Mining_And_Hauling.md** | ✅ Complete | Mining and hauling automation |
+| **17_Fleet_Operations.md** | ✅ Complete | Fleet coordination patterns |
+| **18_Bot_Architecture_Analysis.md** | ✅ Complete | Analysis of EVEBot, Yamfa, and Tehbot architectures |
+| **19_DotNet_Development.md** | ✅ Complete | Scripts vs .NET development |
+| **20_Debugging_And_Troubleshooting.md** | ✅ Complete | Debugging and problem solving |
+| **21_Advanced_Scripting_Patterns.md** | ✅ Complete | Production-grade script patterns and organization |
+| **22_Utility_Script_Patterns.md** | ✅ Complete | Essential utility patterns for robust scripts |
 
 ---
 
@@ -264,7 +262,7 @@ Essential utility patterns:
 | Source | Type | Purpose |
 |--------|------|---------|
 | **ISXEVE Extension** | API/Extension | Complete API reference |
-| **EVEBot** | Script (~50,000+ lines) | Multi-purpose automation |
+| **EVEBot** | Script | Multi-purpose automation |
 | **Yamfa** | Script | Fleet assist patterns |
 | **Tehbot** | Script | Combat automation |
 | **[Metatron2](https://github.com/spacekoala420/Metatron2)** | .NET Framework | .NET development patterns |

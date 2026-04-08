@@ -3,7 +3,6 @@
 **Source:** EQ2BJCommon Scripts Analysis
 **Repository:** https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2BJCommon
 **Scripts Analyzed:** bjauction, bjlooter, bjmagic, bjshuffle, bjxpbot
-**Total Lines Analyzed:** ~2,500 lines
 
 ---
 

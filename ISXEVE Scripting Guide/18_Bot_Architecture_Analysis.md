@@ -1450,24 +1450,24 @@ objectdef obj_MyNewBehavior inherits obj_BaseClass
 
 ### Single-File Architecture
 
-Unlike EVEBot's 30+ files, Yamfa is **845 lines in one file**:
+Unlike EVEBot's 30+ files, Yamfa is **a single file**:
 
 ```
-Yamfa.iss (845 lines total)
-├── Constants & Variables (lines 1-61)
-├── Relay Event Handler (lines 62-71)
-├── Main Entry Point (lines 72-120)
-├── Initialization (lines 121-179)
-├── Main Pulse (lines 180-205)
-├── Master Pulse (lines 206-310)
-├── Slave Pulse (lines 311-439)
-├── Movement Functions (lines 440-495)
-├── Config & UI (lines 496-589)
-├── Console Commands (lines 590-657)
-├── Retreat Functions (lines 658-737)
-├── Shutdown (lines 738-761)
-├── UI Event Handlers (lines 762-799)
-└── Hotkey Relay (lines 800-845)
+Yamfa.iss
+├── Constants & Variables
+├── Relay Event Handler
+├── Main Entry Point
+├── Initialization
+├── Main Pulse
+├── Master Pulse
+├── Slave Pulse
+├── Movement Functions
+├── Config & UI
+├── Console Commands
+├── Retreat Functions
+├── Shutdown
+├── UI Event Handlers
+└── Hotkey Relay
 ```
 
 **Philosophy**: Simplicity over modularity. Entire bot fits in one file for easy understanding.
@@ -1480,7 +1480,7 @@ Yamfa.iss (845 lines total)
 
 | Aspect | Yamfa | EVEBot |
 |--------|-------|--------|
-| **Files** | 1 file (845 lines) | 30+ files (~15,000+ lines) |
+| **Files** | 1 file | 30+ files |
 | **Purpose** | Fleet assist only | Full automation (mining, combat, hauling) |
 | **Complexity** | Simple | Complex |
 | **State Machine** | No states | Comprehensive states |
@@ -2411,7 +2411,7 @@ else
 ### What Yamfa Teaches
 
 **1. Simplicity Can Be Effective**
-- 845 lines does the job
+- A single file does the job
 - No need for complex architecture for simple tasks
 - Single file = easy to understand and modify
 
@@ -2635,7 +2635,7 @@ atom(script) OnTargetsRelay(string targetIDs, int64 activeTarget)
 
 ### Strengths
 
-✅ Simple (845 lines, one file)
+✅ Simple (single file)
 ✅ Effective (does the job well)
 ✅ Hysteresis prevents spam
 ✅ Change detection reduces traffic
@@ -3842,7 +3842,7 @@ query = "SELECT BestAmmo WHERE TargetType = '${type}'"
 
 Three bot architectures analyzed:
 - **EVEBot**: Full modular framework (50+ files)
-- **Yamfa**: Simple single-file (845 lines)
+- **Yamfa**: Simple single-file
 - **Tehbot**: Hybrid StateQueue + MiniModes (50+ files)
 
 The community now has three proven patterns to choose from based on project needs!

@@ -90,7 +90,6 @@ Contents:
 - Main execution loop
 - Event handlers
 
-Size: ~845 lines
 Execution: run Yamfa
 ```
 
