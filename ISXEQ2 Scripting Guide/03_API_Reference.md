@@ -3516,7 +3516,7 @@ atom(script) EQ2_onLootWindowAppeared(uint ID)
 | Event | Parameters | Description |
 |-------|-----------|-------------|
 | EQ2_onDestroyItem | int ItemID, string ItemName | Player deletes an item from inventory |
-| EQ2_onSellItem | string ItemName, int Quantity, int LinkID | Player sells an item to NPC merchant |
+| EQ2_onSellItem | string ItemName, int Quantity, int LinkID, string ItemLinkString | Player sells an item to NPC merchant |
 | EQ2_onDeleteQuest | string Param1, string Param2 | Player deletes a quest from journal |
 | EQ2_ItemAddedToAltarForSacrifice | int ItemIndex | Item added to deity altar for sacrifice |
 | EQ2_ExamineAchievement | string Type, string ID | Player examines an achievement |
