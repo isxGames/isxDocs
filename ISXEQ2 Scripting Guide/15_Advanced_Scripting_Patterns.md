@@ -2801,8 +2801,8 @@ function LoadPlugins()
 
         for (i:Set[1]; ${i} <= ${PluginFiles.Files}; i:Inc)
         {
-            echo "Loading plugin: ${PluginFiles.File[${i}]}"
-            runscript "${PluginDir}/${PluginFiles.File[${i}]}" ${MainTabsID} ${TabPos}
+            echo "Loading plugin: ${PluginFiles.File[${i}].Filename}"
+            runscript "${PluginDir}/${PluginFiles.File[${i}].Filename}" ${MainTabsID} ${TabPos}
             TabPos:Inc
         }
     }
