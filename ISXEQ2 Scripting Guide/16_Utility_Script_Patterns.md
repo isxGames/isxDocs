@@ -2750,6 +2750,9 @@ objectdef TimerObject
 
 function main()
 {
+	while !${ISXEQ2.IsReady}
+		wait 10
+
 	Event[EQ2_onIncomingText]:AttachAtom[EQ2_onIncomingText]
 
 	call LoadSettings
@@ -2881,6 +2884,9 @@ variable int DisplayHours
 
 function main()
 {
+	while !${ISXEQ2.IsReady}
+		wait 10
+
 	; Save starting position
 	HomeLocation:Set[${Me.Loc}]
 	HomeHeading:Set[${Me.Heading}]
@@ -3041,6 +3047,9 @@ variable float TSPerHour
 
 function main()
 {
+	while !${ISXEQ2.IsReady}
+		wait 10
+
 	call InitializeTracking
 
 	echo ========================================

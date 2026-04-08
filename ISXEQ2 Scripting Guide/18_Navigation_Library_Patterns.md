@@ -882,6 +882,9 @@ variable index:string Waypoints
 
 function main()
 {
+    while !${ISXEQ2.IsReady}
+        wait 10
+
     ; Initialize
     Nav:UseLSO[FALSE]
     Nav:LoadMap
