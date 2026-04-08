@@ -1554,7 +1554,8 @@ Item stat modifier.
 | Member | Type | Description |
 |--------|------|-------------|
 | Type | string | Modifier type (Strength, Stamina, etc.) |
-| Value | int | Modifier value |
+| SubType | string | Modifier subtype |
+| Value | int/float | Modifier value (float for blue text/overcap modifiers, int otherwise) |
 
 **Example Usage:**
 ```lavishscript
