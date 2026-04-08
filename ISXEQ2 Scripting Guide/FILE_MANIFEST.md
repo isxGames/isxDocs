@@ -265,7 +265,7 @@ This documentation set is specifically designed to serve as a knowledge base for
 
 ### Accuracy
 
-- ✅ All API references from official ISXEQ2_Reference+.md
+- ✅ All API references from official ISXEQ2Changes.txt
 - ✅ Architecture details from actual source code
 - ✅ Patterns from real production scripts (EQ2Bot)
 - ✅ No invented/guessed API members

@@ -276,7 +276,7 @@ ISXEQ2 provides 38+ events you can react to:
 
 This guide was created by analyzing:
 
-1. **Official ISXEQ2 Reference** - `..\+ISXEQ2_Reference+.md` (4,715 lines)
+1. **Official ISXEQ2 Reference** - ISXEQ2Changes.txt (7,661 lines)
 2. **ISXEQ2 Source Code** - (100+ files, ~120,000 lines of C++)
 3. **EQ2Bot Scripts** - https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2Bot (7,509 lines main script + 20+ class routines + 39 UI files)
 4. **MyPrices Script** - https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/MyPrices (3,937 lines main script + 3,288 line UI file)
