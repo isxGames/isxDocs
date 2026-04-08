@@ -834,7 +834,7 @@ function CheckIfCollected(string ItemName)
     ; Check examine window text for "already collected"
     if (${ExamineItemWindow.TextVector} >= 2)
     {
-        if (${ExamineItemWindow.TextVector[2].Type.Equal[Text]} && ${ExamineItemWindow.TextVector[2].Label.Find[already collected]} > 0)
+        if (${ExamineItemWindow.TextVector[2].Type.Equal[Text]} && ${ExamineItemWindow.TextVector[2].GetProperty[LocalText].Find[already collected]} > 0)
         {
             echo "${ItemName} has already been collected."
             eq2execute /close_top_window
