@@ -1061,35 +1061,19 @@ atom OnChat(int ChatType, string Message, string Speaker, string Target, string 
     if ${ChatType} != 7
         return
 
-    ; Process commands
+    ; Process commands (atoms cannot use "call" -- inline the logic)
     if ${Message.Find["!status"]}
     {
-        call SendStatus "${Speaker}"
+        EQ2Execute /tell ${Speaker} Status: Level ${Me.Level} ${Me.SubClass}
     }
     elseif ${Message.Find["!health"]}
     {
-        call SendHealth "${Speaker}"
+        EQ2Execute /tell ${Speaker} Health: ${Math.Calc[${Me.CurrentHealth}*100/${Me.MaxHealth}].Int}%
     }
     elseif ${Message.Find["!location"]}
     {
-        call SendLocation "${Speaker}"
+        EQ2Execute /tell ${Speaker} Location: ${Zone.Name} (${Me.X}, ${Me.Z})
     }
-}
-
-function SendStatus(string recipient)
-{
-    EQ2Execute /tell ${recipient} Status: Level ${Me.Level} ${Me.SubClass}
-}
-
-function SendHealth(string recipient)
-{
-    variable float HP = ${Math.Calc[${Me.CurrentHealth}*100/${Me.MaxHealth}]}
-    EQ2Execute /tell ${recipient} Health: ${HP.Int}%
-}
-
-function SendLocation(string recipient)
-{
-    EQ2Execute /tell ${recipient} Location: ${Zone.Name} (${Me.X}, ${Me.Z})
 }
 ```
 
