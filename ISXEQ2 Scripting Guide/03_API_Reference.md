@@ -3451,7 +3451,7 @@ atom(script) EQ2_ActorSpawned(string ID, string Name, string Level, string Type)
 
 **Example:**
 ```lavishscript
-atom(script) EQ2_onIncomingChatText(int ChatType, string Message, string Speaker, string Target, string SpeakerIsNPC, string ChannelName)
+atom(script) EQ2_onIncomingChatText(int ChatType, string Message, string Speaker, string Target, string SpeakerIsNPC, string ChannelName, int SpeakerID, int TargetID)
 {
     if ${ChatType} == 15
         echo "Group chat from ${Speaker}: ${Message}"
