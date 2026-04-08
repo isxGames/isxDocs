@@ -237,7 +237,7 @@ EQ2:QueryActors[Index, Distance < 50 && Level == 120]
 Me:QueryInventory[Items,"Name =- \"Potion\" && Quantity > 1"]
 
 ; Find ready abilities
-Me:QueryAbilities[Abilities,"IsReady && IsReady"]
+Me:QueryAbilities[Abilities,"IsReady"]
 
 ; Find effects
 Me:QueryEffects[Effects,"IsBeneficial && Duration > 60"]
