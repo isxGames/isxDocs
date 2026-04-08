@@ -1296,7 +1296,7 @@ objectdef EQ2Craft
     }
 }
 
-atom UpdateTotal()
+function UpdateTotal()
 {
     variable int xvar
     variable int xval
