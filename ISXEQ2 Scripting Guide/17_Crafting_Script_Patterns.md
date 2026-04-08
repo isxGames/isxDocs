@@ -1042,7 +1042,7 @@ else
 }
 
 ; Check if we need emergency durability boost
-if ${tempdur} < ${Durability[${tempvar2},1]} && ${Me.Power} > ${Durability[${tempvar2},3]}
+if ${tempdur} < ${Durability[${tempvar2},1]} && ${Me.CurrentPower} > ${Durability[${tempvar2},3]}
 {
     call CastReaction 2 3  ; Emergency durability art
 }
