@@ -755,12 +755,12 @@ function HandleStuck()
 
     ; Back up
     press -hold ${Backward}
-    wait 500
+    wait 10
     press -release ${Backward}
 
     ; Try moving sideways
     press -hold ${StrafeLeft}
-    wait 300
+    wait 5
     press -release ${StrafeLeft}
 
     wait 10
