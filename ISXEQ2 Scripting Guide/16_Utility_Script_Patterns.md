@@ -760,7 +760,7 @@ function main()
 		call UseNextPotion
 
 		; Wait for potion to expire (check effect duration)
-		wait 36000  ; 10 minutes
+		wait 6000  ; 10 minutes (6000 deciseconds)
 	}
 }
 
