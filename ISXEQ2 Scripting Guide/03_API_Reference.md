@@ -28,7 +28,7 @@ Complete API reference extracted from official ISXEQ2 documentation. This compre
   - [Window DataTypes](#window-datatypes)
   - [Widget/UI DataTypes](#widgetui-datatypes)
 - [Complete DataType Reference](#complete-datatype-reference)
-- [Events Reference (43 Events)](#events-reference-43-events)
+- [Events Reference (38 Events)](#events-reference-38-events)
 
 ---
 
@@ -3402,7 +3402,7 @@ echo ${EQ2UIPage[MainHUD].Child[iconbank,Abilities].NumIcons}
 
 ---
 
-## Events Reference (43 Events)
+## Events Reference (38 Events)
 
 ISXEQ2 fires events that scripts can react to using atoms. Attach an atom to an event with:
 

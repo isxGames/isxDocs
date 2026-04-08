@@ -23,7 +23,7 @@
 | **00_MASTER_GUIDE.md** | ✅ Complete | 613 | Master reference with organized links to all APIs, commands, events |
 | **01_LavishScript_Fundamentals.md** | ✅ Complete | 3,045 | Complete LavishScript programming guide (variables, functions, objects, loops, index, webrequest, audio) |
 | **02_Quick_Start_Guide.md** | ✅ Complete | 751 | Quick start tutorial for beginners |
-| **03_API_Reference.md** | ✅ Complete | 3,559 | Complete API documentation (all TLOs, datatypes, commands, 43 events) |
+| **03_API_Reference.md** | ✅ Complete | 3,559 | Complete API documentation (all TLOs, datatypes, commands, 38 events) |
 | **04_Core_Concepts.md** | ✅ Complete | 862 | Essential ISXEQ2 concepts (datatypes, queries, async, inheritance) |
 | **05_Patterns_And_Best_Practices.md** | ✅ Complete | 1,098 | Coding patterns from [EQ2Bot](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2Bot) analysis |
 | **06_Working_Examples.md** | ✅ Complete | 1,156 | Real-world code examples for common tasks |
@@ -77,7 +77,7 @@
 #### ISXEQ2 Extension Architecture
 - **Total Source Files:** 100+ C++ files
 - **Datatypes Defined:** 60+ datatypes
-- **Events Available:** 43 events
+- **Events Available:** 38 events
 - **Commands Implemented:** 15+ commands
 - **Top-Level Objects:** 21 TLOs
 
@@ -153,7 +153,7 @@
 ### Architecture Insights
 
 1. **Detour-Based Monitoring**: ISXEQ2 hooks game functions non-invasively to monitor state
-2. **Event-Driven Design**: 43 events cover all major game activities
+2. **Event-Driven Design**: 38 events cover all major game activities
 3. **Typed Object System**: Strong typing with inheritance hierarchies
 4. **Async Data Loading**: Many detailed info objects require async loading
 5. **Modular Organization**: Clear separation between datatypes, commands, events, and utilities

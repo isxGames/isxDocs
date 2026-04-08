@@ -260,7 +260,7 @@ Many datatypes inherit from others:
 
 ### Events
 
-ISXEQ2 provides 43 events you can react to:
+ISXEQ2 provides 38+ events you can react to:
 
 - Actor spawning/despawning
 - Chat messages
