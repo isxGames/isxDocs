@@ -975,14 +975,14 @@ Player character datatype. Inherits all members and methods from [actor](#actor)
 | InZone | bool | TRUE if fully loaded in zone |
 | CameraPitch | float | Camera pitch angle |
 
-#### Members - Collections
+#### Methods - Collection Populators
 
-| Member | Type | Description |
-|--------|------|-------------|
-| GetInventory | collection | Returns LavishScript collection of item objects |
-| GetInventoryAtHand | collection | Returns at-hand inventory collection |
-| GetEquipment | collection | Returns equipment collection |
-| GetAbilities | collection | Returns abilities collection |
+| Method | Parameters | Description |
+|--------|-----------|-------------|
+| GetInventory | index:item[, params] | Populates index with inventory items, returns count |
+| GetInventoryAtHand | index:item | Populates index with at-hand inventory items, returns count |
+| GetEquipment | index:item | Populates index with equipped items, returns count |
+| GetAbilities | index:ability | Populates index with abilities, returns count |
 
 #### Members - Dynamic Game Data
 
