@@ -1680,7 +1680,7 @@ function AcceptQuest(string NPCName)
 	wait 20
 
 	; Wait for dialog window
-	if ${EQ2UIPage[Conversation](exists)}
+	if ${EQ2UIPage[ProxyActor,Conversation](exists)}
 	{
 		echo Dialog opened. Accepting quest...
 
