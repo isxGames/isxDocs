@@ -852,7 +852,7 @@ function GetWrit()
     UIElement[Craft Selection].FindUsableChild[Create Rush Order,commandbutton]:Hide
 
     ; Navigate to writ agent
-    if ${ISXEQ2.GetCustomVariable[SRO,bool]}
+    if ${ISXEQ2.GetCustomVariable["SRO",bool]}
     {
         call MovetoDevice "RushOrder"
         guildtag:Set[Rush Orders]
@@ -984,16 +984,16 @@ if ${GotWrit}
     Craft:ClearAllRecipes[0]
 
     ; Decrement writ counter
-    ISXEQ2:SetCustomVariable[CWC,${Math.Calc[${ISXEQ2.GetCustomVariable["CWC",int]}-1]}]
+    ISXEQ2:SetCustomVariable["CWC",${Math.Calc[${ISXEQ2.GetCustomVariable["CWC",int]}-1]}]
 
     if ${ISXEQ2.GetCustomVariable["CWC",int]} < 1
     {
         startrecipe:Set[FALSE]
-        ISXEQ2:SetCustomVariable[SRO,0]
-        ISXEQ2:SetCustomVariable[SWO,0]
+        ISXEQ2:SetCustomVariable["SRO",0]
+        ISXEQ2:SetCustomVariable["SWO",0]
 
         ChatEcho "No more Writs to Make!"
-        ISXEQ2:SetCustomVariable[CWC,-1]
+        ISXEQ2:SetCustomVariable["CWC",-1]
         UIElement[Craft Selection].FindUsableChild[Writs Remaining,text]:SetText[""]
     }
     else
