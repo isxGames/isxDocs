@@ -200,8 +200,7 @@ Datatypes representing actors (characters, NPCs, objects) in the game world.
 
 - [actor](#actor) - Base datatype for all actors
 - [character](#character) - Player character (inherits from actor)
-- [groupmember](#groupmember) - Group member (inherits from actor)
-- [raidmember](#raidmember) - Raid member (uses groupmember type, inherits from actor)
+- [groupmember](#groupmember) - Group member (inherits from actor). Raid members also use this type — `Me.Raid[index]` returns groupmember
 - [moveableobject](#moveableobject) - Moveable house object
 - [equipmentappearance](#equipmentappearance) - Equipment appearance information
 
@@ -609,7 +608,7 @@ Base datatype for all actors (NPCs, PCs, objects) in the game world.
 
 **Access:** `${Target}`, `${Actor[id/name]}`, `${CustomActor[index]}`, `${Me.Target}`, etc.
 
-**Inherited By:** [character](#character), [groupmember](#groupmember), [raidmember](#raidmember)
+**Inherited By:** [character](#character), [groupmember](#groupmember)
 
 #### Members - Identity
 
@@ -892,7 +891,7 @@ Player character datatype. Inherits all members and methods from [actor](#actor)
 | GroupCount | int | Number of group members |
 | Grouped | bool | TRUE if in a group |
 | IsGroupLeader | bool | TRUE if group leader |
-| Raid[index] | [raidmember](#raidmember) | Raid member by index (1 to RaidCount) |
+| Raid[index] | [groupmember](#groupmember) | Raid member by index (1 to RaidCount) |
 | RaidCount | int | Number of raid members |
 | InRaid | bool | TRUE if in a raid |
 | RaidGroupNum | int | Raid group number (1-4) |
@@ -1104,24 +1103,6 @@ echo ${Me.Group[1].Name}
 echo ${Me.Group[1].EffectiveLevel}
 echo ${Me.Group[1].InZone}
 echo ${Me.Group[1].ToActor.Distance}
-```
-
----
-
-### raidmember
-
-Raid members use the same underlying datatype as [groupmember](#groupmember). There is no separate raidmember type — `Me.Raid[index]` returns a groupmember object populated with raid member data. All groupmember and actor members/methods are available.
-
-**Access:** `${Me.Raid[index]}`
-
-**Inherits From:** [groupmember](#groupmember) → [actor](#actor)
-
-**Note:** Both `${Me.Group[index]}` and `${Me.Raid[index]}` return the same groupmember datatype.
-
-**Example Usage:**
-```lavishscript
-echo ${Me.Raid[1].Name}
-echo ${Me.Raid[1].RaidGroupNum}
 ```
 
 ---
