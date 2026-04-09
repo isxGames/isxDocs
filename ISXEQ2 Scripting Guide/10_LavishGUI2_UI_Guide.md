@@ -12,12 +12,13 @@
 2. [Getting Started](#getting-started)
 3. [Package Structure](#package-structure)
 4. [Core UI Elements](#core-ui-elements)
-5. [Layout Containers](#layout-containers)
-6. [Event Handling](#event-handling)
-7. [Data Binding](#data-binding)
-8. [Styling and Visual Customization](#styling-and-visual-customization)
-9. [Templates](#templates)
-10. [Advanced Features](#advanced-features)
+5. [Box Model and Composition](#box-model-and-composition)
+6. [Layout Containers](#layout-containers)
+7. [Event Handling](#event-handling)
+8. [Data Binding](#data-binding)
+9. [Styling and Visual Customization](#styling-and-visual-customization)
+10. [Templates](#templates)
+11. [Advanced Features](#advanced-features)
     - Canvas Drawing API
     - Audio System Integration
     - Keyboard Input Handling
@@ -29,11 +30,11 @@
     - FilePicker
     - Animations
     - Item View Generators
-11. [Element Lifecycle and Events](#element-lifecycle-and-events)
-12. [Script-to-UI Interaction](#script-to-ui-interaction)
-13. [Complete Working Examples](#complete-working-examples)
-14. [Best Practices](#best-practices)
-15. [Troubleshooting](#troubleshooting)
+12. [Element Lifecycle and Events](#element-lifecycle-and-events)
+13. [Script-to-UI Interaction](#script-to-ui-interaction)
+14. [Complete Working Examples](#complete-working-examples)
+15. [Best Practices](#best-practices)
+16. [Troubleshooting](#troubleshooting)
 
 ---
 
