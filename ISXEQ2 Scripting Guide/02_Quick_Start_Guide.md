@@ -414,7 +414,6 @@ echo "Equipped Chest: ${Me.Equipment[chest].Name}"
 
 ---
 
-<!-- CLAUDE_SKIP_START -->
 ## Common Beginner Mistakes
 
 ### 1. Forgetting NULL Checks
@@ -457,7 +456,6 @@ if !${MyItem.IsItemInfoAvailable}
 
 echo ${MyItem.ToItemInfo.Description}
 ```
-<!-- CLAUDE_SKIP_END -->
 
 ---
 
