@@ -34,11 +34,17 @@
    - [Zone Events](#zone-events)
    - [Miscellaneous Events](#miscellaneous-events)
    - [ISXEQ2 System Events](#isxeq2-system-events)
+   - [isxGames Events](#isxgames-events)
 6. [Deprecated Features](#deprecated-features)
    - [Removed Character Members](#removed-character-members-november-2018)
    - [Removed Pet Members](#removed-pet-members-march-2012)
    - [Removed Actor Members](#removed-actor-members-july-2020)
+   - [Removed Character Member (Breath)](#removed-character-member-november-2022)
    - [Removed TLO](#removed-tlo-december-2016)
+   - [Removed eq2mail/EQ2Mail](#removed-eq2mail-datatype-and-eq2mail-tlo-january-2017)
+   - [Removed EQ2_onSendMailComplete](#removed-eq2_onsendmailcomplete-event-october-2020)
+   - [Removed Battlegrounds Code](#removed-battlegrounds-code-january-2024)
+   - [Removed iteminfo Members](#removed-iteminfo-combatdefense-members-january-2026)
 7. [Usage Examples](#usage-examples)
    - [Basic Information](#basic-information)
    - [Inventory and Items](#inventory-and-items)
@@ -80,7 +86,7 @@ This document provides comprehensive reference documentation for all datatypes a
 
 Many datatypes inherit from other datatypes, gaining all the members and methods of their parent type. Common inheritance patterns:
 
-- **char** inherits from **actor**
+- **character** inherits from **actor**
 - **groupmember** inherits from **actor**
 - **eq2widget** inherits from **eq2baseobject**
 - All window types inherit from **eq2window**
@@ -90,7 +96,7 @@ Many datatypes inherit from other datatypes, gaining all the members and methods
 DataTypes are accessed through Top-Level Objects (TLOs) or through members of other datatypes. For example:
 
 ```
-${Me}                           // TLO returning 'char' datatype
+${Me}                           // TLO returning 'character' datatype
 ${Me.Target}                    // Member returning 'actor' datatype
 ${Me.Inventory[5]}              // Member returning 'item' datatype
 ${EQ2UIPage[MapWindow]}         // TLO with parameter returning 'eq2uipage' datatype
@@ -115,17 +121,17 @@ Top-Level Objects (TLOs) are the entry points for accessing game data. They can 
 | TLO | DataType | Description |
 |-----|----------|-------------|
 | **EQ2** | [eq2](#eq2) | Main game information and utilities |
-| **Me** | [char](#char) | Player character |
+| **Me** | [character](#character) | Player character |
 | **Target** | [actor](#actor) | Current target |
 | **Zone** | [zone](#zone) | Current zone information |
 | **Actor[id/name]** | [actor](#actor) | Access specific actor by ID or name |
-| **CustomActor[index]** | [actor](#actor) | Access custom actor array |
+| **CustomActor[index]** | [actor](#actor) | Access custom actor array (legacy — prefer `EQ2:GetActors`) |
 | **Radar** | [radar](#radar) | Radar functionality |
 | **EQ2Loc[x,y,z]** | [eq2location](#eq2location) | Create location object |
 | **Crafting** | [crafting](#crafting) | Crafting session information |
 | **Achievement[id/name]** | [achievement](#achievement) | Access achievement data |
 | **StripTags[text]** | string | Removes EQ2 formatting tags from text |
-| **EQ2DataSourceContainer[name]** | [eq2datasourcecontainer](#eq2datasourcecontainer) | Access UI data source |
+| ~~**EQ2DataSourceContainer[name]**~~ | ~~eq2datasourcecontainer~~ | **Removed Dec 2016** — Use `${Me.GetGameData}` instead |
 
 
 
@@ -175,8 +181,9 @@ Extension information and utilities.
 
 **Methods:**
 - `ClearAbilitiesCache` - Clears abilities cache
-- `ClearRecipesCache` - Clears recipes cache
 - `Popup[text,title,status]` - Shows popup window
+- `ToggleOptionalAutoReloads` - Toggles optional auto-reload behavior
+- `ShowWelcomeInfoWindow` - Toggles the ISXEQ2 welcome info window
 - `AddLoc[label,notes]` - Adds location
 - `EnduringBreath` / `EB` - Toggles enduring breath
 - `NoFog` - Toggles fog removal
@@ -248,7 +255,9 @@ Main game information and utilities.
 - `CreateSoundEffect[file]` - Creates sound effect
 - `PlaceMoveableObject` - Places moveable object
 - `CancelMoveObject` - Cancels move object
-- `OpenTravelMapWindow` - Opens travel map window
+- `OpenTravelMapWindow` - Opens travel map window (alias: `OpenFastTravelWindow`)
+- `ClearRecipesCache` - Clears recipes cache
+- `EnableAfflictionEvents` - Enables affliction events (required for `EQ2_onMeAfflicted`, `EQ2_onGroupMemberAfflicted`, `EQ2_OnRaidMemberAfflicted`)
 
 ---
 
@@ -260,7 +269,7 @@ Zone information.
 - `Name` - string: Zone name
 - `ShortName` - string: Zone short name
 - `ID` - uint: Zone ID
-- `Description` - string: Zone description
+- `RoomID` - uint: Room ID within the zone
 
 ---
 
@@ -272,6 +281,7 @@ Zone information.
 - `X` - float: X coordinate
 - `Y` - float: Y coordinate
 - `Z` - float: Z coordinate
+- `RoomID` - uint: Room ID
 - `Distance[x,y,z]` - float: Distance to specified coordinates
 - `Distance2D[x,z]` - float: 2D distance to coordinates
 
@@ -305,8 +315,14 @@ Achievement information.
 - `Name` - string: Achievement name
 - `ID` - int: Achievement ID
 - `Description` - string: Achievement description
-- `Points` - int: Achievement points
-- `IsComplete` - bool: Whether achievement is complete
+- `Level` - int: Current achievement level
+- `MaxLevel` - int: Maximum achievement level
+- `PointCostPerLevel` - int: Achievement point cost per level
+- `ReqLevelToBuy` - int: Required character level to purchase
+- `ToAbility` - [abilityinfo](#abilityinfo): Associated ability info
+
+**Methods:**
+- `Examine` - Examines the achievement
 
 ---
 
@@ -315,15 +331,9 @@ Achievement information.
 Quest/loot reward.
 
 **Members:**
-- `Name` - string: Reward name
-- `LinkID` - int: Link ID
-- `ToLink` - string: Creates clickable chat link
-- `Type` - string: Reward type
-- `IsItemInfoAvailable` - bool: Whether item info available
-- `ToItemInfo` - [iteminfo](#iteminfo): Converts to iteminfo
+- `LinkID` - uint: Link ID
 
-**Methods:**
-- `Examine` - Examines the reward
+**Note:** The `Name` member was removed in July 2022. Use `AcceptReward[LinkID]` method syntax instead.
 
 ---
 
@@ -399,7 +409,7 @@ Base datatype for all actors (NPCs, PCs, objects) in the game world.
 - `MountAppearance` - [equipmentappearance](#equipmentappearance): Mount appearance
 
 *Casting:*
-- `AbilityCastingID` - int: ID of ability being cast
+- `AbilityCastingID` - uint: ID of ability being cast
 - `AbilityCastingTime` - float: Time remaining for cast
 
 *Tags:*
@@ -452,7 +462,8 @@ Base datatype for all actors (NPCs, PCs, objects) in the game world.
 - `UpdatesMyQuest` - bool: Updates player's quest
 - `UpdatesGroupMemberQuest` - bool: Updates group quest
 - `ActiveStateExists` - bool: Has active states
-- `OffersQuest` - bool: Offers quest
+- `OffersQuest` - string: Quest offer type (NULL if none, otherwise "normal", "repeatable", "tradeskill", "gray", or "storyline")
+- `CheckCollision` - bool: Checks collision between player and this actor
 - `CheckCollision[x,y,z]` - bool: Checks collision to point
 
 **Methods:**
@@ -465,14 +476,14 @@ Base datatype for all actors (NPCs, PCs, objects) in the game world.
 - `RequestEffectsInfo` - Requests effects from server
 - `GetActiveStates` - Gets active states
 - `Resize[scale]` - Resizes actor (visual)
-- `Move[x,y,z]` - Moves actor to coordinates
+- `Move` - Picks up a moveable housing object for repositioning (no parameters)
 - `Set[actorID]` - Sets actor reference
 
 ---
 
-#### **char**
+#### **character**
 
-Player character. Inherits from [**actor**](#actor).
+Player character. Inherits from [**actor**](#actor). (Internal datatype name: `character`; accessed via the `Me` TLO.)
 
 **Inheritance:**
 - All members and methods from [**actor**](#actor) are available
@@ -480,10 +491,10 @@ Player character. Inherits from [**actor**](#actor).
 **Additional Members:**
 
 *Stats:*
-- `CurrentHealth` / `Health` - int: Current health
-- `MaxHealth` - int: Maximum health
-- `CurrentPower` / `Power` - int: Current power
-- `MaxPower` - int: Maximum power
+- `CurrentHealth` / `Health` - int64: Current health
+- `MaxHealth` - int64: Maximum health
+- `CurrentPower` / `Power` - int64: Current power
+- `MaxPower` - int64: Maximum power
 - `UsedConc` - int: Used concentration
 - `MaxConc` - int: Maximum concentration
 - `Strength` - int: Strength stat
@@ -541,7 +552,7 @@ Player character. Inherits from [**actor**](#actor).
 - `GroupCount` - int: Group size
 - `Grouped` - bool: In a group
 - `IsGroupLeader` - bool: Is group leader
-- `Raid[index]` - [raidmember](#raidmember): Raid member
+- `Raid[index]` - [groupmember](#groupmember): Raid member (returns groupmember, not a separate raidmember type)
 - `RaidCount` - int: Raid size
 - `InRaid` - bool: In a raid
 - `RaidGroupNum` - int: Raid group number
@@ -601,20 +612,20 @@ Player character. Inherits from [**actor**](#actor).
 - `Achievement[index|"name"]` - [achievement](#achievement): Get achievement
 - `IsInPVP` - bool: In PVP zone
 - `IsHated` - bool: Hated
-- `PowerRegen` - float: Power regen rate
-- `HealthRegen` - float: Health regen rate
+- `PowerRegen` - int64: Power regen rate
+- `HealthRegen` - int64: Health regen rate
 - `InZone` - bool: Fully in zone
 - `CameraPitch` - float: Camera pitch angle
 
-*Collections:*
-- `GetInventory` - collection: Returns inventory collection (LavishScript collection of [item](#item) objects)
-- `GetInventoryAtHand` - collection: Returns at-hand inventory (LavishScript collection of [item](#item) objects)
-- `GetEquipment` - collection: Returns equipment collection (LavishScript collection of [item](#item) objects)
-- `GetAbilities` - collection: Returns abilities collection (LavishScript collection of [ability](#ability) objects)
+*Index Populators:*
+- `GetInventory[index:item]` - Populates an index with inventory [item](#item) objects
+- `GetInventoryAtHand[index:item]` - Populates an index with at-hand inventory [item](#item) objects
+- `GetEquipment[index:item]` - Populates an index with equipment [item](#item) objects
+- `GetAbilities[index:ability]` - Populates an index with [ability](#ability) objects
 
 *Dynamic Game Data:*
 - `GetGameData["string"]` - [eq2dynamicdata](#eq2dynamicdata): Retrieves dynamic game data values
-  - Returns an eq2dynamicdata object (also known as eq2uielement) with `.Label`, `.ShortLabel`, and `.Percent` members
+  - Returns an eq2dynamicdata object with `.Label`, `.Tooltip`, `.Percent`, and `.IsSet` members
   - Used to access many character values that were previously direct members
   - Example: `${Me.GetGameData[Self.ExperienceNextLevel].Label}`.  See "GetGameData Examples" below for more.
 
@@ -641,7 +652,7 @@ Player character. Inherits from [**actor**](#actor).
 
 **GetGameData Examples:**
 
-The `GetGameData` member provides access to dynamic game data values. It returns an eq2dynamicdata object with `.Label`, `.ShortLabel`, and `.Percent` members.
+The `GetGameData` member provides access to dynamic game data values. It returns an eq2dynamicdata object with `.Label`, `.Tooltip`, `.Percent`, and `.IsSet` members.
 
 *Experience Values:*
 ```lavishscript
@@ -726,10 +737,19 @@ Group member. Inherits from [**actor**](#actor).
 **Inheritance:**
 - All members and methods from [**actor**](#actor) are available
 
-**Additional Members:**
-- `ID` - int: Group member ID
+**Additional Members (work even when member is in a different zone):**
+- `Name` - string: Group member name
+- `Race` - string: Race
+- `Class` - string: Class name
+- `Level` - int: Level
+- `ID` - uint: Group member ID
 - `PetID` - int: Pet ID
-- `ToActor` - [actor](#actor): Returns actor datatype
+- `HitPoints` - int64: Current hit points
+- `MaxHitPoints` - int64: Maximum hit points
+- `CurrentPower` - int64: Current power
+- `MaxPower` - int64: Maximum power
+- `ZoneName` - string: Zone the member is in
+- `ToActor` - [actor](#actor): Returns actor datatype (**deprecated** — groupmember inherits from actor, access members directly)
 - `EffectiveLevel` - int: Effective level
 - `Noxious` - int: Noxious afflictions
 - `Cursed` - int: Cursed afflictions
@@ -737,20 +757,11 @@ Group member. Inherits from [**actor**](#actor).
 - `Elemental` - int: Elemental afflictions
 - `Trauma` - int: Trauma afflictions
 - `IsAfflicted` - bool: Has afflictions
-- `RaidRole` - string: Raid role
+- `RaidRole` - int: Raid role
 - `RaidGroupNum` - int: Raid group number
 - `InZone` - bool: In zone
 
----
-
-#### **raidmember**
-
-Raid member. This is the same as [**groupmember**](#groupmember) - see that datatype for all members and methods.
-
-**Inheritance:**
-- All members and methods from [**groupmember**](#groupmember) (and [**actor**](#actor)) are available
-
-**Note:** When you're in a raid, both `${Me.Group[index]}` and `${Me.Raid[index]}` return this datatype.
+**Note:** `Me.Raid[index]` also returns the `groupmember` datatype. The separate `raidmember` datatype was removed in May 2008.
 
 ---
 
@@ -887,7 +898,7 @@ Item in inventory, equipment, or containers.
 
 **See Also:**
 - [iteminfo](#iteminfo) - Detailed item information (accessed via `Item.ToItemInfo`)
-- [char](#char) - Character inventory access via `Me.Inventory[slot]` or `Me.Equip[slot]`
+- [character](#character) - Character inventory access via `Me.Inventory[slot]` or `Me.Equip[slot]`
 
 ---
 
@@ -937,14 +948,7 @@ Detailed item examination data. Obtained via `Item.ToItemInfo`.
 - `Satiation` - int: Satiation value (food/drink)
 - `Duration` - int: Effect duration
 
-*Combat Stats (Weapons):*
-- `DamageRating` - int: Damage rating
-- `MyMinDamage` - int: Player's min damage
-- `MyMaxDamage` - int: Player's max damage
-- `BaseMinDamage` - int: Base min damage
-- `BaseMaxDamage` - int: Base max damage
-- `MasteryMinDamage` - int: Mastery min damage
-- `MasteryMaxDamage` - int: Mastery max damage
+*Weapon Stats:*
 - `Delay` - float: Weapon delay
 - `Range` / `MaxRange` - float: Weapon range
 - `MinRange` - float: Minimum range
@@ -954,10 +958,8 @@ Detailed item examination data. Obtained via `Item.ToItemInfo`.
 *Defense Stats (Armor/Shields):*
 - `Mitigation` - int: Mitigation value
 - `MaxMitigation` - int: Max mitigation
-- `ShieldFactor` - int: Shield factor
-- `MaxShieldFactor` - int: Max shield factor
-- `Protection` - int: Protection value
-- `MaxProtection` - int: Max protection
+
+**Note:** DamageRating, MyMinDamage, MyMaxDamage, BaseMinDamage, BaseMaxDamage, MasteryMinDamage, MasteryMaxDamage, Protection, MaxProtection, ShieldFactor, and MaxShieldFactor were **removed in January 2026**.
 
 *Modifiers:*
 - `NumModifiers` - int: Number of stat modifiers
@@ -1022,7 +1024,7 @@ Detailed item examination data. Obtained via `Item.ToItemInfo`.
 *Quest & Collectible:*
 - `IsCollectible` - bool: Is collectible
 - `AlreadyCollected` - bool: Already collected
-- `OffersQuest` - bool: Offers quest
+- `OffersQuest` - string: Quest offer type (NULL if none, otherwise "normal", "repeatable", "tradeskill", "gray", or "storyline")
 - `RequiredByQuest` - bool: Required by quest
 - `IsQuestItemUsable` - bool: Quest item usable
 
@@ -1050,7 +1052,8 @@ Item stat modifier.
 
 **Members:**
 - `Type` - string: Modifier type
-- `Value` - int: Modifier value
+- `SubType` - string: Modifier sub-type
+- `Value` - int/float: Modifier value (returns float for overcap/"blue text" modifiers, int otherwise)
 
 ---
 
@@ -1115,7 +1118,7 @@ Character ability/spell.
 
 **See Also:**
 - [abilityinfo](#abilityinfo) - Detailed ability information (accessed via `Ability.ToAbilityInfo`)
-- [char](#char) - Character abilities access via `Me.Ability[index]`
+- [character](#character) - Character abilities access via `Me.Ability[index]`
 
 ---
 
@@ -1194,7 +1197,7 @@ Character effect/buff.
 - [effectinfo](#effectinfo) - Detailed effect information (accessed via `Effect.ToEffectInfo`)
 - [maintained](#maintained) - Maintained spell effects on player
 - [actoreffect](#actoreffect) - Effects on other actors
-- [char](#char) - Character effects access via `Me.Effect[index]`
+- [character](#character) - Character effects access via `Me.Effect[index]`
 
 ---
 
@@ -1221,7 +1224,7 @@ Maintained buff/spell.
 **See Also:**
 - [effect](#effect) - Regular character effects
 - [actoreffect](#actoreffect) - Effects on other actors
-- [char](#char) - Maintained effects access via `Me.Maintained[index]`
+- [character](#character) - Maintained effects access via `Me.Maintained[index]`
 
 ---
 
@@ -1300,7 +1303,7 @@ Quest information.
 
 #### **currentquest**
 
-Currently selected quest in journal.
+Currently selected quest in journal. (Internal datatype name: `journalcurrentquest`)
 
 **Members:**
 - `Name` - [eq2text](#eq2text): Quest name
@@ -1405,7 +1408,7 @@ Player vendor container.
 
 #### **inboxmailmessage**
 
-Mail message in inbox.
+Mail message in inbox. (Internal datatype name: `eq2inboxmailmessage`)
 
 **Members:**
 - `ID` - uint: Message ID
@@ -1427,7 +1430,7 @@ Mail message in inbox.
 
 #### **mailmessage**
 
-Opened mail message.
+Opened mail message. (Internal datatype name: `eq2mailmessage`)
 
 **Members:**
 - `ID` - uint: Message ID
@@ -1469,7 +1472,7 @@ Crafting recipe.
 
 **See Also:**
 - [recipeinfo](#recipeinfo) - Detailed recipe information (accessed via `Recipe.ToRecipeInfo`)
-- [char](#char) - Character recipes access via `Me.Recipe[index]`
+- [character](#character) - Character recipes access via `Me.Recipe[index]`
 
 ---
 
@@ -1598,7 +1601,7 @@ Clone window type. Inherits from [**eq2window**](#eq2window).
 
 ---
 
-#### **journalquestwindow**
+#### **journalquestwindow** — **Access:** `${QuestJournalWindow}`
 
 Quest journal window. Inherits from [**eq2window**](#eq2window).
 
@@ -1620,7 +1623,7 @@ Quest journal window. Inherits from [**eq2window**](#eq2window).
 
 #### **lootwindow**
 
-Loot window. Inherits from [**eq2clonewindow**](#eq2clonewindow).
+Loot window. Inherits from [**eq2clonewindow**](#eq2clonewindow). **Access:** `${LootWindow}`
 
 **Inheritance:**
 - All members and methods from [**eq2clonewindow**](#eq2clonewindow) and [**eq2window**](#eq2window) are available
@@ -1654,7 +1657,7 @@ Loot window. Inherits from [**eq2clonewindow**](#eq2clonewindow).
 
 #### **choicewindow**
 
-Choice dialog window. Inherits from [**eq2clonewindow**](#eq2clonewindow).
+Choice dialog window. Inherits from [**eq2clonewindow**](#eq2clonewindow). **Access:** `${ChoiceWindow}`
 
 **Inheritance:**
 - All members and methods from [**eq2clonewindow**](#eq2clonewindow) and [**eq2window**](#eq2window) are available
@@ -1672,7 +1675,7 @@ Choice dialog window. Inherits from [**eq2clonewindow**](#eq2clonewindow).
 
 #### **containerwindow**
 
-Container window. Inherits from [**eq2clonewindow**](#eq2clonewindow).
+Container window. Inherits from [**eq2clonewindow**](#eq2clonewindow). **Access:** `${ContainerWindow}`
 
 **Inheritance:**
 - All members and methods from [**eq2clonewindow**](#eq2clonewindow) and [**eq2window**](#eq2window) are available
@@ -1705,7 +1708,7 @@ Item in container window.
 
 #### **rewardwindow**
 
-Reward pack window. Inherits from [**eq2clonewindow**](#eq2clonewindow).
+Reward pack window. Inherits from [**eq2clonewindow**](#eq2clonewindow). **Access:** `${RewardWindow}`
 
 **Inheritance:**
 - All members and methods from [**eq2clonewindow**](#eq2clonewindow) and [**eq2window**](#eq2window) are available
@@ -1722,7 +1725,7 @@ Reward pack window. Inherits from [**eq2clonewindow**](#eq2clonewindow).
 
 #### **replydialog**
 
-NPC conversation window. Inherits from [**eq2clonewindow**](#eq2clonewindow).
+NPC conversation window. Inherits from [**eq2clonewindow**](#eq2clonewindow). **Access:** `${ReplyDialog}`
 
 **Inheritance:**
 - All members and methods from [**eq2clonewindow**](#eq2clonewindow) and [**eq2window**](#eq2window) are available
@@ -1738,7 +1741,7 @@ NPC conversation window. Inherits from [**eq2clonewindow**](#eq2clonewindow).
 
 #### **mapwindow**
 
-Map window. Inherits from [**eq2clonewindow**](#eq2clonewindow).
+Map window. Inherits from [**eq2clonewindow**](#eq2clonewindow). **Access:** `${MapWindow}`
 
 **Inheritance:**
 - All members and methods from [**eq2clonewindow**](#eq2clonewindow) and [**eq2window**](#eq2window) are available
@@ -1759,7 +1762,7 @@ Map window. Inherits from [**eq2clonewindow**](#eq2clonewindow).
 
 #### **travelmapwindow**
 
-Travel map window (Fast Travel window). Inherits from [**eq2window**](#eq2window).
+Travel map window (Fast Travel window). Inherits from [**eq2window**](#eq2window). **Access:** `${TravelMapWindow}`
 
 **Members:**
 - `TeleportLocations` - int: Total number of teleport locations available
@@ -1804,7 +1807,7 @@ Travel map location.
 
 #### **radialmenuwindow**
 
-Radial menu window. Inherits from [**eq2window**](#eq2window).
+Radial menu window. Inherits from [**eq2window**](#eq2window). **Access:** `${RadialMenuWindow}`
 
 **Inheritance:**
 - All members and methods from [**eq2window**](#eq2window) are available
@@ -1833,99 +1836,155 @@ Radial menu action.
 
 #### **brokerwindow**
 
-Broker search window. Inherits from [**eq2window**](#eq2window).
+Broker search window. Inherits from [**eq2window**](#eq2window). **Access:** `${BrokerWindow}`
 
 **Inheritance:**
 - All members and methods from [**eq2window**](#eq2window) are available
 
 **Additional Members:**
-- `NumItems` - int: Number of items in results
+- `NumSearchResults` - int: Number of items in search results
+- `CurrentSearchPage` - int: Current search results page
+- `TotalSearchPages` - int: Total number of search result pages
+- `SearchResult[index]` - [consignment](#consignment): Get search result by index
+- `NumVendingContainers` - int: Number of vending containers
+- `VendingContainer[index]` - [vendingcontainer](#vendingcontainer): Get vending container
+- `TotalVendingCapacity` - int: Total vending capacity
+- `VendingCapacityUsed` - int: Vending capacity used
+- `VendingCapacityFree` - int: Vending capacity free
+
+**Additional Methods:**
+- `GotoSearchPage[page]` - Navigate to a specific search results page
+- `ChangeActiveVendingContainer[index]` - Switch active vending container
 
 ---
 
 #### **merchantwindow**
 
-Merchant window. Inherits from [**eq2window**](#eq2window).
+Merchant window. Inherits from [**eq2window**](#eq2window). **Access:** `${MerchantWindow}`
 
 **Inheritance:**
 - All members and methods from [**eq2window**](#eq2window) are available
 
 **Additional Members:**
-- `NumItems` - int: Number of items
-- `Item[index|name]` - [merchandise](#merchandise): Get merchandise
+- `NumMerchantItemsForSale` - int: Number of merchant items for sale
+- `NumMyItemsForSale` - int: Number of player items for sale (buyback)
+- `MerchantInventory[index]` - [merchandise](#merchandise): Get merchant item
+- `MyInventory[index]` - [merchandise](#merchandise): Get player sellback item
 
 ---
 
 #### **mailwindow**
 
-Mail inbox window. Inherits from [**eq2window**](#eq2window).
+Mail inbox window. Inherits from [**eq2window**](#eq2window). **Access:** `${MailWindow}`
 
 **Inheritance:**
 - All members and methods from [**eq2window**](#eq2window) are available
 
 **Additional Members:**
-- `NumMessages` - int: Number of messages
-- `Message[index]` - [inboxmailmessage](#inboxmailmessage): Get message
+- `NumInbox` - int: Number of inbox messages
+- `Inbox[index]` - [eq2inboxmailmessage](#inboxmailmessage): Get inbox message
+- `Recipient` - [eq2text](#eq2text): Recipient text field
+- `Subject` - [eq2text](#eq2text): Subject text field
+- `Body` - [eq2text](#eq2text): Body text field
+- `Send` - [eq2button](#eq2button): Send button
+- `Platinum` - [eq2text](#eq2text): Platinum amount field
+- `Gold` - [eq2text](#eq2text): Gold amount field
+- `Silver` - [eq2text](#eq2text): Silver amount field
+- `Copper` - [eq2text](#eq2text): Copper amount field
+- `Attachment[index]` - [eq2icon](#eq2icon): Mail attachment icon
+
+**Additional Methods:**
+- `Cancel` - Cancel composing mail
+- `RemoveAttachment[index]` - Remove an attachment
+- `AddPlatinum[amount]` - Add platinum to mail
+- `AddGold[amount]` - Add gold to mail
+- `AddSilver[amount]` - Add silver to mail
+- `AddCopper[amount]` - Add copper to mail
+- `RemovePlatinum[amount]` - Remove platinum from mail
+- `RemoveGold[amount]` - Remove gold from mail
+- `RemoveSilver[amount]` - Remove silver from mail
+- `RemoveCopper[amount]` - Remove copper from mail
 
 ---
 
 #### **openedmailwindow**
 
-Opened mail message window. Inherits from [**eq2window**](#eq2window).
+Opened mail message window. Inherits from [**eq2window**](#eq2window). **Access:** `${OpenedMailWindow}`
 
 **Inheritance:**
 - All members and methods from [**eq2window**](#eq2window) are available
 
 **Additional Members:**
-- `Message` - [mailmessage](#mailmessage): Current message
+- `Message` - [eq2mailmessage](#mailmessage): Current opened message
+
+**Additional Methods:**
+- `Cancel` - Close the opened mail window
 
 ---
 
 #### **reforgewindow**
 
-Item reforge window. Inherits from [**eq2window**](#eq2window).
+Item reforge window. Inherits from [**eq2window**](#eq2window). **Access:** `${ReforgeWindow}`
 
 **Inheritance:**
 - All members and methods from [**eq2window**](#eq2window) are available
 
 **Additional Members:**
-- `Item` - [iteminfo](#iteminfo): Item being reforged
+- `ItemName` - [eq2text](#eq2text): Item name text
+- `StatsText` - [eq2text](#eq2text): Stats text display
+- `SourceDiff` - [eq2text](#eq2text): Source stat diff text
+- `DestDiff` - [eq2text](#eq2text): Destination stat diff text
+- `ReforgeItemNameAndPrice` - [eq2text](#eq2text): Reforge item name and price text
+- `DecorationName` - [eq2text](#eq2text): Decoration name text
+- `Copper` - [eq2text](#eq2text): Copper cost text
+- `Silver` - [eq2text](#eq2text): Silver cost text
+- `Gold` - [eq2text](#eq2text): Gold cost text
+- `Platinum` - [eq2text](#eq2text): Platinum cost text
+- `AttributeSlider` - [eq2sliderbar](#eq2sliderbar): Attribute slider
+- `ReforgeItemIcon` - [eq2icon](#eq2icon): Reforge item icon
+- `DecorationSlot` - [eq2icon](#eq2icon): Decoration slot icon
+- `ReforgeButton` - [eq2button](#eq2button): Reforge button
+- `CancelReforgeButton` - [eq2button](#eq2button): Cancel reforge button
+- `SourceDropdown` - [eq2dropdownbox](#eq2dropdownbox): Source stat dropdown
+- `DestDropdown` - [eq2dropdownbox](#eq2dropdownbox): Destination stat dropdown
 
 ---
 
 #### **examineitemwindow**
 
-Item examination window. Inherits from [**eq2clonewindow**](#eq2clonewindow).
+Item examination window. Inherits from [**eq2clonewindow**](#eq2clonewindow). **Access:** `${ExamineItemWindow}`
 
 **Inheritance:**
 - All members and methods from [**eq2clonewindow**](#eq2clonewindow) and [**eq2window**](#eq2window) are available
 
 **Additional Members:**
-- `Item` - [iteminfo](#iteminfo): Item being examined
+- `ToItem` - [item](#item): Item being examined
+- `TextVector` - string: Text vector data
+- `GetBaseCheckbox` - [eq2checkbox](#eq2checkbox): Base stats checkbox
 
 ---
 
 #### **channelerwindow**
 
-Channeler class window. Inherits from [**eq2window**](#eq2window).
+Channeler class window. Inherits from [**eq2window**](#eq2window). **Access:** `${ChannelerWindow}`
 
 **Inheritance:**
 - All members and methods from [**eq2window**](#eq2window) are available
 
 **Additional Members:**
-- `NumAbilities` - int: Number of abilities
+- `IconBank` - [eq2iconbank](#eq2iconbank): Ability icon bank
 
 ---
 
 #### **beastlordwindow**
 
-Beastlord class window. Inherits from [**eq2window**](#eq2window).
+Beastlord class window. Inherits from [**eq2window**](#eq2window). **Access:** `${BeastlordWindow}`
 
 **Inheritance:**
 - All members and methods from [**eq2window**](#eq2window) are available
 
 **Additional Members:**
-- `NumAbilities` - int: Number of abilities
+- `IconBank` - [eq2iconbank](#eq2iconbank): Ability icon bank
 
 ---
 
@@ -1936,7 +1995,7 @@ Beastlord class window. Inherits from [**eq2window**](#eq2window).
 Base class for all EQ2 UI objects. Many UI datatypes inherit from this type.
 
 **Members:**
-- `GetProperty[name,type]` - variable: Gets UI property
+- `GetProperty[name,type]` - bool/string: Gets UI property (returns bool for true/false values, string otherwise; optional `type` param can be `int`, `float`, or `int64` to force conversion)
 - `Type` - string: Object type name
 - `Parent` - [eq2baseobject](#eq2baseobject): Parent object
 
@@ -1959,6 +2018,9 @@ UI data source container. Inherits from [**eq2baseobject**](#eq2baseobject).
 **Inheritance:**
 - All members and methods from [**eq2baseobject**](#eq2baseobject) are available
 
+**Additional Members:**
+- `GetDynamicData[name]` - [eq2dynamicdata](#eq2dynamicdata): Get dynamic data by name
+
 ---
 
 #### **eq2dynamicdata**
@@ -1967,6 +2029,12 @@ UI dynamic data. Inherits from [**eq2baseobject**](#eq2baseobject).
 
 **Inheritance:**
 - All members and methods from [**eq2baseobject**](#eq2baseobject) are available
+
+**Additional Members:**
+- `Label` - string: Display label
+- `Tooltip` - string: Tooltip text
+- `IsSet` - bool: Whether the data is set
+- `Percent` - float: Percentage value
 
 ---
 
@@ -2153,7 +2221,9 @@ UI page container. Inherits from [**eq2widget**](#eq2widget).
 **Additional Members:**
 - `NumChildren` - int: Number of child widgets
 - `ChildType[index]` - string: Child type by index
-- `Child[index|name]` / `Child[instance,name]` - [eq2widget](#eq2widget): Get child
+- `Child["name"]` - [eq2widget](#eq2widget): Get child by name
+- `Child[#]` - [eq2widget](#eq2widget): Get child by index
+- `Child[#, "name"]` - [eq2widget](#eq2widget): Get Nth child with given name
 
 **Methods:**
 - `SpewChildren` - Lists all children
@@ -2710,6 +2780,8 @@ atom OnActorDespawned(string ID, string Name)
 
 #### **EQ2_ActorTargetChange**
 
+**Requires:** Call `ISXEQ2:EnableActorEvents` before this event will fire. Range configurable via `ISXEQ2:SetActorEventsRange[distance]` (default 35m).
+
 Fired when an actor changes their target.
 
 **Arguments:**
@@ -2736,6 +2808,8 @@ atom OnTargetChange(string ActorID, string ActorName, string ActorType, string O
 
 #### **EQ2_ActorAnimationChanged**
 
+**Requires:** Call `ISXEQ2:EnableActorEvents` before this event will fire. Range configurable via `ISXEQ2:SetActorEventsRange[distance]` (default 35m).
+
 Fired when an actor's animation state changes.
 
 **Arguments:**
@@ -2761,6 +2835,8 @@ atom OnAnimationChanged(string ActorID, string ActorName, string ActorType, stri
 ---
 
 #### **EQ2_ActorStanceChange**
+
+**Requires:** Call `ISXEQ2:EnableActorEvents` before this event will fire. Range configurable via `ISXEQ2:SetActorEventsRange[distance]` (default 35m).
 
 Fired when an actor changes their stance (combat, peace, etc.).
 
@@ -2789,6 +2865,8 @@ atom OnStanceChange(string ActorID, string ActorName, string ActorType, string O
 
 #### **EQ2_ActorHealthChange**
 
+**Requires:** Call `ISXEQ2:EnableActorEvents` before this event will fire. Range configurable via `ISXEQ2:SetActorEventsRange[distance]` (default 35m).
+
 Fired when an actor's health changes.
 
 **Arguments:**
@@ -2814,6 +2892,8 @@ atom OnHealthChange(string ActorID, string ActorName, string ActorType, string O
 ---
 
 #### **EQ2_ActorPowerChange**
+
+**Requires:** Call `ISXEQ2:EnableActorEvents` before this event will fire. Range configurable via `ISXEQ2:SetActorEventsRange[distance]` (default 35m).
 
 Fired when an actor's power changes.
 
@@ -2949,6 +3029,8 @@ atom OnCharacterSheetUpdate()
 
 #### **EQ2_onMeAfflicted**
 
+**Requires:** Call `EQ2:EnableAfflictionEvents` before this event will fire. Only fires during combat.
+
 Fired when the player character is afflicted with a detrimental effect.
 
 **Arguments:**
@@ -2996,6 +3078,8 @@ atom OnGroupChange(int PreviousGroupCount, int NewGroupCount)
 
 #### **EQ2_onGroupMemberAfflicted**
 
+**Requires:** Call `EQ2:EnableAfflictionEvents` before this event will fire. Only fires during combat.
+
 Fired when a group member is afflicted with a detrimental effect.
 
 **Arguments:**
@@ -3038,9 +3122,13 @@ atom OnRaidChange(int PreviousRaidCount, int NewRaidCount)
 
 ---
 
-#### **EQ2_onRaidMemberAfflicted**
+#### **EQ2_OnRaidMemberAfflicted**
+
+**Requires:** Call `EQ2:EnableAfflictionEvents` before this event will fire. Only fires during combat.
 
 Fired when a raid member is afflicted with a detrimental effect.
+
+**Note:** The registered event name uses capital "O" — `EQ2_OnRaidMemberAfflicted`.
 
 **Arguments:**
 - `ActorID` (int): ID of the afflicted raid member
@@ -3052,7 +3140,7 @@ Fired when a raid member is afflicted with a detrimental effect.
 
 **Usage:**
 ```lavishscript
-Event[EQ2_onRaidMemberAfflicted]:AttachAtom[OnRaidMemberAfflicted]
+Event[EQ2_OnRaidMemberAfflicted]:AttachAtom[OnRaidMemberAfflicted]
 
 atom OnRaidMemberAfflicted(int ActorID, int TraumaCounter, int ArcaneCounter, int NoxiousCounter, int ElementalCounter, int CursedCounter)
 {
@@ -3140,16 +3228,16 @@ atom OnDeleteQuest(string Param1, string Param2)
 Fired when an achievement is examined.
 
 **Arguments:**
-- `Type` (string): Achievement type
 - `ID` (string): Achievement ID
+- `Type` (string): Achievement type
 
 **Usage:**
 ```lavishscript
 Event[EQ2_ExamineAchievement]:AttachAtom[OnExamineAchievement]
 
-atom OnExamineAchievement(string Type, string ID)
+atom OnExamineAchievement(string ID, string Type)
 {
-    echo "Examining achievement: Type=${Type}, ID=${ID}"
+    echo "Examining achievement: ID=${ID}, Type=${Type}"
 }
 ```
 
@@ -3236,6 +3324,8 @@ atom OnSellItem(string ItemName, int Quantity, int LinkID, string ItemLinkString
     echo "Sold ${Quantity}x ${ItemName}"
 }
 ```
+
+**Note:** Due to a source code bug (arg count passed as 3 instead of 4), the 4th argument (`ItemLinkString`) may not be delivered to event handlers.
 
 ---
 
@@ -3438,7 +3528,7 @@ Fired when chat text is received.
 - `ChannelName` (string): Channel name
 - `SpeakerID` (int): Speaker actor ID
 - `TargetID` (int): Target actor ID
-- `UnkString1` (string): Unknown parameter
+- `UnkString1` (string): Undocumented parameter (content unreliable)
 
 **Usage:**
 ```lavishscript
@@ -3633,6 +3723,33 @@ atom OnReloading(string SessionPatched)
 - Scripts can use this to clean up before the extension reloads
 - The automatic cross-session reload feature is currently disabled in the code
 
+### isxGames Events
+
+Events from the isxGames framework used by ISXEQ2.
+
+#### **isxGames_onHTTPResponse**
+
+Fired when a `GetURL` or `PostURL` request completes.
+
+**Arguments:**
+- `Size` (int): Response size in bytes
+- `URL` (string): Request URL
+- `IPAddress` (string): Server IP address
+- `ResponseCode` (int): HTTP response code
+- `TransferTime` (float): Transfer time in seconds
+- `ResponseText` (string): Raw response text
+- `ParsedBody` (string): Parsed response body
+
+**Usage:**
+```lavishscript
+Event[isxGames_onHTTPResponse]:AttachAtom[OnHTTPResponse]
+
+atom OnHTTPResponse(int Size, string URL, string IPAddress, int ResponseCode, float TransferTime, string ResponseText, string ParsedBody)
+{
+    echo "HTTP response from ${URL}: ${ResponseCode} (${Size} bytes)"
+}
+```
+
 ---
 
 ## Deprecated Features
@@ -3693,9 +3810,32 @@ echo ${EQ2DataSourceContainer.GetGameData[Self.Experience].Label}
 echo ${Me.GetGameData[Self.Experience].Label}
 ```
 
+### Removed eq2mail Datatype and EQ2Mail TLO (January 2017)
+
+- ~~`eq2mail`~~ datatype and ~~`EQ2Mail`~~ TLO were removed
+- Use `MailWindow` and `OpenedMailWindow` TLOs instead
+
+### Removed EQ2_onSendMailComplete Event (October 2020)
+
+- ~~`EQ2_onSendMailComplete`~~ — This event was removed entirely
+
+### Removed Battlegrounds Code (January 2024)
+
+- All code and routines related to Battlegrounds were removed from ISXEQ2
+
+### Removed iteminfo Combat/Defense Members (January 2026)
+
+The following members were removed from the `iteminfo` datatype:
+
+**Weapon Stats:**
+- ~~`DamageRating`~~, ~~`MyMinDamage`~~, ~~`MyMaxDamage`~~, ~~`BaseMinDamage`~~, ~~`BaseMaxDamage`~~, ~~`MasteryMinDamage`~~, ~~`MasteryMaxDamage`~~
+
+**Shield/Protection Stats:**
+- ~~`Protection`~~, ~~`MaxProtection`~~, ~~`ShieldFactor`~~, ~~`MaxShieldFactor`~~
+
 ### Complete GetGameData Migration Examples
 
-See the [GetGameData Examples](#getgamedata-examples) section under the **char** datatype for comprehensive examples of all experience, vitality, pet, and bank coin values accessible through GetGameData.
+See the [GetGameData Examples](#getgamedata-examples) section under the **character** datatype for comprehensive examples of all experience, vitality, pet, and bank coin values accessible through GetGameData.
 
 ---
 
@@ -3727,15 +3867,13 @@ echo ${Target.ConColor}            ; "grey"
 ; Access inventory items
 echo ${Me.Inventory[5].Name}                            ; "Glowing Black Stone"
 echo ${Me.Inventory[5].Quantity}                        ; 10
-echo ${Me.Inventory[Pack1].IsContainer}                 ; TRUE
-echo ${Me.Inventory[Pack1].NumSlots}                    ; 8
+echo ${Me.Inventory[1].IsContainer}                     ; TRUE
+echo ${Me.Inventory[1].NumSlots}                        ; 8
 
 ; Item information
 echo ${Me.Equipment[chest].Name}                        ; "Breastplate of Valor"
 echo ${Me.Equipment[chest].ToItemInfo.Type}             ; "Heavy Armor"
-echo ${Me.Equipment[Primary].ToItemInfo.DamageRating}   ; 523
 echo ${Me.Equipment[Primary].ToItemInfo.Delay}          ; 2.5
-
 ; Use items
 Me.Inventory[5]:Use
 Me.Inventory["Health Potion"]:Consume
@@ -3790,13 +3928,13 @@ echo ${QuestJournalWindow.CurrentQuest.Name}    ; "The Hunt Begins"
 
 ```lavishscript
 ; Merchant
-echo ${MerchantWindow.NumItems}                 ; 25
-echo ${MerchantWindow.Item[1].Name}             ; "Iron Sword"
-echo ${MerchantWindow.Item[1].Price}            ; 5.25
-MerchantWindow.Item[1]:Buy[1]
+echo ${MerchantWindow.NumMerchantItemsForSale}          ; 25
+echo ${MerchantWindow.MerchantInventory[1].Name}        ; "Iron Sword"
+echo ${MerchantWindow.MerchantInventory[1].Price}       ; 5.25
+MerchantWindow.MerchantInventory[1]:Buy[1]
 
 ; Broker
-echo ${BrokerWindow.NumItems}                   ; 100
+echo ${BrokerWindow.NumSearchResults}            ; 100
 ```
 
 ### UI Interaction
@@ -3818,10 +3956,11 @@ LootWindow:LootAll
 ### Advanced Queries
 
 ```lavishscript
-; Find specific actors
-EQ2:CreateCustomActorArray[Distance,50,All]
-echo ${EQ2.CustomActorArraySize}                ; 35
-echo ${CustomActor[1].Name}                     ; "a gnoll scout"
+; Find specific actors (modern API)
+variable index:actor Actors
+EQ2:GetActors[Actors,All,byDist,50]
+echo ${Actors.Used}                             ; 35
+echo ${Actors[1].Name}                          ; "a gnoll scout"
 
 ; Query inventory
 variable index:item MyItems
@@ -3859,11 +3998,11 @@ echo ${Me.Heading}                              ; 180.5
 
 ; Distance calculations
 echo ${Me.Distance[100,50,-25]}                 ; 45.3
-echo ${Me.HeadingTo[100,50,-25,AsString]}       ; "180.5h"
+echo ${Me.HeadingTo[100,50,-25,AsString]}       ; "NE"
 
-; Movement
-Me:DoFace
-Me:WaypointTo
+; Movement (these are actor methods — call on OTHER actors, not Me)
+Target:DoFace
+Actor[named,SomeNPC]:WaypointTo
 ```
 
 ### Extension Utilities
@@ -4069,7 +4208,7 @@ Me:RequestEffectsInfo
 wait 5
 
 variable index:effect MyEffects
-Me:QueryEffect[MyEffects,"IsBeneficial"]
+Me:QueryEffects[MyEffects,"IsBeneficial"]
 variable iterator EffectIterator
 MyEffects:GetIterator[EffectIterator]
 
@@ -4147,32 +4286,39 @@ Query strings support complex filtering with special operators:
 ; =~ (regex match), !~ (regex does not match)
 ; && (and), || (or)
 
-; Find actors within range and specific level
-Me:CreateCustomActorArray[NearbyMobs,"Distance < 50 && Level == 120"]
-echo Found ${EQ2.CustomActorArraySize} actors
+; Find actors within range using modern GetActors API
+variable index:actor NearbyMobs
+EQ2:GetActors[NearbyMobs,NPC,byDist,50]
+echo Found ${NearbyMobs.Used} actors
+
+; Query actors with complex criteria using QueryActors
+variable index:actor Targets
+EQ2:QueryActors[Targets,"Type == \"NPC\" && Level >= 110 && Distance < 100 && !IsDead"]
 
 ; Find inventory items with complex criteria
 variable index:item Items
 Me:QueryInventory[Items,"Location == \"Inventory\" && Name =- \"Fang\" && Quantity > 1"]
 Items:GetIterator[ItemIterator]
 
-; Find detrimental effects lasting longer than 30 seconds
-variable index:effect Detriments
-Me:QueryEffect[Detriments,"IsDetrimental && Duration > 30"]
+; Find beneficial effects
+variable index:effect BeneficialEffects
+Me:QueryEffects[BeneficialEffects,"IsBeneficial"]
 
-; Find ready combat arts
+; Find ready abilities
 variable index:ability ReadyAbilities
-Me:QueryAbilities[ReadyAbilities,"IsReady && Type == \"Combat Art\""]
-
-; Complex actor search
-Me:CreateCustomActorArray[Targets,"Type == \"NPC\" && Level >= 110 && Distance < 100 && !IsDead"]
+Me:QueryAbilities[ReadyAbilities,"IsReady"]
 
 ; Find specific item types
-Me:QueryInventory[Weapons,"Type =- \"Weapon\" && ToItemInfo.MinLevel <= ${Me.Level}"]
+Me:QueryInventory[Weapons,"Type =- \"Weapon\""]
 
-; Find maintained spells by name pattern
-variable index:effect Wards
-Me:QueryEffect[Wards,"IsMaintained && Name =- \"Ward\""]
+; Iterate maintained spells by name pattern
+variable int i = 1
+while ${i} <= ${Me.CountMaintained}
+{
+    if ${Me.Maintained[${i}].Name.Find["Ward"]}
+        echo "Found ward: ${Me.Maintained[${i}].Name}"
+    i:Inc
+}
 ```
 
 ### Event-Driven Scripting
@@ -4196,7 +4342,7 @@ function main()
     wait 99999999 ${StopScript}
 }
 
-atom OnItemAddedToAltar()
+atom OnItemAddedToAltar(int ItemIndex)
 {
     ; Add randomized delay to appear more human
     wait ${Math.Rand[10]:Inc[5]}
@@ -4219,9 +4365,9 @@ function main()
     wait 99999999
 }
 
-atom OnChat(string ChatType, string ChatMessage, string ChatTarget, string ChatSender)
+atom OnChat(int ChatType, string Message, string Speaker, string Target, string SpeakerIsNPC, string ChannelName, int SpeakerID, int TargetID)
 {
-    if ${ChatMessage.Find["You are being attacked"]}
+    if ${Message.Find["You are being attacked"]}
     {
         echo "Under attack! Responding..."
         ; Defensive response code here
@@ -4451,7 +4597,7 @@ function ListAllQuests()
             echo "-- ID: ${QuestIt.Value.ID}"
             echo "-- Level: ${QuestIt.Value.Level}"
             echo "-- Category: ${QuestIt.Value.Category}"
-            echo "-- Zone: ${QuestIt.Value.Zone}"
+            echo "-- Zone: ${QuestIt.Value.CurrentZone}"
             Counter:Inc
         }
         while ${QuestIt:Next(exists)}
@@ -4535,7 +4681,7 @@ function ListAccountFeatures()
 function SetAAConversion(int Percentage)
 {
     ; Get current conversion
-    echo "Current AA conversion: ${EQ2DataSourceContainer[GameData].GetDynamicData[Achievement.ExperienceConversion].Percent}%"
+    echo "Current AA conversion: ${Me.GetGameData[Achievement.ExperienceConversion].Percent}%"
 
     ; Set new conversion percentage
     EQ2Execute "achievement_conversion ${Percentage}"
@@ -4577,7 +4723,7 @@ function DetectGroupLeader()
         if ${NumChildren} < 8
             continue
 
-        GMType:Set[${Me.Group[${GroupCounter}].ToActor.Type}]
+        GMType:Set[${Me.Group[${GroupCounter}].Type}]
         if ${GMType.Equal["Mercenary"]}
             continue
 
@@ -4686,8 +4832,8 @@ function CombatAlert()
 
 Some members are marked as deprecated and should not be used in new scripts:
 - `Item.IsInitialized` - Use `IsItemInfoAvailable` instead
-- `Ability.TimeRemaining` - Use `TimeUntilReady` instead
-- `Actor.ToActor` - No longer necessary
+- `Ability.TimeRemaining` — `TimeUntilReady` is an alias; prefer `TimeUntilReady` for consistency with the item datatype (both still work)
+- `Actor.ToActor` / `character.ToActor` / `groupmember.ToActor` — No longer necessary; these types inherit from actor, so all actor members are directly accessible. `groupmember.ToActor` prints a deprecation warning
 
 ### Case Sensitivity
 
