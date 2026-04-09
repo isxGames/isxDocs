@@ -12,7 +12,11 @@ Get up and running with ISXEQ2 scripting in minutes!
 - [Verify Installation](#verify-installation)
 - [Your First Script](#your-first-script)
 - [Understanding the Example](#understanding-the-example)
+- [Common First Scripts](#common-first-scripts)
+- [Experiment and Learn](#experiment-and-learn)
+- [Common Beginner Mistakes](#common-beginner-mistakes)
 - [Next Steps](#next-steps)
+- [Troubleshooting](#troubleshooting)
 
 ---
 
