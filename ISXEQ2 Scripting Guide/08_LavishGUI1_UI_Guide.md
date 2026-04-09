@@ -539,6 +539,48 @@ Display scrollable lists of items.
 </listbox>
 ```
 
+### Sliders
+
+Sliders for numeric input with visual feedback.
+
+```xml
+<slider name='SpeedSlider'>
+  <X>10</X>
+  <Y>200</Y>
+  <Width>150</Width>
+  <Height>18</Height>
+  <Range>100</Range>
+  <OnLoad>
+    This:SetValue[${Script[MyScript].Variable[SpeedValue]}]
+  </OnLoad>
+  <OnChange>
+    Script[MyScript].Variable[SpeedValue]:Set[${Int[${This.Value}]}]
+    UIElement[SpeedLabel]:SetText["Speed: ${This.Value}%"]
+  </OnChange>
+</slider>
+<Text name='SpeedLabel'>
+  <X>170</X>
+  <Y>200</Y>
+  <Width>200</Width>
+  <Height>18</Height>
+  <Text>Speed: 0%</Text>
+  <OnLoad>
+    This:SetText["Speed: ${Script[MyScript].Variable[SpeedValue]}%"]
+  </OnLoad>
+</Text>
+```
+
+**Key Slider Properties:**
+- `<Range>N</Range>` - Maximum value (slider range is 0 to N)
+- `${This.Value}` - Current slider value
+- `:SetValue[n]` - Set slider position programmatically
+- `OnChange` - Fires when the slider value changes
+
+**Pattern — Slider with Synchronized Label:**
+- Update label text in both `OnLoad` (initial state) and `OnChange` (live updates)
+- Use `${Int[${This.Value}]}` to ensure integer when storing values
+- Place the label element adjacent to the slider for a clean layout
+
 ---
 
 ## Event Handling
