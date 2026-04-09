@@ -1422,6 +1422,7 @@ function BackupSettings()
 
 ---
 
+<!-- CLAUDE_SKIP_START -->
 ## Summary
 
 These advanced patterns from the [MyPrices](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/MyPrices) script demonstrate:
@@ -1439,3 +1440,4 @@ These advanced patterns from the [MyPrices](https://github.com/isxGames/isxScrip
 - Visual feedback improves user experience
 - Settings backups are essential
 - Use the right pattern for the job (@ vs FindChild, Show vs Alpha)
+<!-- CLAUDE_SKIP_END -->
