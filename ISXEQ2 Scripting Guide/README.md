@@ -191,7 +191,6 @@ This comprehensive guide provides complete documentation for creating, debugging
 | **UI Windows** | [03_API_Reference.md#window-datatypes](03_API_Reference.md#window-datatypes) |
 | **Commands** | [03_API_Reference.md#commands](03_API_Reference.md#commands) |
 | **Events** | [03_API_Reference.md#events](03_API_Reference.md#events) |
-<!-- CLAUDE_SKIP_END -->
 
 ---
 
@@ -226,6 +225,7 @@ This comprehensive guide provides complete documentation for creating, debugging
 8. Study [15_Advanced_Scripting_Patterns.md](15_Advanced_Scripting_Patterns.md) for production-grade patterns from EQ2Ogre (multi-threading, LavishNav, modern EQ2:GetActors, etc.)
 9. Implement raid tracking and localization from advanced patterns
 10. Analyze the [EQ2Bot](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2Bot), [EQ2Craft](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2Craft), [MyPrices](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/MyPrices), [EQ2OgreFree](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2OgreFree), and other source scripts referenced in this documentation
+<!-- CLAUDE_SKIP_END -->
 
 ---
 
