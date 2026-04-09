@@ -18,6 +18,10 @@ This guide covers advanced patterns and techniques discovered through analysis o
 8. [Script Controller Pattern](#script-controller-pattern)
 9. [Dynamic Variable Declaration](#dynamic-variable-declaration)
 10. [Injectable UI Components](#injectable-ui-components)
+11. [UI Initialization Guard Pattern](#11-ui-initialization-guard-pattern)
+12. [Collection-Based Exclusion Lists](#12-collection-based-exclusion-lists)
+13. [Dynamic File-Based Configuration Discovery](#13-dynamic-file-based-configuration-discovery)
+14. [Zone-Aware Auto-Configuration](#14-zone-aware-auto-configuration)
 
 ---
 
