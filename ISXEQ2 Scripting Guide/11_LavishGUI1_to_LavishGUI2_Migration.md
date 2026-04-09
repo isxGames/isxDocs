@@ -17,6 +17,10 @@
 8. [Complete Migration Examples](#complete-migration-examples)
 9. [Migration Checklist](#migration-checklist)
 10. [Common Migration Issues](#common-migration-issues)
+11. [Advanced Migration Topics](#advanced-migration-topics)
+12. [Summary](#summary)
+13. [Known Limitations](#known-limitations)
+14. [LGUI2-Exclusive Features](#lgui2-exclusive-features)
 
 ---
 
