@@ -402,7 +402,7 @@ When using UI scaling (see [12_LGUI2_Scaling_System.md](12_LGUI2_Scaling_System.
 - ✅ When default skin appearance is acceptable
 - ✅ For quick prototypes or simple tools
 
-See complete example: [EQ2BotCommander.json](https://github.com/isxGames/isxScripts/blob/master/EverQuest2/Scripts/EQ2Bot/UI/EQ2BotCommander.json) (lines 1-88)
+See the LavishGUI 2 wiki for complete window examples: https://www.lavishsoft.com/wiki/index.php/LavishGUI_2
 
 ### TextBlock
 
@@ -434,7 +434,7 @@ The text will automatically update every frame with the current FPS value!
 {
     "type": "textblock",
     "textBinding": {
-        "pullFormat": "Health: ${Me.Health}"
+        "pullFormat": "Status: ${Script[MyScript].Variable[StatusText]}"
     }
 }
 ```
@@ -659,7 +659,7 @@ For more control over the dropdown behavior, font sizing, and proper event handl
     "eventHandlers": {
         "onSelectionChanged": {
             "type": "code",
-            "code": "if ${This.SelectedItem.Data.Get[text].NotNULLOrEmpty}\n{\n\tLogger:Log[\"Selection changed to ${This.SelectedItem.Data.Get[text]}\"]\n\tScript[EVEBot].VariableScope.Config.Common:CurrentBehavior[${This.SelectedItem.Data.Get[text]}]\n}"
+            "code": "if ${This.SelectedItem.Data.Get[text].NotNULLOrEmpty}\n{\n\tLogger:Log[\"Selection changed to ${This.SelectedItem.Data.Get[text]}\"]\n\tScript[MyScript].VariableScope.Config.Common:CurrentBehavior[${This.SelectedItem.Data.Get[text]}]\n}"
         }
     },
     "popup": {
@@ -674,7 +674,7 @@ For more control over the dropdown behavior, font sizing, and proper event handl
             },
             "minSize": [0, 200],
             "itemsBinding": {
-                "pullFormat": "${Script[EVEBot].VariableScope.UI.GetBehaviors}"
+                "pullFormat": "${Script[MyScript].VariableScope.UI.GetBehaviors}"
             },
             "eventHandlers": {
                 "onItemSelected": {
@@ -826,19 +826,19 @@ function main()
 
 When migrating from LGUI1, you may have comboboxes that stored numeric values (e.g., `<Item Value='1'>Option Text</Item>`). LGUI2 uses text-based selection, so you need to map between numeric config values and text selections.
 
-**Example: JetCan Naming Pattern (from EVEBot)**
+**Example: Deferred ComboBox Selection Pattern**
 
 **LGUI1 Version (stored numeric 1-10):**
 ```xml
-<combobox name='cbJetCanName'>
+<combobox name='cbPresetName'>
     <Items>
-        <Item Value='1'>CorpTicker Time</Item>
-        <Item Value='2'>CorpTicker:Time</Item>
+        <Item Value='1'>Option Time</Item>
+        <Item Value='2'>Option:Time</Item>
         ...
         <Item Value='10'>Do Not Rename</Item>
     </Items>
-    <OnLoad>This:SetSelection[${Config.JetCanNaming}]</OnLoad>
-    <OnSelect>Config:SetJetCanNaming[${This.SelectedItem.Value}]</OnSelect>
+    <OnLoad>This:SetSelection[${Config.PresetNaming}]</OnLoad>
+    <OnSelect>Config:SetPresetNaming[${This.SelectedItem.Value}]</OnSelect>
 </combobox>
 ```
 
@@ -846,20 +846,20 @@ When migrating from LGUI1, you may have comboboxes that stored numeric values (e
 ```json
 {
     "type": "combobox",
-    "name": "cbJetCanName",
+    "name": "cbPresetName",
     "eventHandlers": {
         "onSelectionChanged": {
             "type": "code",
-            "code": "variable int Value\nswitch ${This.SelectedItem.Data.Get[text]}\n{\ncase CorpTicker Time\n\tValue:Set[1]\n\tbreak\ncase CorpTicker:Time\n\tValue:Set[2]\n\tbreak\n...\n}\nif ${Value}\n\tConfig:SetJetCanNaming[${Value}]"
+            "code": "variable int Value\nswitch ${This.SelectedItem.Data.Get[text]}\n{\ncase Option Time\n\tValue:Set[1]\n\tbreak\ncase Option:Time\n\tValue:Set[2]\n\tbreak\n...\n}\nif ${Value}\n\tConfig:SetPresetNaming[${Value}]"
         }
     },
     "popup": {
         "content": {
             "type": "listbox",
-            "name": "cbJetCanNameList",
+            "name": "cbPresetNameList",
             "items": [
-                {"type": "textblock", "text": "CorpTicker Time"},
-                {"type": "textblock", "text": "CorpTicker:Time"},
+                {"type": "textblock", "text": "Option Time"},
+                {"type": "textblock", "text": "Option:Time"},
                 ...
             ]
         }
@@ -867,42 +867,42 @@ When migrating from LGUI1, you may have comboboxes that stored numeric values (e
 }
 ```
 
-**Controller Implementation (obj_EVEBotUI.iss):**
+**Controller Implementation (obj_MyScriptUI.iss):**
 ```lavishscript
-objectdef obj_EVEBotUI
+objectdef obj_MyScriptUI
 {
-    variable bool NeedToSetJetCanComboBox = FALSE
-    variable int JetCanComboBoxValueToSet = 0
+    variable bool NeedToSetPresetComboBox = FALSE
+    variable int PresetComboBoxValueToSet = 0
 
-    method SetJetCanComboBoxWhenReady(int numericValue)
+    method SetPresetComboBoxWhenReady(int numericValue)
     {
-        This.NeedToSetJetCanComboBox:Set[TRUE]
-        This.JetCanComboBoxValueToSet:Set[${numericValue}]
+        This.NeedToSetPresetComboBox:Set[TRUE]
+        This.PresetComboBoxValueToSet:Set[${numericValue}]
     }
 
     method Pulse()
     {
-        if ${This.NeedToSetJetCanComboBox}
+        if ${This.NeedToSetPresetComboBox}
         {
-            if ${LGUI2.Element[cbJetCanNameList](exists)} && ${LGUI2.Element[cbJetCanNameList].ItemCount} > 0
+            if ${LGUI2.Element[cbPresetNameList](exists)} && ${LGUI2.Element[cbPresetNameList].ItemCount} > 0
             {
-                This:SetJetCanComboBox[${This.JetCanComboBoxValueToSet}]
-                This.NeedToSetJetCanComboBox:Set[FALSE]
+                This:SetPresetComboBox[${This.PresetComboBoxValueToSet}]
+                This.NeedToSetPresetComboBox:Set[FALSE]
             }
         }
     }
 
-    method SetJetCanComboBox(int numericValue)
+    method SetPresetComboBox(int numericValue)
     {
         variable string SelectedText
 
         switch ${numericValue}
         {
             case 1
-                SelectedText:Set["CorpTicker Time"]
+                SelectedText:Set["Option Time"]
                 break
             case 2
-                SelectedText:Set["CorpTicker:Time"]
+                SelectedText:Set["Option:Time"]
                 break
             ; ... other cases
             case 10
@@ -913,11 +913,11 @@ objectdef obj_EVEBotUI
         if ${SelectedText.NotNULLOrEmpty}
         {
             variable int i
-            for (i:Set[1]; ${i} <= ${LGUI2.Element[cbJetCanNameList].ItemCount}; i:Inc)
+            for (i:Set[1]; ${i} <= ${LGUI2.Element[cbPresetNameList].ItemCount}; i:Inc)
             {
-                if ${LGUI2.Element[cbJetCanNameList].Item[${i}].Data.Get[text].Equal[${SelectedText}]}
+                if ${LGUI2.Element[cbPresetNameList].Item[${i}].Data.Get[text].Equal[${SelectedText}]}
                 {
-                    LGUI2.Element[cbJetCanNameList]:SetItemSelected[${i},TRUE]
+                    LGUI2.Element[cbPresetNameList]:SetItemSelected[${i},TRUE]
                     return
                 }
             }
@@ -926,12 +926,12 @@ objectdef obj_EVEBotUI
 }
 ```
 
-**Main Script Initialization (EVEBot.iss):**
+**Main Script Initialization (MyScript.iss):**
 ```lavishscript
 function main()
 {
     ; After UI loads and config is loaded
-    UI:SetJetCanComboBoxWhenReady[${Config.Miner.JetCanNaming}]
+    UI:SetPresetComboBoxWhenReady[${Config.Settings.PresetNaming}]
 }
 ```
 
@@ -1208,7 +1208,7 @@ Visual indicator showing progress or completion percentage.
     "width": 200,
     "height": 20,
     "valueBinding": {
-        "pullFormat": "${Me.Health}"
+        "pullFormat": "${Script[MyScript].Variable[ProgressValue]}"
     },
     "minValue": 0,
     "maxValue": 100,
@@ -2158,17 +2158,17 @@ objectdef MyUI
 }
 ```
 
-**Real-World Example (EVEBot Pattern):**
+**Real-World Example (MyScript Pattern):**
 
-EVEBot uses this pattern to organize its complex UI across multiple files:
+MyScript uses this pattern to organize its complex UI across multiple files:
 
 ```lavishscript
-; obj_EVEBotUI.iss
+; obj_MyScriptUI.iss
 method Initialize()
 {
     LGUI2:LoadPackageFile[interface/UIElements.json]    ; Common templates
     LGUI2:LoadPackageFile[interface/tabStatus.json]     ; Status tab content
-    LGUI2:LoadPackageFile[interface/EVEBot.json]        ; Main UI definition
+    LGUI2:LoadPackageFile[interface/MyScript.json]        ; Main UI definition
 }
 ```
 
@@ -2606,7 +2606,7 @@ Circular gauge for displaying values (speedometer-style).
     "maxValue": 100,
     "value": 65,
     "valueBinding": {
-        "pullFormat": "${Me.Speed}"
+        "pullFormat": "${Script[MyScript].Variable[SpeedValue]}"
     },
     "foregroundBrush": {
         "color": "#00ff00"
@@ -2718,7 +2718,7 @@ Multiple statements:
 "eventHandlers": {
     "onPress": {
         "type": "code",
-        "code": "echo Starting attack; Me:Target[${Actor[nearest npc]}]; Me.Ability[1]:Use"
+        "code": "echo Button pressed; Script[MyScript]:QueueCommand[call OnButtonPress]"
     }
 }
 ```
@@ -3097,7 +3097,7 @@ When the user clicks the checkbox, `MyController.AutoLootEnabled` is automatical
 
 ```json
 "textBinding": {
-    "pullFormat": "Health: ${Me.Health}"
+    "pullFormat": "Status: ${Script[MyScript].Variable[StatusText]}"
 }
 ```
 
@@ -4003,13 +4003,13 @@ Properties that work with `:Set`:
 
 #### Complete Working Example
 
-**Real-world example from EQ2BotCommander:**
+**Toggle button with color-coded state:**
 
 ```json
 {
     "type": "button",
-    "name": "Main.RunEQ2Bot",
-    "content": "Run EQ2BOT",
+    "name": "Main.ToggleProcess",
+    "content": "Start Process",
     "font": {"height": 36},
     "backgroundBrush": {"color": "#FF0000"},
     "styles": {
@@ -4029,7 +4029,7 @@ Properties that work with `:Set`:
     "eventHandlers": {
         "onPress": {
             "type": "code",
-            "code": "Script[EQ2BotCommander]:QueueCommand[call ToggleRunEQ2Bot]"
+            "code": "Script[MyScript]:QueueCommand[call ToggleProcess]"
         },
         "setGreen": {
             "type": "style",
@@ -4041,47 +4041,45 @@ Properties that work with `:Set`:
         },
         "gotMouseOver": {
             "type": "code",
-            "code": "Script[EQ2BotCommander]:QueueCommand[call ReapplyRunEQ2BotButtonColor]"
+            "code": "Script[MyScript]:QueueCommand[call ReapplyToggleButtonColor]"
         },
         "lostMouseOver": {
             "type": "code",
-            "code": "Script[EQ2BotCommander]:QueueCommand[call ReapplyRunEQ2BotButtonColor]"
+            "code": "Script[MyScript]:QueueCommand[call ReapplyToggleButtonColor]"
         }
     }
 }
 ```
 
 ```lavishscript
-variable bool EQ2BotRunning = FALSE
+variable bool ProcessRunning = FALSE
 
-function ToggleRunEQ2Bot()
+function ToggleProcess()
 {
-    if ${EQ2BotRunning} == FALSE
+    if ${ProcessRunning} == FALSE
     {
-        EQ2BotRunning:Set[TRUE]
-        LGUI2.Element[Main.RunEQ2Bot]:SetContent["End EQ2BOT"]
-        LGUI2.Element[Main.RunEQ2Bot]:FireEventHandler[setGreen]
-        ; Start EQ2Bot...
+        ProcessRunning:Set[TRUE]
+        LGUI2.Element[Main.ToggleProcess]:SetContent["Stop Process"]
+        LGUI2.Element[Main.ToggleProcess]:FireEventHandler[setGreen]
+        ; Start processing...
     }
     else
     {
-        EQ2BotRunning:Set[FALSE]
-        LGUI2.Element[Main.RunEQ2Bot]:SetContent["Run EQ2BOT"]
-        LGUI2.Element[Main.RunEQ2Bot]:FireEventHandler[setRed]
-        ; Stop EQ2Bot...
+        ProcessRunning:Set[FALSE]
+        LGUI2.Element[Main.ToggleProcess]:SetContent["Start Process"]
+        LGUI2.Element[Main.ToggleProcess]:FireEventHandler[setRed]
+        ; Stop processing...
     }
 }
 
-function ReapplyRunEQ2BotButtonColor()
+function ReapplyToggleButtonColor()
 {
-    if ${EQ2BotRunning}
-        LGUI2.Element[Main.RunEQ2Bot]:FireEventHandler[setGreen]
+    if ${ProcessRunning}
+        LGUI2.Element[Main.ToggleProcess]:FireEventHandler[setGreen]
     else
-        LGUI2.Element[Main.RunEQ2Bot]:FireEventHandler[setRed]
+        LGUI2.Element[Main.ToggleProcess]:FireEventHandler[setRed]
 }
 ```
-
-**Reference Implementation:** See [EQ2BotCommander.json](https://github.com/isxGames/isxScripts/blob/master/EverQuest2/Scripts/EQ2Bot/UI/EQ2BotCommander.json) and [EQ2BotCommander.iss](https://github.com/isxGames/isxScripts/blob/master/EverQuest2/Scripts/EQ2BotCommander.iss) for a complete production example with 11 toggle buttons using this pattern.
 
 #### Summary: Dynamic Styles Best Practices
 
@@ -4282,7 +4280,7 @@ method Shutdown()
 - **Load order matters** - Template packages must be loaded before packages that use them
 - **No skins required** - Templates are available across packages without PushSkin/PopSkin
 - **Clean separation** - Keep reusable UI components in separate template files
-- **Production example** - EVEBot uses this pattern to separate titleBar templates from main UI
+- **Production example** - MyScript uses this pattern to separate titleBar templates from main UI
 
 ### Item View Templates
 
@@ -4932,7 +4930,7 @@ Triggers fire event handlers based on conditions:
     },
     "triggers": {
         "health-warning": {
-            "condition": "${Me.Health} < 50",
+            "condition": "${Script[MyScript].Variable[AlertLevel]} > 3",
             "matched": {
                 "type": "audio",
                 "voiceName": "ui sound",
@@ -6055,10 +6053,10 @@ For more control over tooltip appearance, define the tooltip as a complete eleme
 ```json
 {
     "type": "button",
-    "content": "Run EVEBot",
+    "content": "Run MyScript",
     "tooltip": {
         "type": "textblock",
-        "text": "Click to start the EVEBot automation",
+        "text": "Click to start the MyScript automation",
         "font": {
             "face": "Segoe UI Italic",
             "height": 36
@@ -6443,25 +6441,25 @@ method Load_WindowInformation(string _WindowName)
                     {
                         "type": "textblock",
                         "textBinding": {
-                            "pullFormat": "Name: ${Me.Name}"
+                            "pullFormat": "Name: ${Script[MyScript].Variable[PlayerName]}"
                         }
                     },
                     {
                         "type": "textblock",
                         "textBinding": {
-                            "pullFormat": "Health: ${Me.Health}/${Me.MaxHealth}"
+                            "pullFormat": "Value: ${Script[MyScript].Variable[CurrentValue]}/${Script[MyScript].Variable[MaxValue]}"
                         }
                     },
                     {
                         "type": "textblock",
                         "textBinding": {
-                            "pullFormat": "Power: ${Me.Power}/${Me.MaxPower}"
+                            "pullFormat": "Progress: ${Script[MyScript].Variable[Progress]}/${Script[MyScript].Variable[MaxProgress]}"
                         }
                     },
                     {
                         "type": "textblock",
                         "textBinding": {
-                            "pullFormat": "Level: ${Me.Level}"
+                            "pullFormat": "Count: ${Script[MyScript].Variable[ItemCount]}"
                         }
                     },
                     {
@@ -6600,15 +6598,15 @@ objectdef combat_controller
         echo Attacking!
         This.StatusText:Set["Attacking..."]
 
-        if !${Target(exists)}
+        if !${Script[MyScript].Variable[IsReady]}
         {
-            This.StatusText:Set["No target!"]
+            This.StatusText:Set["Not ready!"]
             return
         }
 
-        ; Start combat
-        Me.Ability[1]:Use
-        This.StatusText:Set["In combat"]
+        ; Start processing
+        Script[MyScript]:QueueCommand[call StartProcess]
+        This.StatusText:Set["Processing"]
     }
 
     method OnStopPressed()
@@ -6709,8 +6707,8 @@ objectdef targets_controller
         variable index:actor actorList
         variable iterator iter
 
-        ; Get nearby NPCs
-        EQ2:QueryActors[actorList, "Type = NPC && Distance < 20"]
+        ; Populate from script data
+        Script[MyScript]:QueueCommand[call GetNearbyItems[actorList]]
 
         actorList:GetIterator[iter]
         if ${iter:First(exists)}
@@ -6775,7 +6773,7 @@ function main()
 1. **Use data binding instead of manual updates**
    ```json
    // GOOD - Automatic updates
-   "textBinding": {"pullFormat": "Health: ${Me.Health}"}
+   "textBinding": {"pullFormat": "Status: ${Script[MyScript].Variable[StatusText]}"}
    
    // BAD - Manual updates required
    "text": "Health: 100"
@@ -6792,9 +6790,9 @@ function main()
 3. **Avoid complex computations in pullFormat**
    ```lavishscript
    // GOOD - Compute in controller member
-   member:string GetFormattedHealth()
+   member:string GetFormattedProgress()
    {
-       return "${Me.Health}/${Me.MaxHealth} (${Math.Calc[${Me.Health}*100/${Me.MaxHealth}]}%)"
+       return "${This.CurrentValue}/${This.MaxValue} (${Math.Calc[${This.CurrentValue}*100/${This.MaxValue}]}%)"
    }
    ```
 
@@ -6810,11 +6808,11 @@ function main()
     "eventHandlers": {
         "onLoad": {
             "type": "code",
-            "code": "This:SetText[${Script[EVEBot].VariableScope.Config.Combat.WarpRange}]"
+            "code": "This:SetText[${Script[MyScript].VariableScope.Config.Settings.MaxRange}]"
         },
         "onTextChanged": {
             "type": "code",
-            "code": "if ${This.Text.Length} > 0\n{\n\tScript[EVEBot].VariableScope.Config.Combat:SetWarpRange[${Int[${This.Text}]}]\n}\nelse\n{\n\tScript[EVEBot].VariableScope.Config.Combat:SetWarpRange[0]\n}"
+            "code": "if ${This.Text.Length} > 0\n{\n\tScript[MyScript].VariableScope.Config.Settings:SetMaxRange[${Int[${This.Text}]}]\n}\nelse\n{\n\tScript[MyScript].VariableScope.Config.Settings:SetMaxRange[0]\n}"
         }
     }
 }
@@ -6826,8 +6824,8 @@ function main()
     "type": "textbox",
     "name": "warpRange",
     "textBinding": {
-        "pullFormat": "${Script[EVEBot].VariableScope.Config.Combat.WarpRange}",
-        "pushFormat": ["Script[EVEBot].VariableScope.Config.Combat:SetWarpRange[", "]"]
+        "pullFormat": "${Script[MyScript].VariableScope.Config.Settings.MaxRange}",
+        "pushFormat": ["Script[MyScript].VariableScope.Config.Settings:SetMaxRange[", "]"]
     }
 }
 ```
@@ -6847,31 +6845,31 @@ function main()
     "type": "textbox",
     "name": "droneCount",
     "textBinding": {
-        "pullFormat": "${Config.Combat.MinimumDronesInSpace}",
-        "pushFormat": ["Config.Combat:SetMinimumDronesInSpace[", "]"]
+        "pullFormat": "${Config.Settings.MaxItemCount}",
+        "pushFormat": ["Config.Settings:SetMaxItemCount[", "]"]
     }
 }
 ```
 
 ```lavishscript
 // In your config objectdef
-method SetMinimumDronesInSpace(string value)
+method SetMaxItemCount(string value)
 {
     ; Validation happens in the setter
-    if !${ISXEVE.IsNumeric[${value}]}
+    if ${value.Length} == 0
     {
-        echo "Invalid drone count: ${value}"
+        echo "Invalid item count: ${value}"
         return
     }
 
-    variable int droneCount = ${Int[${value}]}
-    if ${droneCount} < 0 || ${droneCount} > 5
+    variable int itemCount = ${Int[${value}]}
+    if ${itemCount} < 0 || ${itemCount} > 100
     {
-        echo "Drone count must be 0-5"
+        echo "Item count must be 0-100"
         return
     }
 
-    This.CombatRef:AddSetting[MinimumDronesInSpace, ${droneCount}]
+    This.SettingsRef:AddSetting[MaxItemCount, ${itemCount}]
 }
 ```
 
@@ -7046,11 +7044,7 @@ function atexit()
 2. **Multi-monitor**: Critical for users with multiple displays
 3. **First run**: Uses JSON defaults (-1 check ensures this)
 4. **Shutdown paths**: Saves on close button AND script end
-5. **Production tested**: Based on EQ2BotCommander implementation
-
-**Reference Implementation:**
-- [EQ2BotCommander.iss](https://github.com/isxGames/isxScripts/blob/master/EverQuest2/Scripts/EQ2BotCommander.iss) (lines 83-133, 548-573)
-- Complete working example with window position persistence
+5. **Production tested**: Based on real-world InnerSpace script implementations
 
 #### Other Settings Persistence
 
@@ -7392,21 +7386,21 @@ Check for:
 1. **Verify pullFormat syntax**
    ```json
    "textBinding": {
-       "pullFormat": "Health: ${Me.Health}"  // Correct variable reference
+       "pullFormat": "Status: ${Script[MyScript].Variable[StatusText]}"  // Correct variable reference
    }
    ```
 
 2. **Check controller member exists**
    ```lavishscript
-   member:string GetHealth()
+   member:string GetValue()
    {
-       return "${Me.Health}"
+       return "${This.CurrentValue}"
    }
    ```
 
 3. **Ensure data is actually changing**
    ```lavishscript
-   echo ${Me.Health}  // Verify the value changes
+   echo ${Script[MyScript].Variable[CurrentValue]}  // Verify the value changes
    ```
 
 ### Event Handler Not Firing
@@ -7559,7 +7553,7 @@ LGUI2.Element[mycheckbox]:SetChecked[TRUE]
 
 ```json
 // Text binding
-"textBinding": {"pullFormat": "${Me.Health}"}
+"textBinding": {"pullFormat": "${Script[MyScript].Variable[ProgressValue]}"}
 
 // Checkbox binding (bidirectional)
 "checkedBinding": "MyController.Enabled"
@@ -7607,6 +7601,6 @@ LGUI2.Element[mycheckbox]:SetChecked[TRUE]
 - 12 LERN/Game example files: https://github.com/LavishSoftware/LERN/tree/master/Game (canvas, audio, game controller patterns)
 - Official LavishGUI 2 documentation and wiki
 - Complete coverage of all element types, events, and patterns
-- Real-world migration experience (EQ2BotCommander LGUI1→LGUI2)
+- Real-world migration experience (LGUI1→LGUI2)
 
 <!-- CLAUDE_SKIP_END -->
