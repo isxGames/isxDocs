@@ -1,7 +1,7 @@
 # JSON in LavishScript - Complete Guide
 
 **System:** LavishScript JSON API
-**Target:** InnerSpace / ISXEQ2 Scripts
+**Target:** InnerSpace / LavishScript
 
 ---
 
@@ -38,7 +38,7 @@
 - Inter-script data exchange
 - **LavishGUI 2 UI packages** (covered in [10_LavishGUI2_UI_Guide.md](10_LavishGUI2_UI_Guide.md))
 
-### Why Use JSON in ISXEQ2 Scripts?
+### Why Use JSON in LavishScript?
 
 1. ✅ **Configuration Management** - Store script settings in readable files
 2. ✅ **Data Persistence** - Save and load complex data structures
@@ -1372,8 +1372,8 @@ variable(global) player_stats Stats
 
 function main()
 {
-    Stats.Name:Set["${Me.Name}"]
-    Stats.Level:Set[${Me.Level}]
+    Stats.Name:Set["${Script.Filename}"]
+    Stats.Level:Set[1]
     Stats:LoadStats
 
     ; Simulate some combat
@@ -1433,32 +1433,24 @@ objectdef target_manager
 {
     variable collection:target_entry Targets
 
-    method ScanNearbyTargets()
+    method ScanItems()
     {
         Targets:Clear
 
-        variable index:actor nearbyActors
-        EQ2:QueryActors[nearbyActors, Type =- "NPC" && Distance < 50]
-
-        variable iterator iter
-        nearbyActors:GetIterator[iter]
-
-        if ${iter:First(exists)}
+        ; Populate from your extension's data source
+        variable int i
+        for (i:Set[1] ; ${i} <= 10 ; i:Inc)
         {
-            do
-            {
-                variable jsonvalue joTarget={}
-                joTarget:SetString[name,"${iter.Value.Name~}"]
-                joTarget:SetInteger[level,${iter.Value.Level}]
-                joTarget:SetString[type,"${iter.Value.Type~}"]
-                joTarget:SetNumber[distance,${iter.Value.Distance}]
+            variable jsonvalue joTarget={}
+            joTarget:SetString[name,"Item ${i}"]
+            joTarget:SetInteger[level,${i}]
+            joTarget:SetString[type,"TypeA"]
+            joTarget:SetNumber[distance,${Math.Calc[${i} * 5.0]}]
 
-                Targets:Set["${iter.Value.Name~}",joTarget]
-            }
-            while ${iter:Next(exists)}
+            Targets:Set["Item ${i}",joTarget]
         }
 
-        echo Scanned ${Targets.Used} targets
+        echo Scanned ${Targets.Used} items
     }
 
     method SaveTargets()
@@ -1476,7 +1468,7 @@ objectdef target_manager
         {
             Targets:Clear
             data:ForEach["Targets:Set[\"\${ForEach.Value.Get[name]~}\",ForEach.Value]"]
-            echo Loaded ${Targets.Used} targets
+            echo Loaded ${Targets.Used} items
         }
     }
 
