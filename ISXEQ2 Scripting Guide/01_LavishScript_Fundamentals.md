@@ -3054,4 +3054,5 @@ echo "CursorX: ${LGUI2.CursorX}"
 - **LavishScript Math Operators:** http://www.lavishsoft.com/wiki/index.php/LavishScript:Mathematical_Formulae
 - **InnerSpace Documentation:** http://www.lavishsoft.com/wiki/
 - **LERN Examples:** https://github.com/LavishSoftware/LERN/tree/master
+- **LERN LavishScript Tutorials (19 lessons):** https://github.com/LavishSoftware/LERN/tree/master/LS
 
