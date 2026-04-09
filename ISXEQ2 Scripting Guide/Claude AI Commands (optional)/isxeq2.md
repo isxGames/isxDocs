@@ -9,6 +9,7 @@
 | **Scripts Directory** | `C:\Dev\InnerSpace\Scripts` |
 | **Guide Directory** | `C:\Dev\InnerSpace\isxDocs\ISXEQ2 Scripting Guide` |
 | **Changes File** | `C:\Dev\InnerSpace\ISXEQ2\Install\x64\Extensions\ISXDK35\ISXEQ2Changes.txt` |
+| **Quick Reference** | `C:\Dev\InnerSpace\isxDocs\ISXEQ2_QuickReference.md` |
 
 ---
 
@@ -94,6 +95,9 @@ When reviewing scripts over ~200 lines:
 
 **DEFINITIVE API SOURCE:**
 - Changes File (~7,700 lines) — THE authoritative source for all ISXEQ2 API documentation. When delegating API-related tasks, remind the subagent to verify against CHANGES_FILE.
+
+**QUICK REFERENCE FILE** (~4,900 lines):
+- `ISXEQ2_QuickReference.md` — Comprehensive quick reference covering all TLOs, datatypes (members/methods), commands, events, and usage examples in a single file. Useful for subagents that need broad API context without reading multiple guide files. Located outside the Guide Directory (see User Configuration table for path). When delegating tasks, include this path so the subagent can use it.
 
 **LARGE DOCUMENTATION FILES** (delegate reading to subagent):
 - API Reference (~3,600 lines)

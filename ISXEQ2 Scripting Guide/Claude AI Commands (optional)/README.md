@@ -20,9 +20,13 @@ This conserves context in the main conversation while maintaining thoroughness.
 3. Edit `ISXEQ2-Expert.md` and update the **Local Paths** section at the top:
    - `SCRIPTS_DIR`: Your InnerSpace Scripts directory
    - `GUIDE_DIR`: Your ISXEQ2 Scripting Guide directory
+   - `CHANGES_FILE`: The ISXEQ2Changes.txt file from your ISXEQ2 installation
+   - `QUICK_REF_FILE`: Path to `ISXEQ2_QuickReference.md` (in the parent `isxDocs` directory)
 4. Edit `isxeq2.md` and update the **User Configuration** table at the top:
    - **Scripts Directory**: Your InnerSpace Scripts directory
    - **Guide Directory**: Your ISXEQ2 Scripting Guide directory
+   - **Changes File**: The ISXEQ2Changes.txt file from your ISXEQ2 installation
+   - **Quick Reference**: Path to `ISXEQ2_QuickReference.md`
 
 ---
 
@@ -49,7 +53,7 @@ Task(subagent_type="ISXEQ2-Expert", prompt="Create a health monitoring script...
 
 ## What the Agent Does
 
-- Reads your comprehensive guide (19 documentation files)
+- Reads your comprehensive guide (19 documentation files + quick reference)
 - Knows your directories (Scripts, Guide location)
 - Follows best practices (EQ2Bot patterns, NULL checks, async data handling)
 - Handles all tasks (creating, editing, debugging, refactoring scripts)

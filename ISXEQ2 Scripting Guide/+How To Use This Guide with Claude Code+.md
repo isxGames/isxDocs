@@ -83,15 +83,17 @@ Edit `ISXEQ2-Expert.md` and update the **Local Paths** section at the very top o
 ```
 ## Local Paths (UPDATE THESE FOR YOUR SYSTEM)
 
-SCRIPTS_DIR: C:\Dev\InnerSpace\Scripts\
-GUIDE_DIR:   C:\Dev\InnerSpace\isxDocs\ISXEQ2 Scripting Guide\
-CHANGES_FILE: C:\Dev\InnerSpace\ISXEQ2\Install\x64\Extensions\ISXDK35\ISXEQ2Changes.txt
+SCRIPTS_DIR:    C:\Dev\InnerSpace\Scripts\
+GUIDE_DIR:      C:\Dev\InnerSpace\isxDocs\ISXEQ2 Scripting Guide\
+CHANGES_FILE:   C:\Dev\InnerSpace\ISXEQ2\Install\x64\Extensions\ISXDK35\ISXEQ2Changes.txt
+QUICK_REF_FILE: C:\Dev\InnerSpace\isxDocs\ISXEQ2_QuickReference.md
 ```
 
 Change these paths to match where you have:
 - **SCRIPTS_DIR**: Your InnerSpace Scripts directory
 - **GUIDE_DIR**: This ISXEQ2 Scripting Guide directory
 - **CHANGES_FILE**: The ISXEQ2Changes.txt file from your ISXEQ2 installation
+- **QUICK_REF_FILE**: The ISXEQ2_QuickReference.md file (in the parent `isxDocs` directory)
 
 ### Step 4: Update the Coordinator's Paths
 
@@ -107,6 +109,7 @@ Change these paths to match where you have:
 - **Scripts Directory**: Your InnerSpace Scripts directory
 - **Guide Directory**: This ISXEQ2 Scripting Guide directory
 - **Changes File**: The ISXEQ2Changes.txt file from your ISXEQ2 installation
+- **Quick Reference**: The ISXEQ2_QuickReference.md file (in the parent `isxDocs` directory)
 
 ### Step 5: Verify Installation
 
@@ -146,7 +149,7 @@ It does NOT read documentation files directly, keeping your main conversation co
 ### The Worker Agent (ISXEQ2-Expert)
 
 The agent runs in an isolated context and:
-- Reads documentation files (all 21 guides)
+- Reads documentation files (all 21 guides + quick reference)
 - Analyzes existing scripts
 - Creates and edits script files
 - Debugs issues
