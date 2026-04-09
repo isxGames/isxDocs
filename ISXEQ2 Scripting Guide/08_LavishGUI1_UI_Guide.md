@@ -19,6 +19,7 @@ Complete guide to creating custom user interfaces with LavishGUI 1 XML for ISXEQ
 7. [Complete Working Examples](#complete-working-examples)
 8. [Best Practices](#best-practices)
 9. [Troubleshooting](#troubleshooting)
+10. [Advanced Topics](#advanced-topics)
 
 ---
 
