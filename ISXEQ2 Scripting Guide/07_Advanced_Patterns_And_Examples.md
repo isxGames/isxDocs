@@ -1602,6 +1602,7 @@ function main()
 
 ---
 
+<!-- CLAUDE_SKIP_START -->
 ## Summary of New Patterns
 
 ### Patterns Added from Additional Script Analysis:
@@ -1621,6 +1622,7 @@ function main()
 13. **Advanced Debugging** - Multi-level verbosity, file logging
 14. **Text-to-Speech** - Audio notifications
 15. **Extension Management** - Loading, checking, graceful degradation
+<!-- CLAUDE_SKIP_END -->
 
 ---
 
