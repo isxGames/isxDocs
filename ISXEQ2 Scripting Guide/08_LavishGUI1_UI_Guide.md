@@ -1,8 +1,8 @@
-# LavishGUI 1 - UI Creation Guide for ISXEQ2
+# LavishGUI 1 - UI Creation Guide
 
-Complete guide to creating custom user interfaces with LavishGUI 1 XML for ISXEQ2 scripts.
+Complete guide to creating custom user interfaces with LavishGUI 1 XML for InnerSpace scripts.
 
-**Note:** This guide covers **LavishGUI 1**, the XML-based UI system used by older ISXEQ2 scripts. Newer scripts may use LavishGUI 2, which is a different system.
+**Note:** This guide covers **LavishGUI 1**, the XML-based UI system used by older InnerSpace scripts. Newer scripts may use LavishGUI 2, which is a different system.
 
 **Official Documentation:** https://www.lavishsoft.com/wiki/index.php/LavishGUI
 
@@ -52,17 +52,17 @@ Complete guide to creating custom user interfaces with LavishGUI 1 XML for ISXEQ
 Scripts\<ScriptName>\UI\<UIFile>.xml
 ```
 
-**Example (EQ2Bot):**
+**Example:**
 ```
-Scripts\EQ2Bot\UI\EQ2Bot.xml         (main window)
-Scripts\EQ2Bot\UI\EQ2BotExtras.xml   (additional UI)
-Scripts\EQ2Bot\UI\EQ2Skin.xml        (skin/theme)
+Scripts\MyScript\UI\MyScript.xml      (main window)
+Scripts\MyScript\UI\Options.xml       (additional UI)
+Scripts\MyScript\UI\MySkin.xml        (skin/theme)
 ```
 
 **Loading UI from Script:**
 ```lavishscript
-ui -load "${LavishScript.HomeDirectory}/Scripts/EQ2Bot/UI/EQ2Bot.xml"
-ui -reload "${LavishScript.HomeDirectory}/Scripts/EQ2Bot/UI/EQ2Bot.xml"
+ui -load "${LavishScript.HomeDirectory}/Scripts/MyScript/UI/MyScript.xml"
+ui -reload "${LavishScript.HomeDirectory}/Scripts/MyScript/UI/MyScript.xml"
 ```
 
 ---
@@ -206,7 +206,7 @@ The top-level container for your UI.
   <AutoTooltip>Click to start the bot</AutoTooltip>
 
   <OnLeftClick>
-    Script[EQ2Bot]:QueueCommand[call StartBot]
+    Script[MyScript]:QueueCommand[call StartProcess]
   </OnLeftClick>
 </commandbutton>
 ```
@@ -258,31 +258,31 @@ Checkboxes for boolean options.
 #### CommandCheckbox (with LavishSettings Integration)
 
 ```xml
-<commandcheckbox Name='MainTank'>
+<commandcheckbox Name='VerboseMode'>
   <X>10</X>
   <Y>100</Y>
   <Width>150</Width>
   <Height>20</Height>
-  <Text>I am Main Tank</Text>
-  <AutoTooltip>Check if you are the main tank</AutoTooltip>
+  <Text>Verbose Logging</Text>
+  <AutoTooltip>Enable detailed logging output</AutoTooltip>
 
   <OnLeftClick>
     if ${This.Checked}
     {
-      Script[EQ2Bot].Variable[MainTank]:Set[TRUE]
-      LavishSettings[EQ2Bot].FindSet[Character].FindSet[Settings]:AddSetting[MainTank,TRUE]
-      Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+      Script[MyScript].Variable[VerboseMode]:Set[TRUE]
+      LavishSettings[MyScript].FindSet[Profile].FindSet[Settings]:AddSetting[VerboseMode,TRUE]
+      Script[MyScript].VariableScope.MyScript:Save_Settings
     }
     else
     {
-      Script[EQ2Bot].Variable[MainTank]:Set[FALSE]
-      LavishSettings[EQ2Bot].FindSet[Character].FindSet[Settings]:AddSetting[MainTank,FALSE]
-      Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+      Script[MyScript].Variable[VerboseMode]:Set[FALSE]
+      LavishSettings[MyScript].FindSet[Profile].FindSet[Settings]:AddSetting[VerboseMode,FALSE]
+      Script[MyScript].VariableScope.MyScript:Save_Settings
     }
   </OnLeftClick>
 
   <!-- Load checked state from settings -->
-  <Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[Settings].FindSetting[MainTank]}</Data>
+  <Data>${LavishSettings[MyScript].FindSet[Profile].FindSet[Settings].FindSetting[VerboseMode]}</Data>
 </commandcheckbox>
 ```
 
@@ -323,10 +323,10 @@ Dropdown selection lists.
 </combobox>
 ```
 
-#### Dynamic ComboBox (Populated from Game Data)
+#### Dynamic ComboBox (Populated from Script Data)
 
 ```xml
-<combobox name='MainTankSelection'>
+<combobox name='ProfileSelection'>
   <X>10</X>
   <Y>160</Y>
   <Width>150</Width>
@@ -335,36 +335,30 @@ Dropdown selection lists.
 
   <OnLoad>
     ; Load saved selection
-    if ${Actor[exactname,${Script[EQ2Bot].Variable[MainTankPC]}].Name(exists)}
+    if ${Script[MyScript].Variable[SelectedProfile].Length}
     {
-      This:AddItem[${Script[EQ2Bot].Variable[MainTankPC]}]
-      This.ItemByText[${Script[EQ2Bot].Variable[MainTankPC]}]:Select
+      This:AddItem[${Script[MyScript].Variable[SelectedProfile]}]
+      This.ItemByText[${Script[MyScript].Variable[SelectedProfile]}]:Select
     }
   </OnLoad>
 
   <OnSelect>
     ; Save selection
-    Script[EQ2Bot].Variable[MainTankPC]:Set[${This.SelectedItem.Text}]
-    LavishSettings[EQ2Bot].FindSet[Character].FindSet[Settings]:AddSetting[MainTank,${This.SelectedItem.Text}]
-    Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+    Script[MyScript].Variable[SelectedProfile]:Set[${This.SelectedItem.Text}]
+    LavishSettings[MyScript].FindSet[Config]:AddSetting[SelectedProfile,${This.SelectedItem.Text}]
+    LavishSettings[MyScript]:Export["${LavishScript.HomeDirectory}/Scripts/MyScript/Config.xml"]
   </OnSelect>
 
   <OnLeftClick>
-    ; Populate with group members when clicked
+    ; Populate with available profiles when clicked
     declare tmpvar int
     This:ClearItems
     tmpvar:Set[1]
 
-    if ${Me.Group} > 1
+    while ${tmpvar} <= ${Script[MyScript].Variable[NumProfiles]}
     {
-      do
-      {
-        if ${Me.Group[${tmpvar}].InZone}
-        {
-          This:AddItem[${Me.Group[${tmpvar}].Name}]
-        }
-      }
-      while ${tmpvar:Inc} < ${Me.Group}
+      This:AddItem[${Script[MyScript].Variable[Profile${tmpvar}]}]
+      tmpvar:Inc
     }
 
     This:Sort
@@ -529,17 +523,14 @@ Display scrollable lists of items.
   <Items></Items>
 
   <OnLoad>
-    ; Populate with targets
+    ; Populate with items from a collection
     declare i int
     i:Set[1]
-    do
+    while ${i} <= ${Script[MyScript].Variable[ItemCount]}
     {
-      if ${Actor[${i}](exists)}
-      {
-        This:AddItem[${Actor[${i}].Name}]
-      }
+      This:AddItem[${Script[MyScript].Variable[Item${i}]}]
+      i:Inc
     }
-    while ${i:Inc} <= 50
   </OnLoad>
 
   <OnSelect>
@@ -609,7 +600,7 @@ Called every frame while the element is visible.
 <Window name='MyWindow'>
   <OnRender>
     ; Update title dynamically
-    UIElement[Title@TitleBar@MyWindow]:SetText[MyScript - ${Me.Name}]
+    UIElement[Title@TitleBar@MyWindow]:SetText[MyScript - ${Script[MyScript].Variable[StatusText]}]
   </OnRender>
 </Window>
 ```
@@ -633,7 +624,7 @@ Access script variables using the `Script[]` TLO:
 
 ```xml
 <OnLoad>
-  if ${Script[EQ2Bot].Variable[MainTank]}
+  if ${Script[MyScript].Variable[VerboseMode]}
   {
     This:SetChecked
   }
@@ -650,9 +641,9 @@ Access script variables using the `Script[]` TLO:
 Use `Script:QueueCommand` to execute script code:
 
 ```xml
-<commandbutton name='StartBot'>
+<commandbutton name='StartProcess'>
   <OnLeftClick>
-    Script[EQ2Bot]:QueueCommand[call StartBot]
+    Script[MyScript]:QueueCommand[call StartProcess]
   </OnLeftClick>
 </commandbutton>
 ```
@@ -701,7 +692,7 @@ UIElement[MyWindow].FindUsableChild[SomeDeepElement,checkbox]
 
 ```lavishscript
 UIElement[StatusLabel]:SetText["Status: Running"]
-UIElement[Title@TitleBar@MyWindow]:SetText["MyScript - ${Me.Name}"]
+UIElement[Title@TitleBar@MyWindow]:SetText["MyScript - ${Script[MyScript].Variable[StatusText]}"]
 ```
 
 #### SetChecked / UnsetChecked - Checkboxes
@@ -782,34 +773,34 @@ Templates allow you to:
 Reference a template in your element:
 
 ```xml
-<button Name='MyButton' Template='EQ2.button'>
+<button Name='MyButton' Template='Custom.button'>
   <Text>Click Me</Text>
 </button>
 ```
 
 ### Creating a Skin
 
-**EQ2Skin.xml example:**
+**MySkin.xml example:**
 
 ```xml
 <?xml version="1.0" encoding="UTF-8" ?>
 <ISUI>
-  <Skin Name='eq2skin' Template='Default Skin'>
-    <SkinTemplate Base='window' Skin='EQ2.window' />
-    <SkinTemplate Base='button' Skin='EQ2.button' />
-    <SkinTemplate Base='checkbox' Skin='EQ2.checkbox' />
-    <SkinTemplate Base='combobox' Skin='EQ2.combobox' />
+  <Skin Name='customskin' Template='Default Skin'>
+    <SkinTemplate Base='window' Skin='Custom.window' />
+    <SkinTemplate Base='button' Skin='Custom.button' />
+    <SkinTemplate Base='checkbox' Skin='Custom.checkbox' />
+    <SkinTemplate Base='combobox' Skin='Custom.combobox' />
   </Skin>
 
   <!-- Window Template -->
-  <template name='EQ2.window'>
+  <template name='Custom.window'>
     <Border>1</Border>
     <Resizable>1</Resizable>
     <StorePosition>1</StorePosition>
   </template>
 
   <!-- Button Template -->
-  <template name='EQ2.button'>
+  <template name='Custom.button'>
     <Width>100</Width>
     <Height>25</Height>
   </template>
@@ -819,7 +810,7 @@ Reference a template in your element:
 ### Using Textures in Templates
 
 ```xml
-<template name='EQ2.window.Texture' Filename='windowelements.dds' ColorKey='00000000'>
+<template name='Custom.window.Texture' Filename='windowelements.dds' ColorKey='00000000'>
   <Left>14</Left>
   <Right>414</Right>
   <Top>529</Top>
@@ -1019,21 +1010,15 @@ function main()
   </OnSelect>
 
   <OnLeftClick>
-    ; Populate with group members when clicked
+    ; Populate with available options when clicked
     declare tmpvar int
     This:ClearItems
     tmpvar:Set[1]
 
-    if ${Me.Group} > 1
+    while ${tmpvar} &lt;= ${Script[MyScript].Variable[NumOptions]}
     {
-      do
-      {
-        if ${Me.Group[${tmpvar}].InZone} &amp;&amp; !${Me.Group[${tmpvar}].Name.Equal[${Me.Name}]}
-        {
-          This:AddItem[${Me.Group[${tmpvar}].Name}]
-        }
-      }
-      while ${tmpvar:Inc} &lt; ${Me.Group}
+      This:AddItem[${Script[MyScript].Variable[Option${tmpvar}]}]
+      tmpvar:Inc
     }
 
     This:Sort
@@ -1104,7 +1089,7 @@ function main()
    ```xml
    <!-- Bad - updates every frame -->
    <OnRender>
-     UIElement[HPText]:SetText["HP: ${Me.CurrentHealth}"]
+     UIElement[StatusText]:SetText["Status: ${Script[MyScript].Variable[CurrentStatus]}"]
    </OnRender>
    ```
 
@@ -1245,7 +1230,7 @@ variable string UICode
 
 UICode:Set["<Window name='DynamicWindow'><X>100</X><Y>100</Y><Width>300</Width><Height>200</Height></Window>"]
 
-ui -load -skin eq2skin code ${UICode}
+ui -load -skin customskin code ${UICode}
 ```
 
 ### Multiple Windows
@@ -1260,12 +1245,12 @@ ui -load "${LavishScript.HomeDirectory}/Scripts/MyScript/UI/Advanced.xml"
 
 ### Conditional UI Elements
 
-Show/hide elements based on class, level, etc.:
+Show/hide elements based on script variables or conditions:
 
 ```xml
-<checkbox Name='ClassSpecificOption'>
+<checkbox Name='ConditionalOption'>
   <OnLoad>
-    if ${Me.SubClass.Equal[Guardian]}
+    if ${Script[MyScript].Variable[AdvancedMode]}
     {
       This:Show
     }
@@ -1281,7 +1266,7 @@ Show/hide elements based on class, level, etc.:
 
 ## Summary
 
-**LavishGUI 1** provides a complete XML-based UI system for ISXEQ2 scripts. Key concepts:
+**LavishGUI 1** provides a complete XML-based UI system for InnerSpace scripts. Key concepts:
 
 1. **XML Structure** - `<ISUI>` root, Windows, Children, elements
 2. **Elements** - Windows, Buttons, Checkboxes, ComboBoxes, Text, Tabs, etc.
@@ -1292,7 +1277,7 @@ Show/hide elements based on class, level, etc.:
 
 <!-- CLAUDE_SKIP_START -->
 **Next Steps:**
-- Study EQ2Bot UI files for real-world examples
+- Study existing script UI files for real-world examples
 - Start with a simple window and build up
 - Test frequently as you add elements
 - Refer to official LavishGUI documentation for advanced features
@@ -1300,10 +1285,6 @@ Show/hide elements based on class, level, etc.:
 
 ---
 
-## Cross-References
-
-- **Core Concepts:** [04_Core_Concepts.md](04_Core_Concepts.md)
-- **Advanced Patterns:** [07_Advanced_Patterns_And_Examples.md](07_Advanced_Patterns_And_Examples.md)
-- **API Reference:** [03_API_Reference.md](03_API_Reference.md)
+## Reference
 
 **Official Documentation:** https://www.lavishsoft.com/wiki/index.php/LavishGUI
