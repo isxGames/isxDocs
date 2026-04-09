@@ -2,7 +2,7 @@
 
 Complete guide to creating custom user interfaces with LavishGUI 1 XML for ISXEQ2 scripts.
 
-**Note:** This guide covers **LavishGUI 1**, the XML-based UI system used by older ISXEQ2 scripts like EQ2Bot. Newer scripts may use LavishGUI 2, which is a different system.
+**Note:** This guide covers **LavishGUI 1**, the XML-based UI system used by older ISXEQ2 scripts. Newer scripts may use LavishGUI 2, which is a different system.
 
 **Official Documentation:** https://www.lavishsoft.com/wiki/index.php/LavishGUI
 

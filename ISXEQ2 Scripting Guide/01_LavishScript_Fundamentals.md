@@ -44,7 +44,7 @@ LavishScript is a **custom scripting language** designed specifically for game a
 - **Object-oriented programming** with inheritance
 - **Strong typing** with built-in and custom types
 - **Atomic execution** for performance-critical code
-- **Direct game memory access** through extensions like ISXEQ2, ISXEVE, etc.
+- **Direct game memory access** through InnerSpace extensions
 - **Event-driven programming** for reactive scripts
 
 ---
@@ -1509,12 +1509,12 @@ After 5 more seconds: 6000ms
 Wait for a condition to become true:
 
 ```lavishscript
-wait 100 ${Target(exists)}
+wait 100 ${MyObject(exists)}
 ```
 
 **Syntax:** `wait <max_time> <condition>`
 
-This waits up to 10 seconds (100 deciseconds) for `${Target(exists)}` to become TRUE.
+This waits up to 10 seconds (100 deciseconds) for `${MyObject(exists)}` to become TRUE.
 
 ### Infinite Loops with waitframe
 
@@ -1705,10 +1705,10 @@ if ${Health}<20 || ${Power}<10
 Check if an object exists with `(exists)`:
 
 ```lavishscript
-if ${Target(exists)}
-    echo "Target exists"
+if ${MyObject(exists)}
+    echo "Object exists"
 else
-    echo "No target"
+    echo "No object"
 ```
 
 ---
@@ -2865,12 +2865,12 @@ function main() {
 **Use comments to explain why, not what:**
 ```lavishscript
 ; GOOD - Explains reasoning
-; Wait for target to load completely before proceeding
-wait 10 ${Target.IsLoaded}
+; Wait for data to load completely before proceeding
+wait 10 ${MyObject.IsLoaded}
 
 ; BAD - States the obvious
-; Wait for target
-wait 10 ${Target.IsLoaded}
+; Wait for data
+wait 10 ${MyObject.IsLoaded}
 ```
 
 ### 5. NULL Checks
@@ -2878,11 +2878,11 @@ wait 10 ${Target.IsLoaded}
 **Always check object existence:**
 ```lavishscript
 ; GOOD
-if ${Target(exists)}
-    echo "${Target.Name}"
+if ${MyObject(exists)}
+    echo "${MyObject.Name}"
 
-; BAD - May error if no target
-echo "${Target.Name}"
+; BAD - May error if object is NULL
+echo "${MyObject.Name}"
 ```
 
 ### 6. Loop Safety
@@ -2908,17 +2908,17 @@ while TRUE
 **One function, one purpose:**
 ```lavishscript
 ; GOOD - Focused function
-function GetTargetHealth()
+function GetPlayerHealth()
 {
-    if !${Target(exists)}
+    if !${Health(exists)}
         return 0
-    return ${Target.Health}
+    return ${Health}
 }
 
 ; BAD - Does too many things
 function DoEverything()
 {
-    ; Checks target, casts spell, loots, etc.
+    ; Checks state, performs action, cleans up, etc.
 }
 ```
 
@@ -2927,13 +2927,13 @@ function DoEverything()
 **Check conditions before acting:**
 ```lavishscript
 ; GOOD
-if ${Target(exists)} && ${Target.Distance}<10
+if ${MyObject(exists)} && ${MyObject.Distance}<10
 {
-    Target:DoTarget
+    MyObject:Activate
 }
 
-; BAD - May fail if no target
-Target:DoTarget
+; BAD - May fail if object is NULL
+MyObject:Activate
 ```
 
 ### 9. Variable Scope
