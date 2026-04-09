@@ -4,6 +4,32 @@ Complete quick reference for ISXEQ2 scripting. For detailed information, see the
 
 ---
 
+## Table of Contents
+
+- [Quick Links](#quick-links)
+- [Essential TLOs](#essential-tlos-top-level-objects)
+- [Character (Me)](#character-me---most-used-members)
+- [Actor (Target, NPCs, PCs)](#actor-target-npcs-pcs---most-used-members)
+- [Item](#item---most-used-members)
+- [Ability](#ability---most-used-members)
+- [Common Commands](#common-commands)
+- [Query Syntax](#query-syntax)
+- [Essential Patterns](#essential-patterns)
+- [Common Events](#common-events)
+- [Control Flow](#control-flow)
+- [Variable Declarations](#variable-declarations)
+- [String Manipulation](#string-manipulation)
+- [Math Operations](#math-operations)
+- [Wait Commands](#wait-commands)
+- [Common Window TLOs](#common-window-tlos)
+- [Datatype Inheritance](#datatype-inheritance)
+- [Function Syntax](#function-syntax)
+- [Debugging Tips](#debugging-tips)
+- [Best Practices Checklist](#best-practices-checklist)
+- [Quick Troubleshooting](#quick-troubleshooting)
+
+---
+
 ## Quick Links
 
 - **[README.md](README.md)** - Start here for navigation
