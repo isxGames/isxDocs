@@ -1,7 +1,7 @@
 # LavishMachine (LMAC) - Complete Guide
 
 **System:** LavishMachine Virtual Machine
-**Target:** InnerSpace / ISXEQ2 Scripts
+**Target:** InnerSpace / LavishScript
 
 ---
 
