@@ -168,7 +168,7 @@ When converting windows from LGUI1 to LGUI2, use these **standard defaults** for
 - `"width": 800` - Default window width (adequate space for most UIs)
 - `"height": 800` - Default window height
 
-These defaults match the pattern used in EQ2BotCommander and other EQ2Bot UI files, placing windows on a secondary monitor in typical multi-monitor setups. Users can move/resize windows as needed, and positions can be persisted via settings.
+These defaults place windows on a secondary monitor in typical multi-monitor setups. Users can move/resize windows as needed, and positions can be persisted via settings.
 
 ### Conversion Steps
 
@@ -361,7 +361,7 @@ atom(script) Shutdown()
 }
 ```
 
-See complete example: [EQ2BotCommander.json](https://github.com/isxGames/isxScripts/blob/master/EverQuest2/Scripts/EQ2Bot/UI/EQ2BotCommander.json) (lines 1-88)
+See the LavishGUI 2 wiki for complete window examples: https://www.lavishsoft.com/wiki/index.php/LavishGUI_2
 For details on scalable title bars: [12_LGUI2_Scaling_System.md](12_LGUI2_Scaling_System.md#creating-scalable-title-bars)
 
 ### Button
@@ -666,57 +666,57 @@ If your LGUI1 combobox stored numeric values (`<Item Value='1'>Text</Item>`), yo
 }
 ```
 
-**UI Object (obj_EVEBotUI.iss):**
+**UI Object (obj_MyScriptUI.iss):**
 ```lavishscript
-objectdef obj_EVEBotUI
+objectdef obj_MyScriptUI
 {
-    variable bool NeedToSetJetCanComboBox = FALSE
-    variable int JetCanComboBoxValueToSet = 0
+    variable bool NeedToSetPresetComboBox = FALSE
+    variable int PresetComboBoxValueToSet = 0
 
-    method SetJetCanComboBoxWhenReady(int numericValue)
+    method SetPresetComboBoxWhenReady(int numericValue)
     {
-        This.NeedToSetJetCanComboBox:Set[TRUE]
-        This.JetCanComboBoxValueToSet:Set[${numericValue}]
+        This.NeedToSetPresetComboBox:Set[TRUE]
+        This.PresetComboBoxValueToSet:Set[${numericValue}]
     }
 
     method Pulse()
     {
-        if ${This.NeedToSetJetCanComboBox}
+        if ${This.NeedToSetPresetComboBox}
         {
-            if ${LGUI2.Element[cbJetCanNameList](exists)} && ${LGUI2.Element[cbJetCanNameList].ItemCount} > 0
+            if ${LGUI2.Element[cbPresetNameList](exists)} && ${LGUI2.Element[cbPresetNameList].ItemCount} > 0
             {
-                This:SetJetCanComboBox[${This.JetCanComboBoxValueToSet}]
-                This.NeedToSetJetCanComboBox:Set[FALSE]
+                This:SetPresetComboBox[${This.PresetComboBoxValueToSet}]
+                This.NeedToSetPresetComboBox:Set[FALSE]
             }
         }
     }
 
-    method SetJetCanComboBox(int numericValue)
+    method SetPresetComboBox(int numericValue)
     {
         variable string SelectedText
 
         switch ${numericValue}
         {
             case 1
-                SelectedText:Set["CorpTicker Time"]
+                SelectedText:Set["Option A"]
                 break
             case 2
-                SelectedText:Set["CorpTicker:Time"]
+                SelectedText:Set["Option B"]
                 break
             ; ... remaining mappings
             case 10
-                SelectedText:Set["Do Not Rename"]
+                SelectedText:Set["Default"]
                 break
         }
 
         if ${SelectedText.NotNULLOrEmpty}
         {
             variable int i
-            for (i:Set[1]; ${i} <= ${LGUI2.Element[cbJetCanNameList].ItemCount}; i:Inc)
+            for (i:Set[1]; ${i} <= ${LGUI2.Element[cbPresetNameList].ItemCount}; i:Inc)
             {
-                if ${LGUI2.Element[cbJetCanNameList].Item[${i}].Data.Get[text].Equal[${SelectedText}]}
+                if ${LGUI2.Element[cbPresetNameList].Item[${i}].Data.Get[text].Equal[${SelectedText}]}
                 {
-                    LGUI2.Element[cbJetCanNameList]:SetItemSelected[${i},TRUE]
+                    LGUI2.Element[cbPresetNameList]:SetItemSelected[${i},TRUE]
                     return
                 }
             }
@@ -725,12 +725,12 @@ objectdef obj_EVEBotUI
 }
 ```
 
-**Main Script (EVEBot.iss):**
+**Main Script (MyScript.iss):**
 ```lavishscript
 function main()
 {
     ; After UI loads
-    UI:SetJetCanComboBoxWhenReady[${Config.Miner.JetCanNaming}]
+    UI:SetPresetComboBoxWhenReady[${Config.Settings.PresetNaming}]
 }
 ```
 
@@ -1270,7 +1270,7 @@ When creating minimize/maximize functionality for windows:
 
 ```json
 {
-    "evebotTitleBar": {
+    "customTitleBar": {
         "type": "dockpanel",
         "name": "MyTitleBar",
         "height": 80,
@@ -1743,7 +1743,7 @@ function ConsoleEcho(string textString)
     variable int maxChars
     variable float charWidth
 
-    textboxWidth:Set[${LGUI2.Element[EQ2AFKAlarm Console].ActualWidth.Precision[0]}]
+    textboxWidth:Set[${LGUI2.Element[MyScript Console].ActualWidth.Precision[0]}]
 
     ; If that didn't work, use a safe default
     if ${textboxWidth} <= 0
@@ -1796,7 +1796,7 @@ function main()
 
     while 1
     {
-        UIElement[healthText]:SetText["Health: ${Me.Health}"]
+        UIElement[healthText]:SetText["Status: ${Script[MyScript].Variable[StatusText]}"]
         waitframe
     }
 }
@@ -1814,9 +1814,9 @@ function main()
 ```json
 {
     "type": "textblock",
-    "name": "healthText",
+    "name": "statusText",
     "textBinding": {
-        "pullFormat": "Health: ${Me.Health}"
+        "pullFormat": "Status: ${Script[MyScript].Variable[StatusText]}"
     }
 }
 ```
@@ -1949,9 +1949,9 @@ function main()
     while 1
     {
         ; Manual updates every frame
-        UIElement[nametext]:SetText["Name: ${Me.Name}"]
-        UIElement[healthtext]:SetText["Health: ${Me.Health}/${Me.MaxHealth}"]
-        UIElement[powertext]:SetText["Power: ${Me.Power}/${Me.MaxPower}"]
+        UIElement[nametext]:SetText["Name: ${Script[MyScript].Variable[PlayerName]}"]
+        UIElement[healthtext]:SetText["Value: ${Script[MyScript].Variable[CurrentValue]}/${Script[MyScript].Variable[MaxValue]}"]
+        UIElement[powertext]:SetText["Progress: ${Script[MyScript].Variable[Progress]}/${Script[MyScript].Variable[MaxProgress]}"]
         UIElement[fpstext]:SetText["FPS: ${Display.FPS.Centi}"]
         waitframe
     }
@@ -1986,19 +1986,19 @@ function OnExit()
                     {
                         "type": "textblock",
                         "textBinding": {
-                            "pullFormat": "Name: ${Me.Name}"
+                            "pullFormat": "Name: ${Script[MyScript].Variable[PlayerName]}"
                         }
                     },
                     {
                         "type": "textblock",
                         "textBinding": {
-                            "pullFormat": "Health: ${Me.Health}/${Me.MaxHealth}"
+                            "pullFormat": "Value: ${Script[MyScript].Variable[CurrentValue]}/${Script[MyScript].Variable[MaxValue]}"
                         }
                     },
                     {
                         "type": "textblock",
                         "textBinding": {
-                            "pullFormat": "Power: ${Me.Power}/${Me.MaxPower}"
+                            "pullFormat": "Progress: ${Script[MyScript].Variable[Progress]}/${Script[MyScript].Variable[MaxProgress]}"
                         }
                     },
                     {
@@ -2282,7 +2282,7 @@ function main()
 ### Before You Start
 
 - [ ] Back up all existing `.xml` and `.iss` files
-- [ ] Review the [LavishGUI 2 UI Guide](08_LavishGUI2_UI_Guide.md)
+- [ ] Review the [LavishGUI 2 UI Guide](10_LavishGUI2_UI_Guide.md)
 - [ ] Install a JSON editor with schema support (VS Code recommended)
 - [ ] Test LGUI2 with a simple example first
 
@@ -2829,7 +2829,7 @@ function ReapplyButtonColor()
 
 #### Complete Working Example: Multi-Button UI
 
-**Real-world example from EQ2BotCommander migration:**
+**Multi-button toggle panel with color-coded state:**
 
 ```json
 {
@@ -2837,15 +2837,15 @@ function ReapplyButtonColor()
     "elements": [
         {
             "type": "window",
-            "title": "Bot Commander",
+            "title": "Script Commander",
             "content": {
                 "type": "stackpanel",
                 "orientation": "vertical",
                 "children": [
                     {
                         "type": "button",
-                        "name": "Main.RunEQ2Bot",
-                        "content": "Run EQ2BOT",
+                        "name": "Main.ToggleProcess",
+                        "content": "Start Process",
                         "styles": {
                             "green": {
                                 "backgroundBrush": {"color": "#32CD32"},
@@ -2861,17 +2861,17 @@ function ReapplyButtonColor()
                             }
                         },
                         "eventHandlers": {
-                            "onPress": {"type": "code", "code": "Script[EQ2BotCommander]:QueueCommand[call ToggleRunEQ2Bot]"},
+                            "onPress": {"type": "code", "code": "Script[MyScript]:QueueCommand[call ToggleProcess]"},
                             "setGreen": {"type": "style", "styleName": "green"},
                             "setRed": {"type": "style", "styleName": "red"},
-                            "gotMouseOver": {"type": "code", "code": "Script[EQ2BotCommander]:QueueCommand[call ReapplyRunEQ2BotButtonColor]"},
-                            "lostMouseOver": {"type": "code", "code": "Script[EQ2BotCommander]:QueueCommand[call ReapplyRunEQ2BotButtonColor]"}
+                            "gotMouseOver": {"type": "code", "code": "Script[MyScript]:QueueCommand[call ReapplyProcessButtonColor]"},
+                            "lostMouseOver": {"type": "code", "code": "Script[MyScript]:QueueCommand[call ReapplyProcessButtonColor]"}
                         }
                     },
                     {
                         "type": "button",
-                        "name": "Main.Follow",
-                        "content": "Follow",
+                        "name": "Main.Monitor",
+                        "content": "Monitor",
                         "styles": {
                             "green": {
                                 "backgroundBrush": {"color": "#32CD32"},
@@ -2887,11 +2887,11 @@ function ReapplyButtonColor()
                             }
                         },
                         "eventHandlers": {
-                            "onPress": {"type": "code", "code": "Script[EQ2BotCommander]:QueueCommand[call FollowToggle]"},
+                            "onPress": {"type": "code", "code": "Script[MyScript]:QueueCommand[call MonitorToggle]"},
                             "setGreen": {"type": "style", "styleName": "green"},
                             "setRed": {"type": "style", "styleName": "red"},
-                            "gotMouseOver": {"type": "code", "code": "Script[EQ2BotCommander]:QueueCommand[call ReapplyFollowButtonColor]"},
-                            "lostMouseOver": {"type": "code", "code": "Script[EQ2BotCommander]:QueueCommand[call ReapplyFollowButtonColor]"}
+                            "gotMouseOver": {"type": "code", "code": "Script[MyScript]:QueueCommand[call ReapplyMonitorButtonColor]"},
+                            "lostMouseOver": {"type": "code", "code": "Script[MyScript]:QueueCommand[call ReapplyMonitorButtonColor]"}
                         }
                     }
                 ]
@@ -2902,59 +2902,57 @@ function ReapplyButtonColor()
 ```
 
 ```lavishscript
-variable bool EQ2BotRunning = FALSE
-variable bool Following = FALSE
+variable bool ProcessRunning = FALSE
+variable bool Monitoring = FALSE
 
-function ToggleRunEQ2Bot()
+function ToggleProcess()
 {
-    if ${EQ2BotRunning} == FALSE
+    if ${ProcessRunning} == FALSE
     {
-        EQ2BotRunning:Set[TRUE]
-        LGUI2.Element[Main.RunEQ2Bot]:FireEventHandler[setGreen]
-        Relay all RunScript EQ2Bot/EQ2Bot
+        ProcessRunning:Set[TRUE]
+        LGUI2.Element[Main.ToggleProcess]:FireEventHandler[setGreen]
+        ; Start the process...
     }
     else
     {
-        EQ2BotRunning:Set[FALSE]
-        LGUI2.Element[Main.RunEQ2Bot]:FireEventHandler[setRed]
-        Relay all EndScript EQ2Bot
-    }
-}
-
-function ReapplyRunEQ2BotButtonColor()
-{
-    if ${EQ2BotRunning}
-        LGUI2.Element[Main.RunEQ2Bot]:FireEventHandler[setGreen]
-    else
-        LGUI2.Element[Main.RunEQ2Bot]:FireEventHandler[setRed]
-}
-
-function FollowToggle()
-{
-    if ${Following} == FALSE
-    {
-        Following:Set[TRUE]
-        LGUI2.Element[Main.Follow]:FireEventHandler[setGreen]
-        Relay "all other" Script[EQ2Bot]:ExecuteAtom[AutoFollowTank]
-    }
-    else
-    {
-        Following:Set[FALSE]
-        LGUI2.Element[Main.Follow]:FireEventHandler[setRed]
-        Relay "all other" Script[EQ2Bot]:ExecuteAtom[StopAutoFollowing]
+        ProcessRunning:Set[FALSE]
+        LGUI2.Element[Main.ToggleProcess]:FireEventHandler[setRed]
+        ; Stop the process...
     }
 }
 
-function ReapplyFollowButtonColor()
+function ReapplyProcessButtonColor()
 {
-    if ${Following}
-        LGUI2.Element[Main.Follow]:FireEventHandler[setGreen]
+    if ${ProcessRunning}
+        LGUI2.Element[Main.ToggleProcess]:FireEventHandler[setGreen]
     else
-        LGUI2.Element[Main.Follow]:FireEventHandler[setRed]
+        LGUI2.Element[Main.ToggleProcess]:FireEventHandler[setRed]
+}
+
+function MonitorToggle()
+{
+    if ${Monitoring} == FALSE
+    {
+        Monitoring:Set[TRUE]
+        LGUI2.Element[Main.Monitor]:FireEventHandler[setGreen]
+        ; Start monitoring...
+    }
+    else
+    {
+        Monitoring:Set[FALSE]
+        LGUI2.Element[Main.Monitor]:FireEventHandler[setRed]
+        ; Stop monitoring...
+    }
+}
+
+function ReapplyMonitorButtonColor()
+{
+    if ${Monitoring}
+        LGUI2.Element[Main.Monitor]:FireEventHandler[setGreen]
+    else
+        LGUI2.Element[Main.Monitor]:FireEventHandler[setRed]
 }
 ```
-
-**Reference Implementation:** [EQ2BotCommander.json](https://github.com/isxGames/isxScripts/blob/master/EverQuest2/Scripts/EQ2Bot/UI/EQ2BotCommander.json) and [EQ2BotCommander.iss](https://github.com/isxGames/isxScripts/blob/master/EverQuest2/Scripts/EQ2BotCommander.iss)
 
 #### Summary: Style-Based Visual Changes
 
@@ -3201,10 +3199,10 @@ Tooltips in LGUI1 used system default styling with no customization options.
 ```json
 {
     "type": "button",
-    "content": "Run EVEBot",
+    "content": "Start Process",
     "tooltip": {
         "type": "textblock",
-        "text": "Click to start the EVEBot automation",
+        "text": "Click to start the automated process",
         "font": {
             "face": "Segoe UI Italic",
             "height": 36
@@ -3259,7 +3257,7 @@ Tooltips in LGUI1 used system default styling with no customization options.
 
 **Production Example:**
 
-EVEBot uses custom styled tooltips extensively. See [EVEBot.json](https://github.com/isxGames/isxScripts/blob/master/EverQuest2/Scripts/EVEBot/Branches/Stable/interface/EVEBot.json) for a real-world implementation with consistent tooltip styling across hundreds of UI elements.
+Custom styled tooltips can be used extensively across production UIs for consistent appearance.
 
 For more tooltip customization options, see the [LGUI2 UI Guide - Tooltip Customization section](10_LavishGUI2_UI_Guide.md#tooltip-customization).
 
@@ -3454,9 +3452,8 @@ function CloseWindow()
 
 **Real-World Example:**
 
-See [EQ2AFKAlarm.iss](https://github.com/isxGames/isxScripts/blob/master/EverQuest2/Scripts/EQ2AFKAlarm/EQ2AFKAlarm.iss) for complete implementation with:
-- 13 persistent checkboxes (6 trigger channels + 6 TTS options + 1 logging option)
-- Handler function pairs for each checkbox
+A production implementation might include:
+- Multiple persistent checkboxes with handler function pairs
 - Proper `ExecuteQueued` usage in save function
 - Config window position persistence
 
@@ -3681,7 +3678,7 @@ The example above uses 3x scaling. For 1x (baseline), use these values:
 
 **Real-World Example:**
 
-See [EQ2AFKAlarm.iss](https://github.com/isxGames/isxScripts/blob/master/EverQuest2/Scripts/EQ2AFKAlarm/EQ2AFKAlarm.iss) and [EQ2AFKAlarm_MessageBox.json](https://github.com/isxGames/isxScripts/blob/master/EverQuest2/Scripts/EQ2AFKAlarm/Interface/EQ2AFKAlarm_MessageBox.json) for complete implementation.
+Production scripts typically implement this pattern with a custom MessageBox JSON package and corresponding script logic.
 
 **Key Differences from LGUI1:**
 
@@ -4122,7 +4119,7 @@ function main()
 }
 ```
 
-**Real Example:** `EQ2BotCommander_LGUI2.iss` implements full UI scaling.
+**Tip:** Production scripts can implement full UI scaling using this pattern.
 
 ## Known Limitations
 
@@ -4140,7 +4137,7 @@ element type not found: yourelementtype
 
 #### Examples of Affected Elements
 
-- **ISXEQ2 Radar** (`eq2radar`) - Custom radar display with 3D-to-2D coordinate conversion, dynamic blips, and interactive tooltips
+- **Custom radar elements** (e.g., `customradar`) - Custom display with 3D-to-2D coordinate conversion, dynamic blips, and interactive tooltips
 - **Custom HUD elements** - Game-specific overlays with custom rendering
 - **Advanced interactive displays** - Elements with complex mouse interaction and real-time updates
 
@@ -4149,9 +4146,9 @@ element type not found: yourelementtype
 **LGUI1 Pattern (Works):**
 ```cpp
 // C++ Extension Code
-LGUIFactory<LGUIEQ2Radar> RadarFactory("eq2radar");
+LGUIFactory<LGUICustomRadar> RadarFactory("customradar");
 
-class LGUIEQ2Radar : public LGUIElement
+class LGUICustomRadar : public LGUIElement
 {
     void Render() { /* custom rendering */ }
     // ... custom behavior
@@ -4160,10 +4157,10 @@ class LGUIEQ2Radar : public LGUIElement
 
 ```xml
 <!-- LGUI1 XML (Works) -->
-<eq2radar Name="radar1">
+<customradar Name="radar1">
     <Width>100%</Width>
     <Height>100%</Height>
-</eq2radar>
+</customradar>
 ```
 
 **LGUI2 Pattern (Does NOT Work):**
@@ -4172,7 +4169,7 @@ class LGUIEQ2Radar : public LGUIElement
     "$schema": "http://www.lavishsoft.com/schema/lgui2Package.json",
     "elements": [
         {
-            "type": "eq2radar",
+            "type": "customradar",
             "name": "radar1"
         }
     ]
@@ -4181,7 +4178,7 @@ class LGUIEQ2Radar : public LGUIElement
 
 **Error:**
 ```
-element type not found: eq2radar
+element type not found: customradar
 ```
 
 #### Why This Happens
@@ -4211,12 +4208,11 @@ There are no perfect workarounds, but options include:
    - No timeline or confirmation this will happen
    - Monitor LavishSoft wiki and forums for updates
 
-#### Example: EQ2-Specific Features
+#### Example: Extension-Specific Features
 
-**Note:** The following are EQ2-specific examples demonstrating features that **must remain on LGUI1**:
+**Note:** The following demonstrates features that **must remain on LGUI1**:
 
-- **Radar Command** (`radar on`) - Uses custom `eq2radar` element type
-  - File: `x64/extensions/ISXEQ2Radar.xml`
+- **Custom Radar** (`radar on`) - Uses custom `customradar` element type
   - Cannot be converted to JSON
   - Custom C++ rendering for 3D radar display
 
@@ -4229,7 +4225,7 @@ Exhaustive research was performed to find LGUI2 custom element support:
 - LavishGUI 2 documentation
 - LGUI2:Elements reference
 - InnerSpace extension documentation
-- ISXEQ2 forums and documentation
+- InnerSpace extension forums and documentation
 - LERN example repository
 
 ❌ **Not Found:**
@@ -4401,7 +4397,7 @@ LGUI2's most powerful feature - automatic UI updates:
 {
     "type": "textblock",
     "textBinding": {
-        "pullFormat": "${Me.Health}",
+        "pullFormat": "${Script[MyScript].Variable[CurrentValue]}",
         "pullHook": {
             "elementName": "events",
             "flags": "global",
@@ -4641,13 +4637,13 @@ LGUI2 packages support advanced features at the root level:
 
 ```lavishscript
 ; LGUI1 - Manual updates required
-UIElement[healthText]:SetText[${Me.Health}]
+UIElement[statusText]:SetText[${Script[MyScript].Variable[CurrentValue]}]
 ```
 
 **LGUI2 Solution:** Automatic updates via data binding
 
 ```json
-"textBinding": {"pullFormat": "${Me.Health}"}
+"textBinding": {"pullFormat": "${Script[MyScript].Variable[CurrentValue]}"}
 ```
 
 The UI automatically updates when the bound data changes!
