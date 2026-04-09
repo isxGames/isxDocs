@@ -1289,11 +1289,13 @@ Show/hide elements based on class, level, etc.:
 5. **Persistence** - LavishSettings, StorePosition, Data attribute
 6. **Templates** - Reusable styles and skins
 
+<!-- CLAUDE_SKIP_START -->
 **Next Steps:**
 - Study EQ2Bot UI files for real-world examples
 - Start with a simple window and build up
 - Test frequently as you add elements
 - Refer to official LavishGUI documentation for advanced features
+<!-- CLAUDE_SKIP_END -->
 
 ---
 
