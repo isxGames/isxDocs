@@ -29,6 +29,7 @@
 20. [Web Requests](#web-requests)
 21. [Audio System](#audio-system)
 22. [Best Practices Summary](#best-practices-summary)
+23. [Type Inspection and Debugging Commands](#type-inspection-and-debugging-commands)
 
 ---
 
