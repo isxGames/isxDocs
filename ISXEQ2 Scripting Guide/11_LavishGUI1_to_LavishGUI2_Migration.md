@@ -2110,9 +2110,9 @@ objectdef combat_controller
     method Attack()
     {
         echo Attacking!
-        This.Status:Set["Attacking..."]
+        This.Status:Set["Processing..."]
         This:UpdateStatus
-        Me.Ability[1]:Use
+        Script[MyScript]:QueueCommand[call DoAction]
     }
 
     method Stop()
@@ -2243,9 +2243,9 @@ objectdef combat_controller
     method Attack()
     {
         echo Attacking!
-        This.Status:Set["Attacking..."]
+        This.Status:Set["Processing..."]
         ; No UpdateStatus call needed - automatic!
-        Me.Ability[1]:Use
+        Script[MyScript]:QueueCommand[call DoAction]
     }
 
     method Stop()
@@ -3843,20 +3843,20 @@ LGUI2.Element[mylist]:InsertItem["{\"type\":\"textblock\",\"text\":\"Item 2\"}"]
 
 **With a loop:**
 ```lavishscript
-variable index:bookmark bm_index
-EVE:GetBookmarks[bm_index]
+variable index:string item_index
+Script[MyScript]:QueueCommand[call GetItems[item_index]]
 
-variable iterator bm_iterator
-bm_index:GetIterator[bm_iterator]
+variable iterator item_iterator
+item_index:GetIterator[item_iterator]
 
 LGUI2.Element[mylist]:ClearItems
-if ${bm_iterator:First(exists)}
+if ${item_iterator:First(exists)}
 {
     do
     {
-        LGUI2.Element[mylist]:InsertItem["{\"type\":\"textblock\",\"text\":\"${bm_iterator.Value.Label.Escape}\"}"]
+        LGUI2.Element[mylist]:InsertItem["{\"type\":\"textblock\",\"text\":\"${item_iterator.Value.Escape}\"}"]
     }
-    while ${bm_iterator:Next(exists)}
+    while ${item_iterator:Next(exists)}
 }
 ```
 
