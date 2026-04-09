@@ -348,6 +348,17 @@ Found an error or have an improvement? This documentation was generated using ac
 <!-- CLAUDE_SKIP_START -->
 ## Version History
 
+- **4.0** (2026-04-09) — Comprehensive Accuracy Audit and QuickReference Overhaul
+  - **MAJOR UPDATE:** Line-by-line accuracy audit of all guides and QuickReference against ISXEQ2 source code and ISXEQ2Changes.txt
+  - **QuickReference completely audited** (~113 issues fixed): wrong types corrected (int→int64 for health/power/regen, int→uint for IDs), 11 removed iteminfo combat stats cleaned up, fabricated window datatype members replaced with verified source-code members (reforgewindow, brokerwindow, merchantwindow, mailwindow fully rewritten), missing members added (groupmember, achievement, eq2dynamicdata), deprecated entries added, usage examples corrected, `char` renamed to `character`, TLO Access notation added to all window types
+  - **QuickReference integrated** into Claude AI command/agent files as a knowledge base resource with `QUICK_REF_FILE` path
+  - **API Reference (03) major fixes:** removed fabricated members (reward, achievement, reforgewindow, merchantwindow), fixed wrong types (OffersQuest bool→string, AbilityCastingID int→uint, HealthRegen/PowerRegen float→int64), removed nonexistent raidmember datatype, fixed zone members (removed Description, added RoomID), corrected actor Move method signature, fixed GetInventory/GetEquipment/GetAbilities from members to methods
+  - **Event documentation fixes across guides:** corrected EQ2_ExamineAchievement parameter order, fixed EQ2_onIncomingChatText/EQ2_onIncomingText signatures, added missing EQ2_onSellItem parameter, fixed ISXEQ2: prefix for actor event methods
+  - **Code example fixes across 12+ guides:** corrected wait values (deciseconds not milliseconds), replaced fabricated commands/methods with real API, fixed incorrect member names (MerchantWindow.Item→MerchantInventory, Actor.InCombat→InCombatMode, Me.Power→CurrentPower), corrected Me:DoFace→Target:DoFace, fixed function/atom mismatches, added ISXEQ2.IsReady checks to working examples
+  - **Cross-reference and structural fixes:** fixed 15+ broken cross-references, corrected event counts (43 not 40+/48), fixed stale file counts in FILE_MANIFEST and README, removed hardcoded line counts from guide footers, added/fixed Tables of Contents in 8 guides
+  - **Claude AI integration improvements:** established CHANGES_FILE as definitive API source in agent prompts, added QUICK_REF_FILE path to all config files, improved How To Use guide setup instructions, added CRITICAL sections to ISXEQ2-Expert agent
+  - **Formatting cleanup:** added CLAUDE_SKIP tags to human-oriented sections, removed informational footers and stale "last updated" lines, general linting
+
 - **3.0** (2025-10-25)
   - **MAJOR UPDATE:** Scalable Title Bars now standard for all LGUI2 scripts
   - Discovered correct `onCloseButtonClick` event for window close handling
