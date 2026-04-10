@@ -844,6 +844,85 @@ ${This.SelectedItem.ID}
 - ID-based lookups
 - When display text differs from stored value
 
+### Dynamic Population from Game Data
+
+**Pattern:** Populate a ComboBox at load time from an ISXEVE API (bookmarks, entities, etc.), with sorting and saved selection restoration.
+
+**Source:** EVEBot — Freighter destination bookmark selector
+
+**The ComboBox:**
+
+```xml
+<combobox name='DestinationBookmark'>
+  <X>150</X>
+  <Y>35</Y>
+  <Width>375</Width>
+  <Height>18</Height>
+  <FullHeight>350</FullHeight>
+  <ButtonWidth>20</ButtonWidth>
+  <Sort>Text</Sort>
+  <Items>
+    <Item Value='1'>None</Item>
+  </Items>
+
+  <OnLoad>
+    ; Configure sorting
+    This:SetSortType[Text]
+    This:SetAutoSort[TRUE]
+
+    ; Populate from ISXEVE bookmark API
+    variable index:bookmark bm_index
+    EVE:GetBookmarks[bm_index]
+
+    variable iterator bm_iterator
+    bm_index:GetIterator[bm_iterator]
+    This:ClearItems
+    if ${bm_iterator:First(exists)}
+    {
+      do
+      {
+        This:AddItem[${bm_iterator.Value.Label},${bm_iterator.Value.ID}]
+      }
+      while ${bm_iterator:Next(exists)}
+    }
+
+    ; Restore saved selection (text → item ID lookup)
+    This:SelectItem[${This.ItemByText[${Script[EVEBot].VariableScope.Config.Freighter.Destination}].ID}]
+    This:Sort
+  </OnLoad>
+
+  <OnSelect>
+    if ${This.SelectedItem.Text.NotNULLOrEmpty}
+    {
+      Script[EVEBot].VariableScope.Config.Freighter:SetDestination[${This.SelectedItem.Text}]
+    }
+  </OnSelect>
+</combobox>
+```
+
+**Key techniques:**
+
+1. **`EVE:GetBookmarks[index:bookmark]`** — Populates an index with all bookmarks. Returns count. Each bookmark has `.Label` (display name) and `.ID` (unique int64 identifier).
+
+2. **`AddItem[text, value]`** — Dual-parameter form stores both the bookmark label (display) and ID (hidden value). This enables lookup by either text or value later.
+
+3. **`SetSortType[Text]` + `SetAutoSort[TRUE]`** — Configures alphabetical sorting that applies automatically as items are added.
+
+4. **Saved selection restoration** — Config stores the bookmark **label** (text). To restore the selection, `ItemByText[savedText]` finds the matching combobox item, `.ID` gets its internal item index, and `SelectItem[index]` selects it.
+
+5. **`NotNULLOrEmpty` guard** — Prevents writing empty/null values to config when selection is cleared.
+
+**Applicable ISXEVE APIs for dynamic population:**
+
+| API | Returns | Use Case |
+|-----|---------|----------|
+| `EVE:GetBookmarks[index:bookmark]` | All bookmarks | Destination/location selectors |
+| `EVE:GetLocalPilots[index:pilot]` | Local pilots | Fleet member selection |
+| `Me:GetStations[index:station]` | Known stations | Station selectors |
+| `Me:GetJournalEntries[index:journalentry]` | Journal entries | Entry browsers |
+
+Each API follows the same pattern: populate an index, iterate with an iterator, add items via `AddItem[displayText, ID]`.
+
 ---
 
 ## Production Patterns
@@ -978,7 +1057,8 @@ These advanced patterns from EVE Online production scripts demonstrate:
 11. **Decoupled List Refresh** - OnRightClick as centralized refresh trigger
 12. **Advanced TextEntry** - OnKeyDown for Enter key detection
 13. **ComboBox Values** - Separate display text from stored values
-14. **Production Robustness** - Dynamic displays and polymorphic input
+14. **Dynamic ComboBox Population** - Populate from ISXEVE APIs with saved selection restore
+15. **Production Robustness** - Dynamic displays and polymorphic input
 
 **Key Takeaways:**
 - Real production scripts require sophisticated UI patterns
