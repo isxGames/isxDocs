@@ -6,6 +6,7 @@
 - [MyPrices](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/MyPrices) broker script
 - [EQ2Craft](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2Craft) automation script
 - [EQ2Bot](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2Bot) combat bot (main script + main UI + 39 class UIs)
+
 **Target Audience:** Advanced script developers
 
 ---
