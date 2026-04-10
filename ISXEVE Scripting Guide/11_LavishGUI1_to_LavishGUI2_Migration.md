@@ -4941,13 +4941,6 @@ The `slider.handle` template from DefaultSkin.json provides:
 Sliders use **direct styling** and **templates at the element level**, NOT `contentContainer` like checkboxes. Always include `borderThickness` and `borderBrush` to make the slider track visible.
 
 <!-- CLAUDE_SKIP_START -->
-## Next Steps
-1. Start with a simple UI to practice migration
-2. Review the [LavishGUI 2 UI Guide](10_LavishGUI2_UI_Guide.md) for complete reference
-3. Migrate one UI at a time
-4. Test thoroughly before removing old XML files
-5. **Consider adding UI scaling** - See [LGUI2 Scaling System](12_LGUI2_Scaling_System.md)
-6. Use version control to track changes
 
 ---
 ## Additional Resources

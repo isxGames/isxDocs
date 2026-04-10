@@ -1,6 +1,5 @@
 # ISXEVE Scripting Guide
 
-**Version:** 2.0
 **Language:** LavishScript
 **Extension:** ISXEVE for InnerSpace
 **Target Game:** EVE Online
@@ -362,8 +361,6 @@ LavishScript is case-insensitive for member and method names:
 
 - **InnerSpace Documentation:** http://www.lavishsoft.com/wiki/
 - **LavishScript Reference:** http://www.lavishsoft.com/wiki/LavishScript
-- **ISXEVE Wiki:** IsxeveWiki/ (included in this guide)
-- **LavishScript Wiki:** LavishScriptWiki/ (included in this guide)
 
 ---
 
@@ -376,18 +373,32 @@ Found an error or have an improvement? This documentation was generated using ac
 <!-- CLAUDE_SKIP_START -->
 ## Version History
 
-- **2.0** (2025-10-27) - Major documentation expansion
-  - Reorganized into 23 comprehensive guides (added 7 game-agnostic UI/system guides)
-  - Added game-agnostic guides: LavishGUI 1/2, JSON, LavishMachine
-  - Added master navigation hub and quick start guide
-  - Beginner-friendly LavishScript fundamentals
-  - Advanced scripting patterns and utility patterns
+- **v2.0 (2025-10-27)**
+  
+  - Reorganized into 23 comprehensive guides (added 7 game-agnostic guides)
+  - Added 7 game-agnostic UI/system guides from ISXEQ2 documentation
+    - LavishGUI 1 UI Guide (08)
+    - Advanced LGUI1 Patterns (09)
+    - LavishGUI 2 UI Guide (10)
+    - LGUI1 to LGUI2 Migration (11)
+    - LGUI2 Scaling System (12)
+    - JSON Guide (13)
+    - LavishMachine Guide (14)
+  - Added master navigation hub (00_MASTER_GUIDE.md)
+  - Created quick start guide (02_Quick_Start_Guide.md)
+  - Replaced LavishScript fundamentals with beginner-friendly version
+  - Added advanced scripting patterns (21_Advanced_Scripting_Patterns.md)
+  - Added utility script patterns (22_Utility_Script_Patterns.md)
   - Merged Extension Reference navigation content into README for single entry point
-  - Enhanced cross-references, learning paths, quick start guides, and checklists
-  - Improved organization and navigation structure
+  - Enhanced README with comprehensive learning paths, quick start guides, and checklists
+  - Improved organization and cross-referencing
+  - Added FILE_MANIFEST for documentation tracking
+  
+- **v1.0 (2024)**
 
-- **1.0** (2025) - Initial documentation by Spacekoala
-  - Comprehensive coverage of ISXEVE API
-  - Analysis of [EVEBot](https://github.com/CyberTech/EVEBot/tree/master/Branches/Stable), [Yamfa](https://github.com/isxGames/isxScripts/tree/master/EVE-Online/Scripts/Yamfa), [Tehbot](https://github.com/isxGames/Tehbot) architectures
+  - Initial documentation by Spacekoala
+  - Comprehensive ISXEVE API coverage
+  - Analysis of EVEBot, Yamfa, Tehbot
   - LavishScript fundamentals and patterns
-<!-- CLAUDE_SKIP_END -->
+
+  <!-- CLAUDE_SKIP_END -->

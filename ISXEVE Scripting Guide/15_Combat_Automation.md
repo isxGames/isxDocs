@@ -2766,7 +2766,7 @@ query = "SELECT BestAmmo WHERE TargetType = '${type}'"
 
 
 Three bot architectures analyzed:
-- **EVEBot**: Full modular framework (50+ files)
+- **EVEBot**: Full modular framework
 - **Yamfa**: Simple single-file
 - **Tehbot**: Hybrid StateQueue + MiniModes (50+ files)
 

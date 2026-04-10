@@ -309,54 +309,5 @@ These directories contain compiled HTML documentation and are kept as reference 
 | **Script Patterns** | 21_Advanced_Scripting_Patterns.md |
 | **Utility Patterns** | 22_Utility_Script_Patterns.md |
 | **Debugging** | 20_Debugging_And_Troubleshooting.md |
-| **.NET Development** | 19_DotNet_Development.md |
-
----
-
-## Documentation Quality Standards
-
-### Standards Met
-- ✅ Comprehensive topic coverage
-- ✅ Logical organization
-- ✅ Clear navigation structure
-- ✅ Cross-references between sections
-- ✅ Table of contents in all major files
-- ✅ Working code examples throughout
-- ✅ Consistent formatting and style
-- ✅ Version information tracked
-
----
-
-## Version History
-
-- **v2.0 (2025-10-27)**
-  - Reorganized into 23 comprehensive guides (added 7 game-agnostic guides)
-  - Added 7 game-agnostic UI/system guides from ISXEQ2 documentation
-    - LavishGUI 1 UI Guide (08)
-    - Advanced LGUI1 Patterns (09)
-    - LavishGUI 2 UI Guide (10)
-    - LGUI1 to LGUI2 Migration (11)
-    - LGUI2 Scaling System (12)
-    - JSON Guide (13)
-    - LavishMachine Guide (14)
-  - Added master navigation hub (00_MASTER_GUIDE.md)
-  - Created quick start guide (02_Quick_Start_Guide.md)
-  - Replaced LavishScript fundamentals with beginner-friendly version
-  - Added advanced scripting patterns (21_Advanced_Scripting_Patterns.md)
-  - Added utility script patterns (22_Utility_Script_Patterns.md)
-  - Merged Extension Reference navigation content into README for single entry point
-  - Enhanced README with comprehensive learning paths, quick start guides, and checklists
-  - Improved organization and cross-referencing
-  - Added FILE_MANIFEST for documentation tracking
-
-- **v1.0 (2024)**
-  - Initial documentation by Spacekoala
-  - Comprehensive ISXEVE API coverage
-  - Analysis of EVEBot, Yamfa, Tehbot
-  - LavishScript fundamentals and patterns
-
----
-
-*ISXEVE Scripting Guide - Generated 2025-10-26*
-*Complete documentation from beginner to advanced topics*
-<!-- CLAUDE_SKIP_END -->
+| **.NET Development** | 19_DotNet_Development.md
+<!-- CLAUDE_SKIP_END --> |

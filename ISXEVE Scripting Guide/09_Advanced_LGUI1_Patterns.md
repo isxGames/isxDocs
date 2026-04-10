@@ -2,9 +2,9 @@
 
 **Purpose:** Real-world patterns from production EVE Online scripts
 **Sources:**
-- [EVEBot](https://github.com/CyberTech/EVEBot/tree/master/Branches/Stable) - Combat/mining/mission bot (2,974 line main UI)
-- [WreckingBall2](https://github.com/isxGames/isxScripts/tree/master/EVE-Online/Scripts/WreckingBall2) - Salvaging bot (328 line UI)
-- [Yamfa](https://github.com/isxGames/isxScripts/tree/master/EVE-Online/Scripts/Yamfa) - Multi-client automation (326 line UI)
+- [EVEBot](https://github.com/CyberTech/EVEBot/tree/master/Branches/Stable) - Combat/mining/mission bot 
+- [WreckingBall2](https://github.com/isxGames/isxScripts/tree/master/EVE-Online/Scripts/WreckingBall2) - Salvaging bot
+- [Yamfa](https://github.com/isxGames/isxScripts/tree/master/EVE-Online/Scripts/Yamfa) - Multi-client automation
 
 **Target Audience:** Advanced script developers
 
@@ -1508,8 +1508,4 @@ These advanced patterns from EVE Online production scripts demonstrate:
 - [LavishGUI 1 UI Guide](08_LavishGUI1_UI_Guide.md)
 - [Core Concepts](04_Core_Concepts.md)
 - [Advanced Patterns](07_Advanced_Patterns_And_Examples.md)
-
----
-
-*Part of ISXEVE Scripting Guide*
-<!-- CLAUDE_SKIP_END -->
+  <!-- CLAUDE_SKIP_END -->

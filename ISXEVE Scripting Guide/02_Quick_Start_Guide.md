@@ -754,17 +754,3 @@ function main()
         echo "WARNING: Cargo almost full!"
 }
 ```
----
-
-<!-- CLAUDE_SKIP_START -->
-## Congratulations!
-
-You've completed the ISXEVE Quick Start Guide! You now know how to:
-
-- ✓ Verify ISXEVE installation
-- ✓ Write basic ISXEVE scripts
-- ✓ Access character and ship data
-- ✓ Use TLOs and object members
-- ✓ Handle existence checking
-- ✓ Run and debug scripts
-<!-- CLAUDE_SKIP_END -->

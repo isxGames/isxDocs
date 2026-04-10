@@ -1072,17 +1072,3 @@ if (!${uiScale.Equal[1.0]})
 ```lavishscript
 uiScale:Set[${LavishSettings[MyScript].Set[UI].GetSetting[ScaleFactor,1.0]}]
 ```
-
----
-
-<!-- CLAUDE_SKIP_START -->
-## Next Steps
-
-1. **Copy** `LGUI2Scaling.iss` to your scripts directory
-2. **Include** it in your LGUI2-based script
-3. **Add** scaling logic to your `main()` function
-4. **Test** with different scale factors (0.5, 1.0, 1.5, 2.0, etc.)
-5. **Adjust** hard-coded window dimensions if needed
-6. **Enable** debug mode if troubleshooting issues
-
-<!-- CLAUDE_SKIP_END -->

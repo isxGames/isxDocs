@@ -1664,14 +1664,6 @@ Show/hide elements based on script variables or conditions:
 5. **Persistence** - LavishSettings, StorePosition, Data attribute
 6. **Templates** - Reusable styles and skins
 
-<!-- CLAUDE_SKIP_START -->
-**Next Steps:**
-- Study existing script UI files for real-world examples
-- Start with a simple window and build up
-- Test frequently as you add elements
-- Refer to official LavishGUI documentation for advanced features
-<!-- CLAUDE_SKIP_END -->
-
 ---
 
 ## Reference

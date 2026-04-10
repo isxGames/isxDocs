@@ -11477,7 +11477,7 @@ EVE:QueryEntities[CloseNPCs, "CategoryID = 11 && IsNPC = TRUE && Distance < 1000
 
 ## Summary
 
-This reference covers **the most commonly used ~20 ISXEVE datatypes** in EVE Online bot development.
+This reference covers **the most commonly used datatypes** in EVE Online bot development.
 
 ### Key Takeaways
 
