@@ -633,6 +633,102 @@ This:Sort
 - Sort after adding all items
 - Use iterators for collections/settings
 
+### OnRightClick as Programmatic Refresh Trigger
+
+**Pattern:** Decouple list population logic from multiple trigger points by placing it in `OnRightClick`, then calling `:RightClick` programmatically from `OnLoad` and from Add/Delete buttons.
+
+**Source:** EVEBot — Whitelist management (Pilots, Corporations, Alliances lists)
+
+**Why this pattern?** When a listbox needs to be refreshed from multiple places (initial load, after adding an item, after deleting an item, after external sync), duplicating the population logic in each trigger is error-prone. By centralizing the logic in `OnRightClick` and triggering it programmatically, you get a single source of truth for list population.
+
+**The ListBox:**
+
+```xml
+<listbox name='lbWLPilots'>
+  <X>r140</X>
+  <Y>90</Y>
+  <Width>130</Width>
+  <Height>300</Height>
+  <Sort>Text</Sort>
+
+  <!-- Step 1: OnLoad triggers OnRightClick for initial population -->
+  <OnLoad>
+    This:RightClick
+  </OnLoad>
+
+  <!-- Step 2: OnLeftClick handles user interaction (show details) -->
+  <OnLeftClick>
+    variable string pilotinfo=${UIElement[MyWindow].FindUsableChild[txtPilotInfo,text].FullName}
+    UIElement[${pilotinfo}]:SetText[Pilot: ${This.SelectedItem[1].Text} (${This.SelectedItem[1].Value})]
+  </OnLeftClick>
+
+  <!-- Step 3: OnRightClick IS the refresh logic (centralized) -->
+  <OnRightClick>
+    This:ClearItems
+    variable iterator i
+    Script[MyScript].VariableScope.Whitelist.PilotsRef:GetSettingIterator[i]
+    if ${i:First(exists)}
+    {
+      do
+      {
+        This:AddItem[${i.Key},${i.Value}]
+      }
+      while ${i:Next(exists)}
+    }
+    This:Sort
+  </OnRightClick>
+</listbox>
+```
+
+**The Add Button (triggers refresh after adding):**
+
+```xml
+<button name='btnAddPilot'>
+  <Text>Add</Text>
+  <OnLeftClick>
+    ; Get selected pilot from another list
+    variable string pilotname=${UIElement[MyWindow].FindUsableChild[lbLocal,listbox].SelectedItem[1].Text}
+
+    ; Add to whitelist via script method
+    Script[MyScript].VariableScope.Social:AddWhiteList[Pilot,${pilotname}]
+
+    ; Refresh the whitelist listbox by triggering OnRightClick
+    UIElement[MyWindow].FindUsableChild[lbWLPilots,listbox]:RightClick
+  </OnLeftClick>
+</button>
+```
+
+**The Delete Button (triggers refresh after removing):**
+
+```xml
+<button name='btnDelPilot'>
+  <Text>Del</Text>
+  <OnLeftClick>
+    ; Get selected item from whitelist listbox
+    variable string pilotname=${UIElement[MyWindow].FindUsableChild[lbWLPilots,listbox].SelectedItem[1].Text}
+
+    ; Remove from whitelist via script method
+    Script[MyScript].VariableScope.Social:DelWhiteList[Pilot,${pilotname}]
+
+    ; Refresh the whitelist listbox
+    UIElement[MyWindow].FindUsableChild[lbWLPilots,listbox]:RightClick
+  </OnLeftClick>
+</button>
+```
+
+**The complete flow:**
+
+1. **On UI load** → `OnLoad` calls `This:RightClick` → `OnRightClick` runs → list populated from settings
+2. **User clicks Add** → button adds item to data → button calls `:RightClick` on listbox → `OnRightClick` runs → list refreshed
+3. **User clicks Delete** → button removes item from data → button calls `:RightClick` on listbox → `OnRightClick` runs → list refreshed
+4. **User right-clicks listbox manually** → `OnRightClick` runs → list refreshed (manual refresh)
+
+**Key advantages:**
+- Population logic exists in exactly one place (OnRightClick)
+- Any trigger can refresh the list with a single `:RightClick` call
+- Manual user refresh is available for free (right-click the list)
+- Adding new trigger points (e.g., cross-session sync) only requires one `:RightClick` call
+
 ---
 
 ## Advanced TextEntry Patterns
@@ -879,9 +975,10 @@ These advanced patterns from EVE Online production scripts demonstrate:
 8. **Nested TabControls** - Tab-within-tab organization
 9. **Slider Synchronization** - Real-time label updates with unit conversion
 10. **List Management** - Iterator-based population patterns
-11. **Advanced TextEntry** - OnKeyDown for Enter key detection
-12. **ComboBox Values** - Separate display text from stored values
-13. **Production Robustness** - Dynamic displays and polymorphic input
+11. **Decoupled List Refresh** - OnRightClick as centralized refresh trigger
+12. **Advanced TextEntry** - OnKeyDown for Enter key detection
+13. **ComboBox Values** - Separate display text from stored values
+14. **Production Robustness** - Dynamic displays and polymorphic input
 
 **Key Takeaways:**
 - Real production scripts require sophisticated UI patterns
