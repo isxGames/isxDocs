@@ -482,6 +482,8 @@ Dropdown selection lists.
 - `:Sort` - Sort items alphabetically
 - `.SelectedItem.Text` - Get selected item text
 - `.ItemByText[text]:Select` - Select an item by text
+- `:SetSortType[type]` - Set sort type (`text`, `valuereverse`)
+- `:SetAutoSort[TRUE]` - Auto-sort when items are added
 
 ### Text and Labels
 
@@ -498,6 +500,21 @@ Display static or dynamic text.
   <Color>FFFFFFFF</Color>  <!-- ARGB color -->
 </text>
 ```
+
+**Multi-line wrapping text:**
+
+```xml
+<text Name='DescriptionText'>
+  <X>10</X>
+  <Y>190</Y>
+  <Width>300</Width>
+  <Height>60</Height>
+  <Text>This is a long description that will wrap to multiple lines within the element bounds.</Text>
+  <Wrap>1</Wrap>
+</text>
+```
+
+The `<Wrap>` element controls word-wrapping: `1` enables wrapping, `0` disables (default). Can also be written as self-closing `<Wrap />` to enable.
 
 **Update text from script:**
 ```lavishscript
@@ -522,6 +539,26 @@ Allow user text input.
   </OnLoad>
 </textentry>
 ```
+
+**TextEntry with input constraints:**
+
+```xml
+<textentry Name='PasswordInput'>
+  <X>10</X>
+  <Y>250</Y>
+  <Width>200</Width>
+  <Height>20</Height>
+  <MaxLength>50</MaxLength>
+  <PasswordCharacter>*</PasswordCharacter>
+  <OnLoad>
+    This:SetText[${LavishSettings[MyScript].FindSetting[Password]}]
+  </OnLoad>
+</textentry>
+```
+
+**Key TextEntry properties:**
+- `<MaxLength>N</MaxLength>` — Maximum character count (e.g., `2`, `6`, `25`, `50`, `64`)
+- `<PasswordCharacter>*</PasswordCharacter>` — Masks typed characters for password fields
 
 **Read text from script:**
 ```lavishscript
@@ -647,6 +684,43 @@ Display scrollable lists of items.
     echo Selected: ${This.SelectedItem.Text}
   </OnSelect>
 </listbox>
+```
+
+**ListBox properties:**
+
+| Property | Values | Description |
+|----------|--------|-------------|
+| `<Sort>` | `None`, `Text`, `Value`, `User` | Sort mode (default: `None`) |
+| `<AutoSort>` | `TRUE` / `FALSE` | Re-sort automatically when items are added |
+| `<SelectMultiple>` | `0` / `1` | Enable multi-select (default: `0` = single) |
+
+**AddItem with hidden value:**
+
+Items can store both display text and a hidden value (useful for IDs):
+
+```lavishscript
+; Single parameter — display text only
+This:AddItem[Item Name]
+
+; Dual parameter — display text + hidden value
+This:AddItem[Item Name,42]
+```
+
+The hidden value enables lookup by value (`ItemByValue`) vs by text (`ItemByText`), and is used as the sort key when `<Sort>Value</Sort>` is set.
+
+**Sort from script:**
+
+```lavishscript
+; Set sort type and apply
+UIElement[MyList]:SetSortType[text]
+UIElement[MyList]:Sort
+
+; Sort by value in reverse (e.g., highest level first)
+UIElement[MyList]:SetSortType[valuereverse]
+UIElement[MyList]:Sort
+
+; Enable auto-sort for future additions
+UIElement[MyList]:SetAutoSort[TRUE]
 ```
 
 ### Sliders
