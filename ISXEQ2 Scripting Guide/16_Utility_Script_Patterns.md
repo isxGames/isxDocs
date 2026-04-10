@@ -417,90 +417,26 @@ function ReturnToHome()
 
 ## Character-Specific Configuration
 
-Allow the same script to maintain different settings for each character on each server.
+Allow the same script to maintain different settings for each character on each server by naming the config file with both server and character name.
 
-### Pattern
+> **Note:** For the full LavishSettings API (nested sets, iterators, shared caches, `FindSetting` with defaults, and complete Load/Save bodies), see [07_Advanced_Patterns_And_Examples.md](07_Advanced_Patterns_And_Examples.md#lavishsettings-xml-configuration). This section only covers the per-character filename convention that is the unique value-add of utility scripts like `bjxpbot.iss`.
+
+### Filename Convention
 
 ```lavishscript
-variable settingsetref Settings
-variable settingsetref _ref
 variable filepath ConfigFile="${LavishScript.HomeDirectory}/Scripts/MyScript/Character Config/${EQ2.ServerName}_${Me.Name}_Settings.xml"
-
-function LoadSettings()
-{
-	LavishSettings:AddSet[MyScript]
-	LavishSettings[MyScript]:Clear
-	LavishSettings[MyScript]:AddSet[Settings]
-	LavishSettings[MyScript]:Import["${LavishScript.HomeDirectory}/Scripts/MyScript/Character Config/${EQ2.ServerName}_${Me.Name}_Settings.xml"]
-	_ref:Set[${LavishSettings.FindSet[MyScript]}]
-
-	echo Loaded settings for ${Me.Name} on ${EQ2.ServerName}
-}
-
-function SaveSettings()
-{
-	; Save settings with character-specific filename
-	LavishSettings[MyScript]:Export["${LavishScript.HomeDirectory}/Scripts/MyScript/Character Config/${EQ2.ServerName}_${Me.Name}_Settings.xml"]
-	echo Saved settings for ${Me.Name} on ${EQ2.ServerName}
-}
 ```
 
-### Complete Example
+Two conventions worth noting:
+
+- **`${EQ2.ServerName}_${Me.Name}` ordering** — server first, then character name. Sorts config files by server when browsing the folder.
+- **Dedicated `Character Config/` subfolder** — keeps per-character files grouped separately from shared config, presets, or logs.
+
+### Auto-Save on Exit
+
+Pair the per-character filename with an `atexit` handler so settings are always persisted when the script stops — no manual save step required:
 
 ```lavishscript
-variable settingsetref Settings
-variable settingsetref _ref
-variable filepath ConfigFile="${LavishScript.HomeDirectory}/Scripts/AutoBuff/Character Config/${EQ2.ServerName}_${Me.Name}_BuffSettings.xml"
-variable bool AutoBuffEnabled
-variable string PreferredBuff
-
-function main()
-{
-	call LoadSettings
-
-	echo Auto-buff enabled: ${AutoBuffEnabled}
-	echo Preferred buff: ${PreferredBuff}
-
-	; Use settings...
-	if ${AutoBuffEnabled}
-	{
-		while 1
-		{
-			call CheckBuffs
-			wait 50
-		}
-	}
-}
-
-function LoadSettings()
-{
-	LavishSettings:AddSet[AutoBuff]
-	LavishSettings[AutoBuff]:Clear
-	LavishSettings[AutoBuff]:AddSet[Settings]
-	LavishSettings[AutoBuff]:Import["${ConfigFile}"]
-	_ref:Set[${LavishSettings.FindSet[AutoBuff]}]
-
-	; Load individual settings
-	if ${_ref.FindSetting[AutoBuffEnabled](exists)}
-		AutoBuffEnabled:Set[${_ref.FindSetting[AutoBuffEnabled]}]
-	else
-		AutoBuffEnabled:Set[TRUE]
-
-	if ${_ref.FindSetting[PreferredBuff](exists)}
-		PreferredBuff:Set[${_ref.FindSetting[PreferredBuff]}]
-	else
-		PreferredBuff:Set["Brell's Stalwart Shield"]
-}
-
-function SaveSettings()
-{
-	_ref:AddSetting[AutoBuffEnabled,${AutoBuffEnabled}]
-	_ref:AddSetting[PreferredBuff,${PreferredBuff}]
-
-	LavishSettings[AutoBuff]:Export["${ConfigFile}"]
-	echo Settings saved for ${Me.Name} on ${EQ2.ServerName}
-}
-
 function atexit()
 {
 	call SaveSettings
@@ -512,7 +448,7 @@ function atexit()
 - **Character-specific**: Different settings per character
 - **Server-aware**: Handles same character names on different servers
 - **Automatic**: No manual file selection needed
-- **Organized**: Character Config folder keeps files together
+- **Organized**: `Character Config/` folder keeps files together
 
 **Source**: bjxpbot.iss:17,25,166
 
