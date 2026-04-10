@@ -145,44 +145,44 @@ ${Me.Ability[1]}    ; only character has this
 
 ## Members and Methods
 
-Datatypes have two types of access:
+Every ISXEQ2 datatype exposes two kinds of access: **members** (read values with `.`) and **methods** (perform actions with `:`). For the underlying LavishScript concepts and how to define your own members/methods on custom `objectdef` types, see [01_LavishScript_Fundamentals.md - Members](01_LavishScript_Fundamentals.md#members) and [01_LavishScript_Fundamentals.md - Methods](01_LavishScript_Fundamentals.md#methods).
 
-### Members (Properties)
+This section focuses on how members and methods appear on ISXEQ2 datatypes.
 
-Members are **read-only values** accessed with a dot:
+### ISXEQ2 Member Access
 
 ```lavishscript
-${Me.Name}           ; Returns "Mycharacter"
-${Me.Level}          ; Returns 120
-${Target.Distance}   ; Returns 15.3
+${Me.Name}           ; character member - returns "Mycharacter"
+${Me.Level}          ; character member - returns 120
+${Target.Distance}   ; actor member - returns 15.3
 ```
 
-### Methods (Actions)
-
-Methods are **actions** you can perform, accessed with a colon:
+### ISXEQ2 Method Calls
 
 ```lavishscript
 Me.Inventory[5]:Use              ; Use the item
 Me.Ability["Holy Strike"]:Use    ; Cast the ability
 Target:DoTarget                  ; Target the actor
-LootWindow:LootAll              ; Loot everything
+LootWindow:LootAll               ; Loot everything
 ```
 
 **Method with Parameters:**
 
 ```lavishscript
 Me:Face[180]                     ; Face heading 180
-Me:BankDeposit[c,1000]          ; Deposit 1000 copper
+Me:BankDeposit[c,1000]           ; Deposit 1000 copper
 MerchantWindow.MerchantInventory[1]:Buy[5]  ; Buy 5 of item 1
 ```
 
-**Syntax Summary:**
+**ISXEQ2 Syntax Summary:**
 
 ```lavishscript
-${Object.Member}         ; Get a value (read)
-Object:Method            ; Perform an action (write)
-Object:Method[param]     ; Perform an action with parameter
+${Object.Member}         ; Get a value from an ISXEQ2 object
+Object:Method            ; Perform an action on an ISXEQ2 object
+Object:Method[param]     ; Perform an action with a parameter
 ```
+
+**Key Point:** Many ISXEQ2 methods require the object to exist - always pair method calls with `(exists)` checks (see next section).
 
 ---
 
@@ -263,59 +263,27 @@ function SafeTargetInfo()
 
 ## Variable Declarations and Scoping
 
-### Variable Scopes
+For the fundamentals of declaring variables, variable types, scopes (script vs local vs global), and assignment, see [01_LavishScript_Fundamentals.md - Variables and Data Types](01_LavishScript_Fundamentals.md#variables-and-data-types) and [01_LavishScript_Fundamentals.md - Variable Scope](01_LavishScript_Fundamentals.md#best-practices-summary).
 
-LavishScript has two variable scopes:
+This section covers how variables are used with ISXEQ2 datatypes.
 
-#### Script-Scoped (Global)
+### Declaring ISXEQ2 Datatype Variables
 
-```lavishscript
-declare MyVariable int script 100
-
-; Available throughout entire script
-; Persists across function calls
-; Survives loops and code blocks
-```
-
-**Use for:** Settings, counters, flags that need to persist
-
-#### Local-Scoped (Function)
+ISXEQ2 datatypes can be stored in local or script-scoped variables just like primitive types:
 
 ```lavishscript
-function MyFunction()
-{
-    declare MyVariable int local 100
-
-    ; Only available in this function
-    ; Destroyed when function ends
-    ; Each call creates a new instance
-}
+variable item MyWeapon
+variable actor MyTarget
+variable index:actor NearbyActors        ; Collection of actors
+variable index:item Potions              ; Collection of items
+variable iterator ResultIt               ; Iterator for collections
 ```
 
-**Use for:** Temporary calculations, loop counters, function-specific data
-
-### Variable Types
-
-```lavishscript
-declare MyInt int local 100              ; Integer
-declare MyFloat float local 3.14         ; Floating point
-declare MyString string local "Hello"    ; String
-declare MyBool bool local TRUE           ; Boolean
-declare MyCounter int local               ; Integer (uninitialized, defaults to 0)
-```
-
-### Variable Assignment
-
-```lavishscript
-; Using :Set method
-MyVariable:Set[100]
-MyString:Set["New Value"]
-
-; Using = operator (integers only)
-MyInt:Set[${Math.Calc[10+5]}]
-```
+`index:actor`, `index:item`, `index:ability`, etc. are the collection types used with `EQ2:GetActors`, `Me:QueryInventory`, `Me:QueryAbilities`, and similar population methods (see [Query Syntax](#query-syntax) and [Collections and Iterators](#collections-and-iterators)).
 
 ### Common Pattern: Shorthand Variable
+
+Assigning an ISXEQ2 object to a variable avoids repeating long member paths and, for async-loaded types, gives you a stable handle to call `Is*InfoAvailable` against:
 
 ```lavishscript
 ; Instead of repeatedly typing long paths:
@@ -329,6 +297,8 @@ MyWeapon:Set[${Me.Equipment[primary]}]
 echo ${MyWeapon.ToItemInfo.DamageRating}
 echo ${MyWeapon.ToItemInfo.Delay}
 ```
+
+**Key Point:** Script-scoped variables are useful for persistent state (settings, timers, flags) across an ISXEQ2 script's lifetime; local variables should be preferred for temporary calculations inside functions.
 
 ---
 
@@ -622,126 +592,15 @@ Event[EQ2_onIncomingChatText]:DetachAtom[OnChat]
 
 ## LavishScript Basics
 
-Quick reference for essential LavishScript syntax.
+This guide focuses on ISXEQ2-specific concepts. For core LavishScript syntax - control flow (`if`/`while`/`for`), string manipulation, math (`${Math.Calc[...]}`), wait commands, function declaration/calling, and comparisons - see the dedicated LavishScript reference:
 
-### Control Flow
+- [01_LavishScript_Fundamentals.md - Conditional Branching](01_LavishScript_Fundamentals.md#conditional-branching)
+- [01_LavishScript_Fundamentals.md - Loops](01_LavishScript_Fundamentals.md#loops)
+- [01_LavishScript_Fundamentals.md - Wait Commands](01_LavishScript_Fundamentals.md#wait-commands)
+- [01_LavishScript_Fundamentals.md - Functions](01_LavishScript_Fundamentals.md#functions)
+- [01_LavishScript_Fundamentals.md - Return Values](01_LavishScript_Fundamentals.md#return-values)
 
-```lavishscript
-; If statement
-if ${Condition}
-{
-    ; Code
-}
-elseif ${OtherCondition}
-{
-    ; Code
-}
-else
-{
-    ; Code
-}
-
-; While loop
-while ${Condition}
-{
-    ; Code
-}
-
-; Do-While loop
-do
-{
-    ; Code
-}
-while ${Condition}
-
-; For loop
-variable int i
-for (i:Set[1]; ${i} <= 10; i:Inc)
-{
-    ; Code
-}
-```
-
-### Comparisons
-
-```lavishscript
-; Numeric
-${Value} > 10
-${Value} < 100
-${Value} == 50
-${Value} != 25
-${Value} >= 10
-${Value} <= 100
-
-; Boolean
-${Boolean}           ; TRUE check
-!${Boolean}          ; FALSE check (negation)
-
-; String
-${String.Equal["Text"]}         ; Exact match (case-sensitive)
-${String.NotEqual["Text"]}      ; Not equal
-${String.Find["Sub"]}           ; Contains substring
-${String.Left[5].Equal["Start"]}  ; First 5 chars
-```
-
-### String Manipulation
-
-```lavishscript
-${String.Length}                ; Length
-${String.Left[5]}              ; First 5 characters
-${String.Right[3]}             ; Last 3 characters
-${String.Mid[2,5]}             ; 5 chars starting at position 2
-${String.Upper}                ; UPPERCASE
-${String.Lower}                ; lowercase
-${String.Find["sub"]}          ; Position of substring (or 0 if not found)
-${String.Replace["old","new"]} ; Replace text
-```
-
-### Math
-
-```lavishscript
-${Math.Calc[10+5]}             ; 15
-${Math.Calc[10-5]}             ; 5
-${Math.Calc[10*5]}             ; 50
-${Math.Calc[10/5]}             ; 2
-${Math.Calc[(10+5)*2]}         ; 30
-${Math.Rand[100]}              ; Random 0-99
-${Math.Rand[100]:Inc}          ; Random 1-100
-```
-
-### Wait Commands
-
-```lavishscript
-wait 10                        ; Wait 1 second (10 deciseconds)
-wait 50 ${Condition}           ; Wait up to 5 seconds for condition
-waitframe                      ; Wait one frame (~16ms)
-```
-
-### Functions
-
-```lavishscript
-function MyFunction()
-{
-    echo "Function called"
-}
-
-function MyFunctionWithParams(string name, int level)
-{
-    echo "Name: ${name}, Level: ${level}"
-}
-
-function MyFunctionWithReturn()
-{
-    return 42
-}
-
-; Calling functions
-call MyFunction
-call MyFunctionWithParams "Bob" 120
-call MyFunctionWithReturn
-variable int result
-result:Set[${Return}]
-```
+The remaining sections of this file apply those fundamentals to ISXEQ2-specific tasks.
 
 ---
 
