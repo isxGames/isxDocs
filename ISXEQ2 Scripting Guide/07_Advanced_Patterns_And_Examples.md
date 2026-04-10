@@ -440,70 +440,7 @@ function main(... Args)
 
 #### EQ2Craft Command-Line Switch Pattern
 
-**Source:** EQ2Craft.iss
-
-```lavishscript
-function main(... recipeFavourite)
-{
-    variable int argIndex=1
-    variable bool V1 = FALSE
-    variable bool V2 = FALSE
-    variable bool EnableDebug = FALSE
-    variable bool AllowWritSort = FALSE
-    variable bool Quiet = FALSE
-    variable bool startrecipe = FALSE
-    variable bool skipwait = FALSE
-    variable bool CraftLiteMode = FALSE
-    variable bool HideUI = FALSE
-    variable string CmdLineQueue
-
-    while ${argIndex} <= ${recipeFavourite.Used}
-    {
-        switch ${recipeFavourite[${argIndex}]}
-        {
-            case -vv
-                V2:Set[TRUE]
-                break
-            case -debug
-                EnableDebug:Set[TRUE]
-                Debug:Enable
-                break
-            case -sort
-                AllowWritSort:Set[TRUE]
-                break
-            case -v
-                V1:Set[TRUE]
-                break
-            case -q
-                Quiet:Set[TRUE]
-                break
-            case -chat
-                Verbose:Set[TRUE]
-                break
-            case -start
-                startrecipe:Set[TRUE]
-                break
-            case -load
-                skipwait:Set[TRUE]
-                break
-            case -lite
-                CraftLiteMode:Set[TRUE]
-                break
-            case -hideui
-                HideUI:Set[TRUE]
-                break
-            case -buffer
-            case -script
-                ; Ignore these flags
-                break
-            default
-                ; Everything else is part of the queue
-                CmdLineQueue:Set[${CmdLineQueue} ${recipeFavourite[${argIndex}]}]
-        }
-        argIndex:Inc
-    }
-}
-```
+EQ2Craft uses a `switch` statement over a variable-argument list (`... recipeFavourite`) to parse flags such as `-vv`, `-debug`, `-sort`, `-v`, `-q`, `-chat`, `-start`, `-load`, `-lite`, and `-hideui`, while the `default` case accumulates any non-flag tokens into a queue-name string. For the full parser, post-parse validation logic, usage examples, and detailed explanation, see [17_Crafting_Script_Patterns.md](17_Crafting_Script_Patterns.md#command-line-argument-parsing).
 
 #### Key Lessons:
 
