@@ -2,8 +2,6 @@
 # ISXEVE Scripting Guide - File Manifest
 
 **Project:** ISXEVE Scripting Guide
-**Version:** 2.0
-**Generated:** 2025-10-26
 
 ---
 
