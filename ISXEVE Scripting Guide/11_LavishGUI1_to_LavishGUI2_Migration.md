@@ -3982,674 +3982,6 @@ UIElement[ModeSelector].ItemByText[${Config.Mode}]:Select
 5. **No sorting** - Pre-sort data before inserting
 6. **ClearItems still works** - Only method that's the same!
 
----
-
-## Advanced Migration Topics
-
-### Migrating Templates
-
-**LGUI1 Templates:**
-
-```xml
-<Template Name="MyButton">
-    <Button>
-        <BackgroundColor>#0000ff</BackgroundColor>
-        <Text>Default Text</Text>
-    </Button>
-</Template>
-```
-
-**LGUI2 Templates:**
-
-```json
-{
-    "templates": {
-        "myButton": {
-            "backgroundBrush": {"color": "#0000ff"},
-            "padding": 5
-        }
-    },
-    "elements": [
-        {
-            "jsonTemplate": "myButton",
-            "type": "button",
-            "content": "Custom Text"
-        }
-    ]
-}
-```
-
-### Migrating Skins
-
-**LGUI1:**
-
-```lavishscript
-ui -loadskin myskin
-ui -load myui.xml
-```
-
-**LGUI2:**
-
-```lavishscript
-LGUI2:PushSkin[myskin]
-LGUI2:LoadPackageFile[myui.json]
-LGUI2:PopSkin[myskin]
-```
-
-### Migrating Complex Layouts
-
-For complex nested layouts, break them into logical sections:
-
-**LGUI2 Pattern:**
-
-```json
-{
-    "type": "dockpanel",
-    "children": [
-        {
-            "_dock": "top",
-            "type": "panel",
-            "height": 50,
-            "children": [/* Header content */]
-        },
-        {
-            "_dock": "left",
-            "type": "panel",
-            "width": 200,
-            "children": [/* Sidebar content */]
-        },
-        {
-            "type": "panel",
-            "children": [/* Main content fills remaining space */]
-        }
-    ]
-}
-```
-
----
-
-## Summary
-
-### Key Takeaways
-
-1. **File Format:** XML → JSON
-2. **Loading:** `ui -load` → `LGUI2:LoadPackageFile`
-3. **Access:** `UIElement[]` → `LGUI2.Element[]`
-4. **Events:** XML attributes → JSON `eventHandlers` objects
-5. **Data Binding:** Manual updates → Automatic `textBinding`/`checkedBinding`
-6. **Controller Pattern:** Use objectdef with Initialize/Shutdown
-
-### Benefits of Migration
-
-- ✅ **Less code** - Data binding eliminates manual updates
-- ✅ **Better tooling** - JSON schema provides IDE support
-- ✅ **More powerful** - Advanced features like triggers, item view generators
-- ✅ **Future-proof** - LGUI2 is actively developed, LGUI1 is legacy
-- ✅ **Easier maintenance** - Cleaner, more readable JSON syntax
-
-### UI Scaling Enhancement
-
-After migrating to LGUI2, consider adding **dynamic UI scaling** to your script:
-
-**Why Add Scaling?**
-- Users have different screen resolutions and DPI settings
-- 4K displays benefit from 2x scaling
-- Compact mode (0.5x) useful for multi-boxing
-
-**How to Add Scaling:**
-
-See the comprehensive **[LGUI2 Scaling System Guide](12_LGUI2_Scaling_System.md)** for complete implementation details.
-
-**Quick Implementation:**
-
-```lavishscript
-#include ${LavishScript.HomeDirectory}/Scripts/LGUI2Scaling.iss
-
-function main()
-{
-    variable float uiScale = 1.0
-
-    if (!${uiScale.Equal[1.0]})
-    {
-        call ScaleUIJson "MyUI.json" "MyUI_Scaled.json" ${uiScale}
-        LGUI2:LoadPackageFile["MyUI_Scaled.json"]
-    }
-    else
-        LGUI2:LoadPackageFile["MyUI.json"]
-}
-```
-
-**Tip:** Production scripts can implement full UI scaling using this pattern.
-
-## Known Limitations
-
-### Custom C++ Element Types Not Supported
-
-**Critical Limitation:** LavishGUI 2 JSON packages **do not support custom C++ element types** registered via `LGUIFactory`.
-
-#### What This Means
-
-If your LGUI1 UI uses custom C++ elements (registered with `LGUIFactory<YourClass>`), you **cannot migrate** to LGUI2 JSON packages. These elements will produce errors like:
-
-```
-element type not found: yourelementtype
-```
-
-#### Examples of Affected Elements
-
-- **Custom radar elements** (e.g., `customradar`) - Custom display with 3D-to-2D coordinate conversion, dynamic blips, and interactive tooltips
-- **Custom HUD elements** - Game-specific overlays with custom rendering
-- **Advanced interactive displays** - Elements with complex mouse interaction and real-time updates
-
-#### Technical Details
-
-**LGUI1 Pattern (Works):**
-```cpp
-// C++ Extension Code
-LGUIFactory<LGUICustomRadar> RadarFactory("customradar");
-
-class LGUICustomRadar : public LGUIElement
-{
-    void Render() { /* custom rendering */ }
-    // ... custom behavior
-};
-```
-
-```xml
-<!-- LGUI1 XML (Works) -->
-<customradar Name="radar1">
-    <Width>100%</Width>
-    <Height>100%</Height>
-</customradar>
-```
-
-**LGUI2 Pattern (Does NOT Work):**
-```json
-{
-    "$schema": "http://www.lavishsoft.com/schema/lgui2Package.json",
-    "elements": [
-        {
-            "type": "customradar",
-            "name": "radar1"
-        }
-    ]
-}
-```
-
-**Error:**
-```
-element type not found: customradar
-```
-
-#### Why This Happens
-
-LavishGUI 2's JSON package system only recognizes built-in element types:
-- Layout: window, panel, dockpanel, stackpanel, etc.
-- Display: textblock, imagebox, progressbar, etc.
-- Interaction: button, checkbox, listbox, combobox, etc.
-
-Custom C++ element types registered with `LGUIFactory` are **not accessible** from JSON packages.
-
-#### Workarounds
-
-There are no perfect workarounds, but options include:
-
-1. **Keep Using LGUI1** - If your custom element is critical, continue using XML-based LGUI1
-   ```lavishscript
-   ui -reload -skin YourSkin x64\\extensions\\yourui
-   ```
-
-2. **Redesign Without Custom Elements** - If possible, rebuild functionality using standard LGUI2 elements
-   - Use `imagebox` with dynamically generated textures
-   - Use standard controls with data binding
-   - Note: This may lose interactivity and features
-
-3. **Wait for LGUI2 Support** - LavishSoft may add custom element support in the future
-   - No timeline or confirmation this will happen
-   - Monitor LavishSoft wiki and forums for updates
-
-#### Example: Extension-Specific Features
-
-**Note:** The following demonstrates features that **must remain on LGUI1**:
-
-- **Custom Radar** (`radar on`) - Uses custom `customradar` element type
-  - Cannot be converted to JSON
-  - Custom C++ rendering for 3D radar display
-
-#### Investigation Conducted
-
-Exhaustive research was performed to find LGUI2 custom element support:
-
-✅ **Searched:**
-- LavishSoft wiki (lavishsoft.com)
-- LavishGUI 2 documentation
-- LGUI2:Elements reference
-- InnerSpace extension documentation
-- InnerSpace extension forums and documentation
-- LERN example repository
-
-❌ **Not Found:**
-- Any mention of `LGUIFactory` in LGUI2
-- Documentation for registering custom element types in LGUI2
-- Migration path for custom LGUI1 elements
-- C++ API for LGUI2 custom elements
-
-**Conclusion:** As of October 2025, custom C++ element types are **not supported** in LavishGUI 2 JSON packages.
-
-#### When to Use LGUI1 vs LGUI2
-
-**Use LGUI1 (XML) when:**
-- ✅ You have custom C++ element types
-- ✅ You use `LGUIFactory<>` registered elements
-- ✅ Migration would break critical functionality
-
-**Use LGUI2 (JSON) when:**
-- ✅ You only use standard element types
-- ✅ You want data binding and modern UI features
-- ✅ You can rebuild custom elements with standard controls
-
----
-
-## LGUI2-Exclusive Features
-
-These powerful features are **only available in LavishGUI 2** and have no LGUI1 equivalent:
-
-> **Note:** For complete documentation with detailed examples, property tables, and advanced patterns, see **10_LavishGUI2_UI_Guide.md**. This section provides a migration-focused overview of new capabilities.
-
-### Animations
-
-LGUI2 provides a complete animation system for smooth transitions and effects:
-
-```json
-{
-    "type": "button",
-    "animations": {
-        "fadeIn": {
-            "type": "fade",
-            "duration": 500,
-            "from": 0.0,
-            "to": 1.0
-        }
-    },
-    "eventHandlers": {
-        "gotMouseOver": {
-            "type": "animation",
-            "animation": "fadeIn"
-        }
-    }
-}
-```
-
-**Available Animation Types:**
-- `fade` - Opacity transitions
-- `slide` - Position animations
-- `value` - Numeric value animations
-- `chain` - Sequential animations
-- `composite` - Parallel animations
-- `delay` - Timed pauses
-- `repeat` - Looping animations
-
-### Event Hooks
-
-Attach event handlers to events from other elements:
-
-```json
-{
-    "type": "textblock",
-    "hooks": {
-        "dataRefresh": {
-            "elementName": "eventHub",
-            "flags": "global",
-            "event": "onDataUpdated",
-            "eventHandler": {
-                "type": "code",
-                "code": "This:Pull"
-            }
-        }
-    }
-}
-```
-
-**Use Cases:**
-- Coordinating behavior across multiple UI elements
-- Creating event broadcasting systems
-- Decoupling UI components
-
-### Advanced Brushes
-
-LGUI2 brushes support advanced features:
-
-```json
-{
-    "backgroundBrush": {
-        "color": [1.0, 0.5, 0.5, 1.0],
-        "imageFile": "Interface/textures/button.png",
-        "imageOrientation": "mirrorHorizontal",
-        "canvas": { /* Canvas definition */ },
-        "pixelShader": { /* Shader definition */ }
-    }
-}
-```
-
-**New Brush Features:**
-- Canvas rendering
-- Image orientation (mirroring)
-- Pixel and vertex shaders
-- Image transparency keys
-- Advanced tinting/blending
-
-### Box Model Control
-
-LGUI2 provides explicit control over the box model:
-
-```json
-{
-    "type": "panel",
-    "width": 100,
-    "height": 100,
-    "margin": [5, 10, 5, 10],
-    "padding": 10,
-    "borderThickness": 2
-}
-```
-
-**Key Difference:** Padding is INSIDE bounds (reduces content area), Margin is OUTSIDE bounds.
-
-### Factor-Based Positioning
-
-Proportional sizing relative to parent:
-
-```json
-{
-    "widthFactor": 0.5,
-    "heightFactor": 0.75,
-    "xFactor": 0.25,
-    "yFactor": 0.5
-}
-```
-
-Combine with offsets: `final = offset + (factor × parentDimension)`
-
-### Metadata System
-
-Store custom data using underscore properties:
-
-```json
-{
-    "type": "button",
-    "_customData": "myValue",
-    "_priority": 10,
-    "_category": "combat"
-}
-```
-
-Access from script:
-
-```lavishscript
-echo ${LGUI2.Element[myButton].Metadata.Get[customData]}
-```
-
-### Automatic Data Binding
-
-LGUI2's most powerful feature - automatic UI updates:
-
-```json
-{
-    "type": "textblock",
-    "textBinding": {
-        "pullFormat": "${Script[MyScript].Variable[CurrentValue]}",
-        "pullHook": {
-            "elementName": "events",
-            "flags": "global",
-            "event": "onHealthChanged"
-        }
-    }
-}
-```
-
-**Benefits:**
-- No manual `SetText` calls
-- Event-driven updates via `pullHook`
-- Two-way binding with `pushFormat`
-- Context-aware bindings
-
-### New UI Elements (No LGUI1 Equivalent)
-
-LGUI2 introduces many new element types that have no counterpart in LGUI1:
-
-#### Interactive Controls
-
-**Slider** - Draggable numeric value selection
-```json
-{
-    "type": "slider",
-    "orientation": "horizontal",
-    "minValue": 0,
-    "maxValue": 100,
-    "value": 50
-}
-```
-
-**Knob** - Rotary control for fine-tuning values
-```json
-{
-    "type": "knob",
-    "minValue": 0,
-    "maxValue": 10,
-    "value": 5
-}
-```
-
-**CommandBox** - Advanced text input with command history
-```json
-{
-    "type": "commandbox",
-    "placeholder": "Enter command..."
-}
-```
-
-**InputPicker** - Combo input (free text + dropdown suggestions)
-```json
-{
-    "type": "inputpicker",
-    "comboMode": true,
-    "items": []
-}
-```
-
-#### Progress & Indicators
-
-**ProgressBar** - Visual progress indicator
-```json
-{
-    "type": "progressbar",
-    "minValue": 0,
-    "maxValue": 100,
-    "value": 75
-}
-```
-
-**RadialGauge** - Circular gauge (speedometer-style)
-```json
-{
-    "type": "radialgauge",
-    "startAngle": -135,
-    "endAngle": 135,
-    "value": 65
-}
-```
-
-#### Layout & Organization
-
-**ScrollViewer** - Scrollable container
-```json
-{
-    "type": "scrollviewer",
-    "horizontalScrollBarVisibility": "auto",
-    "verticalScrollBarVisibility": "auto",
-    "content": { /* scrollable content */ }
-}
-```
-
-**Expander** - Collapsible sections
-```json
-{
-    "type": "expander",
-    "header": "Advanced Options",
-    "isExpanded": false,
-    "content": { /* collapsible content */ }
-}
-```
-
-**Dragger** - Resizable panel dividers
-```json
-{
-    "type": "dragger",
-    "allowResize": true,
-    "width": 5
-}
-```
-
-#### Menus & Popups
-
-**Popup** - Floating windows
-```json
-{
-    "type": "popup",
-    "placementTarget": "buttonName",
-    "placement": "bottom",
-    "isOpen": false
-}
-```
-
-**ContextMenu** - Right-click menus
-```json
-{
-    "contextMenu": {
-        "type": "contextmenu",
-        "children": [ /* menu items */ ]
-    }
-}
-```
-
-**Use Cases for New Elements:**
-
-| Element | Replace LGUI1 Pattern | Primary Use |
-|---------|----------------------|-------------|
-| Slider | Custom drag logic | Volume, opacity, zoom controls |
-| ProgressBar | Manual bar drawing | Health/mana bars, loading indicators |
-| ScrollViewer | Manual scrolling | Long content, logs, lists |
-| Expander | Show/hide button + panel | Settings panels, accordion UIs |
-| Popup | Tooltip windows | Tooltips, dropdown menus |
-| ContextMenu | Manual menu windows | Right-click actions |
-| CommandBox | Basic textbox | Console input, command execution |
-| Dragger | Fixed layouts | Resizable split-pane interfaces |
-
-### Advanced Event Handler Types
-
-LGUI2 adds new event handler types beyond LGUI1's simple callbacks:
-
-**Forward Handler** - Delegate events to other elements
-```json
-{
-    "eventHandlers": {
-        "onPress": {
-            "type": "forward",
-            "elementName": "targetElement",
-            "event": "onPress"
-        }
-    }
-}
-```
-
-**Animation Handler** - Trigger animations
-```json
-{
-    "eventHandlers": {
-        "gotMouseOver": {
-            "type": "animation",
-            "animation": "fadeIn"
-        }
-    }
-}
-```
-
-**Task Handler** - Execute background tasks
-```json
-{
-    "eventHandlers": {
-        "onPress": {
-            "type": "task",
-            "taskManager": "MyTaskManager",
-            "task": "refreshData"
-        }
-    }
-}
-```
-
-### Package-Level Features
-
-LGUI2 packages support advanced features at the root level:
-
-**Package Dependencies:**
-```json
-{
-    "includes": ["required-library.json"],
-    "optionalIncludes": ["optional-feature.json"]
-}
-```
-
-**Audio System:**
-```json
-{
-    "audioVoices": {
-        "ui": {"volume": [1.0, 1.0]}
-    },
-    "audioStreams": {
-        "click": {"filename": "click.wav"}
-    }
-}
-```
-
-**Shader Support:**
-```json
-{
-    "pixelShaders": { /* ps_2_0 through ps_5_1 */ },
-    "vertexShaders": { /* vs_2_0 through vs_5_1 */ }
-}
-```
-
-**MetaScript Integration:**
-```json
-{
-    "metaScripts": [
-        {
-            "filename": "helper.iss",
-            "autoStart": true
-        }
-    ]
-}
-```
-
-### Why These Features Matter
-
-**LGUI1 Limitation:** Manual updates everywhere
-
-```lavishscript
-; LGUI1 - Manual updates required
-UIElement[statusText]:SetText[${Script[MyScript].Variable[CurrentValue]}]
-```
-
-**LGUI2 Solution:** Automatic updates via data binding
-
-```json
-"textBinding": {"pullFormat": "${Script[MyScript].Variable[CurrentValue]}"}
-```
-
-The UI automatically updates when the bound data changes!
-
----
-
 ### Issue 14: Checkbox State Management - Use Data Binding
 
 **Problem:**
@@ -4939,6 +4271,302 @@ The `slider.handle` template from DefaultSkin.json provides:
 **Key Takeaway:**
 
 Sliders use **direct styling** and **templates at the element level**, NOT `contentContainer` like checkboxes. Always include `borderThickness` and `borderBrush` to make the slider track visible.
+
+---
+
+## Advanced Migration Topics
+
+### Migrating Templates
+
+**LGUI1 Templates:**
+
+```xml
+<Template Name="MyButton">
+    <Button>
+        <BackgroundColor>#0000ff</BackgroundColor>
+        <Text>Default Text</Text>
+    </Button>
+</Template>
+```
+
+**LGUI2 Templates:**
+
+```json
+{
+    "templates": {
+        "myButton": {
+            "backgroundBrush": {"color": "#0000ff"},
+            "padding": 5
+        }
+    },
+    "elements": [
+        {
+            "jsonTemplate": "myButton",
+            "type": "button",
+            "content": "Custom Text"
+        }
+    ]
+}
+```
+
+### Migrating Skins
+
+**LGUI1:**
+
+```lavishscript
+ui -loadskin myskin
+ui -load myui.xml
+```
+
+**LGUI2:**
+
+```lavishscript
+LGUI2:PushSkin[myskin]
+LGUI2:LoadPackageFile[myui.json]
+LGUI2:PopSkin[myskin]
+```
+
+### Migrating Complex Layouts
+
+For complex nested layouts, break them into logical sections:
+
+**LGUI2 Pattern:**
+
+```json
+{
+    "type": "dockpanel",
+    "children": [
+        {
+            "_dock": "top",
+            "type": "panel",
+            "height": 50,
+            "children": [/* Header content */]
+        },
+        {
+            "_dock": "left",
+            "type": "panel",
+            "width": 200,
+            "children": [/* Sidebar content */]
+        },
+        {
+            "type": "panel",
+            "children": [/* Main content fills remaining space */]
+        }
+    ]
+}
+```
+
+---
+
+## Summary
+
+### Key Takeaways
+
+1. **File Format:** XML → JSON
+2. **Loading:** `ui -load` → `LGUI2:LoadPackageFile`
+3. **Access:** `UIElement[]` → `LGUI2.Element[]`
+4. **Events:** XML attributes → JSON `eventHandlers` objects
+5. **Data Binding:** Manual updates → Automatic `textBinding`/`checkedBinding`
+6. **Controller Pattern:** Use objectdef with Initialize/Shutdown
+
+### Benefits of Migration
+
+- ✅ **Less code** - Data binding eliminates manual updates
+- ✅ **Better tooling** - JSON schema provides IDE support
+- ✅ **More powerful** - Advanced features like triggers, item view generators
+- ✅ **Future-proof** - LGUI2 is actively developed, LGUI1 is legacy
+- ✅ **Easier maintenance** - Cleaner, more readable JSON syntax
+
+### UI Scaling Enhancement
+
+After migrating to LGUI2, consider adding **dynamic UI scaling** to your script:
+
+**Why Add Scaling?**
+- Users have different screen resolutions and DPI settings
+- 4K displays benefit from 2x scaling
+- Compact mode (0.5x) useful for multi-boxing
+
+**How to Add Scaling:**
+
+See the comprehensive **[LGUI2 Scaling System Guide](12_LGUI2_Scaling_System.md)** for complete implementation details.
+
+**Quick Implementation:**
+
+```lavishscript
+#include ${LavishScript.HomeDirectory}/Scripts/LGUI2Scaling.iss
+
+function main()
+{
+    variable float uiScale = 1.0
+
+    if (!${uiScale.Equal[1.0]})
+    {
+        call ScaleUIJson "MyUI.json" "MyUI_Scaled.json" ${uiScale}
+        LGUI2:LoadPackageFile["MyUI_Scaled.json"]
+    }
+    else
+        LGUI2:LoadPackageFile["MyUI.json"]
+}
+```
+
+**Tip:** Production scripts can implement full UI scaling using this pattern.
+
+## Known Limitations
+
+### Custom C++ Element Types Not Supported
+
+**Critical Limitation:** LavishGUI 2 JSON packages **do not support custom C++ element types** registered via `LGUIFactory`.
+
+#### What This Means
+
+If your LGUI1 UI uses custom C++ elements (registered with `LGUIFactory<YourClass>`), you **cannot migrate** to LGUI2 JSON packages. These elements will produce errors like:
+
+```
+element type not found: yourelementtype
+```
+
+#### Examples of Affected Elements
+
+- **Custom radar elements** (e.g., `customradar`) - Custom display with 3D-to-2D coordinate conversion, dynamic blips, and interactive tooltips
+- **Custom HUD elements** - Game-specific overlays with custom rendering
+- **Advanced interactive displays** - Elements with complex mouse interaction and real-time updates
+
+#### Technical Details
+
+**LGUI1 Pattern (Works):**
+```cpp
+// C++ Extension Code
+LGUIFactory<LGUICustomRadar> RadarFactory("customradar");
+
+class LGUICustomRadar : public LGUIElement
+{
+    void Render() { /* custom rendering */ }
+    // ... custom behavior
+};
+```
+
+```xml
+<!-- LGUI1 XML (Works) -->
+<customradar Name="radar1">
+    <Width>100%</Width>
+    <Height>100%</Height>
+</customradar>
+```
+
+**LGUI2 Pattern (Does NOT Work):**
+```json
+{
+    "$schema": "http://www.lavishsoft.com/schema/lgui2Package.json",
+    "elements": [
+        {
+            "type": "customradar",
+            "name": "radar1"
+        }
+    ]
+}
+```
+
+**Error:**
+```
+element type not found: customradar
+```
+
+#### Why This Happens
+
+LavishGUI 2's JSON package system only recognizes built-in element types:
+- Layout: window, panel, dockpanel, stackpanel, etc.
+- Display: textblock, imagebox, progressbar, etc.
+- Interaction: button, checkbox, listbox, combobox, etc.
+
+Custom C++ element types registered with `LGUIFactory` are **not accessible** from JSON packages.
+
+#### Workarounds
+
+There are no perfect workarounds, but options include:
+
+1. **Keep Using LGUI1** - If your custom element is critical, continue using XML-based LGUI1
+   ```lavishscript
+   ui -reload -skin YourSkin x64\\extensions\\yourui
+   ```
+
+2. **Redesign Without Custom Elements** - If possible, rebuild functionality using standard LGUI2 elements
+   - Use `imagebox` with dynamically generated textures
+   - Use standard controls with data binding
+   - Note: This may lose interactivity and features
+
+3. **Wait for LGUI2 Support** - LavishSoft may add custom element support in the future
+   - No timeline or confirmation this will happen
+   - Monitor LavishSoft wiki and forums for updates
+
+#### Example: Extension-Specific Features
+
+**Note:** The following demonstrates features that **must remain on LGUI1**:
+
+- **Custom Radar** (`radar on`) - Uses custom `customradar` element type
+  - Cannot be converted to JSON
+  - Custom C++ rendering for 3D radar display
+
+#### Investigation Conducted
+
+Exhaustive research was performed to find LGUI2 custom element support:
+
+✅ **Searched:**
+- LavishSoft wiki (lavishsoft.com)
+- LavishGUI 2 documentation
+- LGUI2:Elements reference
+- InnerSpace extension documentation
+- InnerSpace extension forums and documentation
+- LERN example repository
+
+❌ **Not Found:**
+- Any mention of `LGUIFactory` in LGUI2
+- Documentation for registering custom element types in LGUI2
+- Migration path for custom LGUI1 elements
+- C++ API for LGUI2 custom elements
+
+**Conclusion:** As of October 2025, custom C++ element types are **not supported** in LavishGUI 2 JSON packages.
+
+#### When to Use LGUI1 vs LGUI2
+
+**Use LGUI1 (XML) when:**
+- ✅ You have custom C++ element types
+- ✅ You use `LGUIFactory<>` registered elements
+- ✅ Migration would break critical functionality
+
+**Use LGUI2 (JSON) when:**
+- ✅ You only use standard element types
+- ✅ You want data binding and modern UI features
+- ✅ You can rebuild custom elements with standard controls
+
+---
+
+## LGUI2-Exclusive Features
+
+LavishGUI 2 introduces a number of capabilities that have **no LGUI1 equivalent**. There is no migration path for these features — they simply did not exist in LGUI1. To use them, see [10_LavishGUI2_UI_Guide.md](10_LavishGUI2_UI_Guide.md) for complete documentation, JSON examples, and property tables.
+
+**New systems and capabilities:**
+
+- **Animations** — `fade`, `slide`, `value`, `chain`, `composite`, `delay`, and `repeat` animation types for smooth transitions and effects
+- **Event Hooks** — Attach handlers to events fired by other elements via the `hooks` property
+- **Advanced Brushes** — Image brushes, canvas rendering, image orientation/mirroring, pixel and vertex shaders, transparency keys
+- **Box Model Control** — Explicit `margin`, `padding`, and `borderThickness` properties
+- **Factor-Based Positioning** — Proportional sizing/placement via `widthFactor`, `heightFactor`, `xFactor`, `yFactor` (combine with offsets)
+- **Metadata System** — Store arbitrary custom data on elements via underscore properties (e.g., `_customData`), accessible from script
+- **Automatic Data Binding** — Two-way `pullFormat` / `pushFormat` bindings replace manual `SetText` / polling patterns; supports `pullHook` for event-driven updates
+
+**New element types (no LGUI1 equivalent):**
+
+- `slider`, `knob`, `popup`, `contextmenu`, `expander`, `progressbar`, `scrollviewer`, `radialgauge`, `dragger`, `commandbox`, `inputpicker`
+
+**New event handler types:**
+
+- `forward` (delegate events to another element), `animation` (trigger an animation), `task` (run a background task), plus the standard `code` and `method` handler types
+
+**Package-level features:**
+
+- Package dependencies (`includes`, `optionalIncludes`), audio voices and streams, pixel/vertex shader definitions, and `metaScripts` for bundled script auto-start
+
+For complete documentation of any of the above — including JSON examples, property tables, and best practices — refer to [10_LavishGUI2_UI_Guide.md](10_LavishGUI2_UI_Guide.md).
 
 <!-- CLAUDE_SKIP_START -->
 
