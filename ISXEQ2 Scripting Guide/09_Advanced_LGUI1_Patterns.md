@@ -1065,6 +1065,8 @@ else
 - Sort alphabetically
 - Declare local variable in OnLeftClick
 
+> **Note:** Raid slots can have gaps. The ISXEQ2 documentation states: *"when you iterate through the raid, you must always iterate from 1-24 as there can be gaps."* The EQ2Bot pattern above iterates up to `${Me.Raid}` (the member count), which may skip members in higher-numbered slots. For complete coverage, iterate from 1 to 24.
+
 **Why Use This:**
 - Always show current group/raid members
 - Handles group/raid changes
