@@ -697,17 +697,7 @@ break
 
 ## Audio Tasks
 
-### Setup
-
-**Create audio voice:**
-```lavishscript
-Audio:AddVoice[music]
-```
-
-**Add audio stream:**
-```lavishscript
-Audio:AddStream[tune,"path/to/music.mp3"]
-```
+> **Choose the right API:** This section documents the **LMAC `audio.playstream` and `audio.setvolume` task types** — declarative tasks defined inside a LavishMachine task JSON, useful for timed fades, looping playback, and other task-based audio automation. LavishScript also provides the imperative **`Audio:AddVoice` / `Audio:AddStream` / `Audio.Voice[...]:PlayStream` / `:SetVolume` / `:Stop` API** documented in [01_LavishScript_Fundamentals.md](01_LavishScript_Fundamentals.md#audio-system). You must create voices and streams with that API before referencing them by name from the LMAC task types below. Rule of thumb: use the LavishScript Audio API for straightforward play/stop/volume control in regular script code; use the LMAC task types documented here when you need duration-based volume transitions, looping playback managed by a task manager, or audio that fits into a larger task-based automation.
 
 ### Play Sound
 
