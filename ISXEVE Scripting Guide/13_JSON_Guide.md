@@ -1,7 +1,7 @@
 # JSON in LavishScript - Complete Guide
 
 **System:** LavishScript JSON API
-**Target:** InnerSpace Scripts (Game-Agnostic)
+**Target:** InnerSpace / LavishScript
 
 ---
 
@@ -27,6 +27,7 @@
 
 ## Introduction to JSON
 
+<!-- CLAUDE_SKIP_START -->
 ### What is JSON?
 
 **JSON (JavaScript Object Notation)** is a lightweight data interchange format that's easy for humans to read and write, and easy for machines to parse and generate. It's the standard format for:
@@ -35,9 +36,9 @@
 - Data storage
 - API communication
 - Inter-script data exchange
-- **LavishGUI 2 UI packages** (covered in [08_LavishGUI2_UI_Guide.md](08_LavishGUI2_UI_Guide.md))
+- **LavishGUI 2 UI packages** (covered in [10_LavishGUI2_UI_Guide.md](10_LavishGUI2_UI_Guide.md))
 
-### Why Use JSON in InnerSpace Scripts?
+### Why Use JSON in LavishScript?
 
 1. ✅ **Configuration Management** - Store script settings in readable files
 2. ✅ **Data Persistence** - Save and load complex data structures
@@ -45,6 +46,7 @@
 4. ✅ **UI Creation** - LavishGUI 2 uses JSON packages
 5. ✅ **API Integration** - Modern web APIs use JSON
 6. ✅ **Structured Data** - Organize complex information clearly
+<!-- CLAUDE_SKIP_END -->
 
 ### JSON in LavishScript
 
@@ -557,9 +559,9 @@ fruits:ForEach["echo [\${ForEach.Key}] = \${ForEach.Value~}"]
 ```lavishscript
 variable jsonvalue players="$$>
 [
-    {\"name\":\"Warrior\",\"level\":50},
-    {\"name\":\"Mage\",\"level\":48},
-    {\"name\":\"Priest\",\"level\":52}
+    {"name":"Warrior","level":50},
+    {"name":"Mage","level":48},
+    {"name":"Priest","level":52}
 ]
 <$$"
 
@@ -923,9 +925,9 @@ function main()
     ; JSON array input
     variable jsonvalue jaPersons="$$>
     [
-        {\"first_name\":\"John\",\"last_name\":\"Doe\"},
-        {\"first_name\":\"Jane\",\"last_name\":\"Doe\"},
-        {\"first_name\":\"John\",\"last_name\":\"Public\"}
+        {"first_name":"John","last_name":"Doe"},
+        {"first_name":"Jane","last_name":"Doe"},
+        {"first_name":"John","last_name":"Public"}
     ]
     <$$"
 
@@ -949,8 +951,8 @@ function main()
 
     variable jsonvalue jaPersons="$$>
     [
-        {\"first_name\":\"John\",\"last_name\":\"Doe\"},
-        {\"first_name\":\"Jane\",\"last_name\":\"Doe\"}
+        {"first_name":"John","last_name":"Doe"},
+        {"first_name":"Jane","last_name":"Doe"}
     ]
     <$$"
 
@@ -1115,10 +1117,10 @@ variable jsonvalue data="{\"a\":1,\"b\":{\"c\":2,\"d\":3}}"
 ; GOOD - Clean and readable
 variable jsonvalue data="$$>
 {
-    \"a\": 1,
-    \"b\": {
-        \"c\": 2,
-        \"d\": 3
+    "a": 1,
+    "b": {
+        "c": 2,
+        "d": 3
     }
 }
 <$$"
@@ -1359,7 +1361,10 @@ objectdef player_stats
         echo Kills: ${TotalKills}
         echo Deaths: ${TotalDeaths}
         echo Damage: ${TotalDamage}
-        echo K/D Ratio: ${Math.Calc[${TotalKills}/${TotalDeaths}]}
+        if ${TotalDeaths} > 0
+            echo K/D Ratio: ${Math.Calc[${TotalKills}/${TotalDeaths}]}
+        else
+            echo K/D Ratio: ${TotalKills}:0
     }
 }
 
@@ -1367,8 +1372,8 @@ variable(global) player_stats Stats
 
 function main()
 {
-    Stats.Name:Set["${Me.Name}"]
-    Stats.Level:Set[${Me.Level}]
+    Stats.Name:Set["${Script.Filename}"]
+    Stats.Level:Set[1]
     Stats:LoadStats
 
     ; Simulate some combat
@@ -1428,32 +1433,24 @@ objectdef target_manager
 {
     variable collection:target_entry Targets
 
-    method ScanNearbyTargets()
+    method ScanItems()
     {
         Targets:Clear
 
-        variable index:actor nearbyActors
-        EQ2:QueryActors[nearbyActors, "Type = NPC && Distance < 50"]
-
-        variable iterator iter
-        nearbyActors:GetIterator[iter]
-
-        if ${iter:First(exists)}
+        ; Populate from your extension's data source
+        variable int i
+        for (i:Set[1] ; ${i} <= 10 ; i:Inc)
         {
-            do
-            {
-                variable jsonvalue joTarget={}
-                joTarget:SetString[name,"${iter.Value.Name~}"]
-                joTarget:SetInteger[level,${iter.Value.Level}]
-                joTarget:SetString[type,"${iter.Value.Type~}"]
-                joTarget:SetNumber[distance,${iter.Value.Distance}]
+            variable jsonvalue joTarget={}
+            joTarget:SetString[name,"Item ${i}"]
+            joTarget:SetInteger[level,${i}]
+            joTarget:SetString[type,"TypeA"]
+            joTarget:SetNumber[distance,${Math.Calc[${i} * 5.0]}]
 
-                Targets:Set["${iter.Value.Name~}",joTarget]
-            }
-            while ${iter:Next(exists)}
+            Targets:Set["Item ${i}",joTarget]
         }
 
-        echo Scanned ${Targets.Used} targets
+        echo Scanned ${Targets.Used} items
     }
 
     method SaveTargets()
@@ -1471,7 +1468,7 @@ objectdef target_manager
         {
             Targets:Clear
             data:ForEach["Targets:Set[\"\${ForEach.Value.Get[name]~}\",ForEach.Value]"]
-            echo Loaded ${Targets.Used} targets
+            echo Loaded ${Targets.Used} items
         }
     }
 
@@ -1713,19 +1710,8 @@ method FromJSON(jsonvalueref jo)
 
 ---
 
-<!-- CLAUDE_SKIP_START -->
 ## Additional Resources
 
 - **JSON Standard:** https://www.json.org
 - **LavishScript Reference:** http://www.lavishsoft.com/wiki/LavishScript
 - **LERN JSON Examples:** https://github.com/LavishSoftware/LERN/tree/master/JSON
-
----
-
-**This guide was created through comprehensive analysis of:**
-- LERN/JSON tutorial files: https://github.com/LavishSoftware/LERN/tree/master/JSON (1.md, 2.md, 3.md)
-- LERN/JSON example scripts (1.iss, 2.iss, 3.iss)
-- LERN/JSON serialization examples (serialize-1 through serialize-4)
-- Complete coverage of jsonvalue, jsonvalueref, jsonobject, jsonarray
-- Real-world use cases and patterns
-<!-- CLAUDE_SKIP_END -->

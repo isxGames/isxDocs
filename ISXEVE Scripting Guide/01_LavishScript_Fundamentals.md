@@ -29,7 +29,7 @@
 20. [Web Requests](#web-requests)
 21. [Audio System](#audio-system)
 22. [Best Practices Summary](#best-practices-summary)
-23. [Next Steps](#next-steps)
+23. [Type Inspection and Debugging Commands](#type-inspection-and-debugging-commands)
 
 ---
 
@@ -44,7 +44,7 @@ LavishScript is a **custom scripting language** designed specifically for game a
 - **Object-oriented programming** with inheritance
 - **Strong typing** with built-in and custom types
 - **Atomic execution** for performance-critical code
-- **Direct game memory access** through extensions like ISXEQ2, ISXEVE, etc.
+- **Direct game memory access** through InnerSpace extensions
 - **Event-driven programming** for reactive scripts
 
 ---
@@ -138,7 +138,7 @@ variable string Message    ; No initial value
 |------|-------------|----------------|
 | `string` | Text data | `"Hello"`, `"Bob"` |
 | `int` | 32-bit signed integer | `-1`, `0`, `100`, `2147483647` |
-| `uint` | 32-bit unsigned integer | `0`, `100`, `4294967296` |
+| `uint` | 32-bit unsigned integer | `0`, `100`, `4294967295` |
 | `float` | Floating-point number | `1.5`, `-3.14`, `0.001` |
 | `bool` | Boolean (TRUE/FALSE) | `TRUE`, `FALSE` |
 
@@ -149,7 +149,7 @@ variable string Message    ; No initial value
 - Can be positive or negative
 
 **Unsigned Integer (`uint`):**
-- Range: 0 to 4,294,967,296
+- Range: 0 to 4,294,967,295
 - Cannot be negative (more room for positive values)
 
 ### Using Variables
@@ -856,12 +856,12 @@ function main()
     ; As a command (recommended for actions)
     MyFruit:SetName["Banana"]
 
-    ; In a Data Sequence (unnecessary)
+    ; In a Data Sequence (calls SetName, then echoes the object's string value)
     echo "${MyFruit:SetName["Banana"]}"
 }
 ```
 
-**Best practice:** Use methods as commands when you're performing an action, not retrieving a value.
+**Best practice:** Use methods as commands when you're performing an action, not retrieving a value. Using a method inside `${}` will execute the method AND output the object's string representation, which is usually not the intent.
 
 ### Method Chaining
 
@@ -882,7 +882,7 @@ function main()
 
 ### Method Return Values
 
-Methods typically return the same object (for chaining). To indicate failure or destruction, return `FALSE`:
+In a Data Sequence, a method call retains the original object, allowing further chaining. A method may `return FALSE` to indicate failure or destruction, which causes the sequence to result in `NULL`:
 
 ```lavishscript
 method Destroy()
@@ -1073,7 +1073,7 @@ objectdef person
 
 **Why `This.FirstName` instead of just `FirstName`?**
 
-Inside a member, you **must** use `This` to access variables/members/methods of the same object. Variables without `This` refer to local or global variables.
+Inside an objectdef, `This` refers to the current object instance. Variables defined in the objectdef **can** be accessed directly by name (e.g., `FirstName:Set[...]`), but members and methods **must** be accessed through an object reference like `This` (e.g., `This:SetName[...]`). Using `This.VariableName` for variables is optional but recommended for clarity and forward-compatibility.
 
 ---
 
@@ -1325,7 +1325,7 @@ Hello Bob!
 | Can use waitframe | Yes | No |
 | Can use wait | Yes | No |
 | Can run for minutes | Yes | No |
-| Can be used as command | No | Yes |
+| Can be used as named command (without `call`) | No | Yes |
 | Blocks game | No | Yes |
 
 ### The atexit Atom
@@ -1509,12 +1509,12 @@ After 5 more seconds: 6000ms
 Wait for a condition to become true:
 
 ```lavishscript
-wait 100 ${Target(exists)}
+wait 100 ${MyObject(exists)}
 ```
 
 **Syntax:** `wait <max_time> <condition>`
 
-This waits up to 10 seconds (100 deciseconds) for `${Target(exists)}` to become TRUE.
+This waits up to 10 seconds (100 deciseconds) for `${MyObject(exists)}` to become TRUE.
 
 ### Infinite Loops with waitframe
 
@@ -1705,10 +1705,10 @@ if ${Health}<20 || ${Power}<10
 Check if an object exists with `(exists)`:
 
 ```lavishscript
-if ${Target(exists)}
-    echo "Target exists"
+if ${MyObject(exists)}
+    echo "Object exists"
 else
-    echo "No target"
+    echo "No object"
 ```
 
 ---
@@ -2865,12 +2865,12 @@ function main() {
 **Use comments to explain why, not what:**
 ```lavishscript
 ; GOOD - Explains reasoning
-; Wait for target to load completely before proceeding
-wait 10 ${Target.IsLoaded}
+; Wait for data to load completely before proceeding
+wait 10 ${MyObject.IsLoaded}
 
 ; BAD - States the obvious
-; Wait for target
-wait 10 ${Target.IsLoaded}
+; Wait for data
+wait 10 ${MyObject.IsLoaded}
 ```
 
 ### 5. NULL Checks
@@ -2878,11 +2878,11 @@ wait 10 ${Target.IsLoaded}
 **Always check object existence:**
 ```lavishscript
 ; GOOD
-if ${Target(exists)}
-    echo "${Target.Name}"
+if ${MyObject(exists)}
+    echo "${MyObject.Name}"
 
-; BAD - May error if no target
-echo "${Target.Name}"
+; BAD - May error if object is NULL
+echo "${MyObject.Name}"
 ```
 
 ### 6. Loop Safety
@@ -2908,17 +2908,17 @@ while TRUE
 **One function, one purpose:**
 ```lavishscript
 ; GOOD - Focused function
-function GetTargetHealth()
+function GetPlayerHealth()
 {
-    if !${Target(exists)}
+    if !${Health(exists)}
         return 0
-    return ${Target.Health}
+    return ${Health}
 }
 
 ; BAD - Does too many things
 function DoEverything()
 {
-    ; Checks target, casts spell, loots, etc.
+    ; Checks state, performs action, cleans up, etc.
 }
 ```
 
@@ -2927,13 +2927,13 @@ function DoEverything()
 **Check conditions before acting:**
 ```lavishscript
 ; GOOD
-if ${Target(exists)} && ${Target.Distance}<10
+if ${MyObject(exists)} && ${MyObject.Distance}<10
 {
-    Target:DoTarget
+    MyObject:Activate
 }
 
-; BAD - May fail if no target
-Target:DoTarget
+; BAD - May fail if object is NULL
+MyObject:Activate
 ```
 
 ### 9. Variable Scope
@@ -3035,8 +3035,8 @@ echo ${LGUI2(type)}
 lstype lgui2
 
 ; Access the members
-echo "Name: ${LGUI2.Name}
-echo "CursorX: ${LGUI2.CursorX}
+echo "Name: ${LGUI2.Name}"
+echo "CursorX: ${LGUI2.CursorX}"
 ```
 
 ### When to Use Type Inspection
@@ -3054,7 +3054,5 @@ echo "CursorX: ${LGUI2.CursorX}
 - **LavishScript Math Operators:** http://www.lavishsoft.com/wiki/index.php/LavishScript:Mathematical_Formulae
 - **InnerSpace Documentation:** http://www.lavishsoft.com/wiki/
 - **LERN Examples:** https://github.com/LavishSoftware/LERN/tree/master
-
----
-*Based on LERN/LS Tutorial Series: https://github.com/LavishSoftware/LERN/tree/master/LS (19 lessons)**
+- **LERN LavishScript Tutorials (19 lessons):** https://github.com/LavishSoftware/LERN/tree/master/LS
 

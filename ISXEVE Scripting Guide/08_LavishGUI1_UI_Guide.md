@@ -2,7 +2,7 @@
 
 Complete guide to creating custom user interfaces with LavishGUI 1 XML for InnerSpace scripts.
 
-**Note:** This guide covers **LavishGUI 1**, the XML-based UI system. This is a game-agnostic guide applicable to any InnerSpace extension. For newer scripts, consider LavishGUI 2, which is a different system.
+**Note:** This guide covers **LavishGUI 1**, the XML-based UI system used by older InnerSpace scripts. Newer scripts may use LavishGUI 2, which is a different system.
 
 **Official Documentation:** https://www.lavishsoft.com/wiki/index.php/LavishGUI
 
@@ -19,11 +19,13 @@ Complete guide to creating custom user interfaces with LavishGUI 1 XML for Inner
 7. [Complete Working Examples](#complete-working-examples)
 8. [Best Practices](#best-practices)
 9. [Troubleshooting](#troubleshooting)
+10. [Advanced Topics](#advanced-topics)
 
 ---
 
 ## Introduction to LavishGUI 1
 
+<!-- CLAUDE_SKIP_START -->
 ### What is LavishGUI 1?
 
 **LavishGUI 1** is InnerSpace's original XML-based user interface system. It allows you to:
@@ -32,6 +34,7 @@ Complete guide to creating custom user interfaces with LavishGUI 1 XML for Inner
 - Interface between your LavishScript code and visual elements
 - Save/restore window positions and settings
 - Create themed UIs with skins and templates
+<!-- CLAUDE_SKIP_END -->
 
 ### How LavishGUI 1 Works with Scripts
 
@@ -47,21 +50,19 @@ Complete guide to creating custom user interfaces with LavishGUI 1 XML for Inner
 **UI XML Files:**
 ```
 Scripts\<ScriptName>\UI\<UIFile>.xml
-Scripts\<ScriptName>\interface\<UIFile>.xml
 ```
 
-**Example (EVEBot):**
+**Example:**
 ```
-Scripts\EVEBot\interface\EVEBot.xml           (main window)
-Scripts\EVEBot\interface\eveskin\eveskin.xml  (skin/theme)
+Scripts\MyScript\UI\MyScript.xml      (main window)
+Scripts\MyScript\UI\Options.xml       (additional UI)
+Scripts\MyScript\UI\MySkin.xml        (skin/theme)
 ```
-
-**GitHub Reference:** https://github.com/CyberTech/EVEBot/tree/master/Branches/Stable/interface
 
 **Loading UI from Script:**
 ```lavishscript
-ui -load "${LavishScript.HomeDirectory}/Scripts/EVEBot/interface/EVEBot.xml"
-ui -reload "${LavishScript.HomeDirectory}/Scripts/EVEBot/interface/EVEBot.xml"
+ui -load "${LavishScript.HomeDirectory}/Scripts/MyScript/UI/MyScript.xml"
+ui -reload "${LavishScript.HomeDirectory}/Scripts/MyScript/UI/MyScript.xml"
 ```
 
 ---
@@ -177,31 +178,38 @@ The top-level container for your UI.
 
 ### Buttons and CommandButtons
 
-#### CommandButton (Executes Script Commands)
+#### Basic Button
 
 ```xml
-<commandbutton name='Run EVEBot' template='EVESkin.Window.TitleBar.RunButton'>
-  <OnLeftClick>
-    EVEBot:Resume["Clicked Run"]
-  </OnLeftClick>
-</commandbutton>
-```
+<button Name='MyButton'>
+  <X>10</X>
+  <Y>10</Y>
+  <Width>100</Width>
+  <Height>25</Height>
+  <Text>Click Me</Text>
 
-**EVEBot Example - Save Config Button:**
-```xml
-<button Name='SaveConfig' template='EveSkin.Window.ClickButton'>
-  <text>Save Config</text>
-  <x>r320</x>
-  <y>10</y>
-  <width>150</width>
-  <height>20</height>
   <OnLeftClick>
-    Script[EVEBot].VariableScope.Config:Save
+    echo Button clicked!
   </OnLeftClick>
 </button>
 ```
 
-**GitHub Reference:** [EVEBot.xml](https://github.com/CyberTech/EVEBot/tree/master/Branches/Stable/interface/EVEBot.xml)
+#### CommandButton (Executes Script Commands)
+
+```xml
+<commandbutton name='StartBot'>
+  <X>10</X>
+  <Y>40</Y>
+  <Width>100</Width>
+  <Height>25</Height>
+  <Text>Start Bot</Text>
+  <AutoTooltip>Click to start the bot</AutoTooltip>
+
+  <OnLeftClick>
+    Script[MyScript]:QueueCommand[call StartProcess]
+  </OnLeftClick>
+</commandbutton>
+```
 
 **Note:** The difference:
 - **button** - Generic button, can execute any code
@@ -214,29 +222,69 @@ Checkboxes for boolean options.
 
 #### Basic Checkbox
 
-**EVEBot Example - Enable Sound:**
 ```xml
-<checkbox Name='cbUseSound'>
+<checkbox Name='AutoLoot'>
   <X>10</X>
-  <Y>240</Y>
+  <Y>70</Y>
+  <Width>150</Width>
   <Height>20</Height>
-  <Width>100</Width>
-  <Text>Enable sound</Text>
-  <AutoTooltip>Enable audio events</AutoTooltip>
+  <Text>Enable Auto Loot</Text>
+
   <OnLoad>
-    if ${Script[EVEBot].VariableScope.Config.Common.UseSound}
+    ; Set checked state from script variable
+    if ${Script[MyScript].Variable[AutoLootEnabled]}
     {
       This:SetChecked
     }
   </OnLoad>
+
   <OnLeftClick>
-    Script[EVEBot].VariableScope.Config.Common:SetUseSound[${This.Checked}]
+    if ${This.Checked}
+    {
+      ; Checkbox was just checked
+      Script[MyScript].Variable[AutoLootEnabled]:Set[TRUE]
+      echo Auto loot enabled
+    }
+    else
+    {
+      ; Checkbox was just unchecked
+      Script[MyScript].Variable[AutoLootEnabled]:Set[FALSE]
+      echo Auto loot disabled
+    }
   </OnLeftClick>
 </checkbox>
 ```
 
-**GitHub Reference:** [EVEBot.xml](https://github.com/CyberTech/EVEBot/tree/master/Branches/Stable/interface/EVEBot.xml)
+#### CommandCheckbox (with LavishSettings Integration)
 
+```xml
+<commandcheckbox Name='VerboseMode'>
+  <X>10</X>
+  <Y>100</Y>
+  <Width>150</Width>
+  <Height>20</Height>
+  <Text>Verbose Logging</Text>
+  <AutoTooltip>Enable detailed logging output</AutoTooltip>
+
+  <OnLeftClick>
+    if ${This.Checked}
+    {
+      Script[MyScript].Variable[VerboseMode]:Set[TRUE]
+      LavishSettings[MyScript].FindSet[Profile].FindSet[Settings]:AddSetting[VerboseMode,TRUE]
+      Script[MyScript].VariableScope.MyScript:Save_Settings
+    }
+    else
+    {
+      Script[MyScript].Variable[VerboseMode]:Set[FALSE]
+      LavishSettings[MyScript].FindSet[Profile].FindSet[Settings]:AddSetting[VerboseMode,FALSE]
+      Script[MyScript].VariableScope.MyScript:Save_Settings
+    }
+  </OnLeftClick>
+
+  <!-- Load checked state from settings -->
+  <Data>${LavishSettings[MyScript].FindSet[Profile].FindSet[Settings].FindSetting[VerboseMode]}</Data>
+</commandcheckbox>
+```
 
 ### ComboBoxes (Dropdowns)
 
@@ -244,29 +292,79 @@ Dropdown selection lists.
 
 #### Basic ComboBox
 
-**EVEBot Example - Behavior Selection:**
 ```xml
-<combobox name='CurrentBehavior'>
-  <X>80</X>
-  <Y>10</Y>
-  <Width>250</Width>
-  <Height>15</Height>
-  <FullHeight>200</FullHeight>
-  <ButtonWidth>20</ButtonWidth>
+<combobox name='ClassSelection'>
+  <X>10</X>
+  <Y>130</Y>
+  <Width>150</Width>
+  <Height>20</Height>
+  <AutoTooltip>Select your class</AutoTooltip>
+
+  <!-- Initial items -->
   <Items>
-    <Item Value='1'>Idle</Item>
+    <Item>Warrior</Item>
+    <Item>Mage</Item>
+    <Item>Priest</Item>
   </Items>
+
+  <!-- Sort items alphabetically -->
+  <Sort>Text</Sort>
+
+  <OnLoad>
+    ; Select an item by text
+    This.ItemByText[Warrior]:Select
+  </OnLoad>
+
   <OnSelect>
-    if ${This.SelectedItem.Text.NotNULLOrEmpty}
-    {
-      Logger:Log["Current behavior switched to ${This.SelectedItem.Text}"]
-      Script[EVEBot].VariableScope.Config.Common:CurrentBehavior[${This.SelectedItem.Text}]
-    }
+    ; Called when user selects an item
+    echo Selected: ${This.SelectedItem.Text}
+    Script[MyScript].Variable[SelectedClass]:Set[${This.SelectedItem.Text}]
   </OnSelect>
 </combobox>
 ```
 
-**GitHub Reference:** [EVEBot.xml](https://github.com/CyberTech/EVEBot/tree/master/Branches/Stable/interface/EVEBot.xml)
+#### Dynamic ComboBox (Populated from Script Data)
+
+```xml
+<combobox name='ProfileSelection'>
+  <X>10</X>
+  <Y>160</Y>
+  <Width>150</Width>
+  <Height>20</Height>
+  <Items></Items>  <!-- Empty initially -->
+
+  <OnLoad>
+    ; Load saved selection
+    if ${Script[MyScript].Variable[SelectedProfile].Length}
+    {
+      This:AddItem[${Script[MyScript].Variable[SelectedProfile]}]
+      This.ItemByText[${Script[MyScript].Variable[SelectedProfile]}]:Select
+    }
+  </OnLoad>
+
+  <OnSelect>
+    ; Save selection
+    Script[MyScript].Variable[SelectedProfile]:Set[${This.SelectedItem.Text}]
+    LavishSettings[MyScript].FindSet[Config]:AddSetting[SelectedProfile,${This.SelectedItem.Text}]
+    LavishSettings[MyScript]:Export["${LavishScript.HomeDirectory}/Scripts/MyScript/Config.xml"]
+  </OnSelect>
+
+  <OnLeftClick>
+    ; Populate with available profiles when clicked
+    declare tmpvar int
+    This:ClearItems
+    tmpvar:Set[1]
+
+    while ${tmpvar} <= ${Script[MyScript].Variable[NumProfiles]}
+    {
+      This:AddItem[${Script[MyScript].Variable[Profile${tmpvar}]}]
+      tmpvar:Inc
+    }
+
+    This:Sort
+  </OnLeftClick>
+</combobox>
+```
 
 **Key ComboBox Methods:**
 - `:AddItem[text]` - Add an item
@@ -279,211 +377,209 @@ Dropdown selection lists.
 
 Display static or dynamic text.
 
-**EVEBot Example - Title Bar Text:**
 ```xml
-<Text name='EVEBot_TitleBar_Title' template='EVESkin.Font.TitleBar'>
-  <X>200</X>
-  <Y>3</Y>
-  <Width>130</Width>
+<text Name='StatusText'>
+  <X>10</X>
+  <Y>190</Y>
+  <Width>300</Width>
   <Height>20</Height>
-  <Text>${Script[EVEBot].VariableScope.AppVersion}</Text>
-  <OnLoad>
-    This:SetText[${Script[EVEBot].VariableScope.AppVersion}]
-  </OnLoad>
-</Text>
+  <Text>Status: Idle</Text>
+  <Alignment>Left</Alignment>
+  <Color>FFFFFFFF</Color>  <!-- ARGB color -->
+</text>
 ```
-
-**GitHub Reference:** [EVEBot.xml](https://github.com/CyberTech/EVEBot/tree/master/Branches/Stable/interface/EVEBot.xml)
 
 **Update text from script:**
 ```lavishscript
-UIElement[EVEBot_TitleBar_Title]:SetText["New Version"]
+UIElement[StatusText]:SetText["Status: Running"]
 ```
 
 ### TextBoxes (Text Input)
 
 Allow user text input.
 
-**EVEBot Example - Minimum Drones Input:**
 ```xml
-<Textentry name='MinimumDronesInBay'>
+<textentry Name='CharacterName'>
   <X>10</X>
-  <Y>30</Y>
-  <Width>32</Width>
-  <Height>18</Height>
-  <MaxLength>2</MaxLength>
-  <OnLoad>
-    This:SetText[${Script[EVEBot].VariableScope.Config.Common.DronesInBay}]
-  </OnLoad>
-  <OnChange>
-    if ${This.Text.Length} > 0
-    {
-      Script[EVEBot].VariableScope.Config.Common:SetDronesInBay[${Int[${This.Text}]}]
-    }
-  </OnChange>
-</Textentry>
-```
+  <Y>220</Y>
+  <Width>200</Width>
+  <Height>20</Height>
+  <Text></Text>
 
-**GitHub Reference:** [EVEBot.xml](https://github.com/CyberTech/EVEBot/tree/master/Branches/Stable/interface/EVEBot.xml)
+  <OnLoad>
+    ; Load saved value
+    This:SetText[${LavishSettings[MyScript].FindSetting[CharName]}]
+  </OnLoad>
+</textentry>
+```
 
 **Read text from script:**
 ```lavishscript
-variable string InputValue
-InputValue:Set[${UIElement[MinimumDronesInBay].Text}]
+variable string CharName
+CharName:Set[${UIElement[CharacterName].Text}]
 ```
-
-### Sliders
-
-Sliders for numeric input with visual feedback.
-
-**EVEBot Example - Avoid Player Range Slider:**
-```xml
-<slider name='AvoidPlayerRange'>
-  <X>10</X>
-  <Y>110</Y>
-  <Width>40</Width>
-  <Height>18</Height>
-  <Range>100000</Range>
-  <OnLoad>
-    This:SetValue[${Script[EVEBot].VariableScope.Config.Miner.AvoidPlayerRange}]
-  </OnLoad>
-  <OnChange>
-    Script[EVEBot].VariableScope.Config.Miner:SetAvoidPlayerRange[${Int[${This.Value}]}]
-    UIElement[AvoidPlayerRangeLabel@Miner@EVEBotOptionsTab@EVEBot]:SetText["Min. Distance to Players: ${EVEBot.MetersToKM_Str[${This.Value}]}"]
-  </OnChange>
-</slider>
-<Text name='AvoidPlayerRangeLabel'>
-  <X>55</X>
-  <Y>110</Y>
-  <Width>300</Width>
-  <Height>10</Height>
-  <Text>Min. Distance to Players: 0km</Text>
-  <AutoTooltip>Minimum distance we will keep other players at</AutoTooltip>
-  <OnLoad>
-    This:SetText["Min. Distance to Players: ${EVEBot.MetersToKM_Str[${UIElement[AvoidPlayerRange@Miner@EVEBotOptionsTab@EVEBot].Value}]}"]
-  </OnLoad>
-</Text>
-```
-
-**GitHub Reference:** [EVEBot.xml](https://github.com/CyberTech/EVEBot/tree/master/Branches/Stable/interface/EVEBot.xml)
-
-**Key Slider Properties:**
-- `<Range>100000</Range>` - Maximum value (0 to Range)
-- `${This.Value}` - Current slider value
-- `:SetValue[n]` - Set slider position
-- `OnChange` - Fires when value changes
-
-**Pattern - Slider with Synchronized Label:**
-- Update label text in both OnLoad and OnChange
-- Use script methods for unit conversion
-- Store value with `${Int[${This.Value}]}` to ensure integer
 
 ### Tabs and TabControls
 
 Create tabbed interfaces.
 
-**EVEBot Example - Main Options TabControl:**
 ```xml
-<TabControl Name='EVEBotOptionsTab' template='EVESkin.TabControl'>
-  <X>0</X>
-  <Y>4</Y>
-  <Width>100%</Width>
-  <Height>100%</Height>
+<tabcontrol Name='MainTabs'>
+  <X>5</X>
+  <Y>5</Y>
+  <Width>95%</Width>
+  <Height>95%</Height>
+
   <Tabs>
-    <Tab Name='Status'>
-      <button Name='SaveConfig' template='EveSkin.Window.ClickButton'>
-        <text>Save Config</text>
-        <x>r320</x>
-        <y>10</y>
-        <width>150</width>
-        <height>20</height>
-        <OnLeftClick>
-          Script[EVEBot].VariableScope.Config:Save
-        </OnLeftClick>
-      </button>
+    <!-- Tab 1 -->
+    <Tab Name='General'>
+      <checkbox Name='Option1'>
+        <X>10</X>
+        <Y>10</Y>
+        <Width>150</Width>
+        <Height>20</Height>
+        <Text>Option 1</Text>
+      </checkbox>
+
+      <checkbox Name='Option2'>
+        <X>10</X>
+        <Y>35</Y>
+        <Width>150</Width>
+        <Height>20</Height>
+        <Text>Option 2</Text>
+      </checkbox>
     </Tab>
-    <Tab Name='Main'>
-      <!-- Main tab content -->
+
+    <!-- Tab 2 -->
+    <Tab Name='Advanced'>
+      <text Name='AdvancedLabel'>
+        <X>10</X>
+        <Y>10</Y>
+        <Text>Advanced Options</Text>
+      </text>
     </Tab>
   </Tabs>
-</TabControl>
+</tabcontrol>
 ```
-
-**GitHub Reference:** [EVEBot.xml](https://github.com/CyberTech/EVEBot/tree/master/Branches/Stable/interface/EVEBot.xml)
 
 **Switch tabs from script:**
 ```lavishscript
-UIElement[EVEBotOptionsTab].Tab[Main]:Select
+UIElement[MainTabs].Tab[Advanced]:Select
 ```
 
 ### Frames
 
 Container elements for grouping UI elements.
 
-**EVEBot Example - Fleeing Options Frame:**
 ```xml
-<frame name='FleeingFrame'>
-  <x>0</x>
-  <y>0</y>
-  <width>100%</width>
-  <height>100%</height>
-  <children>
-    <checkbox name='cbRunOnLowAmmo'>
-      <X>10</X>
-      <Y>10</Y>
-      <Height>20</Height>
-      <Width>100</Width>
-      <Text>Run On Low Ammo</Text>
-      <AutoTooltip>If checked, run to safe spot when low on ammo.</AutoTooltip>
-      <OnLoad>
-        if ${Script[EVEBot].VariableScope.Config.Combat.RunOnLowAmmo}
-        {
-          This:SetChecked
-        }
-      </OnLoad>
-      <OnLeftClick>
-        Script[EVEBot].VariableScope.Config.Combat:SetRunOnLowAmmo[${This.Checked}]
-      </OnLeftClick>
-    </checkbox>
-  </children>
-</frame>
-```
+<Frame Name='OptionsFrame'>
+  <X>10</X>
+  <Y>250</Y>
+  <Height>100</Height>
+  <Width>300</Width>
 
-**GitHub Reference:** [EVEBot.xml](https://github.com/CyberTech/EVEBot/tree/master/Branches/Stable/interface/EVEBot.xml)
+  <Children>
+    <checkbox Name='Option1'>
+      <X>5</X>
+      <Y>5</Y>
+      <Width>150</Width>
+      <Height>20</Height>
+      <Text>Option 1</Text>
+    </checkbox>
+
+    <checkbox Name='Option2'>
+      <X>5</X>
+      <Y>30</Y>
+      <Width>150</Width>
+      <Height>20</Height>
+      <Text>Option 2</Text>
+    </checkbox>
+  </Children>
+
+  <OnLoad>
+    ; Show or hide frame based on condition
+    if ${Script[MyScript].Variable[ShowOptions]}
+    {
+      This:Show
+    }
+    else
+    {
+      This:Hide
+    }
+  </OnLoad>
+</Frame>
+```
 
 ### Lists and ListBoxes
 
 Display scrollable lists of items.
 
-**EVEBot Example - Fleet Members Listbox:**
 ```xml
-<listbox Name='FleetMembers'>
+<listbox Name='TargetList'>
   <X>10</X>
-  <Y>90</Y>
-  <Width>530</Width>
-  <Height>175</Height>
-  <SelectMultiple>0</SelectMultiple>
-  <Sort>Text</Sort>
+  <Y>280</Y>
+  <Width>200</Width>
+  <Height>100</Height>
+  <Items></Items>
+
   <OnLoad>
-    Script[EVEBot].VariableScope.Config.Fleet:RefreshFleetMembers
-    variable iterator InfoFromSettings
-    Script[EVEBot].VariableScope.Config.Fleet.FleetMembers:GetIterator[InfoFromSettings]
-    if ${InfoFromSettings:First(exists)}
+    ; Populate with items from a collection
+    declare i int
+    i:Set[1]
+    while ${i} <= ${Script[MyScript].Variable[ItemCount]}
     {
-      do
-      {
-        This:AddItem[${InfoFromSettings.Value.FleetMemberName}]
-      }
-      while ${InfoFromSettings:Next(exists)}
+      This:AddItem[${Script[MyScript].Variable[Item${i}]}]
+      i:Inc
     }
   </OnLoad>
+
   <OnSelect>
-    UIElement[tbAddFleetMember@Fleet@EVEBotOptionsTab@EVEBot]:SetText[${This.SelectedItem.Text}]
+    echo Selected: ${This.SelectedItem.Text}
   </OnSelect>
 </listbox>
 ```
 
-**GitHub Reference:** [EVEBot.xml](https://github.com/CyberTech/EVEBot/tree/master/Branches/Stable/interface/EVEBot.xml)
+### Sliders
+
+Sliders for numeric input with visual feedback.
+
+```xml
+<slider name='SpeedSlider'>
+  <X>10</X>
+  <Y>200</Y>
+  <Width>150</Width>
+  <Height>18</Height>
+  <Range>100</Range>
+  <OnLoad>
+    This:SetValue[${Script[MyScript].Variable[SpeedValue]}]
+  </OnLoad>
+  <OnChange>
+    Script[MyScript].Variable[SpeedValue]:Set[${Int[${This.Value}]}]
+    UIElement[SpeedLabel]:SetText["Speed: ${This.Value}%"]
+  </OnChange>
+</slider>
+<Text name='SpeedLabel'>
+  <X>170</X>
+  <Y>200</Y>
+  <Width>200</Width>
+  <Height>18</Height>
+  <Text>Speed: 0%</Text>
+  <OnLoad>
+    This:SetText["Speed: ${Script[MyScript].Variable[SpeedValue]}%"]
+  </OnLoad>
+</Text>
+```
+
+**Key Slider Properties:**
+- `<Range>N</Range>` - Maximum value (slider range is 0 to N)
+- `${This.Value}` - Current slider value
+- `:SetValue[n]` - Set slider position programmatically
+- `OnChange` - Fires when the slider value changes
+
+**Pattern — Slider with Synchronized Label:**
+- Update label text in both `OnLoad` (initial state) and `OnChange` (live updates)
+- Use `${Int[${This.Value}]}` to ensure integer when storing values
+- Place the label element adjacent to the slider for a clean layout
 
 ---
 
@@ -546,7 +642,7 @@ Called every frame while the element is visible.
 <Window name='MyWindow'>
   <OnRender>
     ; Update title dynamically
-    UIElement[Title@TitleBar@MyWindow]:SetText[MyScript - ${Me.Name}]
+    UIElement[Title@TitleBar@MyWindow]:SetText[MyScript - ${Script[MyScript].Variable[StatusText]}]
   </OnRender>
 </Window>
 ```
@@ -568,10 +664,9 @@ Called when the element is being destroyed.
 
 Access script variables using the `Script[]` TLO:
 
-**EVEBot Example:**
 ```xml
 <OnLoad>
-  if ${Script[EVEBot].VariableScope.Config.Common.UseSound}
+  if ${Script[MyScript].Variable[VerboseMode]}
   {
     This:SetChecked
   }
@@ -585,27 +680,31 @@ Access script variables using the `Script[]` TLO:
 
 ### Calling Script Functions from UI
 
-Use direct atom method calls or `Script:QueueCommand` to execute script code:
+Use `Script:QueueCommand` to execute script code:
 
-**EVEBot Example - Direct method call:**
 ```xml
-<commandbutton name='Run EVEBot'>
+<commandbutton name='StartProcess'>
   <OnLeftClick>
-    EVEBot:Resume["Clicked Run"]
+    Script[MyScript]:QueueCommand[call StartProcess]
   </OnLeftClick>
 </commandbutton>
 ```
 
-**EVEBot Example - Config save:**
+**Or execute directly in events:**
 ```xml
-<button Name='SaveConfig'>
+<checkbox Name='AutoLoot'>
   <OnLeftClick>
-    Script[EVEBot].VariableScope.Config:Save
+    if ${This.Checked}
+    {
+      Script[MyScript]:QueueCommand[call EnableAutoLoot]
+    }
+    else
+    {
+      Script[MyScript]:QueueCommand[call DisableAutoLoot]
+    }
   </OnLeftClick>
-</button>
+</checkbox>
 ```
-
-**GitHub Reference:** [EVEBot.xml](https://github.com/CyberTech/EVEBot/tree/master/Branches/Stable/interface/EVEBot.xml)
 
 ---
 
@@ -635,14 +734,14 @@ UIElement[MyWindow].FindUsableChild[SomeDeepElement,checkbox]
 
 ```lavishscript
 UIElement[StatusLabel]:SetText["Status: Running"]
-UIElement[Title@TitleBar@MyWindow]:SetText["MyScript - ${Me.Name}"]
+UIElement[Title@TitleBar@MyWindow]:SetText["MyScript - ${Script[MyScript].Variable[StatusText]}"]
 ```
 
-#### SetChecked / UnCheck - Checkboxes
+#### SetChecked / UnsetChecked - Checkboxes
 
 ```lavishscript
 UIElement[AutoLoot]:SetChecked
-UIElement[AutoLoot]:UnCheck
+UIElement[AutoLoot]:UnsetChecked
 ```
 
 #### Show / Hide - Visibility
@@ -715,151 +814,287 @@ Templates allow you to:
 
 Reference a template in your element:
 
-**EVEBot Example:**
 ```xml
-<button Name='SaveConfig' Template='EveSkin.Window.ClickButton'>
-  <text>Save Config</text>
-  <width>150</width>
-  <height>20</height>
+<button Name='MyButton' Template='Custom.button'>
+  <Text>Click Me</Text>
 </button>
 ```
 
 ### Creating a Skin
 
-**EVEBot uses eveskin.xml for skin/template definitions:**
+**MySkin.xml example:**
 
 ```xml
 <?xml version="1.0" encoding="UTF-8" ?>
 <ISUI>
-  <Skin Name='eveskin' Template='Default Skin'>
-    <SkinTemplate Base='window' Skin='EVESkin.window' />
-    <SkinTemplate Base='button' Skin='EVESkin.button' />
-    <SkinTemplate Base='tabcontrol' Skin='EVESkin.TabControl' />
+  <Skin Name='customskin' Template='Default Skin'>
+    <SkinTemplate Base='window' Skin='Custom.window' />
+    <SkinTemplate Base='button' Skin='Custom.button' />
+    <SkinTemplate Base='checkbox' Skin='Custom.checkbox' />
+    <SkinTemplate Base='combobox' Skin='Custom.combobox' />
   </Skin>
 
-  <!-- Example: Button Template -->
-  <template name='EVESkin.Window.TitleBar.RunButton'>
-    <X>50</X>
-    <Y>3</Y>
-    <Width>50</Width>
-    <Height>14</Height>
-    <Border>0</Border>
-    <AutoTooltip>Run the bot</AutoTooltip>
+  <!-- Window Template -->
+  <template name='Custom.window'>
+    <Border>1</Border>
+    <Resizable>1</Resizable>
+    <StorePosition>1</StorePosition>
+  </template>
+
+  <!-- Button Template -->
+  <template name='Custom.button'>
+    <Width>100</Width>
+    <Height>25</Height>
   </template>
 </ISUI>
 ```
 
-**GitHub Reference:** [eveskin.xml](https://github.com/CyberTech/EVEBot/tree/master/Branches/Stable/interface/eveskin/eveskin.xml)
-
 ### Using Textures in Templates
 
-EVEBot uses PNG texture files stored in `interface/eveskin/MainGUI/` for UI elements like buttons, checkboxes, and comboboxes. These are referenced in template definitions.
-
-**GitHub Reference:** [MainGUI Folder](https://github.com/CyberTech/EVEBot/tree/master/Branches/Stable/interface/eveskin/MainGUI)
+```xml
+<template name='Custom.window.Texture' Filename='windowelements.dds' ColorKey='00000000'>
+  <Left>14</Left>
+  <Right>414</Right>
+  <Top>529</Top>
+  <Bottom>893</Bottom>
+</template>
+```
 
 ---
 
 ## Complete Working Examples
 
-### Example: EVEBot Main Window Structure
+### Example 1: Simple Status Window
 
-**EVEBot provides a comprehensive real-world example of LavishGUI 1 implementation.**
-
-**Window with TitleBar and TabControl:**
+**UI XML (MyScript_UI.xml):**
 ```xml
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <ISUI>
-  <window name='EVEBot'>
-    <Visible>1</Visible>
-    <X>200</X>
-    <Y>300</Y>
-    <Width>550</Width>
-    <Height>320</Height>
-    <Title>EVEBot Options</Title>
-    <TitleBar template='EVESkin.Window.TitleBar'>
-      <Width>100%</Width>
-      <Height>20</Height>
+  <Window name='MyScript Window'>
+    <X>100</X>
+    <Y>100</Y>
+    <Width>300</Width>
+    <Height>150</Height>
+    <Title>My Script</Title>
+    <StorePosition>1</StorePosition>
+
+    <TitleBar template='window.Titlebar'>
       <Children>
-        <commandbutton name='Run EVEBot' template='EVESkin.Window.TitleBar.RunButton'>
-          <OnLeftClick>
-            EVEBot:Resume["Clicked Run"]
-          </OnLeftClick>
+        <Text Name='Title' Template='window.Titlebar.Title' />
+        <commandbutton name='Close' Template='window.Titlebar.Close'>
+          <Command>Script[MyScript]:End</Command>
         </commandbutton>
-        <button Name='Close' template='EVESkin.Window.TitleBar.Close'>
-          <OnLeftClick>
-            EVEBot:EndBot[]
-          </OnLeftClick>
-        </button>
       </Children>
     </TitleBar>
+
     <Children>
-      <TabControl Name='EVEBotOptionsTab' template='EVESkin.TabControl'>
-        <X>0</X>
-        <Y>4</Y>
-        <Width>100%</Width>
-        <Height>100%</Height>
-        <Tabs>
-          <Tab Name='Main'>
-            <!-- Tab content with checkboxes, comboboxes, etc. -->
-          </Tab>
-        </Tabs>
-      </TabControl>
+      <text Name='Status'>
+        <X>10</X>
+        <Y>10</Y>
+        <Width>280</Width>
+        <Height>20</Height>
+        <Text>Status: Stopped</Text>
+      </text>
+
+      <commandbutton name='StartButton'>
+        <X>10</X>
+        <Y>40</Y>
+        <Width>100</Width>
+        <Height>25</Height>
+        <Text>Start</Text>
+        <OnLeftClick>
+          Script[MyScript]:QueueCommand[call Start]
+        </OnLeftClick>
+      </commandbutton>
+
+      <commandbutton name='StopButton'>
+        <X>120</X>
+        <Y>40</Y>
+        <Width>100</Width>
+        <Height>25</Height>
+        <Text>Stop</Text>
+        <OnLeftClick>
+          Script[MyScript]:QueueCommand[call Stop]
+        </OnLeftClick>
+      </commandbutton>
     </Children>
-  </window>
+  </Window>
 </ISUI>
 ```
 
-**Key Patterns from EVEBot:**
+**Script Code (MyScript.iss):**
+```lavishscript
+variable bool Running = FALSE
 
-1. **Checkbox with Config Integration:**
+function main()
+{
+    ; Load UI
+    ui -load "${LavishScript.HomeDirectory}/Scripts/MyScript/UI/MyScript_UI.xml"
+
+    ; Wait for script to end
+    do
+    {
+        wait 10
+    }
+    while ${Script.Running}
+
+    ; Cleanup
+    ui -unload "${LavishScript.HomeDirectory}/Scripts/MyScript/UI/MyScript_UI.xml"
+}
+
+function Start()
+{
+    Running:Set[TRUE]
+    UIElement[Status@MyScript Window]:SetText["Status: Running"]
+    echo Script started
+}
+
+function Stop()
+{
+    Running:Set[FALSE]
+    UIElement[Status@MyScript Window]:SetText["Status: Stopped"]
+    echo Script stopped
+}
+```
+
+### Example 2: Checkbox with Settings Persistence
+
+**UI XML:**
 ```xml
-<checkbox Name='cbUseSound'>
+<checkbox Name='AutoLoot'>
+  <X>10</X>
+  <Y>70</Y>
+  <Width>200</Width>
+  <Height>20</Height>
+  <Text>Enable Auto Loot</Text>
+
   <OnLoad>
-    if ${Script[EVEBot].VariableScope.Config.Common.UseSound}
+    if ${LavishSettings[MyScript].FindSetting[AutoLoot,FALSE]}
     {
       This:SetChecked
     }
   </OnLoad>
+
   <OnLeftClick>
-    Script[EVEBot].VariableScope.Config.Common:SetUseSound[${This.Checked}]
+    if ${This.Checked}
+    {
+      Script[MyScript].Variable[AutoLoot]:Set[TRUE]
+      LavishSettings[MyScript]:AddSetting[AutoLoot,TRUE]
+      LavishSettings[MyScript]:Export["${LavishScript.HomeDirectory}/Scripts/MyScript/MyScript.xml"]
+    }
+    else
+    {
+      Script[MyScript].Variable[AutoLoot]:Set[FALSE]
+      LavishSettings[MyScript]:AddSetting[AutoLoot,FALSE]
+      LavishSettings[MyScript]:Export["${LavishScript.HomeDirectory}/Scripts/MyScript/MyScript.xml"]
+    }
   </OnLeftClick>
 </checkbox>
 ```
 
-2. **Textentry with Validation:**
-```xml
-<Textentry name='MinimumDronesInBay'>
-  <OnLoad>
-    This:SetText[${Script[EVEBot].VariableScope.Config.Common.DronesInBay}]
-  </OnLoad>
-  <OnChange>
-    if ${This.Text.Length} > 0
+**Script Code:**
+```lavishscript
+variable bool AutoLoot = FALSE
+
+function main()
+{
+    ; Load settings
+    LavishSettings:AddSet[MyScript]
+    LavishSettings[MyScript]:Import["${LavishScript.HomeDirectory}/Scripts/MyScript/MyScript.xml"]
+
+    ; Get saved value
+    AutoLoot:Set[${LavishSettings[MyScript].FindSetting[AutoLoot,FALSE]}]
+
+    ; Load UI
+    ui -load "${LavishScript.HomeDirectory}/Scripts/MyScript/UI/MyScript_UI.xml"
+
+    ; Main loop
+    do
     {
-      Script[EVEBot].VariableScope.Config.Common:SetDronesInBay[${Int[${This.Text}]}]
+        if ${AutoLoot}
+        {
+            call CheckForLoot
+        }
+        wait 10
     }
-  </OnChange>
-</Textentry>
+    while ${Script.Running}
+}
 ```
 
-3. **Combobox with Dynamic Selection:**
+### Example 3: Dynamic ComboBox (Group Members)
+
+**UI XML:**
 ```xml
-<combobox name='CurrentBehavior'>
-  <Items>
-    <Item Value='1'>Idle</Item>
-  </Items>
-  <OnSelect>
-    if ${This.SelectedItem.Text.NotNULLOrEmpty}
+<combobox name='FollowTarget'>
+  <X>10</X>
+  <Y>100</Y>
+  <Width>200</Width>
+  <Height>20</Height>
+  <AutoTooltip>Select who to follow</AutoTooltip>
+  <Items></Items>
+
+  <OnLoad>
+    ; Load saved target
+    variable string SavedTarget
+    SavedTarget:Set[${LavishSettings[MyScript].FindSetting[FollowTarget]}]
+    if ${SavedTarget.Length} > 0
     {
-      Logger:Log["Current behavior switched to ${This.SelectedItem.Text}"]
-      Script[EVEBot].VariableScope.Config.Common:CurrentBehavior[${This.SelectedItem.Text}]
+      This:AddItem[${SavedTarget}]
+      This.ItemByText[${SavedTarget}]:Select
     }
+  </OnLoad>
+
+  <OnSelect>
+    ; Save selection
+    Script[MyScript].Variable[FollowTarget]:Set[${This.SelectedItem.Text}]
+    LavishSettings[MyScript]:AddSetting[FollowTarget,${This.SelectedItem.Text}]
+    LavishSettings[MyScript]:Export["${LavishScript.HomeDirectory}/Scripts/MyScript/MyScript.xml"]
   </OnSelect>
+
+  <OnLeftClick>
+    ; Populate with available options when clicked
+    declare tmpvar int
+    This:ClearItems
+    tmpvar:Set[1]
+
+    while ${tmpvar} &lt;= ${Script[MyScript].Variable[NumOptions]}
+    {
+      This:AddItem[${Script[MyScript].Variable[Option${tmpvar}]}]
+      tmpvar:Inc
+    }
+
+    This:Sort
+  </OnLeftClick>
 </combobox>
 ```
 
-**Full Source:** [EVEBot.xml on GitHub](https://github.com/CyberTech/EVEBot/tree/master/Branches/Stable/interface/EVEBot.xml)
+**Note:** In XML, use `&amp;` for `&&` and `&lt;` for `<`
 
-**Note:** In XML, use `&amp;` for `&&` and `&lt;` for `<` when needed in event code.
+**Script Code:**
+```lavishscript
+variable string FollowTarget
+
+function main()
+{
+    ; Load settings and UI
+    LavishSettings:AddSet[MyScript]
+    LavishSettings[MyScript]:Import["${LavishScript.HomeDirectory}/Scripts/MyScript/MyScript.xml"]
+    FollowTarget:Set[${LavishSettings[MyScript].FindSetting[FollowTarget]}]
+
+    ui -load "${LavishScript.HomeDirectory}/Scripts/MyScript/UI/MyScript_UI.xml"
+
+    ; Main loop
+    do
+    {
+        if ${FollowTarget.Length} > 0
+        {
+            call FollowCharacter "${FollowTarget}"
+        }
+        wait 10
+    }
+    while ${Script.Running}
+}
+```
 
 ---
 
@@ -896,16 +1131,19 @@ EVEBot uses PNG texture files stored in `interface/eveskin/MainGUI/` for UI elem
    ```xml
    <!-- Bad - updates every frame -->
    <OnRender>
-     UIElement[HPText]:SetText["HP: ${Me.CurrentHealth}"]
+     UIElement[StatusText]:SetText["Status: ${Script[MyScript].Variable[CurrentStatus]}"]
    </OnRender>
    ```
 
-2. **Use Efficient Element Access**
+2. **Only Update UI When Values Change**
    ```lavishscript
-   ; Cache element reference
-   variable object StatusText
-   StatusText:Set[${UIElement[StatusText]}]
-   StatusText:SetText["New status"]
+   ; Cache the value and only update UI when it changes
+   variable string LastStatus
+   if !${LastStatus.Equal["${NewStatus}"]}
+   {
+       UIElement[StatusText]:SetText["${NewStatus}"]
+       LastStatus:Set["${NewStatus}"]
+   }
    ```
 
 3. **Don't Populate ComboBoxes on OnLoad**
@@ -1034,27 +1272,27 @@ variable string UICode
 
 UICode:Set["<Window name='DynamicWindow'><X>100</X><Y>100</Y><Width>300</Width><Height>200</Height></Window>"]
 
-ui -load -skin eveskin code ${UICode}
+ui -load -skin customskin code ${UICode}
 ```
 
 ### Multiple Windows
 
 Load multiple UI files:
 
-**EVEBot Example:**
 ```lavishscript
-ui -load "${LavishScript.HomeDirectory}/Scripts/EVEBot/interface/EVEBot.xml"
-ui -load "${LavishScript.HomeDirectory}/Scripts/EVEBot/interface/eveskin/eveskin.xml"
+ui -load "${LavishScript.HomeDirectory}/Scripts/MyScript/UI/Main.xml"
+ui -load "${LavishScript.HomeDirectory}/Scripts/MyScript/UI/Options.xml"
+ui -load "${LavishScript.HomeDirectory}/Scripts/MyScript/UI/Advanced.xml"
 ```
 
 ### Conditional UI Elements
 
-Show/hide elements based on script state or configuration:
+Show/hide elements based on script variables or conditions:
 
 ```xml
-<checkbox Name='AdvancedOption'>
+<checkbox Name='ConditionalOption'>
   <OnLoad>
-    if ${Script[MyScript].Variable[ShowAdvanced]}
+    if ${Script[MyScript].Variable[AdvancedMode]}
     {
       This:Show
     }
@@ -1079,12 +1317,16 @@ Show/hide elements based on script state or configuration:
 5. **Persistence** - LavishSettings, StorePosition, Data attribute
 6. **Templates** - Reusable styles and skins
 
-**Real-World Example:**
-- Study **EVEBot** for comprehensive LGUI1 implementation
-- GitHub: [EVEBot Interface Files](https://github.com/CyberTech/EVEBot/tree/master/Branches/Stable/interface)
-- Main UI: [EVEBot.xml](https://github.com/CyberTech/EVEBot/tree/master/Branches/Stable/interface/EVEBot.xml)
-- Skin: [eveskin.xml](https://github.com/CyberTech/EVEBot/tree/master/Branches/Stable/interface/eveskin/eveskin.xml)
+<!-- CLAUDE_SKIP_START -->
+**Next Steps:**
+- Study existing script UI files for real-world examples
+- Start with a simple window and build up
+- Test frequently as you add elements
+- Refer to official LavishGUI documentation for advanced features
+<!-- CLAUDE_SKIP_END -->
 
 ---
 
-*Part of ISXEVE Scripting Guide*
+## Reference
+
+**Official Documentation:** https://www.lavishsoft.com/wiki/index.php/LavishGUI

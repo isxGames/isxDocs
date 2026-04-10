@@ -11,7 +11,7 @@
 2. [Quick Start](#quick-start)
 3. [How Scaling Works](#how-scaling-works)
 4. [Implementation Details](#implementation-details)
-5. [Real-World Example: EQ2BotCommander](#real-world-example-eq2botcommander)
+5. [Real-World Example](#real-world-example)
 6. [Troubleshooting](#troubleshooting)
 7. [Creating Scalable Title Bars](#creating-scalable-title-bars)
 8. [Advanced Topics](#advanced-topics)
@@ -52,7 +52,7 @@
 
 Place `LGUI2Scaling.iss` in your scripts directory:
 
-**GitHub:** [LGUI2Scaling.iss](https://github.com/isxGames/isxScripts/blob/master/EverQuest2/Scripts/LGUI2Scaling.iss)
+**GitHub:** [LGUI2Scaling.iss](https://github.com/isxGames/isxScripts/blob/master/LGUI2Scaling.iss) (search the isxScripts repository)
 
 ### Step 2: Include in Your Script
 
@@ -345,11 +345,11 @@ ScaleJSON: Complete!
 
 ---
 
-## Real-World Example: EQ2BotCommander
+## Real-World Example
 
 ### Original UI Specifications
 
-**EQ2BotCommander.json** (unscaled):
+**MyScript.json** (unscaled):
 - Window: 800x800px
 - Buttons: 229x60px each
 - Font: 36pt
@@ -357,20 +357,20 @@ ScaleJSON: Complete!
 
 ### Scaled Version (2x)
 
-**EQ2BotCommander_Scaled.json** (2x scale):
+**MyScript_Scaled.json** (2x scale):
 - Window: 1600x1600px
 - Buttons: 389x120px each (85% width scaling)
 - Font: 72pt
 - Layout: Same 2-column grid, wider spacing
 
-### Implementation in EQ2BotCommander_LGUI2.iss
+### Implementation in MyScript.iss
 
 ```lavishscript
 function main()
 {
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;;;; GUI Scaling
-    ;; EQ2BotCommander comes with a GUI window. If you need to increase or decrease
+    ;; MyScript comes with a GUI window. If you need to increase or decrease
     ;; the size of the window (and the elements within) simply change
     ;; the uiScale variable below. For example, to make everything twice as large,
     ;; set it to 2.0. To make everything half as large, set to 0.5
@@ -384,18 +384,18 @@ function main()
             echo Preprocessing UI with ${uiScale}x scale factor...
 
         ; Call the scaling function directly with absolute paths
-        call ScaleUIJson "${LavishScript.HomeDirectory}/Scripts/EQ2Bot/UI/EQ2BotCommander.json" "${LavishScript.HomeDirectory}/Scripts/EQ2Bot/UI/EQ2BotCommander_Scaled.json" ${uiScale}
+        call ScaleUIJson "${LavishScript.HomeDirectory}/Scripts/MyScript/UI/MyScript.json" "${LavishScript.HomeDirectory}/Scripts/MyScript/UI/MyScript_Scaled.json" ${uiScale}
 
         ; Load the scaled LGUI2 package
-        LGUI2:LoadPackageFile["EQ2Bot/UI/EQ2BotCommander_Scaled.json"]
+        LGUI2:LoadPackageFile["MyScript/UI/MyScript_Scaled.json"]
     }
     else
-        LGUI2:LoadPackageFile["EQ2Bot/UI/EQ2BotCommander.json"]
+        LGUI2:LoadPackageFile["MyScript/UI/MyScript.json"]
     ;;;;
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
     ; Wait for window to initialize
-    wait 10 ${LGUI2.Element[EQ2BotCommander.Window](exists)}
+    wait 10 ${LGUI2.Element[MyScript.Window](exists)}
 
     ; Rest of script...
 }
@@ -407,8 +407,8 @@ function main()
 
 | Element | Original | Scaled 2x | Calculation |
 |---------|----------|-----------|-------------|
-| RunEQ2Bot.x | 49 | 98 | 49 × 2 |
-| RunEQ2Bot.y | 15 | 30 | 15 × 2 |
+| StartProcess.x | 49 | 98 | 49 × 2 |
+| StartProcess.y | 15 | 30 | 15 × 2 |
 | Follow.x | 49 | 98 | 49 × 2 |
 | Follow.y | 195 | 390 | 195 × 2 |
 
@@ -416,8 +416,8 @@ function main()
 
 | Element | Original | Scaled 2x | Calculation |
 |---------|----------|-----------|-------------|
-| RunEQ2Bot.width | 229 | 389 | 229 × 2 × 0.85 |
-| RunEQ2Bot.height | 60 | 120 | 60 × 2 |
+| StartProcess.width | 229 | 389 | 229 × 2 × 0.85 |
+| StartProcess.height | 60 | 120 | 60 × 2 |
 
 #### Fonts
 
@@ -596,7 +596,7 @@ To make the title bar scalable, you must **override** the default title bar by d
 
 ### Complete Example
 
-Here's the pattern used in EQ2BotCommander.json:
+Here's the pattern for a scalable title bar:
 
 ```json
 {
@@ -882,9 +882,9 @@ The `onCloseButtonClick` event handler calls this atom:
 - `QueueCommand` safely schedules execution in script thread
 - Prevents threading issues during shutdown
 
-### Complete Working Example: EQ2BotCommander
+### Complete Working Example
 
-See [EQ2BotCommander.json](https://github.com/isxGames/isxScripts/blob/master/EverQuest2/Scripts/EQ2Bot/UI/EQ2BotCommander.json) lines 1-88 for a complete, production-ready implementation of a scalable custom title bar.
+The pattern above provides a complete, production-ready implementation of a scalable custom title bar.
 
 **Key features:**
 - Custom title bar with 2x scaled buttons (font 40, padding 12)

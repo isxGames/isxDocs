@@ -1,13 +1,13 @@
 # LavishMachine (LMAC) - Complete Guide
 
 **System:** LavishMachine Virtual Machine
-**Target:** InnerSpace Scripts (Game-Agnostic)
+**Target:** InnerSpace / LavishScript
 
 ---
 
 ## Table of Contents
 
-1. [Introduction to LavishMachine](#introduction-to-lavish machine)
+1. [Introduction to LavishMachine](#introduction-to-lavishmachine)
 2. [Core Concepts](#core-concepts)
 3. [Task Managers](#task-managers)
 4. [Built-in Task Types](#built-in-task-types)
@@ -27,6 +27,7 @@
 
 ## Introduction to LavishMachine
 
+<!-- CLAUDE_SKIP_START -->
 ### What is LavishMachine?
 
 **LavishMachine (LMAC)** is a **Virtual Machine** integrated into LavishScript that handles running **Tasks**. It provides a powerful framework for:
@@ -59,13 +60,14 @@ while ${frames} < 100
 ; Automatic volume fade - clean and simple
 TaskManager:BeginTask["$$>
 {
-    \"type\":\"audio.setvolume\",
-    \"duration\":5.0,
-    \"voiceName\":\"music\",
-    \"volume\":[0.1,0.1]
+    "type":"audio.setvolume",
+    "duration":5.0,
+    "voiceName":"music",
+    "volume":[0.1,0.1]
 }
 <$$"]
 ```
+<!-- CLAUDE_SKIP_END -->
 
 ### Key Benefits
 
@@ -145,8 +147,8 @@ Use `:BeginTask[jsonDefinition]`:
 ```lavishscript
 TaskManager:BeginTask["$$>
 {
-    \"type\":\"ls1.echo\",
-    \"output\":\"Hello World!\"
+    "type":"ls1.echo",
+    "output":"Hello World!"
 }
 <$$"]
 ```
@@ -228,10 +230,10 @@ Audio:AddStream[tune,"music.mp3"]
 ; Play the sound 3 times
 TaskManager:BeginTask["$$>
 {
-    \"type\":\"audio.playstream\",
-    \"voiceName\":\"music\",
-    \"streamName\":\"tune\",
-    \"playCount\":3
+    "type":"audio.playstream",
+    "voiceName":"music",
+    "streamName":"tune",
+    "playCount":3
 }
 <$$"]
 ```
@@ -240,8 +242,8 @@ TaskManager:BeginTask["$$>
 ```lavishscript
 TaskManager:BeginTask["$$>
 {
-    \"type\":\"audio.playstream\",
-    \"voiceName\":\"music\"
+    "type":"audio.playstream",
+    "voiceName":"music"
 }
 <$$"]
 ```
@@ -269,9 +271,9 @@ Adjusts volume on a voice, optionally over time.
 ```lavishscript
 TaskManager:BeginTask["$$>
 {
-    \"type\":\"audio.setvolume\",
-    \"voiceName\":\"music\",
-    \"volume\":[0.5,0.5]
+    "type":"audio.setvolume",
+    "voiceName":"music",
+    "volume":[0.5,0.5]
 }
 <$$"]
 ```
@@ -280,10 +282,10 @@ TaskManager:BeginTask["$$>
 ```lavishscript
 TaskManager:BeginTask["$$>
 {
-    \"type\":\"audio.setvolume\",
-    \"duration\":5.0,
-    \"voiceName\":\"music\",
-    \"volume\":[0.1,0.1]
+    "type":"audio.setvolume",
+    "duration":5.0,
+    "voiceName":"music",
+    "volume":[0.1,0.1]
 }
 <$$"]
 ```
@@ -293,7 +295,7 @@ TaskManager:BeginTask["$$>
 ; Pan to left (left=1.0, right=0.1)
 TaskManager:BeginTask["{\"type\":\"audio.setvolume\",\"duration\":3.0,\"voiceName\":\"music\",\"volume\":[1.0,0.1]}"]
 
-; Wait for completion, then pan to right
+; Wait for completion, then pan to right (wait 30 = 3 seconds in deciseconds)
 wait 30
 TaskManager:BeginTask["{\"type\":\"audio.setvolume\",\"duration\":3.0,\"voiceName\":\"music\",\"volume\":[0.1,1.0]}"]
 ```
@@ -330,11 +332,11 @@ Performs HTTP requests (GET, POST, etc.).
 ```lavishscript
 TaskManager:BeginTask["$$>
 {
-    \"type\":\"webrequest\",
-    \"url\":\"https://api.example.com/data.json\",
-    \"as\":\"json\",
-    \"object\":\"MyController\",
-    \"method\":\"OnDataReceived\"
+    "type":"webrequest",
+    "url":"https://api.example.com/data.json",
+    "as":"json",
+    "object":"MyController",
+    "method":"OnDataReceived"
 }
 <$$"]
 ```
@@ -368,21 +370,21 @@ Executes multiple tasks in sequence.
 ```lavishscript
 TaskManager:BeginTask["$$>
 {
-    \"type\":\"chain\",
-    \"tasks\":[
+    "type":"chain",
+    "tasks":[
         {
-            \"type\":\"ls1.echo\",
-            \"output\":\"First task\"
+            "type":"ls1.echo",
+            "output":"First task"
         },
         {
-            \"type\":\"audio.setvolume\",
-            \"duration\":2.0,
-            \"voiceName\":\"music\",
-            \"volume\":[0.5,0.5]
+            "type":"audio.setvolume",
+            "duration":2.0,
+            "voiceName":"music",
+            "volume":[0.5,0.5]
         },
         {
-            \"type\":\"ls1.echo\",
-            \"output\":\"Last task\"
+            "type":"ls1.echo",
+            "output":"Last task"
         }
     ]
 }
@@ -410,9 +412,9 @@ Custom task types let you:
 ```lavishscript
 noop ${LMAC.NewTaskType["$$>
 {
-    \"name\":\"custom.echo\",
-    \"object\":\"MyController\",
-    \"method\":\"Task_Echo\"
+    "name":"custom.echo",
+    "object":"MyController",
+    "method":"Task_Echo"
 }
 <$$"]}
 ```
@@ -430,7 +432,7 @@ method Task_Echo()
     switch ${Context.TaskState}
     {
     case Start
-        echo ${Context.Task.Args[output]~}
+        echo "${Context.Task.Args[output].Escape}"
         Context.Task:Stop
     break
     case Continue
@@ -448,8 +450,8 @@ method Task_Echo()
 ```lavishscript
 TaskManager:BeginTask["$$>
 {
-    \"type\":\"custom.echo\",
-    \"output\":\"Hello from custom task!\"
+    "type":"custom.echo",
+    "output":"Hello from custom task!"
 }
 <$$"]
 ```
@@ -462,9 +464,9 @@ This example smoothly transitions a value over time.
 ```lavishscript
 noop ${LMAC.NewTaskType["$$>
 {
-    \"name\":\"custom.slideX\",
-    \"object\":\"MyController\",
-    \"method\":\"Task_SlideX\"
+    "name":"custom.slideX",
+    "object":"MyController",
+    "method":"Task_SlideX"
 }
 <$$"]}
 ```
@@ -526,9 +528,9 @@ method Task_SlideX()
 ; Slide X from 100.0 to 250.0 over 3 seconds
 TaskManager:BeginTask["$$>
 {
-    \"type\":\"custom.slideX\",
-    \"duration\":3.0,
-    \"to\":250.0
+    "type":"custom.slideX",
+    "duration":3.0,
+    "to":250.0
 }
 <$$"]
 ```
@@ -713,9 +715,9 @@ Audio:AddStream[tune,"path/to/music.mp3"]
 ```lavishscript
 TaskManager:BeginTask["$$>
 {
-    \"type\":\"audio.playstream\",
-    \"voiceName\":\"music\",
-    \"streamName\":\"tune\"
+    "type":"audio.playstream",
+    "voiceName":"music",
+    "streamName":"tune"
 }
 <$$"]
 ```
@@ -724,10 +726,10 @@ TaskManager:BeginTask["$$>
 ```lavishscript
 TaskManager:BeginTask["$$>
 {
-    \"type\":\"audio.playstream\",
-    \"voiceName\":\"music\",
-    \"streamName\":\"tune\",
-    \"playCount\":3
+    "type":"audio.playstream",
+    "voiceName":"music",
+    "streamName":"tune",
+    "playCount":3
 }
 <$$"]
 ```
@@ -736,10 +738,10 @@ TaskManager:BeginTask["$$>
 ```lavishscript
 TaskManager:BeginTask["$$>
 {
-    \"type\":\"audio.playstream\",
-    \"voiceName\":\"music\",
-    \"streamName\":\"tune\",
-    \"playCount\":-1
+    "type":"audio.playstream",
+    "voiceName":"music",
+    "streamName":"tune",
+    "playCount":-1
 }
 <$$"]
 ```
@@ -750,9 +752,9 @@ TaskManager:BeginTask["$$>
 ```lavishscript
 TaskManager:BeginTask["$$>
 {
-    \"type\":\"audio.setvolume\",
-    \"voiceName\":\"music\",
-    \"volume\":[1.0,1.0]
+    "type":"audio.setvolume",
+    "voiceName":"music",
+    "volume":[1.0,1.0]
 }
 <$$"]
 ```
@@ -761,10 +763,10 @@ TaskManager:BeginTask["$$>
 ```lavishscript
 TaskManager:BeginTask["$$>
 {
-    \"type\":\"audio.setvolume\",
-    \"duration\":5.0,
-    \"voiceName\":\"music\",
-    \"volume\":[0.0,0.0]
+    "type":"audio.setvolume",
+    "duration":5.0,
+    "voiceName":"music",
+    "volume":[0.0,0.0]
 }
 <$$"]
 ```
@@ -796,20 +798,20 @@ objectdef audio_controller
         ; Play music looping
         TM:BeginTask["$$>
         {
-            \"type\":\"audio.playstream\",
-            \"voiceName\":\"bgmusic\",
-            \"streamName\":\"theme\",
-            \"playCount\":-1
+            "type":"audio.playstream",
+            "voiceName":"bgmusic",
+            "streamName":"theme",
+            "playCount":-1
         }
         <$$"]
 
         ; Fade in over 3 seconds
         TM:BeginTask["$$>
         {
-            \"type\":\"audio.setvolume\",
-            \"duration\":3.0,
-            \"voiceName\":\"bgmusic\",
-            \"volume\":[1.0,1.0]
+            "type":"audio.setvolume",
+            "duration":3.0,
+            "voiceName":"bgmusic",
+            "volume":[1.0,1.0]
         }
         <$$"]
     }
@@ -819,10 +821,10 @@ objectdef audio_controller
         ; Fade to silence over 2 seconds
         TM:BeginTask["$$>
         {
-            \"type\":\"audio.setvolume\",
-            \"duration\":2.0,
-            \"voiceName\":\"bgmusic\",
-            \"volume\":[0.0,0.0]
+            "type":"audio.setvolume",
+            "duration":2.0,
+            "voiceName":"bgmusic",
+            "volume":[0.0,0.0]
         }
         <$$"]
     }
@@ -846,11 +848,11 @@ objectdef audio_controller
 ```lavishscript
 TaskManager:BeginTask["$$>
 {
-    \"type\":\"webrequest\",
-    \"url\":\"https://api.example.com/data\",
-    \"as\":\"json\",
-    \"object\":\"MyController\",
-    \"method\":\"OnDataReceived\"
+    "type":"webrequest",
+    "url":"https://api.example.com/data",
+    "as":"json",
+    "object":"MyController",
+    "method":"OnDataReceived"
 }
 <$$"]
 ```
@@ -927,11 +929,11 @@ objectdef api_client
         variable jsonvalue taskDef
         taskDef:SetValue["$$>
         {
-            \"type\":\"webrequest\",
-            \"as\":\"json\",
-            \"object\":\"APIClient\",
-            \"method\":\"OnPlayerData\",
-            \"url\":\"https://api.example.com/player/${playerName.Escape}\"
+            "type":"webrequest",
+            "as":"json",
+            "object":"APIClient",
+            "method":"OnPlayerData",
+            "url":"https://api.example.com/player/${playerName.Escape}"
         }
         <$$"]
 
@@ -978,19 +980,19 @@ Execute tasks in sequence:
 ```lavishscript
 TaskManager:BeginTask["$$>
 {
-    \"type\":\"chain\",
-    \"tasks\":[
+    "type":"chain",
+    "tasks":[
         {
-            \"type\":\"ls1.echo\",
-            \"output\":\"Step 1\"
+            "type":"ls1.echo",
+            "output":"Step 1"
         },
         {
-            \"type\":\"ls1.echo\",
-            \"output\":\"Step 2\"
+            "type":"ls1.echo",
+            "output":"Step 2"
         },
         {
-            \"type\":\"ls1.echo\",
-            \"output\":\"Step 3\"
+            "type":"ls1.echo",
+            "output":"Step 3"
         }
     ]
 }
@@ -1017,22 +1019,22 @@ Use timed custom tasks or audio.setvolume with 0 volume change as delays:
 ```lavishscript
 TaskManager:BeginTask["$$>
 {
-    \"type\":\"chain\",
-    \"tasks\":[
+    "type":"chain",
+    "tasks":[
         {
-            \"type\":\"audio.playstream\",
-            \"voiceName\":\"effects\",
-            \"streamName\":\"beep\"
+            "type":"audio.playstream",
+            "voiceName":"effects",
+            "streamName":"beep"
         },
         {
-            \"type\":\"audio.setvolume\",
-            \"duration\":1.0,
-            \"voiceName\":\"music\",
-            \"volume\":[0.5,0.5]
+            "type":"audio.setvolume",
+            "duration":1.0,
+            "voiceName":"music",
+            "volume":[0.5,0.5]
         },
         {
-            \"type\":\"ls1.echo\",
-            \"output\":\"Sequence complete!\"
+            "type":"ls1.echo",
+            "output":"Sequence complete!"
         }
     ]
 }
@@ -1046,37 +1048,37 @@ From the audio-1.iss example:
 ```lavishscript
 TaskManager:BeginTask["$$>
 {
-    \"type\":\"chain\",
-    \"tasks\":[
+    "type":"chain",
+    "tasks":[
         {
-            \"type\":\"audio.setvolume\",
-            \"duration\":5.0,
-            \"voiceName\":\"music\",
-            \"volume\":[0.1,0.1]
+            "type":"audio.setvolume",
+            "duration":5.0,
+            "voiceName":"music",
+            "volume":[0.1,0.1]
         },
         {
-            \"type\":\"audio.setvolume\",
-            \"duration\":5.0,
-            \"voiceName\":\"music\",
-            \"volume\":[1.0,0.1]
+            "type":"audio.setvolume",
+            "duration":5.0,
+            "voiceName":"music",
+            "volume":[1.0,0.1]
         },
         {
-            \"type\":\"audio.setvolume\",
-            \"duration\":5.0,
-            \"voiceName\":\"music\",
-            \"volume\":[0.1,1.0]
+            "type":"audio.setvolume",
+            "duration":5.0,
+            "voiceName":"music",
+            "volume":[0.1,1.0]
         },
         {
-            \"type\":\"audio.setvolume\",
-            \"duration\":5.0,
-            \"voiceName\":\"music\",
-            \"volume\":[1.0,0.1]
+            "type":"audio.setvolume",
+            "duration":5.0,
+            "voiceName":"music",
+            "volume":[1.0,0.1]
         },
         {
-            \"type\":\"audio.setvolume\",
-            \"duration\":5.0,
-            \"voiceName\":\"music\",
-            \"volume\":[0.1,1.0]
+            "type":"audio.setvolume",
+            "duration":5.0,
+            "voiceName":"music",
+            "volume":[0.1,1.0]
         }
     ]
 }
@@ -1193,9 +1195,9 @@ objectdef lmac_controller
         ; Register custom task types
         This:AddTaskType["$$>
         {
-            \"name\":\"custom.task1\",
-            \"object\":\"MyController\",
-            \"method\":\"Task_Task1\"
+            "name":"custom.task1",
+            "object":"MyController",
+            "method":"Task_Task1"
         }
         <$$"]
 
@@ -1275,9 +1277,9 @@ objectdef healthbar_controller
     {
         This:AddTaskType["$$>
         {
-            \"name\":\"custom.slidehealth\",
-            \"object\":\"HealthBarController\",
-            \"method\":\"Task_SlideHealth\"
+            "name":"custom.slidehealth",
+            "object":"HealthBarController",
+            "method":"Task_SlideHealth"
         }
         <$$"]
     }
@@ -1298,9 +1300,9 @@ objectdef healthbar_controller
         ; Smoothly transition displayed health to actual
         TM:BeginTask["$$>
         {
-            \"type\":\"custom.slidehealth\",
-            \"duration\":0.5,
-            \"to\":${newHealth}
+            "type":"custom.slidehealth",
+            "duration":0.5,
+            "to":${newHealth}
         }
         <$$"]
     }
@@ -1387,19 +1389,19 @@ objectdef combat_music
     {
         TM:BeginTask["$$>
         {
-            \"type\":\"audio.playstream\",
-            \"voiceName\":\"bgmusic\",
-            \"streamName\":\"explore\",
-            \"playCount\":-1
+            "type":"audio.playstream",
+            "voiceName":"bgmusic",
+            "streamName":"explore",
+            "playCount":-1
         }
         <$$"]
 
         TM:BeginTask["$$>
         {
-            \"type\":\"audio.setvolume\",
-            \"duration\":2.0,
-            \"voiceName\":\"bgmusic\",
-            \"volume\":[0.7,0.7]
+            "type":"audio.setvolume",
+            "duration":2.0,
+            "voiceName":"bgmusic",
+            "volume":[0.7,0.7]
         }
         <$$"]
     }
@@ -1408,19 +1410,19 @@ objectdef combat_music
     {
         TM:BeginTask["$$>
         {
-            \"type\":\"audio.playstream\",
-            \"voiceName\":\"bgmusic\",
-            \"streamName\":\"combat\",
-            \"playCount\":-1
+            "type":"audio.playstream",
+            "voiceName":"bgmusic",
+            "streamName":"combat",
+            "playCount":-1
         }
         <$$"]
 
         TM:BeginTask["$$>
         {
-            \"type\":\"audio.setvolume\",
-            \"duration\":1.0,
-            \"voiceName\":\"bgmusic\",
-            \"volume\":[1.0,1.0]
+            "type":"audio.setvolume",
+            "duration":1.0,
+            "voiceName":"bgmusic",
+            "volume":[1.0,1.0]
         }
         <$$"]
     }
@@ -1443,10 +1445,10 @@ objectdef combat_music
             ; Fade out combat music
             TM:BeginTask["$$>
             {
-                \"type\":\"audio.setvolume\",
-                \"duration\":2.0,
-                \"voiceName\":\"bgmusic\",
-                \"volume\":[0.0,0.0]
+                "type":"audio.setvolume",
+                "duration":2.0,
+                "voiceName":"bgmusic",
+                "volume":[0.0,0.0]
             }
             <$$"]
 
@@ -1489,11 +1491,11 @@ objectdef player_data_cache
         variable jsonvalue taskDef
         taskDef:SetValue["$$>
         {
-            \"type\":\"webrequest\",
-            \"url\":\"https://api.example.com/player/${playerName.Escape}\",
-            \"as\":\"json\",
-            \"object\":\"PlayerDataCache\",
-            \"method\":\"OnPlayerDataReceived\"
+            "type":"webrequest",
+            "url":"https://api.example.com/player/${playerName.Escape}",
+            "as":"json",
+            "object":"PlayerDataCache",
+            "method":"OnPlayerDataReceived"
         }
         <$$"]
 
@@ -1601,9 +1603,9 @@ break
 ; GOOD - Readable
 TaskManager:BeginTask["$$>
 {
-    \"type\":\"audio.playstream\",
-    \"voiceName\":\"music\",
-    \"streamName\":\"tune\"
+    "type":"audio.playstream",
+    "voiceName":"music",
+    "streamName":"tune"
 }
 <$$"]
 
@@ -1690,9 +1692,9 @@ Error: Task type 'custom.mytask' not found
 ; Verify registration
 variable int64 id=${LMAC.NewTaskType["$$>
 {
-    \"name\":\"custom.mytask\",
-    \"object\":\"MyController\",
-    \"method\":\"Task_MyTask\"
+    "name":"custom.mytask",
+    "object":"MyController",
+    "method":"Task_MyTask"
 }
 <$$"].ID}
 
@@ -1772,18 +1774,17 @@ Error parsing task definition
 
 **Fix:**
 ```lavishscript
-; BAD - Missing escaped quotes
-TaskManager:BeginTask["{\"type\":\"ls1.echo\",\"output\":\"Hello\"}"]
-                                                        ; ^ Missing escape
+; BAD - Missing escaped quote before Hello
+TaskManager:BeginTask["{\"type\":\"ls1.echo\",\"output\":Hello\"}"]
 
-; GOOD
+; GOOD - All quotes properly escaped
 TaskManager:BeginTask["{\"type\":\"ls1.echo\",\"output\":\"Hello\"}"]
 
 ; BETTER - Use $$><$$
 TaskManager:BeginTask["$$>
 {
-    \"type\":\"ls1.echo\",
-    \"output\":\"Hello\"
+    "type":"ls1.echo",
+    "output":"Hello"
 }
 <$$"]
 ```
@@ -1809,9 +1810,9 @@ Audio:AddStream[tune,"music.mp3"]
 ; Then play
 TaskManager:BeginTask["$$>
 {
-    \"type\":\"audio.playstream\",
-    \"voiceName\":\"music\",
-    \"streamName\":\"tune\"
+    "type":"audio.playstream",
+    "voiceName":"music",
+    "streamName":"tune"
 }
 <$$"]
 ```
@@ -1872,9 +1873,9 @@ TM:BeginTask["{ JSON definition }"]
 ```lavishscript
 noop ${LMAC.NewTaskType["$$>
 {
-    \"name\":\"custom.taskname\",
-    \"object\":\"ControllerName\",
-    \"method\":\"Task_MethodName\"
+    "name":"custom.taskname",
+    "object":"ControllerName",
+    "method":"Task_MethodName"
 }
 <$$"]}
 ```
@@ -1926,19 +1927,9 @@ TM:Destroy
 
 ---
 
-<!-- CLAUDE_SKIP_START -->
 ## Additional Resources
 
 - **LavishMachine Documentation:** https://www.lavishsoft.com/wiki/index.php/LavishMachine
 - **LERN Examples:** https://github.com/LavishSoftware/LERN/tree/master/LMAC
 - **Audio Documentation:** https://github.com/LavishSoftware/LERN/tree/master/Audio
 - **Web Request Documentation:** https://github.com/LavishSoftware/LERN/tree/master/Web
-
----
-
-**This guide was created through comprehensive analysis of:**
-- LERN/LMAC example files: https://github.com/LavishSoftware/LERN/tree/master/LMAC (1.iss, 2.iss, 3.iss, 4.iss)
-- LERN/LMAC audio documentation and examples (audio-1.md, audio-1.iss)
-- LERN/LMAC web request documentation and examples (webrequest-1.md, webrequest-1.iss)
-- Complete coverage of task types, task managers, custom tasks, and patterns
-<!-- CLAUDE_SKIP_END -->
