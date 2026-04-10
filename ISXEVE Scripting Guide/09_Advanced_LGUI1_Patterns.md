@@ -729,6 +729,129 @@ This:Sort
 - Manual user refresh is available for free (right-click the list)
 - Adding new trigger points (e.g., cross-session sync) only requires one `:RightClick` call
 
+### Live Game Data + Info-Display Pattern
+
+**Pattern:** Populate a listbox from a live ISXEVE query (not settings), then use `OnLeftClick` to drive a multi-field detail panel by re-querying the game TLO for the selected item.
+
+**Source:** EVEBot — Local pilots listbox with pilot/corp/alliance info display
+
+**Why this pattern?** For lists that reflect live game state (local pilots, nearby entities, fleet members), the listbox should only store a minimal identifier (usually the name) — and detail information should be re-queried from the game on selection to avoid showing stale data.
+
+**The Refresh Button (populates the list from live game data):**
+
+```xml
+<button name='btnRefreshLocal' template='EveSkin.Window.ClickButton'>
+  <X>20</X>
+  <Y>235</Y>
+  <Width>110</Width>
+  <Height>22</Height>
+  <Text>Refresh</Text>
+  <OnLeftClick>
+    variable string lbname = ${UIElement[EVEBot].FindUsableChild[lbLocal,listbox].FullName}
+    variable index:pilot pilots
+    variable iterator piter
+    EVE:GetLocalPilots[pilots]
+    pilots:GetIterator[piter]
+
+    ; Clear stale detail text before repopulating the listbox
+    variable string pilotinfo=${UIElement[EVEBot].FindUsableChild[txtPilotInfo,text].FullName}
+    variable string corpinfo=${UIElement[EVEBot].FindUsableChild[txtCorpInfo,text].FullName}
+    variable string allianceinfo=${UIElement[EVEBot].FindUsableChild[txtAllianceInfo,text].FullName}
+    UIElement[${pilotinfo}]:SetText[""]
+    UIElement[${corpinfo}]:SetText[""]
+    UIElement[${allianceinfo}]:SetText[""]
+
+    ; Populate the listbox, filtering out self via CharID comparison
+    UIElement[${lbname}]:ClearItems
+    if ${piter:First(exists)}
+    {
+      do
+      {
+        if !${piter.Value.CharID.Equal[${Me.CharID}]}
+          UIElement[${lbname}]:AddItem[${piter.Value.Name}]
+      }
+      while ${piter:Next(exists)}
+    }
+    UIElement[${lbname}]:Sort
+  </OnLeftClick>
+</button>
+```
+
+**The Listbox (displays pilot info on selection via Local[name] re-query):**
+
+```xml
+<listbox name='lbLocal'>
+  <X>10</X>
+  <Y>25</Y>
+  <Width>130</Width>
+  <Height>200</Height>
+  <Sort>Text</Sort>
+  <OnLeftClick>
+    variable string pilotinfo=${UIElement[EVEBot].FindUsableChild[txtPilotInfo,text].FullName}
+    variable string corpinfo=${UIElement[EVEBot].FindUsableChild[txtCorpInfo,text].FullName}
+    variable string allianceinfo=${UIElement[EVEBot].FindUsableChild[txtAllianceInfo,text].FullName}
+
+    ; Re-query the Local TLO by pilot name to get fresh data
+    variable pilot p = ${Local[${This.SelectedItem[1].Text}]}
+
+    UIElement[${pilotinfo}]:SetText[Pilot: ${p.Name} (${p.CharID})]
+    UIElement[${corpinfo}]:SetText[Corp ID: ${p.Corp.ID}]
+    UIElement[${allianceinfo}]:SetText[Alliance: ${p.Alliance} (${p.AllianceID})]
+  </OnLeftClick>
+</listbox>
+```
+
+**The Info Display Fields:**
+
+```xml
+<Text Name='txtPilotInfo'>
+  <X>150</X>
+  <Y>25</Y>
+  <Width>r355</Width>
+  <Height>60</Height>
+  <wrap />
+  <text>Select a pilot from the list at left.</text>
+</Text>
+
+<Text Name='txtCorpInfo'>
+  <X>150</X>
+  <Y>105</Y>
+  <Width>r355</Width>
+  <Height>60</Height>
+  <wrap />
+</Text>
+
+<Text Name='txtAllianceInfo'>
+  <X>150</X>
+  <Y>185</Y>
+  <Width>r355</Width>
+  <Height>60</Height>
+  <wrap />
+</Text>
+```
+
+**Key techniques:**
+
+1. **Live query with iterator** — `EVE:GetLocalPilots[index:pilot]` populates an index with all pilots currently in the Local channel. Each iteration yields a `pilot` datatype with `.Name`, `.CharID`, `.Corp`, `.Alliance`, `.AllianceID`, `.Standing`, etc.
+
+2. **Self-filtering** — `if !${piter.Value.CharID.Equal[${Me.CharID}]}` skips the player's own character by comparing CharIDs. This works because `character` inherits from `pilot`, so both have `CharID`.
+
+3. **Name-only storage** — `AddItem[${piter.Value.Name}]` stores only the pilot name in the listbox item. No hidden value is needed because the `Local[name]` TLO will re-query on selection.
+
+4. **Re-query on selection** — `variable pilot p = ${Local[${This.SelectedItem[1].Text}]}` uses the `Local[Name]` TLO (which accepts either an integer index or a pilot name) to get a fresh `pilot` object, ensuring the displayed data is current.
+
+5. **Pre-clear detail fields on refresh** — The refresh button clears `txtPilotInfo`, `txtCorpInfo`, and `txtAllianceInfo` before repopulating, preventing stale text from referring to a pilot who may have left Local.
+
+6. **FullName resolution pattern** — `FindUsableChild[elementName,type].FullName` stores the full element path in a variable for reuse, making long nested references cleaner and more efficient.
+
+**Applicable live-query APIs:**
+
+| API | Returns | Datatype | Re-query TLO |
+|-----|---------|----------|--------------|
+| `EVE:GetLocalPilots[index:pilot]` | Pilots in Local | `pilot` | `Local[name]` |
+| `EVE:QueryEntities[index:entity,query]` | Filtered entities | `entity` | `Entity[name]` |
+| `Me:GetFleetMembers[index:fleetmember]` | Fleet members | `fleetmember` | — |
+
 ---
 
 ## Advanced TextEntry Patterns
@@ -1055,10 +1178,11 @@ These advanced patterns from EVE Online production scripts demonstrate:
 9. **Slider Synchronization** - Real-time label updates with unit conversion
 10. **List Management** - Iterator-based population patterns
 11. **Decoupled List Refresh** - OnRightClick as centralized refresh trigger
-12. **Advanced TextEntry** - OnKeyDown for Enter key detection
-13. **ComboBox Values** - Separate display text from stored values
-14. **Dynamic ComboBox Population** - Populate from ISXEVE APIs with saved selection restore
-15. **Production Robustness** - Dynamic displays and polymorphic input
+12. **Live Game Data Display** - Listbox population from live queries with re-query info display
+13. **Advanced TextEntry** - OnKeyDown for Enter key detection
+14. **ComboBox Values** - Separate display text from stored values
+15. **Dynamic ComboBox Population** - Populate from ISXEVE APIs with saved selection restore
+16. **Production Robustness** - Dynamic displays and polymorphic input
 
 **Key Takeaways:**
 - Real production scripts require sophisticated UI patterns
