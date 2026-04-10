@@ -409,6 +409,8 @@ atom OnCombatText(int ChatType, string Message, string Speaker, string Target, s
 
 ### Auto-Target and Attack
 
+> See [15_Advanced_Scripting_Patterns.md - Modern EQ2:GetActors Usage](15_Advanced_Scripting_Patterns.md#modern-eq2getactors-usage) for the full `EQ2:GetActors` API reference, all filter types, and performance throttling guidance.
+
 ```lavishscript
 ;*****************************************************
 ; Auto-Target and Attack Nearest Enemy

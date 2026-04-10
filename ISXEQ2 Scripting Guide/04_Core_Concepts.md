@@ -415,30 +415,16 @@ Me:QueryInventory[Weapons,"Type =- \"Weapon\" && ToItemInfo.Level >= 100"]
 
 ### Modern Actor Collection (EQ2:GetActors)
 
-**IMPORTANT:** Use `EQ2:GetActors` instead of the deprecated `CustomActorArray` system.
+Use `EQ2:GetActors` (not the deprecated `CustomActorArray`) to populate an `index:actor` collection with filtered actors, then walk it with an iterator:
 
 ```lavishscript
-; Get actors using modern method (populates index directly)
 variable index:actor Actors
 variable iterator ActorIt
-
 EQ2:GetActors[Actors,Range,50,NPC]
-
-; Iterate through results
 Actors:GetIterator[ActorIt]
-if ${ActorIt:First(exists)}
-{
-    do
-    {
-        echo "${ActorIt.Value.Name} at ${ActorIt.Value.Distance}m"
-    }
-    while ${ActorIt:Next(exists)}
-}
-
-echo "Total actors found: ${Actors.Used}"
 ```
 
-**Key Point:** `EQ2:GetActors` is the modern, recommended method. See [15_Advanced_Scripting_Patterns.md](15_Advanced_Scripting_Patterns.md#modern-eq2getactors-usage) for comprehensive usage.
+For the full API reference including all filter types (`Range`, `Type`, `Zone`, combined filters), complete examples (harvesting, nearest-enemy, group scan), and performance throttling guidance, see [15_Advanced_Scripting_Patterns.md - Modern EQ2:GetActors Usage](15_Advanced_Scripting_Patterns.md#modern-eq2getactors-usage).
 
 ---
 
