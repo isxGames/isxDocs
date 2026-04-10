@@ -843,6 +843,8 @@ objectdef audio_controller
 
 ## Web Request Tasks
 
+> **Choose the right API:** This section documents the **LMAC `webrequest` task type** — a declarative task you define inside a LavishMachine task JSON (`"type":"webrequest"`) with an `object`/`method` callback invoked when the request completes. LavishScript also provides an imperative **`webrequest` variable type** (`variable webrequest WR`, `WR:Begin`, poll `${WR.State}`) documented in [01_LavishScript_Fundamentals.md](01_LavishScript_Fundamentals.md). Rule of thumb: use the task type documented here when you are already building task-based automation and want an event-style callback; use the LavishScript type when you just need a one-off fetch inside regular script code.
+
 ### Basic Web Request
 
 ```lavishscript

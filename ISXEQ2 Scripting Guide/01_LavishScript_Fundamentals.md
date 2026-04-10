@@ -2369,6 +2369,8 @@ See the JSON Guide for more on collections.
 
 ## Web Requests
 
+> **Choose the right API:** This section documents the **LavishScript `webrequest` type** — an imperative API you use directly from LavishScript code (`variable webrequest WR`, `WR:Begin`, poll `${WR.State}`). LavishMachine also provides a **`webrequest` task type** (declarative JSON task with a callback method) documented in [14_LavishMachine_Guide.md](14_LavishMachine_Guide.md). Rule of thumb: use the type documented here for simple, script-driven requests where you poll or `wait` for completion; use the LMAC task type when you are already building task-based automation and want an event-style callback when the request finishes.
+
 ### What is a Web Request?
 
 A **web request** allows scripts to fetch data from URLs using HTTP/HTTPS protocols.
