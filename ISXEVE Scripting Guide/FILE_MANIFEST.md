@@ -33,7 +33,7 @@
 | **12_LGUI2_Scaling_System.md** | ✅ Complete | UI scaling system guide (game-agnostic) |
 | **13_JSON_Guide.md** | ✅ Complete | JSON in LavishScript guide (game-agnostic) |
 | **14_LavishMachine_Guide.md** | ✅ Complete | LavishMachine (LMAC) guide (game-agnostic) |
-| **15_Combat_Automation.md** | ✅ Complete | Combat bot patterns and analysis |
+| **15_Combat_Automation.md** | ✅ Complete | Combat bot patterns and automation |
 | **16_Mining_And_Hauling.md** | ✅ Complete | Mining and hauling automation |
 | **17_Fleet_Operations.md** | ✅ Complete | Fleet coordination patterns |
 | **18_Bot_Architecture_Analysis.md** | ✅ Complete | Analysis of EVEBot, Yamfa, and Tehbot architectures |
@@ -176,14 +176,17 @@ LavishMachine (LMAC) guide (game-agnostic):
 **Topics:** LMAC, async tasks, animations, audio, web requests
 
 ### 15_Combat_Automation.md Content
-Combat bot patterns and analysis:
-- Combat automation patterns
-- Tehbot combat analysis
-- Target management
-- Weapon systems
-- Tank management
+Combat bot patterns and automation:
+- Combat bot overview and modes
+- Target management and prioritization
+- Weapon systems (turrets, missiles, drones)
+- Movement patterns (orbit, keep range, kiting)
+- Tank management (shield, armor)
+- Combat patterns by ship type
 
-**Topics:** Combat patterns, Tehbot analysis, targeting, weapons
+**Topics:** Combat patterns, targeting, weapons, tank management
+
+**Note:** For Tehbot architectural analysis (StateQueue, MiniModes, CombatComputer), see `18_Bot_Architecture_Analysis.md`.
 
 ### 16_Mining_And_Hauling.md Content
 Mining and logistics automation:
