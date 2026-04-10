@@ -1503,6 +1503,136 @@ Scrollbar control for manual scrolling (typically used internally by ScrollViewe
 | `value` | number | Current scroll position |
 | `viewportSize` | number | Visible area size |
 
+### Textbox
+
+Text input element. Textbox is a Content Container that inherits TextBlock properties and adds input capabilities.
+
+**Official Documentation:** https://www.lavishsoft.com/wiki/index.php/LGUI2:textbox
+
+**Basic Textbox:**
+
+```json
+{
+    "type": "textbox",
+    "name": "usernameInput",
+    "width": 200,
+    "height": 40,
+    "font": { "height": 36 },
+    "borderThickness": 1,
+    "borderBrush": "white",
+    "backgroundBrush": { "color": "#000000" }
+}
+```
+
+**Textbox Properties:**
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `type` | string | "textbox" |
+| `text` | string | Initial text content |
+| `multiline` | boolean | Allow multiple lines of input (default: false) |
+| `readOnly` | boolean | Prevent user editing (display-only) |
+| `password` | boolean | Mask input characters |
+| `maxLength` | integer | Maximum character count for input |
+| `wrap` | boolean | Whether text wraps (default: false) |
+| `textBindingUsesFocus` | boolean | Push textBinding on focus loss rather than on every keystroke |
+| `textScanner` | object | Text Scanner for decoration/highlighting (see [Text Scanners](#text-scanners)) |
+| `cursor` | object | Border definition for the text cursor |
+| `selectionBrush` | brush | Brush for selected text background |
+| `contentContainer` | object | Container element (typically a scrollviewer) |
+| `content` | object | Content element (typically a textblock with padding) |
+
+**Textbox with Styled Cursor and Selection:**
+
+```json
+{
+    "type": "textbox",
+    "name": "styledInput",
+    "font": { "height": 36 },
+    "borderThickness": 1,
+    "borderBrush": { "color": [1.0, 1.0, 1.0] },
+    "backgroundBrush": { "color": [0, 0, 0] },
+    "cursor": {
+        "backgroundBrush": { "color": [0.8, 0.8, 0.8] }
+    },
+    "selectionBrush": {
+        "color": [0.5, 0.2, 0.2, 0.8]
+    }
+}
+```
+
+**Password Field:**
+
+```json
+{
+    "type": "textbox",
+    "name": "passwordInput",
+    "password": true,
+    "maxLength": 50,
+    "textBinding": {
+        "pullFormat": "${Script[MyScript].VariableScope.Config.Password}",
+        "pushFormat": ["Script[MyScript].VariableScope.Config:SetPassword[", "]"]
+    }
+}
+```
+
+**Read-Only Log/Console Display:**
+
+Combine `multiline` and `readOnly` to create a scrollable output console:
+
+```json
+{
+    "type": "textbox",
+    "name": "LogConsole",
+    "multiline": true,
+    "readOnly": true,
+    "text": "Ready.",
+    "borderThickness": 1,
+    "borderBrush": "white",
+    "backgroundBrush": { "color": "#000000" },
+    "style": { "color": "#FFFFFF" },
+    "contentContainer": {
+        "type": "scrollviewer",
+        "acceptsMouseFocus": false
+    }
+}
+```
+
+Append log messages from script with line trimming to prevent unbounded growth:
+
+```lavishscript
+; Append a new line to the log console
+method AppendLog(string msg)
+{
+    variable string currentText = "${LGUI2.Element[LogConsole].Text}"
+    variable int lineCount = ${currentText.Count["\n"]}
+
+    ; Trim oldest line if over 100 lines
+    if ${lineCount} > 100
+    {
+        variable int firstNewline = ${currentText.Find["\n"]}
+        currentText:Set["${currentText.Right[-${Math.Calc[${firstNewline}+1]}]}"]
+    }
+
+    LGUI2.Element[LogConsole]:SetText["${currentText}\n${msg}"]
+}
+```
+
+**Tip:** Add a [Text Scanner](#text-scanners) with `"textScanner": {"type": "lguiconsole"}` to enable InnerSpace console color code rendering in the log display.
+
+**Script Access:**
+
+```lavishscript
+; Read text
+variable string value = "${LGUI2.Element[usernameInput].Text}"
+
+; Set text
+LGUI2.Element[usernameInput]:SetText["new value"]
+
+; Check multiline state
+echo ${LGUI2.Element[LogConsole].Multiline}
+```
+
 ---
 
 ## Box Model and Composition
