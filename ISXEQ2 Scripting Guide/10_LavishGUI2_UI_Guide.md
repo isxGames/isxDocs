@@ -1655,6 +1655,38 @@ Control element positioning within containers:
 }
 ```
 
+### Aspect Ratio (Border Element)
+
+The `border` element supports a `maintainAspectRatio` property that constrains the element's width-to-height ratio. One dimension is determined by normal layout (content, font, parent constraints), and the other is calculated to maintain the specified ratio.
+
+**Values:**
+- `1.0` — Square (width equals height)
+- `2.0` — Landscape (width is 2x height)
+- `0.5` — Portrait (width is half the height)
+- `null` or `false` — Disabled (no constraint; default)
+
+**Common use case — square checkbox indicator:**
+```json
+{
+    "type": "border",
+    "borderThickness": 1,
+    "borderBrush": "white",
+    "maintainAspectRatio": 1.0,
+    "verticalAlignment": "center",
+    "font": { "bold": true, "height": 28 },
+    "child": {
+        "type": "textblock",
+        "text": "✓",
+        "color": "#00FF00",
+        "horizontalAlignment": "center"
+    }
+}
+```
+
+Here, the border's height is determined by the font height (28px). The `maintainAspectRatio: 1.0` forces the width to also be 28px, producing a perfect square regardless of the surrounding content size.
+
+**Note:** This property is only available on the `border` element type — it cannot be used on panels, textblocks, imageboxes, or other elements.
+
 ### Metadata System
 
 **Underscore Properties:**
