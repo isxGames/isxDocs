@@ -14,18 +14,19 @@
 
 1. [UI Element Navigation](#ui-element-navigation)
 2. [Two-Way Data Binding](#two-way-data-binding)
-3. [Dynamic UI Updates](#dynamic-ui-updates)
-4. [Settings Integration](#settings-integration)
-5. [Console and Logging](#console-and-logging)
-6. [Advanced Button Patterns](#advanced-button-patterns)
-7. [Alpha Transparency Effects](#alpha-transparency-effects)
-8. [Multi-Client Relay Commands](#multi-client-relay-commands)
-9. [Nested TabControls](#nested-tabcontrols)
-10. [Slider with Synchronized Labels](#slider-with-synchronized-labels)
-11. [Advanced List Management](#advanced-list-management)
-12. [Advanced TextEntry Patterns](#advanced-textentry-patterns)
-13. [ComboBox Advanced Patterns](#combobox-advanced-patterns)
-14. [Production Patterns](#production-patterns)
+3. [Cross-Element UI Synchronization](#cross-element-ui-synchronization)
+4. [Dynamic UI Updates](#dynamic-ui-updates)
+5. [Settings Integration](#settings-integration)
+6. [Console and Logging](#console-and-logging)
+7. [Advanced Button Patterns](#advanced-button-patterns)
+8. [Alpha Transparency Effects](#alpha-transparency-effects)
+9. [Multi-Client Relay Commands](#multi-client-relay-commands)
+10. [Nested TabControls](#nested-tabcontrols)
+11. [Slider with Synchronized Labels](#slider-with-synchronized-labels)
+12. [Advanced List Management](#advanced-list-management)
+13. [Advanced TextEntry Patterns](#advanced-textentry-patterns)
+14. [ComboBox Advanced Patterns](#combobox-advanced-patterns)
+15. [Production Patterns](#production-patterns)
 
 ---
 
@@ -116,6 +117,119 @@ Use `@` for simple, frequently accessed elements. Use `FindUsableChild` for:
 - UI always reflects script state
 - Script always has current UI value
 - Real-time updates
+
+---
+
+## Cross-Element UI Synchronization
+
+### Lookup-Driven Element Sync
+
+**Pattern:** Use one element's value as a lookup key into a data collection, then drive the state of a different element based on the result. The same sync logic runs from multiple trigger points (TextEntry `OnChange` and Listbox `OnSelect`) so that "the current selection changed" always produces consistent UI state.
+
+**Source:** EVEBot — Fleet member editor (tbAddFleetMember TextEntry syncs cbWing Checkbox)
+
+**The scenario:** A text input lets the user type a fleet member name. A separate checkbox reflects whether that member is configured for "Wing 2". The checkbox must stay in sync with the text input as the user types, AND when the user clicks an existing entry in a listbox of fleet members.
+
+**The TextEntry (triggers sync on every keystroke):**
+
+```xml
+<TextEntry name='tbAddFleetMember'>
+  <X>300</X>
+  <Y>40</Y>
+  <Width>200</Width>
+  <Height>18</Height>
+  <MaxLength>50</MaxLength>
+  <OnChange>
+    if ${Script[EVEBot].VariableScope.Config.Fleet.IsWing["${This.Text.Escape}"]}
+      UIElement[cbWing@Fleet@EVEBotOptionsTab@EVEBot]:SetChecked
+    else
+      UIElement[cbWing@Fleet@EVEBotOptionsTab@EVEBot]:UnsetChecked
+  </OnChange>
+</TextEntry>
+```
+
+**The Checkbox (target of the sync):**
+
+```xml
+<checkbox name='cbWing'>
+  <X>450</X>
+  <Y>65</Y>
+  <Width>50</Width>
+  <Height>20</Height>
+  <Text>Wing 2</Text>
+  <AutoTooltip>If checked, this character will be moved to Wing 2.</AutoTooltip>
+  <OnLeftClick>
+    Script[EVEBot].VariableScope.Config.Fleet:SetWingOne[${This.Checked}]
+  </OnLeftClick>
+</checkbox>
+```
+
+**The Listbox (triggers the same sync on selection):**
+
+```xml
+<listbox Name='FleetMembers'>
+  <X>10</X>
+  <Y>90</Y>
+  <Width>530</Width>
+  <Height>175</Height>
+  <Sort>Text</Sort>
+
+  <OnSelect>
+    ; Copy selected item text into the TextEntry
+    UIElement[tbAddFleetMember@Fleet@EVEBotOptionsTab@EVEBot]:SetText[${This.SelectedItem.Text}]
+
+    ; Run the identical IsWing check to sync cbWing
+    if ${Script[EVEBot].VariableScope.Config.Fleet.IsWing[${UIElement[tbAddFleetMember@Fleet@EVEBotOptionsTab@EVEBot].Text}]}
+      UIElement[cbWing@Fleet@EVEBotOptionsTab@EVEBot]:SetChecked
+    else
+      UIElement[cbWing@Fleet@EVEBotOptionsTab@EVEBot]:UnsetChecked
+  </OnSelect>
+</listbox>
+```
+
+**The Script-Side Lookup Method:**
+
+```lavishscript
+member:bool IsWing(string value)
+{
+    This:RefreshFleetMembers
+    variable iterator InfoFromSettings
+    This.FleetMembers:GetIterator[InfoFromSettings]
+    if ${InfoFromSettings:First(exists)}
+        do
+        {
+            if ${InfoFromSettings.Value.FleetMemberName.Equal[${value}]} && ${InfoFromSettings.Value.Wing}
+                return TRUE
+        }
+        while ${InfoFromSettings:Next(exists)}
+    return FALSE
+}
+```
+
+**Key techniques:**
+
+1. **Fully-qualified element paths** — `UIElement[cbWing@Fleet@EVEBotOptionsTab@EVEBot]` reaches across the entire UI tree from the `@element@tab@tabcontrol@window` hierarchy. This is necessary when the trigger element and target element live in different containers.
+
+2. **Lookup key is a UI value** — The TextEntry's current text is passed as a parameter to a script member function that queries persisted settings. The function returns a bool that directly drives the checkbox state.
+
+3. **`${This.Text.Escape}`** — Escapes special characters in the current text before passing it as a parameter, preventing parse errors from quotes/brackets in typed names.
+
+4. **Duplicated sync logic on multiple triggers** — Both the TextEntry's `OnChange` and the Listbox's `OnSelect` run the SAME lookup-and-sync block. Both events represent "the current selection changed" so both need to update the checkbox. (This duplication is acceptable when the logic is short — for longer logic, extract it to a script method.)
+
+5. **Two-way data flow, not binding** — This is not traditional data binding. The UI elements drive each other through script-side lookups, not through a shared bound variable.
+
+**When to use this pattern:**
+
+- When one element's value is a key into a data collection and other elements must reflect properties of the matching record
+- When multiple user actions (typing, selecting from a list, pasting) should all trigger the same UI state update
+- When the relationship is too complex for simple one-to-one data binding
+- When UI elements live in different tabs or containers
+
+**Caveats:**
+
+- Fully-qualified paths are brittle — if you rename a tab or window, every cross-element reference breaks. Consider using `FindUsableChild` variables for more resilient references (see [Deep Element Access with FindUsableChild](#deep-element-access-with-findusablechild)).
+- Duplicated sync logic is a maintenance hazard. If the logic grows beyond a few lines, refactor it into a script atom/method that all trigger points call.
+- `OnChange` fires on every keystroke, so the lookup method must be fast (avoid expensive iteration over large collections).
 
 ---
 
@@ -1169,20 +1283,21 @@ These advanced patterns from EVE Online production scripts demonstrate:
 
 1. **Deep UI Navigation** - `FindUsableChild` for robust element access
 2. **Two-Way Data Binding** - Bidirectional sync between UI and script
-3. **Stateful UI Components** - Toggle buttons that remember state
-4. **Settings Persistence** - Auto-save on change patterns
-5. **Console Logging** - Real-time output to UI console
-6. **Visual Feedback** - Alpha transparency effects and animations
-7. **Multi-Client Coordination** - Relay commands for fleet operations
-8. **Nested TabControls** - Tab-within-tab organization
-9. **Slider Synchronization** - Real-time label updates with unit conversion
-10. **List Management** - Iterator-based population patterns
-11. **Decoupled List Refresh** - OnRightClick as centralized refresh trigger
-12. **Live Game Data Display** - Listbox population from live queries with re-query info display
-13. **Advanced TextEntry** - OnKeyDown for Enter key detection
-14. **ComboBox Values** - Separate display text from stored values
-15. **Dynamic ComboBox Population** - Populate from ISXEVE APIs with saved selection restore
-16. **Production Robustness** - Dynamic displays and polymorphic input
+3. **Cross-Element UI Sync** - Lookup-driven sync across elements via shared lookup key
+4. **Stateful UI Components** - Toggle buttons that remember state
+5. **Settings Persistence** - Auto-save on change patterns
+6. **Console Logging** - Real-time output to UI console
+7. **Visual Feedback** - Alpha transparency effects and animations
+8. **Multi-Client Coordination** - Relay commands for fleet operations
+9. **Nested TabControls** - Tab-within-tab organization
+10. **Slider Synchronization** - Real-time label updates with unit conversion
+11. **List Management** - Iterator-based population patterns
+12. **Decoupled List Refresh** - OnRightClick as centralized refresh trigger
+13. **Live Game Data Display** - Listbox population from live queries with re-query info display
+14. **Advanced TextEntry** - OnKeyDown for Enter key detection
+15. **ComboBox Values** - Separate display text from stored values
+16. **Dynamic ComboBox Population** - Populate from ISXEVE APIs with saved selection restore
+17. **Production Robustness** - Dynamic displays and polymorphic input
 
 **Key Takeaways:**
 - Real production scripts require sophisticated UI patterns
