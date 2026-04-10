@@ -456,11 +456,11 @@ EQ2Craft uses a `switch` statement over a variable-argument list (`... recipeFav
 
 ## Trigger-Based Automation
 
-### Pattern: Chat-Based Event Automation
+### Pattern: Autoharvest with Wildcard Triggers
 
-Triggers allow scripts to respond to chat messages automatically.
+The trigger system parses incoming chat text and queues handler function calls. For the canonical reference covering placeholders (`@TYPE@`, `@NUMBER@`, `@RAW@`, `@NAME@`, `@ZONE@`), handler signatures, and full examples for harvest/combat/group/tell/zone/quest triggers, see [15_Advanced_Scripting_Patterns.md](15_Advanced_Scripting_Patterns.md#trigger-system-for-chat-parsing).
 
-#### Basic Trigger Pattern
+The example below is unique in two ways: it uses the `@*@` wildcard form (match any text before/after the literal) and it demonstrates a timer-gated `ExecuteQueued` pump so trigger-driven actions are processed at a controlled interval rather than every frame.
 
 **Source:** autoharvest.iss
 
@@ -527,12 +527,9 @@ function Check_Triggers()
 
 #### Key Lessons:
 
-- **AddTrigger syntax**: `AddTrigger FunctionName "pattern"`
-- **Wildcards**: Use `@*@` to match any text before/after
-- **Periodic checking**: Don't execute triggers every frame - use timer
-- **ExecuteQueued**: Processes all queued trigger commands
-- **Function signature**: Trigger function receives `string Line` parameter
-- **Endless loop**: Use `while 1` or `while 0 < 1` for continuous monitoring
+- **Wildcards**: `@*@` matches any text before/after a literal fragment -- useful when you only care that a message occurred, not its details
+- **Periodic checking**: Don't drain the trigger queue every frame -- gate `ExecuteQueued` behind a timer to batch work
+- **ExecuteQueued loop**: Wrap in `do { ExecuteQueued } while ${QueuedCommands}` to drain all pending matches in one pass
 
 ---
 

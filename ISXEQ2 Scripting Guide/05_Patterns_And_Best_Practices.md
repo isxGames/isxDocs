@@ -631,39 +631,7 @@ call CastSpellRange 322 0 1 0 ${KillTarget}         ; Position-specific
 
 ### Chat Trigger Pattern
 
-Triggers match incoming text and queue function calls automatically. Use `AddTrigger` to register patterns and `ExecuteQueued` to process matches. See [07_Advanced_Patterns_And_Examples.md](07_Advanced_Patterns_And_Examples.md) for a complete working example.
-
-```lavishscript
-; Register triggers -- when text matches, the named function is queued
-AddTrigger AutoFollowTank "\\aPC @*@ @*@:@sender@\\/a tells@*@Follow Me@*@"
-AddTrigger ReceivedTell "\\aPC @*@ @*@:@Sender@\\/a tells you,@Message@"
-
-; Trigger handler functions (called via ExecuteQueued when pattern matches)
-function AutoFollowTank(string Line, string sender)
-{
-    echo "Following ${sender}"
-    Actor[${sender}]:DoFace
-    EQ2Execute /follow
-}
-
-function ReceivedTell(string Line, string Sender, string Message)
-{
-    echo "${Sender} said: ${Message}"
-}
-
-; In your main loop, periodically process queued triggers
-function Check_Triggers()
-{
-    if ${QueuedCommands}
-    {
-        do
-        {
-            ExecuteQueued
-        }
-        while ${QueuedCommands}
-    }
-}
-```
+Triggers match incoming chat text against patterns registered with `AddTrigger` and queue named handler functions for later execution via `ExecuteQueued`. This enables chat-driven automation such as auto-follow on request, auto-response to tells, loot tracking, and combat event reactions. For the canonical reference -- including placeholder syntax (`@TYPE@`, `@NUMBER@`, `@RAW@`, `@NAME@`, `@ZONE@`), handler function signatures, and complete examples covering harvesting, combat, group/tell, and zone/quest triggers -- see [15_Advanced_Scripting_Patterns.md](15_Advanced_Scripting_Patterns.md#trigger-system-for-chat-parsing). For a working `@*@` wildcard example with a timer-gated `ExecuteQueued` pump, see [07_Advanced_Patterns_And_Examples.md](07_Advanced_Patterns_And_Examples.md#trigger-based-automation).
 
 ### Window Appearance Pattern
 
