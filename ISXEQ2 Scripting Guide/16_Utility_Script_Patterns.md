@@ -47,68 +47,34 @@ The EQ2BJCommon script collection provides utility scripts for auction managemen
 
 ## Custom Timer Objects
 
-Custom timer objects provide more flexible time tracking than simple `wait` commands. They allow you to check remaining time, restart timers, and coordinate multiple time-based operations.
+Custom timer objects (a `TimerObject` objectdef with `Set`/`TimeLeft` members) provide non-blocking, resettable timing — more flexible than inline `wait` commands. The EQ2BJCommon scripts use this pattern for randomized potion cooldowns and similar delayed-action logic.
 
-### Pattern
+**This pattern is documented canonically in [15_Advanced_Scripting_Patterns.md](15_Advanced_Scripting_Patterns.md#reusable-timer-objects)**, which covers the basic `TimerObject`, an `AdvancedTimer` variant with pause/resume, and a full multi-timer pulse system. Refer there for the complete objectdef and usage examples.
+
+**Minimal signature (for recognition):**
 
 ```lavishscript
 objectdef TimerObject
 {
-	variable uint EndTime
-
-	method Set(uint Milliseconds)
-	{
-		EndTime:Set[${Milliseconds}+${Script.RunningTime}]
-	}
-
-	member:uint TimeLeft()
-	{
-		if ${Script.RunningTime}>=${EndTime}
-			return 0
-		return ${Math.Calc[${EndTime}-${Script.RunningTime}]}
-	}
+    variable uint EndTime
+    method Set(uint Milliseconds)
+    member:uint TimeLeft()
 }
 ```
 
-### Usage Example
+**Typical EQ2BJCommon usage** — a randomized potion-use delay:
 
 ```lavishscript
 variable(global) TimerObject NextPotionTimer
-variable int RandomDelay
+RandomDelay:Set[${Math.Rand[300000]:Inc[600000]}]  ; 10-15 min
+NextPotionTimer:Set[${RandomDelay}]
 
-function main()
+if ${NextPotionTimer.TimeLeft} == 0
 {
-	; Set a random delay between 10-15 minutes (600000-900000 ms)
-	RandomDelay:Set[${Math.Rand[300000]:Inc[600000]}]
-	NextPotionTimer:Set[${RandomDelay}]
-
-	echo Next potion use in ${Math.Calc[${NextPotionTimer.TimeLeft}/1000]} seconds
-
-	while 1
-	{
-		if ${NextPotionTimer.TimeLeft} == 0
-		{
-			echo Timer expired! Using potion...
-			call UsePotion
-
-			; Reset timer for next use
-			RandomDelay:Set[${Math.Rand[300000]:Inc[600000]}]
-			NextPotionTimer:Set[${RandomDelay}]
-		}
-
-		; Display countdown
-		echo Time until next potion: ${Math.Calc[${NextPotionTimer.TimeLeft}/1000]} seconds
-		wait 10
-	}
+    call UsePotion
+    NextPotionTimer:Set[${Math.Rand[300000]:Inc[600000]}]
 }
 ```
-
-### Benefits
-
-- **Non-blocking**: Check timer status without waiting
-- **Resettable**: Restart timer dynamically
-- **Multiple timers**: Track different operations independently
-- **Precise**: Based on `${Script.RunningTime}` for accuracy
 
 **Source**: bjmagic.iss:94-109, bjxpbot.iss:1115-1130
 
