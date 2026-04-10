@@ -691,6 +691,97 @@ Sliders for numeric input with visual feedback.
 - Use `${Int[${This.Value}]}` to ensure integer when storing values
 - Place the label element adjacent to the slider for a clean layout
 
+### Console
+
+A dedicated scrollable log output element with a built-in scrollback buffer. Unlike Text or TextBox elements, console elements receive text via the `:Echo[]` method and manage their own line buffer automatically.
+
+**Note:** Console elements require a fixed-width font. LavishGUI 1 will automatically substitute a fixed font even if you specify a variable-width font.
+
+**Basic Console:**
+
+```xml
+<console Name='StatusConsole'>
+  <X>5</X>
+  <Y>r120</Y>
+  <Width>97.5%</Width>
+  <Height>115</Height>
+  <BackBufferSize>1000</BackBufferSize>
+  <BackgroundColor>FF000000</BackgroundColor>
+  <BorderColor>FFFFFFFF</BorderColor>
+  <SelectionColor>FF006666</SelectionColor>
+  <Border>1</Border>
+  <Font template='console.Font' />
+  <ScrollBar template='console.ScrollBar' />
+</console>
+```
+
+**Console Properties:**
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `BackBufferSize` | int | Number of lines in the scrollback buffer (default varies; common values: 1000, 2000) |
+| `BackgroundColor` | ARGB hex | Background color (e.g., `FF000000` for black) |
+| `ScrollbackColor` | ARGB hex | Background color for scrollback area (older lines) |
+| `BorderColor` | ARGB hex | Border color |
+| `SelectionColor` | ARGB hex | Text selection highlight color |
+| `Border` | int | Border width in pixels |
+| `Font` | template ref | Font template (must be fixed-width) |
+| `ScrollBar` | template ref | Scrollbar template reference |
+
+**Writing to Console from Script:**
+
+Use the `:Echo[]` method on the element — this is the only way to write to a console element:
+
+```lavishscript
+; Address by full element path (Name@Parent@Grandparent@...)
+UIElement[StatusConsole@Status@OptionsTab@MyWindow]:Echo["Process started"]
+
+; Color codes are supported via \a escape sequences
+UIElement[StatusConsole@Status@OptionsTab@MyWindow]:Echo["\agSuccess: task complete"]
+UIElement[StatusConsole@Status@OptionsTab@MyWindow]:Echo["\arError: connection failed"]
+
+; Use .Escape on dynamic text to handle special characters
+UIElement[StatusConsole@Status@OptionsTab@MyWindow]:Echo["${msg.Escape}"]
+```
+
+**Common color codes:** `\ag` (green), `\ar` (red), `\at` (teal), `\ao` (orange), `\ax` (reset to default).
+
+**Important distinctions:**
+- The standalone `echo` command writes to the InnerSpace system console, NOT to your custom console element
+- Custom console elements only receive text when explicitly addressed via `UIElement[...]:Echo[]`
+- Console elements manage their own line buffer and scrollback automatically — no script-side trimming needed (unlike LGUI2 textbox consoles)
+
+**Console with Template:**
+
+Define a reusable console template in your skin file:
+
+```xml
+<!-- In your skin file -->
+<template name='MyConsole.Font'>
+  <Name>Terminal</Name>
+  <Size>8</Size>
+  <Color>FFFFFFFF</Color>
+</template>
+
+<template name='MyConsole'>
+  <Border>0</Border>
+  <Font template='MyConsole.Font' />
+  <SelectionColor>FFD4D0C8</SelectionColor>
+  <ScrollBar>console.ScrollBar</ScrollBar>
+  <BackBufferSize>2000</BackBufferSize>
+</template>
+```
+
+```xml
+<!-- In your UI file -->
+<console Name='StatusConsole' template='MyConsole'>
+  <X>5</X>
+  <Y>r120</Y>
+  <Width>97.5%</Width>
+  <Height>115</Height>
+</console>
+```
+
 ---
 
 ## Event Handling
