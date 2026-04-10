@@ -43,7 +43,10 @@
    - [Percentage-Based Textentry](#percentage-based-textentry)
    - [Conditional Frame Visibility Based on Script Variable](#conditional-frame-visibility-based-on-script-variable)
    - [Commandbutton with Visible Property](#commandbutton-with-visible-property)
-9. [Production Patterns](#production-patterns)
+9. [OnRightClick as Programmatic Refresh Trigger](#onrightclick-as-programmatic-refresh-trigger)
+10. [Cross-Element UI Synchronization](#cross-element-ui-synchronization)
+11. [Production Skin Pattern](#production-skin-pattern)
+12. [Production Patterns](#production-patterns)
 
 ---
 
@@ -1314,6 +1317,356 @@ else
 - Script shows based on class/conditions
 - Class-specific abilities
 - Dynamic UI based on character
+
+---
+
+## OnRightClick as Programmatic Refresh Trigger
+
+### Centralized Handler Dispatch Pattern
+
+**Pattern:** Place state-change logic in `OnRightClick`, then use `OnLeftClick` (physical click) and external buttons to forward to it via `:RightClick`. This gives you a single handler that can be invoked from multiple places without duplicating code.
+
+**Source:** EQ2OgreBot — UplinkController UI (used across ~70 checkboxes for cure potion priorities, combat settings, etc.)
+
+**Why this pattern?** When the same logic must run from multiple triggers (user click, external "update all" button, startup re-apply, cross-session sync), duplicating the code in each trigger is fragile. By centralizing it in `OnRightClick` and using `:RightClick` as a programmatic dispatcher, you get one source of truth.
+
+**The Checkbox (dual handler pattern):**
+
+```xml
+<checkbox name='ChkBoxPriorityCurePotionArcaneID' template='chkbox'>
+  <X>15</X>
+  <Y>30</Y>
+  <Font>
+    <Color>FF00FF00</Color>
+  </Font>
+  <Text>Arcane Potion</Text>
+
+  <!-- Physical click just forwards to OnRightClick -->
+  <OnLeftClick>
+    This:RightClick
+  </OnLeftClick>
+
+  <!-- Actual state-change logic lives here (single source of truth) -->
+  <OnRightClick>
+    relay ${OgreRelayGroup} "Script[\${OgreBotScriptName}]:QueueCommand[call ChangeCastStackListBoxItem ArcanePotionName ${This.Checked}]"
+  </OnRightClick>
+</checkbox>
+```
+
+**The "Update All" Button (programmatic dispatch to multiple checkboxes):**
+
+```xml
+<CommandButton Name="UpdateAllCurePotions" template='Button'>
+  <X>15</X>
+  <Y>10</Y>
+  <Width>110</Width>
+  <Height>20</Height>
+  <Text>Update All Cures</Text>
+  <OnLeftClick>
+    ; Fire each checkbox's OnRightClick handler programmatically
+    This.Parent.FindChild[ChkBoxPriorityCurePotionArcaneID]:RightClick
+    This.Parent.FindChild[ChkBoxPriorityCurePotionNoxiousID]:RightClick
+    This.Parent.FindChild[ChkBoxPriorityCurePotionElementalID]:RightClick
+    This.Parent.FindChild[ChkBoxPriorityCurePotionTraumaID]:RightClick
+  </OnLeftClick>
+</CommandButton>
+```
+
+**Batch "Save Settings" Button** (fires every checkbox's handler to force a save-all):
+
+```xml
+<CommandButton Name="SaveCombatSettings">
+  <Text>Save All</Text>
+  <OnLeftClick>
+    This.Parent.FindChild[checkbox_settings_rangedattack]:RightClick
+    This.Parent.FindChild[checkbox_settings_meleeattack]:RightClick
+    This.Parent.FindChild[checkbox_settings_movemelee]:RightClick
+    This.Parent.FindChild[checkbox_settings_movebehind]:RightClick
+    This.Parent.FindChild[checkbox_settings_combatarts]:RightClick
+    This.Parent.FindChild[checkbox_settings_namedcombatarts]:RightClick
+  </OnLeftClick>
+</CommandButton>
+```
+
+**Key techniques:**
+
+1. **OnLeftClick → OnRightClick forwarding** — The `OnLeftClick` handler contains only `This:RightClick`. The physical click just dispatches to the real handler, making every trigger go through the same code path.
+
+2. **`:RightClick` as a programmatic event** — External code can call `UIElement[name]:RightClick` to fire the OnRightClick handler without requiring an actual mouse click. The user can still right-click the element manually for the same effect.
+
+3. **Parent-relative lookup** — `This.Parent.FindChild[name]` is often cleaner than fully-qualified paths when the dispatcher button is in the same container as the target elements.
+
+4. **Batch operations** — A single "Update All" button can dispatch to dozens of checkboxes, each running its own persistence/broadcast logic, without the button needing to know what that logic is.
+
+**When to use this pattern:**
+
+- Checkboxes that must save state to LavishSettings AND broadcast via relay commands
+- "Save All" / "Update All" / "Refresh All" buttons that trigger multiple individual element handlers
+- Cross-session synchronization where a relay event needs to re-fire all UI element handlers to reapply state
+- Any scenario where the same logic runs from user action + automated trigger
+
+**Note:** Applied to listboxes, this same pattern centralizes list population logic — see the ISXEVE version of this guide for the EVEBot whitelist example where OnRightClick holds the iterate-and-populate code.
+
+---
+
+## Cross-Element UI Synchronization
+
+### One-Way Sync with Value Transformation
+
+**Pattern:** A TextEntry's `OnChange` handler reads its own value, clamps/transforms it into the valid range of a sibling element (like a Slider), and programmatically updates that sibling. Deliberately one-way to avoid infinite feedback loops.
+
+**Source:** EQ2Bot — ScanRange TextEntry ↔ Slider pair (also MARange pair)
+
+**Why this pattern?** Users often want two ways to set the same value — typing a precise number into a TextEntry or dragging a Slider. Both elements need to stay visually in sync, but naive bidirectional update handlers will cause infinite loops (textentry changes slider → slider's OnChange fires → tries to change textentry → textentry's OnChange fires → ...). This pattern solves it by having both elements independently write to a shared backing store, while only ONE direction of UI sync is implemented.
+
+**The TextEntry (drives the Slider, clamps out-of-range input):**
+
+```xml
+<Textentry Name='ScanRange'>
+  <X>90%</X>
+  <Y>216</Y>
+  <Width>7%</Width>
+  <Height>15</Height>
+  <MaxLength>4</MaxLength>
+
+  <OnLoad>
+    This:SetText[${Script[EQ2Bot].Variable[ScanRange]}]
+  </OnLoad>
+
+  <OnChange>
+    variable int Value
+    Value:Set[${This.Text}]
+
+    ; Clamp value into slider's valid range (0-45) with transformation (Value - 5)
+    if ${Value} >= 50
+      UIElement[EQ2 Bot].FindUsableChild[ScanRange Slider,slider]:SetValue[45]
+    elseif ${Value} <= 5
+      UIElement[EQ2 Bot].FindUsableChild[ScanRange Slider,slider]:SetValue[1]
+    else
+      UIElement[EQ2 Bot].FindUsableChild[ScanRange Slider,slider]:SetValue[${Math.Calc[${Value} - 5]}]
+
+    ; Both elements write to the shared LavishSetting + script variable
+    LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[What RANGE to SCAN for Mobs?,${Value}]
+    Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+    Script[EQ2Bot].Variable[ScanRange]:Set[${Value}]
+  </OnChange>
+</Textentry>
+```
+
+**The Slider (does NOT call back to TextEntry — avoids loops):**
+
+```xml
+<Slider Name='ScanRange Slider'>
+  <Range>45</Range>
+  <OnLoad>
+    This:SetValue[${Math.Calc[${Script[EQ2Bot].Variable[ScanRange]} - 5]}]
+  </OnLoad>
+
+  <OnChange>
+    variable int Value
+    Value:Set[${This.Value} + 5]
+
+    ; Writes to shared backing store but does NOT touch the TextEntry
+    LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[What RANGE to SCAN for Mobs?,${Value}]
+    Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+    Script[EQ2Bot].Variable[ScanRange]:Set[${Value}]
+  </OnChange>
+</Slider>
+```
+
+**Key techniques:**
+
+1. **Value transformation** — The TextEntry accepts 5-50 but the Slider displays 0-45, so values are transformed with `${Math.Calc[${Value} - 5]}` and `${This.Value} + 5`. One element can have a different display range than the other.
+
+2. **Input clamping** — The TextEntry's OnChange handles out-of-range input by clamping rather than rejecting, giving better UX than silently ignoring bad values.
+
+3. **One-way UI sync** — The TextEntry's OnChange updates the Slider, but the Slider's OnChange does NOT update the TextEntry. This breaks the feedback loop. If you need the other direction (slider drag updates TextEntry display), use a separate mechanism like OnRender polling or a shared textBinding.
+
+4. **Shared backing store** — Both handlers independently write to the same LavishSetting and script variable (`ScanRange`). This gives you implicit two-way data sync: the underlying value always reflects the most recent user action, regardless of which element was used to change it.
+
+5. **`FindUsableChild` for robust cross-element lookup** — `UIElement[EQ2 Bot].FindUsableChild[ScanRange Slider,slider]:SetValue[...]` works even if the slider is nested inside multiple containers.
+
+**When to use this pattern:**
+
+- Paired input controls (TextEntry + Slider, Slider + Label, Combobox + Visibility toggle)
+- Dropdown selections that show/hide dependent panels (see EQ2Bot's PullType → Bow/Pet/Spell Pull Frames)
+- Master/detail UIs where selecting an item in one list updates fields elsewhere
+- Any UI state that must stay visually consistent across multiple elements
+
+**Caveats:**
+
+- **Never implement full bidirectional sync with direct element updates** — you will create infinite loops. Use a shared backing variable or one-way sync instead.
+- **Value transformations must be symmetric** — if the TextEntry writes `value - 5` to the Slider, the Slider's OnChange must apply `value + 5` to get back to the "real" value.
+- **FindUsableChild performance** — each call walks the element tree. For frequently-fired handlers (OnChange fires on every keystroke), consider caching the result in a script variable.
+
+---
+
+## Production Skin Pattern
+
+### Skin Definition File with SkinTemplate Mappings
+
+**Pattern:** Create a complete visual skin in a separate XML file that defines texture templates, font templates, widget templates, AND a `<Skin>` element with `<SkinTemplate>` mappings. Load the skin file first, then load the main UI with `-skin <SkinName>` to apply the skin's templates.
+
+**Source:** EQ2Bot — `EQ2Bot/UI/EQ2Skin.xml` (616 lines, 85 templates, 3 DDS texture atlases)
+
+**Why this pattern?** For a complete themed application, defining every template and explicitly mapping them to widget types gives maximum control. The `<Skin>` element tells LavishGUI "when a script requests this skin, use my templates for these widget types by default." UI files can then be loaded with `-skin SkinName` to automatically apply the theme without having to specify `template='...'` on every single element.
+
+**Skin File Structure:**
+
+```xml
+<?xml version="1.0" encoding="UTF-8" ?>
+<ISUI>
+  <!-- ============================================== -->
+  <!-- 1. SKIN DECLARATION + TEMPLATE MAPPINGS        -->
+  <!-- ============================================== -->
+  <Skin Name='eq2skin' Template='Default Skin'>
+    <SkinTemplate Base='window' Skin='EQ2.window' />
+    <SkinTemplate Base='tabcontrol' Skin='EQ2.tabcontrol' />
+    <SkinTemplate Base='combobox' Skin='EQ2.combobox' />
+    <SkinTemplate Base='listbox' Skin='EQ2.listbox' />
+    <SkinTemplate Base='checkbox' Skin='EQ2.checkbox' />
+    <SkinTemplate Base='button' Skin='EQ2.button' />
+    <SkinTemplate Base='slider' Skin='EQ2.slider' />
+    <SkinTemplate Base='gauge' Skin='EQ2.gauge' />
+    <SkinTemplate Base='commandbutton' Skin='EQ2.commandbutton' />
+    <SkinTemplate Base='commandcheckbox' Skin='EQ2.commandcheckbox' />
+    <SkinTemplate Base='textentry' Skin='EQ2.textentry' />
+    <SkinTemplate Base='console' Skin='EQ2.console' />
+    <SkinTemplate Base='text' Skin='EQ2.text' />
+  </Skin>
+
+  <!-- ============================================== -->
+  <!-- 2. TEXTURE TEMPLATES (atlas slicing)           -->
+  <!-- ============================================== -->
+  <template name='EQ2.window.Texture' Filename='windowelements.dds'>
+    <Left>14</Left>
+    <Right>414</Right>
+    <Top>529</Top>
+    <Bottom>893</Bottom>
+  </template>
+
+  <template name='EQ2.checkbox.Texture' Filename='commonelements.dds'>
+    <Left>0</Left>
+    <Right>16</Right>
+    <Top>0</Top>
+    <Bottom>16</Bottom>
+  </template>
+  <template name='EQ2.checkbox.TextureHover' Filename='commonelements.dds'>
+    <Left>16</Left>
+    <Right>32</Right>
+    <Top>0</Top>
+    <Bottom>16</Bottom>
+  </template>
+  <template name='EQ2.checkbox.TextureChecked' Filename='commonelements.dds'>
+    <Left>48</Left>
+    <Right>64</Right>
+    <Top>0</Top>
+    <Bottom>16</Bottom>
+  </template>
+
+  <!-- ============================================== -->
+  <!-- 3. FONT TEMPLATES                              -->
+  <!-- ============================================== -->
+  <template name='EQ2.Font'>
+    <Name>Tahoma</Name>
+    <Size>10</Size>
+    <Color>FFDDBB00</Color>
+  </template>
+
+  <!-- Console requires a fixed-width font -->
+  <template name='EQ2.console.Font' Template='Default Fixed Font'>
+    <Color>FFDDBB00</Color>
+  </template>
+
+  <!-- ============================================== -->
+  <!-- 4. WIDGET COMPOSITE TEMPLATES                  -->
+  <!-- ============================================== -->
+  <template name='EQ2.checkbox'>
+    <Font template='EQ2.checkbox.Font' />
+    <Texture template='EQ2.checkbox.Texture' />
+    <TextureHover template='EQ2.checkbox.TextureHover' />
+    <TextureChecked template='EQ2.checkbox.TextureChecked' />
+  </template>
+
+  <!-- ============================================== -->
+  <!-- 5. ORIENTATION-FLIPPED VARIANTS                -->
+  <!-- ============================================== -->
+  <template name='EQ2.verticalslider' Template='EQ2.slider'>
+    <Orientation>vertical</Orientation>
+  </template>
+</ISUI>
+```
+
+**Loading the Skin (EQ2Bot.iss pattern):**
+
+```lavishscript
+method Init_UI()
+{
+    ; Load order: skin file first, then UI file with -skin flag
+    ui -reload "${LavishScript.HomeDirectory}/Interface/skins/EQ2-Green/EQ2-Green.xml"
+    ui -reload -skin EQ2-Green "${PATH_UI}/eq2bot.xml"
+}
+```
+
+The `-skin` flag tells LavishGUI to apply the named skin's `<SkinTemplate>` mappings to all widgets in the loaded UI file. Every `<checkbox>`, `<button>`, etc. automatically uses the skin's templates without needing `template='...'` on each element.
+
+**Loading child UIs into the same skin:**
+
+```lavishscript
+; Class-specific UIs loaded as children must specify the same -skin flag
+ui -load -parent "Class@EQ2Bot Tabs@EQ2 Bot" -skin EQ2-Green "${PATH_UI}/${Me.SubClass}.xml"
+ui -load -parent "Extras@EQ2Bot Tabs@EQ2 Bot" -skin EQ2-Green "${PATH_UI}/EQ2BotExtras.xml"
+```
+
+Each child XML loaded via `-parent` also needs `-skin EQ2-Green` so the templates resolve consistently.
+
+**Key techniques:**
+
+1. **`<Skin>` + `<SkinTemplate>` vs. template library pattern** — The `<Skin>` element explicitly maps base widget types to skinned templates. This is more structured than just defining templates (the "template library" pattern). UI files loaded with `-skin SkinName` automatically use the mapped templates.
+
+2. **Template inheritance from `Default Skin`** — `<Skin Name='eq2skin' Template='Default Skin'>` means any widget type NOT explicitly mapped falls back to the Default Skin, so you only need to override what you want to change.
+
+3. **Texture atlasing** — Multiple states or widgets packed into a single `.dds` file. Each template uses `<Left>/<Right>/<Top>/<Bottom>` to slice out its region. EQ2Bot uses 3 atlases: `windowelements.dds` (window chrome), `commonelements.dds` (widgets), `window_elements_generic.dds` (gauges).
+
+4. **Hierarchical naming convention** — `EQ2.widget.SubComponent` (e.g., `EQ2.checkbox.TextureHover`, `EQ2.window.TitleBar.Title.Font`). This makes template purpose clear and prevents collisions with other loaded skins.
+
+5. **Orientation variants** — Templates like `EQ2.verticalslider` inherit from `EQ2.slider` via `Template='EQ2.slider'` attribute and override with `<Orientation>vertical</Orientation>`.
+
+6. **Widget templates use empty child tags** — `<Font />`, `<Texture />` self-closing inside a widget template act as placeholders that LavishGUI resolves to sibling templates by naming convention. Combined with the skin mapping, this gives you a chain of resolution: widget → texture template → file + slicing.
+
+**File organization:**
+
+```
+Interface/
+└── skins/
+    └── EQ2-Green/
+        ├── EQ2-Green.xml          ← Skin definition with <Skin> mappings
+        ├── windowelements.dds     ← Window chrome atlas
+        ├── commonelements.dds     ← Widget atlas
+        └── window_elements_generic.dds  ← Gauge atlas
+
+Scripts/
+└── EQ2Bot/
+    └── UI/
+        └── eq2bot.xml              ← Main UI (loaded with -skin EQ2-Green)
+```
+
+**Benefits of this pattern:**
+
+- **Implicit template application** — UI files don't need `template='...'` on every element; the `-skin` flag applies mappings automatically
+- **Theme swapping** — Load a different skin file (`EQ2-Green` vs `EQ2-Blue`) to retheme without touching UI XML
+- **Partial overrides** — `Template='Default Skin'` means you only define what you want to change; everything else uses defaults
+- **Child UI consistency** — Class-specific UIs loaded via `-parent -skin` automatically match the parent window's appearance
+- **Separation of concerns** — Artists work on the skin file, developers work on the UI files
+
+**Two approaches, one file format:**
+
+LavishGUI supports two approaches to reusable visual templates:
+
+1. **Skin mapping pattern (EQ2Bot)** — Explicit `<Skin>` element with `<SkinTemplate>` mappings; UI loaded with `-skin SkinName` flag
+2. **Template library pattern (EVEBot)** — No `<Skin>` element; templates are defined globally and UI elements reference them by name via `template='...'` attribute
+
+Both are valid. The skin mapping pattern is more structured and better for complete themes. The template library pattern is simpler and better for partial styling or when UI elements need explicit template control.
 
 ---
 
