@@ -27,6 +27,7 @@
     - Event Hooks
     - Visibility Control
     - Triggers
+    - Text Scanners
     - FilePicker
     - Animations
     - Item View Generators
@@ -4944,6 +4945,108 @@ Triggers fire event handlers based on conditions:
     }
 }
 ```
+
+### Text Scanners
+
+A Text Scanner selects a **Text Type** for processing and decorating text content — enabling features like console color codes, syntax highlighting, or custom text formatting. Text scanners can be applied to `textblock`, `textbox`, and `commandbox` elements.
+
+**Official Documentation:** https://www.lavishsoft.com/wiki/index.php/LGUI2:Text_Scanners
+
+#### Basic Usage
+
+```json
+{
+    "type": "textblock",
+    "textScanner": {
+        "type": "lguiconsole"
+    },
+    "text": "Console-formatted text with color codes"
+}
+```
+
+The `type` property selects which Text Type processes the text. The scanner handles parsing and rendering — for example, `lguiconsole` interprets InnerSpace console color codes in the text content.
+
+#### Console Text Scanner (`lguiconsole`)
+
+The `lguiconsole` scanner is the LGUI2 equivalent of the LGUI1 `<console>` element. It processes text using the InnerSpace console format, supporting embedded color codes.
+
+**Use case: Read-only log/console display**
+```json
+{
+    "type": "textbox",
+    "name": "StatusConsole",
+    "textScanner": {
+        "type": "lguiconsole"
+    },
+    "multiline": true,
+    "readOnly": true,
+    "text": "Loading..."
+}
+```
+
+Update the console from script code:
+```lavishscript
+; Append a new log line (with line trimming to prevent unbounded growth)
+variable string currentText = "${LGUI2.Element[StatusConsole].Text}"
+variable int lineCount = ${currentText.Count["\n"]}
+if ${lineCount} > 100
+{
+    ; Trim the oldest line
+    variable int firstNewline = ${currentText.Find["\n"]}
+    currentText:Set["${currentText.Right[-${Math.Calc[${firstNewline}+1]}]}"]
+}
+LGUI2.Element[StatusConsole]:SetText["${currentText}\n${msg}"]
+```
+
+**Use case: Title bar text with console formatting**
+```json
+{
+    "type": "textblock",
+    "textScanner": {
+        "type": "lguiconsole"
+    },
+    "text": "MyScript",
+    "color": "#00FFFF",
+    "font": {
+        "face": "Segoe UI",
+        "height": 60,
+        "bold": true
+    }
+}
+```
+
+#### Custom Highlighting Overrides
+
+The `textScanner` object supports additional properties that map sub-type names to color, font, and brush overrides:
+
+```json
+{
+    "type": "textblock",
+    "textScanner": {
+        "type": "ls1_commandlines",
+        "dataSequence": { "color": "#00FF00" },
+        "quotedString": { "color": "#FFD700" },
+        "bracket": { "color": "#87CEEB" }
+    },
+    "text": "echo ${System.OS} ${Math.Calc[1+2]}"
+}
+```
+
+Each sub-type key can have `color`, `backgroundBrush`, and `font` properties to customize how that token type is rendered.
+
+#### LGUI1 Console Migration
+
+If migrating a LGUI1 `<console>` element to LGUI2:
+
+| LGUI1 | LGUI2 |
+|-------|-------|
+| `<console Name="StatusConsole">` | `{"type": "textbox", "textScanner": {"type": "lguiconsole"}, "multiline": true, "readOnly": true}` |
+| Console auto-scrolls and manages lines | Script must manage text content (append, trim old lines) |
+| Dedicated element type | Standard textbox with scanner overlay |
+
+**Note:** Unlike the LGUI1 console element which managed its own line buffer, the LGUI2 approach requires script-side text management (appending new lines, trimming old ones to prevent unbounded growth).
+
+---
 
 ### FilePicker
 
