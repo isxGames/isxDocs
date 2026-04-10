@@ -432,6 +432,8 @@ For the full API reference including all filter types (`Range`, `Type`, `Zone`, 
 
 When queries return multiple results, they populate a **collection**. You iterate through collections using an **iterator**.
 
+For the core LavishScript `index` and `collection` types themselves - including `Insert`, `Remove`, `Collapse`, `Clear`, `.Used`, and `AsJSON`/`FromJSON` serialization - see [01_LavishScript_Fundamentals.md - Collections and Lists (index)](01_LavishScript_Fundamentals.md#collections-and-lists-index). This section focuses on how those collections are populated from ISXEQ2 `Query*`/`GetActors` calls and walked with an iterator to inspect ISXEQ2 datatypes.
+
 ### Standard Iterator Pattern
 
 ```lavishscript
