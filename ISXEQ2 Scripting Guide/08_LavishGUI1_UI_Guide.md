@@ -1061,6 +1061,78 @@ Reference a template in your element:
 </template>
 ```
 
+### Template Inheritance
+
+Templates can inherit from other templates using the `Template` attribute on the `<template>` definition itself. The child template starts with all parent properties and can override specific ones.
+
+**Basic inheritance (exact copy):**
+
+```xml
+<!-- Child is an exact copy of parent (self-closing, no overrides) -->
+<template name='button.TextureHover' Template='button.Texture' />
+```
+
+**Inheritance with property overrides:**
+
+```xml
+<!-- Parent defines base font -->
+<template name='Default Font'>
+  <Name>Arial</Name>
+  <Size>12</Size>
+  <Color>FFFFFFFF</Color>
+</template>
+
+<!-- Child inherits all properties, overrides specific ones -->
+<template name='MyScript.Font' Template='Default Font'>
+  <Color>FFFF9900</Color>
+  <Size>14</Size>
+</template>
+```
+
+The child `MyScript.Font` inherits `Name=Arial` from the parent but overrides `Color` and `Size`.
+
+**Multi-level chaining:**
+
+Inheritance can be chained through multiple levels:
+
+```xml
+<!-- Level 1: Base widget template -->
+<template name='checkbox'>
+  <Width>20</Width>
+  <Height>20</Height>
+  <Border>1</Border>
+  <!-- ... textures, colors, etc. -->
+</template>
+
+<!-- Level 2: Inherits everything from checkbox -->
+<template name='commandcheckbox' Template='checkbox'>
+  <!-- Inherits all checkbox properties -->
+  <!-- Can override specific ones here -->
+</template>
+```
+
+The InnerSpace DefaultSkin uses chains up to 3 levels deep (e.g., `slider` → `variableslider` → `verticalvariableslider`).
+
+**Common pattern — skin-specific overrides:**
+
+```xml
+<!-- Base template from DefaultSkin -->
+<template name='scrollbar'>
+  <Border>0</Border>
+  <Height>16</Height>
+  <Width>16</Width>
+</template>
+
+<!-- Skin override inherits base, changes specific properties -->
+<template name='MySkin.scrollbar' Template='scrollbar'>
+  <Border>1</Border>
+  <Height>12</Height>
+  <Width>12</Width>
+</template>
+```
+
+**Note:** The `Template` attribute is case-insensitive (`Template` and `template` both work). Template inheritance on a `<template>` definition creates a new reusable template, while `template` on an element (e.g., `<button template='...'>`) applies a template to that specific element instance.
+
 ---
 
 ## Complete Working Examples
