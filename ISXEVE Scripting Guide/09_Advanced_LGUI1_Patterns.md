@@ -27,6 +27,7 @@
 13. [Advanced TextEntry Patterns](#advanced-textentry-patterns)
 14. [ComboBox Advanced Patterns](#combobox-advanced-patterns)
 15. [Production Patterns](#production-patterns)
+16. [Production Skin Pattern](#production-skin-pattern)
 
 ---
 
@@ -1277,6 +1278,189 @@ Each API follows the same pattern: populate an index, iterate with an iterator, 
 
 ---
 
+## Production Skin Pattern
+
+### Template Library Skin File
+
+**Pattern:** Create a reusable visual skin by defining a collection of named templates in a separate XML file, then load that file before your main UI file. The templates become globally available and UI elements reference them via `template='Name.Path'` attributes.
+
+**Source:** EVEBot — `interface/eveskin/eveskin.xml` (277 lines, 46 templates)
+
+**Why this pattern?** Separating visual appearance from UI structure lets you theme an entire application by swapping one file. EVEBot keeps all fonts, colors, textures, and widget appearances in `eveskin.xml` while `EVEBot.xml` contains only layout and behavior.
+
+**Important:** EVEBot does NOT use the `<Skin>` element or the `-skin` flag. It uses the simpler **"template library" pattern**: load the skin file first (registers templates globally), then load the main UI file (which references them by name). Both are loaded as plain UI files via `ui -load`.
+
+**Skin File Structure (eveskin.xml):**
+
+```xml
+<?xml version="1.0" encoding="UTF-8" ?>
+<ISUI>
+  <!-- ======================================== -->
+  <!-- 1. TEXTURE TEMPLATES                     -->
+  <!-- ======================================== -->
+  <template name='EVESkin.Window.TitleBar.Texture'
+            Filename='eveskin/MainGUI/optionswindow_titlebar.png' />
+
+  <!-- Texture atlas slicing (4 states from one PNG) -->
+  <template name='checkbox.TextureUnchecked'
+            Filename='CheckBox.png' Border='0'>
+    <Left>0</Left><Right>16</Right><Top>0</Top><Bottom>16</Bottom>
+  </template>
+  <template name='checkbox.TextureUncheckedHover'
+            Filename='CheckBox.png' Border='0'>
+    <Left>16</Left><Right>32</Right><Top>0</Top><Bottom>16</Bottom>
+  </template>
+  <template name='checkbox.TextureUncheckedPressed'
+            Filename='CheckBox.png' Border='0'>
+    <Left>32</Left><Right>48</Right><Top>0</Top><Bottom>16</Bottom>
+  </template>
+  <template name='checkbox.TextureChecked'
+            Filename='CheckBox.png' Border='0'>
+    <Left>48</Left><Right>64</Right><Top>0</Top><Bottom>16</Bottom>
+  </template>
+
+  <!-- ======================================== -->
+  <!-- 2. FONT TEMPLATES                        -->
+  <!-- ======================================== -->
+  <template name='EVESkin.Font.TitleBar'>
+    <Name>Verdana</Name>
+    <Size>12</Size>
+    <Color>FFFF9900</Color>
+  </template>
+  <template name='Console.Font'>
+    <Name>Terminal</Name>
+    <Size>8</Size>
+    <Color>FFFF9900</Color>
+  </template>
+
+  <!-- Font inherits from Default Font, overrides specific properties -->
+  <template name='checkbox.Font' Template='Default Font'>
+    <Name>Tahoma</Name>
+    <Size>10</Size>
+  </template>
+
+  <!-- ======================================== -->
+  <!-- 3. WIDGET TEMPLATES                      -->
+  <!-- ======================================== -->
+  <template name='checkbox'>
+    <Font Template='checkbox.Font' />
+    <Width>16</Width>
+    <Height>16</Height>
+    <Border>0</Border>
+    <Texture template='checkbox.TextureUnchecked' />
+    <TextureHover template='checkbox.TextureUncheckedHover' />
+    <TexturePressed template='checkbox.TextureUncheckedPressed' />
+    <TextureChecked template='checkbox.TextureChecked' />
+    <TextureCheckedHover template='checkbox.TextureUncheckedPressed' />
+    <TextureCheckedPressed template='checkbox.TextureUncheckedHover' />
+  </template>
+
+  <!-- commandcheckbox inherits from checkbox -->
+  <template name='commandcheckbox' Template='checkbox'>
+    <!-- Inherits all checkbox properties, can override if needed -->
+  </template>
+
+  <!-- ======================================== -->
+  <!-- 4. COMPOSITE TEMPLATES                   -->
+  <!-- ======================================== -->
+  <template name='EveSkin.Window.ClickButton'>
+    <Font template='Button.Font' />
+    <Texture template='EVESkin.Window.ClickButton.Texture' />
+    <TextureHover template='EVESkin.Window.ClickButton.HoverTexture' />
+  </template>
+
+  <template name='EVESkin.Console'>
+    <Border>0</Border>
+    <Font template='Console.Font' />
+    <SelectionColor>FFD4D0C8</SelectionColor>
+    <ScrollBar>console.ScrollBar</ScrollBar>
+    <BackBufferSize>2000</BackBufferSize>
+  </template>
+</ISUI>
+```
+
+**Loading the Skin (obj_EVEBotUI.iss pattern):**
+
+```lavishscript
+objectdef obj_EVEBotUI
+{
+    variable string Skin = "EVESkin"
+    variable string SkinFile = "eveskin/EVESkin.xml"
+
+    method Initialize()
+    {
+        ; Load order is CRITICAL: skin file first, then main UI
+        ui -load interface/${This.SkinFile}
+        ui -load interface/EVEBot.xml
+    }
+
+    method Shutdown()
+    {
+        ; Unload in reverse order
+        ui -unload interface/EVEBot.xml
+        ui -unload interface/${This.SkinFile}
+    }
+}
+```
+
+**Consuming Templates from the Main UI File:**
+
+```xml
+<window name='EVEBot' template='EVESkin'>
+  <TitleBar template='EVESkin.Window.Titlebar'>
+    <!-- ... -->
+  </TitleBar>
+  <Children>
+    <TabControl Name='MainTab' template='EVESkin.TabControl'>
+      <!-- ... -->
+    </TabControl>
+    <console Name='StatusConsole' template='EVESkin.Console'>
+      <!-- ... -->
+    </console>
+  </Children>
+</window>
+```
+
+**Key techniques:**
+
+1. **Naming convention** — Use dot-separated hierarchical names like `EVESkin.Window.TitleBar.Minimize.Texture`. This makes template purpose clear and prevents collisions with other skins loaded in the same session.
+
+2. **Texture atlasing** — Multi-state widgets (checkboxes with 4 states, comboboxes with 3 regions) use a single PNG file with `<Left>/<Right>/<Top>/<Bottom>` slicing coordinates. This reduces file count and improves texture caching.
+
+3. **Template inheritance for variants** — Use `Template='parentName'` on a template definition to create variants. EVEBot uses this for `commandcheckbox` (inherits `checkbox`), `combobox.ListBox` (inherits `listbox`), and font overrides inheriting from `Default Font`.
+
+4. **Load order matters** — The skin file must be loaded BEFORE any UI file that references its templates. Templates are resolved at load time, so forward references fail. Unload in reverse order during shutdown.
+
+5. **Self-contained file** — The skin file contains only templates — no windows, no events, no script bindings. This makes it a pure visual theme that can be swapped without touching UI logic.
+
+6. **Runtime dynamic UI support** — When creating UI elements dynamically from script (via `UIElement:AddChild`), pass the skin name as the 4th argument: `UIElement[parent]:AddChild["type", name, xml, "eveskin"]`. This tells LavishGUI which template namespace to resolve references against.
+
+**File organization:**
+
+```
+interface/
+├── eveskin/
+│   ├── eveskin.xml             ← Template definitions
+│   └── MainGUI/
+│       ├── CheckBox.png         ← Multi-state texture atlas
+│       ├── Combobox.png
+│       ├── button_close.png
+│       ├── button_minimize.png
+│       └── ...                  ← Individual widget textures
+├── EVEBot.xml                    ← Main UI (references templates)
+└── ...
+```
+
+**Benefits of this pattern:**
+
+- **Theme swapping** — Create alternate skin files (e.g., `eveskin_dark.xml`, `eveskin_light.xml`) and select at load time
+- **Consistent appearance** — All checkboxes, buttons, etc. look identical without repeating properties
+- **Maintainability** — Change one template to update every element using it
+- **Separation of concerns** — Visual designers work on the skin file, developers work on the main UI file
+- **Reusability** — The skin file can be shared across multiple scripts
+
+---
+
 ## Summary
 
 These advanced patterns from EVE Online production scripts demonstrate:
@@ -1298,6 +1482,7 @@ These advanced patterns from EVE Online production scripts demonstrate:
 15. **ComboBox Values** - Separate display text from stored values
 16. **Dynamic ComboBox Population** - Populate from ISXEVE APIs with saved selection restore
 17. **Production Robustness** - Dynamic displays and polymorphic input
+18. **Skin File Pattern** - Template library with texture atlasing for reusable visual themes
 
 **Key Takeaways:**
 - Real production scripts require sophisticated UI patterns
