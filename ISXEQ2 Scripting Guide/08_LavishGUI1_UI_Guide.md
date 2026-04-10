@@ -12,14 +12,15 @@ Complete guide to creating custom user interfaces with LavishGUI 1 XML for Inner
 
 1. [Introduction to LavishGUI 1](#introduction-to-lavishgui-1)
 2. [Basic XML Structure](#basic-xml-structure)
-3. [Core UI Elements](#core-ui-elements)
-4. [Event Handling](#event-handling)
-5. [Script-to-UI Interaction](#script-to-ui-interaction)
-6. [Templates and Skinning](#templates-and-skinning)
-7. [Complete Working Examples](#complete-working-examples)
-8. [Best Practices](#best-practices)
-9. [Troubleshooting](#troubleshooting)
-10. [Advanced Topics](#advanced-topics)
+3. [Positioning and Sizing](#positioning-and-sizing)
+4. [Core UI Elements](#core-ui-elements)
+5. [Event Handling](#event-handling)
+6. [Script-to-UI Interaction](#script-to-ui-interaction)
+7. [Templates and Skinning](#templates-and-skinning)
+8. [Complete Working Examples](#complete-working-examples)
+9. [Best Practices](#best-practices)
+10. [Troubleshooting](#troubleshooting)
+11. [Advanced Topics](#advanced-topics)
 
 ---
 
@@ -115,6 +116,115 @@ Every LavishGUI 1 XML file starts with:
     - **Button** - Close/minimize buttons
   - **Children** - Container for UI elements
     - **Tab Control, Buttons, Checkboxes, etc.**
+
+---
+
+## Positioning and Sizing
+
+LavishGUI 1 supports three value types for element position (`X`, `Y`) and size (`Width`, `Height`) properties. These can be freely mixed on the same element.
+
+### Absolute Values (Pixels)
+
+Fixed pixel values measured from the top-left corner of the parent:
+
+```xml
+<X>100</X>       <!-- 100px from left edge -->
+<Y>50</Y>        <!-- 50px from top edge -->
+<Width>200</Width>  <!-- 200px wide -->
+<Height>30</Height> <!-- 30px tall -->
+```
+
+### Relative Values (`r` Prefix)
+
+The `r` prefix creates coordinates measured from the **opposite edge** of the parent. This is essential for elements that should stay anchored to the right or bottom edge, or stretch to fill available space.
+
+**For position (X, Y):** `rN` places the element N pixels from the right/bottom edge:
+
+```xml
+<X>r160</X>      <!-- 160px from the RIGHT edge of parent -->
+<Y>r120</Y>      <!-- 120px from the BOTTOM edge of parent -->
+```
+
+**For size (Width, Height):** `rN` means "parent dimension minus N pixels":
+
+```xml
+<Width>r10</Width>    <!-- parent width minus 10px -->
+<Height>r32</Height>  <!-- parent height minus 32px -->
+```
+
+**Common patterns:**
+
+```xml
+<!-- Console that fills window with a 14px input bar at the bottom -->
+<console name='output'>
+  <X>0</X>
+  <Y>0</Y>
+  <Height>r14</Height>      <!-- fills parent height minus 14px -->
+  <Width>100%</Width>
+</console>
+<commandentry name='input'>
+  <X>0</X>
+  <Y>r14</Y>                <!-- positioned 14px from bottom -->
+  <Height>14</Height>
+  <Width>100%</Width>
+</commandentry>
+
+<!-- Scrollbar slider between two 16px buttons -->
+<X>16</X>                    <!-- after left button -->
+<Width>r32</Width>           <!-- parent minus 32px (16px each side for buttons) -->
+
+<!-- Right-anchored buttons -->
+<X>r200</X>                  <!-- 200px from right edge -->
+<Width>80</Width>
+```
+
+### Percentage Values
+
+Percentage values are relative to the parent element's corresponding dimension. Fractional percentages are supported.
+
+```xml
+<X>10%</X>             <!-- 10% of parent width from left -->
+<Y>50%</Y>             <!-- 50% of parent height from top -->
+<Width>80%</Width>     <!-- 80% of parent width -->
+<Height>47%</Height>   <!-- 47% of parent height -->
+<Width>97.5%</Width>   <!-- fractional percentages work -->
+```
+
+**Common pattern — fill parent with small margin:**
+
+```xml
+<X>2%</X>
+<Y>2%</Y>
+<Width>96%</Width>
+<Height>96%</Height>
+```
+
+### Mixing Value Types
+
+All three types can be freely combined on the same element:
+
+```xml
+<!-- Console: absolute X, relative Y, percentage width, absolute height -->
+<X>5</X>
+<Y>r120</Y>
+<Width>97.5%</Width>
+<Height>115</Height>
+
+<!-- Tab control: absolute position, relative fill -->
+<X>5</X>
+<Y>5</Y>
+<Width>r10</Width>
+<Height>r40</Height>
+```
+
+### Summary Table
+
+| Property | Absolute | `r` Prefix | Percentage |
+|----------|----------|------------|------------|
+| **X** | Pixels from left | Pixels from right | % of parent width |
+| **Y** | Pixels from top | Pixels from bottom | % of parent height |
+| **Width** | Fixed pixels | Parent width minus N | % of parent width |
+| **Height** | Fixed pixels | Parent height minus N | % of parent height |
 
 ---
 
