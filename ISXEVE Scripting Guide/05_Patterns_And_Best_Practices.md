@@ -723,51 +723,7 @@ function atexit()
 }
 ```
 
-**Tehbot Real Example** (core/obj_Tehbot.iss, lines 8-31):
-
-```lavish
-objectdef obj_Tehbot
-{
-    variable bool Paused = TRUE
-    variable int NextPulse
-    variable int PulseIntervalInMilliseconds = 2000
-
-    method Initialize()
-    {
-        Event[ISXEVE_onFrame]:AttachAtom[This:Pulse]
-    }
-
-    method Shutdown()
-    {
-        Event[ISXEVE_onFrame]:DetachAtom[This:Pulse]
-    }
-
-    method Pulse()
-    {
-        if ${Paused}
-        {
-            return
-        }
-
-        if ${LavishScript.RunningTime} >= ${This.NextPulse}
-        {
-            This.NextPulse:Set[${Math.Calc[${LavishScript.RunningTime} + ${This.PulseIntervalInMilliseconds} + ${Math.Rand[500]}]}]
-            ; (Real work happens here in actual Tehbot)
-        }
-    }
-}
-```
-
-**Tehbot Main Loop** (Tehbot.iss, lines 211-214):
-
-```lavish
-while TRUE
-{
-    wait 10
-}
-```
-
-Yes, that's it! All work happens in the event-driven Pulse method.
+**Tehbot Real Example**: The actual Tehbot source code (`core/obj_Tehbot.iss`, lines 8-31) implements this exact pattern — `obj_Tehbot` with the same `Paused`, `NextPulse`, `PulseIntervalInMilliseconds`, `Initialize`/`Shutdown`, and throttled `Pulse` methods shown in the `obj_Bot` template above. Tehbot's main loop (`Tehbot.iss`, lines 211-214) is simply `while TRUE { wait 10 }` — all work happens in the event-driven `Pulse` method.
 
 ### Key Features
 
@@ -1518,37 +1474,7 @@ objectdef obj_Miner
 
 **Architecture**: Event-driven pulse with independent modules (see [Tehbot](https://github.com/isxGames/Tehbot))
 
-```lavish
-; Attach to onFrame event
-method Initialize()
-{
-    Event[ISXEVE_onFrame]:AttachAtom[This:Pulse]
-}
-
-; Pulse runs every frame
-method Pulse()
-{
-    if ${Paused}
-        return
-
-    if ${LavishScript.RunningTime} >= ${This.NextPulse}
-    {
-        ; Pulse all modules
-        AutoModule:Pulse
-        TargetManager:Pulse
-        DroneControl:Pulse
-        FightOrFlight:Pulse
-
-        This.NextPulse:Set[${Math.Calc[${LavishScript.RunningTime} + ${PulseIntervalInMilliseconds} + ${Math.Rand[500]}]}]
-    }
-}
-
-; Main loop does nothing
-while TRUE
-{
-    wait 10
-}
-```
+The full event-driven pulse pattern with module dispatch and a `while TRUE { wait 10 }` main loop is shown earlier in this guide under [Event-Driven Architecture](#event-driven-architecture). See that section for the complete implementation and surrounding context.
 
 **Key Pattern**: Event-driven with modular independent pulsers
 
@@ -7262,30 +7188,7 @@ function BotPulse()
 
 **File**: `obj_Tehbot.iss`
 
-```lavish
-objectdef obj_Tehbot
-{
-    variable bool Paused = TRUE
-    variable int NextPulse
-    variable int PulseIntervalInMilliseconds = 2000
-
-    method Pulse()
-    {
-        if ${Paused}
-        {
-            return
-        }
-
-        if ${LavishScript.RunningTime} >= ${This.NextPulse}
-        {
-            ; Do work here
-
-            ; Schedule next pulse with jitter
-            This.NextPulse:Set[${Math.Calc[${LavishScript.RunningTime} + ${PulseIntervalInMilliseconds} + ${Math.Rand[500]}]}]
-        }
-    }
-}
-```
+The full `obj_Tehbot` objectdef with throttled pulse and random jitter is shown earlier in this guide under [Event-Driven Architecture](#event-driven-architecture). See that section for the complete implementation and surrounding context.
 
 **Pattern**: Throttle pulse to every 2-2.5 seconds with random jitter
 
