@@ -158,40 +158,9 @@ This comprehensive guide provides complete documentation for creating, debugging
 <!-- CLAUDE_SKIP_START -->
 ## Quick Start Guides
 
-### Brand New to EVE Botting?
+For task-oriented navigation — "I want to build a combat bot", "I want to implement targeting", "I want to coordinate a fleet" — see [Quick Navigation > By Task](#by-task) above, which maps specific tasks directly to the relevant guide files. For a narrative walkthrough of each guide file's purpose and scope, see [Documentation Structure](#documentation-structure) near the top of this README.
 
-**Start with these files in order:**
-
-1. **[01_LavishScript_Fundamentals.md](01_LavishScript_Fundamentals.md)** - Learn the language basics
-2. **[02_Quick_Start_Guide.md](02_Quick_Start_Guide.md)** - Your first ISXEVE script
-3. **[03_API_Reference.md](03_API_Reference.md)** - Core ISXEVE objects (${Me}, ${MyShip}, ${EVE})
-4. **[06_Working_Examples.md](06_Working_Examples.md)** - Copy working code examples
-
-**Total Time**: 4-6 hours to get started
-
----
-
-### Building a Specific Bot?
-
-**Mining Bot**:
-- Study **[16_Mining_And_Hauling.md](16_Mining_And_Hauling.md)** - Mining automation patterns
-- Reference **[03_API_Reference.md](03_API_Reference.md)** - Entity system and modules
-- Copy snippets from **[06_Working_Examples.md](06_Working_Examples.md)** - Mining examples
-
-**Combat Bot**:
-- Study **[15_Combat_Automation.md](15_Combat_Automation.md)** - Combat patterns
-- Reference **[03_API_Reference.md](03_API_Reference.md)** - Entity targeting and modules
-- Study **[18_Bot_Architecture_Analysis.md](18_Bot_Architecture_Analysis.md)** - [Tehbot](https://github.com/isxGames/Tehbot) combat analysis
-
-**Hauling Bot**:
-- Study **[16_Mining_And_Hauling.md](16_Mining_And_Hauling.md)** - Hauling and logistics
-- Reference **[03_API_Reference.md](03_API_Reference.md)** - Navigation and inventory
-- Study **[05_Patterns_And_Best_Practices.md](05_Patterns_And_Best_Practices.md)** - Main loop patterns
-
-**Multi-Boxing Fleet**:
-- Study **[17_Fleet_Operations.md](17_Fleet_Operations.md)** - Fleet coordination
-- Study **[18_Bot_Architecture_Analysis.md](18_Bot_Architecture_Analysis.md)** - [Yamfa](https://github.com/isxGames/isxScripts/tree/master/EVE-Online/Scripts/Yamfa) fleet assist analysis
-- Study **[07_Advanced_Patterns_And_Examples.md](07_Advanced_Patterns_And_Examples.md)** - Relay/IPC systems
+If you're brand new to EVE botting, the shortest path to a running script is [01_LavishScript_Fundamentals.md](01_LavishScript_Fundamentals.md) → [02_Quick_Start_Guide.md](02_Quick_Start_Guide.md) → [03_API_Reference.md](03_API_Reference.md) → [06_Working_Examples.md](06_Working_Examples.md). If you already know what kind of bot you want to build, jump straight to the matching domain guide: [15_Combat_Automation.md](15_Combat_Automation.md), [16_Mining_And_Hauling.md](16_Mining_And_Hauling.md), or [17_Fleet_Operations.md](17_Fleet_Operations.md).
 <!-- CLAUDE_SKIP_END -->
 
 ---
@@ -199,75 +168,14 @@ This comprehensive guide provides complete documentation for creating, debugging
 <!-- CLAUDE_SKIP_START -->
 ## Learning Paths
 
-### Path 1: Complete Beginner (Never scripted before)
+Three progression paths depending on your starting point:
 
-**Time Investment**: 8-12 hours to first working bot
+- **Complete beginner** (never scripted before) — start with [01_LavishScript_Fundamentals.md](01_LavishScript_Fundamentals.md) for language basics, then [02_Quick_Start_Guide.md](02_Quick_Start_Guide.md) to verify your install, then [04_Core_Concepts.md](04_Core_Concepts.md) for EVE/ISXEVE architecture, then skim [03_API_Reference.md](03_API_Reference.md) to understand TLOs, and finally [06_Working_Examples.md](06_Working_Examples.md) to copy and modify runnable code.
+- **LavishScript experienced, new to ISXEVE** — skip to [02_Quick_Start_Guide.md](02_Quick_Start_Guide.md), then [04_Core_Concepts.md](04_Core_Concepts.md), then read [03_API_Reference.md](03_API_Reference.md) in detail, then [05_Patterns_And_Best_Practices.md](05_Patterns_And_Best_Practices.md) and [06_Working_Examples.md](06_Working_Examples.md).
+- **Building production bots** (you already have a working simple bot) — focus on [05_Patterns_And_Best_Practices.md](05_Patterns_And_Best_Practices.md) and [21_Advanced_Scripting_Patterns.md](21_Advanced_Scripting_Patterns.md) for architecture, the domain guides [15_Combat_Automation.md](15_Combat_Automation.md) / [16_Mining_And_Hauling.md](16_Mining_And_Hauling.md) / [17_Fleet_Operations.md](17_Fleet_Operations.md) for your focus area, [18_Bot_Architecture_Analysis.md](18_Bot_Architecture_Analysis.md) to learn from [EVEBot](https://github.com/CyberTech/EVEBot/tree/master/Branches/Stable), [Yamfa](https://github.com/isxGames/isxScripts/tree/master/EVE-Online/Scripts/Yamfa), and [Tehbot](https://github.com/isxGames/Tehbot), and [07_Advanced_Patterns_And_Examples.md](07_Advanced_Patterns_And_Examples.md) for multi-boxing and relay/IPC.
 
-1. **[01_LavishScript_Fundamentals.md](01_LavishScript_Fundamentals.md)** (2-3 hours)
-   - Learn variables, functions, loops, conditionals
-   - Understand LavishScript syntax
-
-2. **[02_Quick_Start_Guide.md](02_Quick_Start_Guide.md)** (30 minutes)
-   - Verify ISXEVE installation
-   - Run your first script
-
-3. **[04_Core_Concepts.md](04_Core_Concepts.md)** (1-2 hours)
-   - Understand EVE mechanics
-   - Learn ISXEVE architecture
-
-4. **[03_API_Reference.md](03_API_Reference.md)** (2-3 hours, skim for now)
-   - Bookmark this for reference
-   - Understand TLOs (${Me}, ${MyShip}, ${EVE})
-
-5. **[06_Working_Examples.md](06_Working_Examples.md)** (1-2 hours)
-   - Copy and run examples
-   - Modify them to learn
-
-6. **Start building**: Pick a simple automation project
-
----
-
-### Path 2: Know LavishScript, New to ISXEVE
-
-**Time Investment**: 4-6 hours to first working bot
-
-1. **[02_Quick_Start_Guide.md](02_Quick_Start_Guide.md)** (15 minutes)
-2. **[04_Core_Concepts.md](04_Core_Concepts.md)** (1 hour)
-3. **[03_API_Reference.md](03_API_Reference.md)** (2 hours, detailed read)
-4. **[05_Patterns_And_Best_Practices.md](05_Patterns_And_Best_Practices.md)** (1 hour)
-5. **[06_Working_Examples.md](06_Working_Examples.md)** (1 hour)
-6. **Start building**: Choose bot type (mining/combat/fleet)
-
----
-
-### Path 3: Building Production Bots
-
-**Prerequisites**: Completed Path 1 or 2, have a working simple bot
-
-1. **[05_Patterns_And_Best_Practices.md](05_Patterns_And_Best_Practices.md)**
-   - Main loop architecture
-   - State machines
-   - Error handling
-
-2. **[21_Advanced_Scripting_Patterns.md](21_Advanced_Scripting_Patterns.md)**
-   - Script organization
-   - Configuration management
-   - Advanced patterns
-
-3. **Specialized Automation** (choose your focus):
-   - **[15_Combat_Automation.md](15_Combat_Automation.md)** - Combat bots
-   - **[16_Mining_And_Hauling.md](16_Mining_And_Hauling.md)** - Mining/hauling
-   - **[17_Fleet_Operations.md](17_Fleet_Operations.md)** - Fleet coordination
-
-4. **[18_Bot_Architecture_Analysis.md](18_Bot_Architecture_Analysis.md)**
-   - Learn from [EVEBot](https://github.com/CyberTech/EVEBot/tree/master/Branches/Stable), [Yamfa](https://github.com/isxGames/isxScripts/tree/master/EVE-Online/Scripts/Yamfa), [Tehbot](https://github.com/isxGames/Tehbot)
-   - Understand production bot architectures
-
-5. **[07_Advanced_Patterns_And_Examples.md](07_Advanced_Patterns_And_Examples.md)**
-   - Multi-boxing
-   - Relay/IPC systems
-   - Complex automation
-   <!-- CLAUDE_SKIP_END -->
+For more granular per-task navigation, see [Quick Navigation > By Task](#by-task) above. For narrative summaries of each guide file, see [Documentation Structure](#documentation-structure) near the top of this README.
+<!-- CLAUDE_SKIP_END -->
 
 ---
 
