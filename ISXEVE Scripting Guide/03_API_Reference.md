@@ -2843,36 +2843,7 @@ entity:MakeActiveTarget
 
 ### Critical Optimization: Use Distance2 for Comparisons
 
-**MOST IMPORTANT OPTIMIZATION:** Use `Distance2` instead of `Distance` for all range checks and nearest-entity finding.
-
-**Performance Gain:** 3-5x faster in tight loops.
-
-**Example - Finding Nearest Entity:**
-```lavish
-; ❌ SLOW - Uses Distance (with sqrt)
-variable float nearestDist = 999999
-for (i:Set[1]; ${i} <= ${entities.Used}; i:Inc)
-{
-    if ${entities.Get[${i}].Distance} < ${nearestDist}
-    {
-        nearestDist:Set[${entities.Get[${i}].Distance}]
-        nearestID:Set[${entities.Get[${i}].ID}]
-    }
-}
-
-; ✅ FAST - Uses Distance2 (no sqrt)
-variable float nearestDist2 = 999999999999
-for (i:Set[1]; ${i} <= ${entities.Used}; i:Inc)
-{
-    if ${entities.Get[${i}].Distance2} < ${nearestDist2}
-    {
-        nearestDist2:Set[${entities.Get[${i}].Distance2}]
-        nearestID:Set[${entities.Get[${i}].ID}]
-    }
-}
-```
-
-**Why it matters:** Bot loops process hundreds/thousands of entities per second. Using Distance2 can reduce CPU usage by 50%+ in distance-heavy code.
+The full Distance vs Distance2 performance tutorial (formula breakdown, slow/fast comparison, anti-pattern, 3-5x speedup explanation) is covered earlier in this guide under [Distance vs Distance2 - CRITICAL Performance Difference](#distance-vs-distance2---critical-performance-difference). See that section for the complete guidance.
 
 ### Query Performance
 
@@ -4168,52 +4139,7 @@ echo "Distance: ${ent1.DistanceTo[${id2}]}m"
 
 ### Distance2 Performance Optimization
 
-**PERFORMANCE CRITICAL**: Use `Distance2` instead of `Distance` for comparisons.
-
-`Distance2` returns the **squared distance** (avoids expensive square root calculation):
-```lavish
-; SLOW - Uses Distance (calculates square root)
-if ${asteroid.Distance} > 15000
-{
-    ; Approach asteroid
-}
-
-; FAST - Uses Distance2 (squared distance, no square root)
-variable int RANGE_SQUARED = ${Math.Calc[15000*15000]}    ; 225,000,000
-if ${asteroid.Distance2} > ${RANGE_SQUARED}
-{
-    ; Approach asteroid
-}
-```
-
-**When to use Distance2**:
-- Range comparisons (most common navigation checks)
-- Sorting entities by distance
-- Any situation where you don't need the actual distance value
-
-**When to use Distance**:
-- Displaying distance to user
-- Calculations requiring actual distance
-- Logging/debugging
-
-**Example: Optimized range check**:
-```lavish
-; Pre-calculate squared ranges (do this ONCE, not in loops)
-variable int DOCKING_RANGE_SQ = ${Math.Calc[2500*2500]}          ; 6,250,000
-variable int MINING_RANGE_SQ = ${Math.Calc[15000*15000]}         ; 225,000,000
-variable int WARP_MIN_RANGE_SQ = ${Math.Calc[150000*150000]}     ; 22,500,000,000
-
-; Use squared distance for comparisons (FAST)
-if ${station.Distance2} > ${DOCKING_RANGE_SQ}
-{
-    ; Too far to dock - need to warp
-    ; Use Distance only for display
-    echo "Station too far (${station.Distance}m), warping..."
-    call WarpToEntity ${station.ID} 0
-}
-```
-
-**Performance Impact**: Distance2 is ~3-10x faster than Distance for comparisons, especially critical in tight loops.
+The full Distance vs Distance2 performance tutorial (formula breakdown, slow/fast comparison, anti-pattern, 3-5x speedup explanation) is covered earlier in this guide under [Distance vs Distance2 - CRITICAL Performance Difference](#distance-vs-distance2---critical-performance-difference). See that section for the complete guidance.
 
 ### Common Distance Checks
 
