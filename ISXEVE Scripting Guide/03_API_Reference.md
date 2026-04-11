@@ -1545,27 +1545,7 @@ if ${targetCount} > 0
 
 ### Gotcha 1: State Can Change Between Checks
 
-**Problem**: Game state changes while script runs.
-
-```lavish
-; BAD - Target might disappear between checks
-if ${Me.GetTarget[1](exists)}
-{
-    wait 1000    ; Long wait!
-    echo "Target: ${Me.GetTarget[1].Name}"    ; Might crash if target unlocked!
-}
-
-; GOOD - Cache entity first
-if ${Me.GetTarget[1](exists)}
-{
-    variable entity target = ${Me.GetTarget[1]}
-    wait 1000
-    if ${target(exists)}    ; Re-check
-    {
-        echo "Target: ${target.Name}"
-    }
-}
-```
+Game state (targets, modules, pilots, inventory, entities) can change between an `(exists)` check and a subsequent use — especially across any `wait`. The mitigation is the same for all cases: cache the reference, then re-check `(exists)` after the wait before accessing members. The canonical BAD/GOOD code example lives at [Existence Changes During Execution](#existence-changes-during-execution) in the Entity Lifecycle chapter; the pattern applies equally to `Me.GetTarget`, modules, fleet members, and any other stateful accessor.
 
 ### Gotcha 2: 1-Indexed Collections
 
@@ -3067,26 +3047,7 @@ function ProcessCombatTargets()
 
 ### Gotcha 1: Entity Can Despawn Between Check and Use
 
-```lavish
-; BAD
-if ${Entity[${id}](exists)}
-{
-    wait 1000
-    echo "${Entity[${id}].Name}"    ; CRASH if despawned!
-}
-
-; GOOD
-variable entity ent = ${Entity[${id}]}
-
-if ${ent(exists)}
-{
-    wait 1000
-    if ${ent(exists)}    ; Re-check!
-    {
-        echo "${ent.Name}"
-    }
-}
-```
+Entities can disappear between an `(exists)` check and a subsequent use (despawn, warp out, death, session change). The full cache-reference + re-check pattern is documented in [Existence Changes During Execution](#existence-changes-during-execution) earlier in this chapter. See that section for the canonical BAD/GOOD code example.
 
 ### Gotcha 2: Distance Changes Constantly
 
