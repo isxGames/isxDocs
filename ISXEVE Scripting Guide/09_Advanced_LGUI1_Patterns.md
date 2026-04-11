@@ -1239,42 +1239,9 @@ Each API follows the same pattern: populate an index, iterate with an iterator, 
 
 ### Dynamic Text Input with Polymorphic Routing
 
-**Pattern:** Text input that handles multiple command types
+This section previously duplicated the Yamfa `SetDest` textentry example. It has been consolidated to avoid repetition.
 
-**Example from Yamfa:**
-```xml
-<textentry name='SetDest'>
-    <X>2</X>
-    <Y>4</Y>
-    <Width>96</Width>
-    <Height>18</Height>
-    <OnKeyDown>
-        if ${Key.Equal["enter"]}
-        {
-            if ${EVE.Bookmark[${This.Text.Escape}](exists)}
-                Relay all "EVE.Bookmark[${This.Text.Escape}]:SetDestination"
-            else
-                Relay all "Universe[${This.Text.Escape}]:SetDestination"
-            This:SetText[""]
-        }
-    </OnKeyDown>
-</textentry>
-```
-
-**GitHub Reference:** [ui.xml](https://github.com/isxGames/isxScripts/tree/master/EVE-Online/Scripts/Yamfa/ui.xml)
-
-**Key Techniques:**
-- Check for Enter key press
-- Conditional command routing (bookmark vs system)
-- Self-clearing input field
-- Text escaping for safety
-- Multi-client relay
-
-**Use Cases:**
-- Universal destination setter
-- Dynamic command input
-- Flexible search boxes
-- Multi-purpose entry fields
+The `SetDest` textentry block with `OnKeyDown` Enter-key detection and polymorphic routing between bookmarks and universe destinations is shown earlier in this guide under [OnKeyDown for Enter Key Detection](#onkeydown-for-enter-key-detection). See that section for the XML and Key Techniques.
 
 ---
 
