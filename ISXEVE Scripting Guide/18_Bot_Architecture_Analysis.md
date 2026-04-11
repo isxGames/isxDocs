@@ -2353,48 +2353,13 @@ else
 
 ## Lessons for the Community
 
-### What Yamfa Teaches
+The Yamfa patterns above are not unique to this bot — similar ideas appear in production-grade fleet assists everywhere. For the full technical analysis of what works and what to fix, see [Code Strengths](#code-strengths) and [Code Weaknesses and Fixes](#code-weaknesses-and-fixes).
 
-**1. Simplicity Can Be Effective**
-- A single file does the job
-- No need for complex architecture for simple tasks
-- Single file = easy to understand and modify
+Community-facing takeaways that go beyond the per-pattern analysis:
 
-**2. Hysteresis Prevents Flickering**
-- Don't immediately react to state changes
-- Hold state for short duration (0.5-1 second)
-- Reduces spam, looks more human
-
-**3. Change Detection Saves Bandwidth**
-- Hash current state
-- Only transmit if changed
-- Massively reduces relay spam
-
-**4. Command Caching Reduces Load**
-- Don't re-issue same command
-- Store last command, compare before issuing new one
-- Looks more natural, reduces server load
-
-**5. Random Timing is Critical**
-- Exact timing = bot detection
-- Random delays (within range) = looks human
-- Apply to waits, movements, all actions
-
-### Patterns to Reuse
-
-**✅ Use These**:
-- Hysteresis pattern for state stability
-- Change detection before broadcasting
-- Command caching to prevent spam
-- Random timing throughout
-- Global variable relay pattern
-
-**❌ Avoid These**:
-- Hardcoded configuration values
-- No error handling
-- Querying all entities when you need subset
-- Spam actions without cooldowns
-- Single point of failure (hardcoded master)
+- **Simplicity is a legitimate architecture.** For a narrow, single-purpose bot, a single 600-line file can be clearer and more maintainable than a full modular framework. Pick complexity based on scope, not habit.
+- **A single point of failure (e.g., hardcoded master) is a design smell, not just a bug.** Auto-detect roles from fleet state wherever possible so the bot survives crew changes.
+- **Yamfa is an excellent starting template.** Copy the relay/hysteresis/change-detection skeleton, then layer in the fixes from the Weaknesses section before trusting it in production.
 
 ### Example: Building Your Own Fleet Assist
 
@@ -2567,58 +2532,16 @@ atom(script) OnTargetsRelay(string targetIDs, int64 activeTarget)
 
 ## Summary
 
-### Yamfa Architecture
+**Core Concept**: Master broadcasts locked targets, slaves lock the same targets.
 
-**Core Concept**: Master broadcasts locked targets → Slaves lock same targets
+For the full technical analysis, see [Code Strengths](#code-strengths) and [Code Weaknesses and Fixes](#code-weaknesses-and-fixes) above.
 
-**Key Techniques**:
-1. **Hysteresis** - Hold state for 0.7s to prevent flickering
-2. **Change Detection** - Only relay when targets actually change
-3. **Command Caching** - Don't spam same command
-4. **Random Timing** - Varies delays for anti-detection
-5. **Relay Events** - LavishScript inter-session communication
+**How to use Yamfa**:
+- As a template for a minimal fleet-assist bot (targeting sync, auto-follow).
+- As a reference for relay-event based inter-session communication.
+- As a starting point — adopt the patterns, then apply the fixes from the Weaknesses section before production use.
 
-### Strengths
-
-✅ Simple (single file)
-✅ Effective (does the job well)
-✅ Hysteresis prevents spam
-✅ Change detection reduces traffic
-✅ Easy to understand and modify
-
-### Weaknesses
-
-❌ Hardcoded master name
-❌ No error handling
-❌ No lock cooldown
-❌ Inefficient entity queries
-❌ No targeting range checks
-
-### For the Community
-
-**Use Yamfa as**:
-- Template for fleet assist bots
-- Example of hysteresis pattern
-- Reference for relay communication
-- Starting point (then improve it!)
-
-**Improve by**:
-- Auto-detecting master from fleet
-- Adding error handling
-- Implementing lock cooldowns
-- Optimizing queries
-- Adding range checks
-
-**Learn from**:
-- Simplicity is powerful
-- Hysteresis prevents problems
-- Change detection saves resources
-- Random timing looks human
-- One file can be enough!
-
----
-
-**Yamfa Status**: Simple, effective fleet assist. Perfect learning example. Needs error handling and configuration improvements, but core patterns are excellent!
+**Takeaway**: A single-file, ~600-line bot can be perfectly adequate when the job is narrow. Simplicity is a feature, not a limitation — provided the error-handling and configuration gaps called out above are addressed.
 
 ---
 
@@ -3559,40 +3482,17 @@ if ${TargetReady}
 }
 ```
 
-### Pattern 3: Hysteresis (Yamfa)
+### Pattern 3: Hysteresis and Change Detection (Yamfa)
 
-**When to use**:
-- Prevent state flickering
-- Smooth transitions
-- Anti-spam
+For the full code and rationale, see [Code Strengths](#code-strengths) in the Yamfa analysis above (patterns: Hysteresis for Stability, Change Detection Before Relay, Command Caching, Random Timing).
 
-**Example**:
-```lavish
-; Hold state for 0.7 seconds after condition false
-if ${Condition} || ${Math.Calc[${Time} - ${LastTrue}]} < 7
-{
-    ; Stay in state
-}
-```
+**When to use these Yamfa patterns**:
+- Hysteresis: prevent state flickering, smooth transitions, anti-spam
+- Change detection: reduce network/relay traffic by only broadcasting on actual change
+- Command caching: avoid re-issuing identical movement/action commands
+- Random timing: anti-detection, natural pacing
 
-### Pattern 4: Change Detection (Yamfa)
-
-**When to use**:
-- Reduce network traffic
-- Only broadcast changes
-- Performance optimization
-
-**Example**:
-```lavish
-variable string currentHash = "${state1}:${state2}"
-if !${currentHash.Equal[${lastHash}]}
-{
-    relay all -event Update "${currentHash}"
-    lastHash:Set[${currentHash}]
-}
-```
-
-### Pattern 5: Behavior + Core (EVEBot)
+### Pattern 4: Behavior + Core (EVEBot)
 
 **When to use**:
 - Large project
