@@ -1569,22 +1569,7 @@ if ${Me.GetTarget[1](exists)}
 
 ### Gotcha 2: 1-Indexed Collections
 
-**CRITICAL**: ${Me.GetTarget}, ${MyShip.Cargo}, etc. are **1-indexed**!
-
-```lavish
-; WRONG (0-indexed assumption)
-variable int i
-for (i:Set[0]; ${i} < ${Me.GetTargets}; i:Inc)    ; Starts at 0!
-{
-    echo "${Me.GetTarget[${i}].Name}"    ; Crash on first iteration!
-}
-
-; RIGHT (1-indexed)
-for (i:Set[1]; ${i} <= ${Me.GetTargets}; i:Inc)    ; Starts at 1!
-{
-    echo "${Me.GetTarget[${i}].Name}"    ; Works!
-}
-```
+**CRITICAL**: ${Me.GetTarget}, ${MyShip.Cargo}, and other ISXEVE collection accessors are **1-indexed** (first item at index 1, not 0). Starting a for-loop at 0 crashes on the first iteration. See [Gotcha 4: 1-Indexed Collections](#gotcha-4-1-indexed-collections) in the Entity chapter for the full WRONG/RIGHT code example.
 
 ### Gotcha 3: (exists) is Required for Optional Objects
 
