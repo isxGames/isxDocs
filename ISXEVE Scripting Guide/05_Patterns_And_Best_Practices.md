@@ -339,56 +339,6 @@ function atexit()
 }
 ```
 
-**Yamfa.iss Real Example** (lines 76-120):
-
-```lavish
-function main()
-{
-    ; Wait for ISXEVE to be ready
-    while !${ISXEVE.IsReady}
-    {
-        echo "Waiting for ISXEVE..."
-        wait 10
-    }
-
-    ; Wait for character and ship
-    while !${Me(exists)} || !${MyShip(exists)}
-    {
-        echo "Waiting for character and ship..."
-        wait 10
-    }
-
-    ; Initialize core systems
-    echo "Initializing Yamfa for ${Me.Name}"
-    call Initialize
-
-    ; Main loop
-    while ${ScriptRunning}
-    {
-        if ${Me.InSpace} && ${ISXEVE.IsReady} && ${Me(exists)}
-        {
-            call MainPulse
-        }
-
-        ; Process queued commands
-        if ${QueuedCommands}
-        {
-            ExecuteQueued
-        }
-
-        ; Periodic cleanup every 5 minutes
-        if ${Math.Calc[${LavishScript.RunningTime} - ${LastCleanupTime}]} > 300000
-        {
-            call PeriodicCleanup
-            LastCleanupTime:Set[${LavishScript.RunningTime}]
-        }
-
-        wait ${Math.Rand[2,6]}
-        waitframe
-    }
-}
-```
-
 ### Key Features
 
 1. **Single control flow**: One loop, easy to understand
@@ -1225,33 +1175,7 @@ function BotPulse()
 }
 ```
 
-**Yamfa Real Example** (lines 97-120):
-
-```lavish
-while ${ScriptRunning}
-{
-    if ${Me.InSpace} && ${ISXEVE.IsReady} && ${Me(exists)}
-    {
-        call MainPulse
-    }
-
-    ; Process queued commands
-    if ${QueuedCommands}
-    {
-        ExecuteQueued
-    }
-
-    ; Periodic cleanup every 5 minutes
-    if ${Math.Calc[${LavishScript.RunningTime} - ${LastCleanupTime}]} > 300000
-    {
-        call PeriodicCleanup
-        LastCleanupTime:Set[${LavishScript.RunningTime}]
-    }
-
-    wait ${Math.Rand[2,6]}
-    waitframe
-}
-```
+For a complete real-world example combining periodic cleanup with the main loop structure, see the [Simple Polling Loop Pattern](#simple-polling-loop-pattern) section above.
 
 ---
 
