@@ -1421,33 +1421,7 @@ Yamfa.iss
 
 ## Architecture Comparison
 
-### Yamfa vs. EVEBot
-
-| Aspect | Yamfa | EVEBot |
-|--------|-------|--------|
-| **Files** | 1 file | 30+ files |
-| **Purpose** | Fleet assist only | Full automation (mining, combat, hauling) |
-| **Complexity** | Simple | Complex |
-| **State Machine** | No states | Comprehensive states |
-| **Error Handling** | Minimal | Extensive |
-| **Modularity** | None (monolithic) | Highly modular |
-| **Learning Curve** | Easy | Steep |
-| **Maintenance** | Easy (one file) | Complex (many files) |
-| **Extensibility** | Limited | Highly extensible |
-
-### When to Use Each Pattern
-
-**Use Yamfa-style (single file) when**:
-- Bot has ONE specific purpose
-- Code is < 1000 lines
-- You want simplicity over features
-- Learning/prototyping
-
-**Use EVEBot-style (modular) when**:
-- Multi-purpose bot
-- Code > 2000 lines
-- Team development
-- Long-term maintenance needed
+This 2-column Yamfa-vs-EVEBot comparison has been superseded by the broader three-way analysis later in this guide. See [Comparison: Tehbot vs EVEBot vs Yamfa](#comparison-tehbot-vs-evebot-vs-yamfa) for the full architectural summary, code comparison, performance analysis, and scalability breakdown across all three bots. For guidance on which architecture to pick for your own project, see [When to Use Which Architecture](#when-to-use-which-architecture).
 
 ---
 
