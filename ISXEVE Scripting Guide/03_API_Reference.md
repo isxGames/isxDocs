@@ -3152,37 +3152,7 @@ echo "${target.Name}"
 
 ### Anti-Pattern 3: Iterating Without Snapshot
 
-```lavish
-; BAD - Entities can despawn during iteration
-variable index:entity asteroids
-EVE:GetEntities[asteroids, CategoryID = 25]
-
-variable int i
-for (i:Set[1]; ${i} <= ${asteroids.Used}; i:Inc)
-{
-    ; Long processing - entity might despawn
-    call ProcessAsteroid ${asteroids.Get[${i}].ID}
-    wait 5000    ; Dangerous!
-}
-
-; GOOD - Snapshot IDs first
-variable int64[] asteroidIDs
-variable int i
-
-for (i:Set[1]; ${i} <= ${asteroids.Used}; i:Inc)
-{
-    if ${asteroids.Get[${i}](exists)}
-    {
-        asteroidIDs:Insert[${asteroids.Get[${i}].ID}]
-    }
-}
-
-for (i:Set[1]; ${i} <= ${asteroidIDs.Used}; i:Inc)
-{
-    call ProcessAsteroid ${asteroidIDs[${i}]}
-    wait 5000    ; Safe - not iterating live query
-}
-```
+Iterating a live entity query result while processing each entity (especially with `wait` calls inside the loop) is unsafe — entities can despawn between iterations and subsequent accesses will crash. The canonical fix is to snapshot entity IDs into an `int64[]` array first, then iterate the snapshot. See [Solution 2: Snapshot Entity IDs (Evebot Pattern)](#solution-2-snapshot-entity-ids-evebot-pattern) under Safe Entity Iteration for the complete `function ProcessAllAsteroids` teaching example.
 
 ### Anti-Pattern 4: Redundant Entity Fetches
 
