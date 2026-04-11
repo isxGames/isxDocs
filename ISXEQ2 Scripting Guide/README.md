@@ -253,10 +253,7 @@ Each datatype has **members** (properties) and **methods** (actions).
 
 ### Inheritance
 
-Many datatypes inherit from others:
-
-- **character** inherits from **actor**, so `${Me}` has all actor members plus character-specific ones
-- **eq2button** inherits from **eq2widget** and **eq2baseobject**, gaining all their members
+Many datatypes inherit from others (for example, **character** inherits from **actor**, so `${Me}` has all actor members plus character-specific ones). See [04_Core_Concepts.md - Datatype Inheritance](04_Core_Concepts.md#datatype-inheritance) for the full explanation and inheritance chain examples.
 
 ### Events
 

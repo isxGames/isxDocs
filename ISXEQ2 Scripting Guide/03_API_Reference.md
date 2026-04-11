@@ -38,21 +38,9 @@ This document provides comprehensive reference documentation for all datatypes a
 
 ### DataType Inheritance
 
-Many datatypes inherit from other datatypes, gaining all the members and methods of their parent type. Common inheritance patterns:
+Many ISXEQ2 datatypes inherit from parent types (e.g. **character** inherits from **actor**, so `${Me}` exposes all actor members). Note that **groupmember** is also used for raid members - `Me.Raid[index]` returns a groupmember object; there is no separate raidmember type.
 
-- **character** inherits from **actor** - All actor members/methods are available on character objects
-- **groupmember** inherits from **actor** - Group members have all actor capabilities. Raid members use this same type (there is no separate raidmember type); `Me.Raid[index]` returns a groupmember object.
-- **eq2widget** inherits from **eq2baseobject** - All widgets have base object properties
-- **eq2window** provides base functionality for all window types
-- **eq2clonewindow** inherits from **eq2window** - Clone windows have window functionality
-
-**Inheritance Chain Examples:**
-```
-character → actor
-groupmember → actor (also used for raid members)
-eq2button → eq2widget → eq2baseobject
-lootwindow → eq2clonewindow → eq2window
-```
+See [04_Core_Concepts.md - Datatype Inheritance](04_Core_Concepts.md#datatype-inheritance) for the full explanation, inheritance chain examples, and common inheritance patterns table.
 
 ### Accessing DataTypes
 
