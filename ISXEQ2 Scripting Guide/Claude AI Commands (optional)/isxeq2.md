@@ -38,6 +38,10 @@ Task(subagent_type="ISXEQ2-Expert", prompt="...")
 
 **THIS IS NOT OPTIONAL.** Even for "quick" lookups or "simple" file reads, you MUST delegate. The subagent handles ALL file operations, documentation research, code analysis, and implementation.
 
+## CRITICAL: Subagent Execution Mode
+
+**Spawn all subagents in the FOREGROUND unless the user explicitly requests background execution.** Do NOT set `run_in_background: true` by default — omit the parameter or set it to `false`. Background subagents auto-deny any tool not in the parent session's `permissions.allow` list (e.g., Write, Edit), whereas foreground subagents pass permission prompts through to the user for interactive approval. Only use background when: (a) the user explicitly says "run in background" / "don't block on this", or (b) there is genuinely independent, non-overlapping main-session work to parallelize and you've told the user up front.
+
 ## Architecture
 
 You are the **coordinator**. The `ISXEQ2-Expert` subagent is the **worker**.
