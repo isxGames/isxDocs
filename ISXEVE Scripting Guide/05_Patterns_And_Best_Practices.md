@@ -7293,40 +7293,9 @@ objectdef obj_Tehbot
 
 **File**: `Yamfa.iss` (lines 707-736)
 
-```lavish
-function PeriodicCleanup()
-{
-    echo "Performing periodic cleanup..."
+The full `PeriodicCleanup` function from Yamfa is shown earlier in this guide under [Memory Management > Pattern 1: Index Cleanup](#pattern-1-index-cleanup). See that section for the complete implementation and surrounding context.
 
-    ; Clean up old target timers
-    if ${Me.Name.Equal["${MASTER_CHARACTER_NAME}"]}
-    {
-        MasterTargetTimers:Clear
-    }
-    else
-    {
-        variable int CurrentTime = ${Math.Calc[${LavishScript.RunningTime} / 100]}
-        variable iterator Timer
-        SlaveTargetTimers:GetIterator[Timer]
-
-        if ${Timer:First(exists)}
-            do
-            {
-                if ${Math.Calc[${CurrentTime} - ${Timer.Value}]} > 50  ; 5 seconds old
-                {
-                    SlaveTargetTimers:Remove[${Timer.Key}]
-                }
-            }
-            while ${Timer:Next(exists)}
-    }
-
-    call SaveConfig
-    call UpdateUI
-    echo "Cleanup complete"
-}
-```
-
-**Pattern**: Periodic cleanup (every 5 minutes) to prevent memory leaks
+**Pattern**: Periodic cleanup (every 5 minutes) to prevent memory leaks.
 
 ### EVEBot: Startup Turbo
 
