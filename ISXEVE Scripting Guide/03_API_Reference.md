@@ -7902,38 +7902,14 @@ echo "Warp initiated"
 
 ### Timeout Pattern (Essential)
 
-```lavish
-function WaitForWindowWithTimeout(string windowName, int timeoutSeconds)
-{
-    variable int startTime = ${Script.RunningTime}
-    variable int elapsed
+The general timeout-polling pattern used by every `WaitFor*` helper in this guide follows the same four-part scaffolding:
 
-    while TRUE
-    {
-        ; Check condition
-        if ${EVEWindow[${windowName}](exists)}
-            return TRUE
+1. Record a start timestamp: `variable int startTime = ${Script.RunningTime}`
+2. Enter a `while TRUE` loop.
+3. Check the condition (e.g., `${Me.InStation}`, `${EVEWindow[name](exists)}`, `${MyShip.ToEntity.Mode} == 3`). Return TRUE if satisfied.
+4. Check elapsed time via `${Math.Calc[(${Script.RunningTime} - ${startTime}) / 1000]}`. Return FALSE if it exceeds the timeout. Otherwise `wait 100` and continue.
 
-        ; Check timeout
-        elapsed:Set[${Math.Calc[(${Script.RunningTime} - ${startTime}) / 1000]}]
-        if ${elapsed} >= ${timeoutSeconds}
-        {
-            echo "TIMEOUT: Window ${windowName} did not appear in ${timeoutSeconds}s"
-            return FALSE
-        }
-
-        wait 100
-    }
-}
-
-; Usage
-EVE:Execute[CmdOpenInventory]
-if !${WaitForWindowWithTimeout["inventory", 10]}
-{
-    echo "Failed to open inventory"
-    return
-}
-```
+For a concrete example of this pattern applied to a UI window, see [function WaitForWindow](#window-finding-and-validation) in the Window Finding and Validation section. Additional specialized helpers using the same pattern include `WaitForDocked`, `WaitForUndocked`, `WaitForJumpComplete`, `WaitForInRange`, `WaitForWarpStart`, and `WaitForWarpComplete` elsewhere in this chapter.
 
 ### Wait Between UI Actions (Rate Limiting)
 
