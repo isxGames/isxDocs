@@ -1295,62 +1295,6 @@ function DebugEntityNotFound(int64 entityID)
 }
 ```
 
-#### Issue: Module Won't Activate
-
-```lavish
-function DebugModuleActivation(int64 moduleID)
-{
-    echo "=== Module Activation Debug ==="
-
-    if !${Me.GetModule[${moduleID}](exists)}
-    {
-        echo "✗ Module ${moduleID} not found"
-        echo "CAUSE: Invalid module ID or module not fitted"
-        return
-    }
-
-    variable module M = ${Me.GetModule[${moduleID}]}
-
-    echo "Module: ${M.ToItem.Name}"
-    echo "IsOnline: ${M.IsOnline}"
-    echo "IsActive: ${M.IsActive}"
-    echo "IsActivatable: ${M.IsActivatable}"
-    echo "IsDeactivating: ${M.IsDeactivating}"
-    echo "IsReloadingAmmo: ${M.IsReloadingAmmo}"
-    echo "IsGoingOnline: ${M.IsGoingOnline}"
-
-    ; Diagnose
-    if !${M.IsOnline}
-    {
-        echo "✗ PROBLEM: Module is OFFLINE"
-        echo "SOLUTION: Activate it manually first"
-    }
-    elseif ${M.IsActive}
-    {
-        echo "⚠ Module already active (not a problem)"
-    }
-    elseif !${M.IsActivatable}
-    {
-        echo "✗ PROBLEM: Module not activatable"
-        echo "CAUSES:"
-        echo "  - No target (weapons/remote reps)"
-        echo "  - No charges (guns without ammo)"
-        echo "  - Insufficient capacitor"
-        echo "  - Module cycling down"
-    }
-    elseif ${M.IsReloadingAmmo}
-    {
-        echo "⚠ Module reloading (wait...)"
-    }
-    else
-    {
-        echo "✓ Module SHOULD activate - try again"
-    }
-
-    echo "==============================="
-}
-```
-
 #### Issue: Targeting Fails
 
 ```lavish
