@@ -88,83 +88,11 @@ Multi-boxing is running multiple EVE clients simultaneously on one or more compu
 
 ### Relay Basics
 
-LavishScript's `relay` command sends messages between sessions on the same computer or across Uplink network.
-
-**Syntax**:
-```lavish
-relay <target> <command>
-relay <target> -event <event_name> <parameters>
-```
-
-**Targets**:
-- `all` - All sessions
-- `other` - All other sessions (not self)
-- `"SessionName"` - Specific session by name
-- `local` - Only local computer sessions
-- `uplink` - All Uplink network sessions
-
-### Basic Relay Examples
-
-```lavish
-// Send command to all sessions
-relay all echo "Hello from ${Me.Name}"
-
-// Send command to specific session
-relay "EVESession1" echo "Message from ${Me.Name}"
-
-// Send command to other sessions (not self)
-relay other echo "Alert from ${Me.Name}"
-
-// Send event to all sessions
-relay all -event MyCustomEvent ${Me.CharID} ${Me.SolarSystemID}
-```
-
-### Receiving Relay Events
-
-```lavish
-// Register custom event
-LavishScript:RegisterEvent[MyCustomEvent]
-
-// Attach atom to handle event
-Event[MyCustomEvent]:AttachAtom[This:OnMyCustomEvent]
-
-// Event handler
-atom OnMyCustomEvent(int64 charID, int64 systemID)
-{
-    echo "Received event from CharID: ${charID} in system ${systemID}"
-}
-
-// Cleanup
-Event[MyCustomEvent]:DetachAtom[This:OnMyCustomEvent]
-```
+For the canonical, in-depth relay primer (syntax, destinations, `-noredirect`, `-event` flag, request/response, state sync), see [LavishScript Relay Basics](#lavishscript-relay-basics) below. That section is the single source of truth; the short form above was a teaser.
 
 ### Event Registration Pattern
 
-```lavish
-method Initialize()
-{
-    // Register all custom events
-    LavishScript:RegisterEvent[EVEBot_HARDSTOP]
-    LavishScript:RegisterEvent[EVEBot_Miner_Full]
-    LavishScript:RegisterEvent[EVEBot_Master_InBelt]
-    LavishScript:RegisterEvent[EVEBot_AttackerReport]
-
-    // Attach handlers
-    Event[EVEBot_HARDSTOP]:AttachAtom[This:OnHardStop]
-    Event[EVEBot_Miner_Full]:AttachAtom[This:OnMinerFull]
-    Event[EVEBot_Master_InBelt]:AttachAtom[This:OnMasterInBelt]
-    Event[EVEBot_AttackerReport]:AttachAtom[This:OnAttackerReport]
-}
-
-method Shutdown()
-{
-    // Detach all handlers
-    Event[EVEBot_HARDSTOP]:DetachAtom[This:OnHardStop]
-    Event[EVEBot_Miner_Full]:DetachAtom[This:OnMinerFull]
-    Event[EVEBot_Master_InBelt]:DetachAtom[This:OnMasterInBelt]
-    Event[EVEBot_AttackerReport]:DetachAtom[This:OnAttackerReport]
-}
-```
+For the canonical register/attach/detach lifecycle (with `Initialize`/`Shutdown` conventions, event-vs-atom semantics, and event broadcasting), see [Event System Foundation](#event-system-foundation) below. That section is the single source of truth; the short form above was a teaser.
 
 ### Emergency Stop Broadcast (EVEBot Pattern)
 
