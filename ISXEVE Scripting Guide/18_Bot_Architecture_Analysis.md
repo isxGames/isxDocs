@@ -550,64 +550,9 @@ objectdef obj_EVEBot inherits obj_BaseClass
 
 ### Behavior Interface
 
-All behaviors follow this pattern:
+All behaviors follow a common generic template built around a `CurrentState` string, a `NextPulse` timer, and the `Initialize` / `Pulse` / `SetState` / `ProcessState` lifecycle inherited from `obj_BaseClass`.
 
-```lavish
-objectdef obj_SomeBehavior inherits obj_BaseClass
-{
-    // STATE
-    variable string CurrentState = "IDLE"
-    variable time NextPulse
-    variable int PulseIntervalInSeconds = 2
-
-    method Initialize()
-    {
-        LogPrefix:Set["${This.ObjectName}"]
-        Event[EVENT_ONFRAME]:AttachAtom[This:Pulse]
-    }
-
-    method Pulse()
-    {
-        if ${EVEBot.Paused}
-        {
-            return
-        }
-
-        if !${Config.Common.CurrentBehavior.Equal["SomeBehavior"]}
-        {
-            return
-        }
-
-        if ${Time.Timestamp} >= ${This.NextPulse.Timestamp}
-        {
-            This:SetState
-
-            This.NextPulse:Set[${Time.Timestamp}]
-            This.NextPulse.Second:Inc[${This.PulseIntervalInSeconds}]
-            This.NextPulse:Update
-        }
-    }
-
-    method SetState()
-    {
-        // DETERMINE WHAT TO DO
-        // Set This.CurrentState based on conditions
-    }
-
-    function ProcessState()
-    {
-        // EXECUTE CURRENT STATE
-        switch ${This.CurrentState}
-        {
-            case IDLE
-                break
-            case DOSTUFF
-                call This.DoStuff
-                break
-        }
-    }
-}
-```
+The canonical behavior template, with full `obj_BaseClass` inheritance, `Initialize`/`Shutdown` lifecycle, `SetState`/`ProcessState` dispatch, and safety-check ordering, is shown under [Example: Creating New Behavior](#example-creating-new-behavior) later in this guide.
 
 ### Miner Behavior Example
 
