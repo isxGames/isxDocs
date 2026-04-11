@@ -898,57 +898,20 @@ function ReturnToStation()
 
 ### Unload Ore to Station Hangar
 
+`UnloadOre` is a thin wrapper around the canonical `TransferCargoToStationHangar`
+(see [Cargo Transfer to Station Hangar](#cargo-transfer-to-station-hangar)).
+The canonical implementation uses the efficient `EVE:MoveItemsTo` batch move
+instead of per-item `MoveTo` calls.
+
 ```lavish
 ; ===== UNLOAD ORE TO HANGAR =====
-; ⚠️ Modern Inventory API (July 2020+)
+; Thin wrapper - delegates to the canonical TransferCargoToStationHangar.
+; At unload time, ship cargo is ore/ice anyway, so moving all cargo is correct.
 
 function UnloadOre()
 {
-    if !${Me.InStation}
-    {
-        echo "ERROR: Not in station, cannot unload"
-        return FALSE
-    }
-
-    echo "Unloading ore to station hangar"
-
-    ; Open inventory window
-    if !${EVEWindow[Inventory](exists)}
-    {
-        EVE:Execute[CmdOpenInventory]
-        wait 20
-    }
-
-    ; Open item hangar
-    EVE:Execute[OpenHangarFloor]
-    wait 20
-
-    ; Get cargo items
-    variable index:item CargoItems
-    EVEWindow[Inventory].Child[ShipCargo]:GetItems[CargoItems]
-
-    variable iterator Item
-    CargoItems:GetIterator[Item]
-
-    variable int itemsMoved = 0
-
-    if ${Item:First(exists)}
-        do
-        {
-            ; Check if ore (CategoryID 25) or ice (CategoryID 423)
-            if ${Item.Value.CategoryID} == 25 || ${Item.Value.CategoryID} == 423
-            {
-                echo "Moving ${Item.Value.Quantity} x ${Item.Value.Name}"
-                Item.Value:MoveTo[MyStationHangar, ${Item.Value.Quantity}]
-                itemsMoved:Inc
-                wait 10  ; Wait between moves
-            }
-        }
-        while ${Item:Next(exists)}
-
-    echo "Unloaded ${itemsMoved} item stacks"
-
-    return TRUE
+    call TransferCargoToStationHangar
+    return ${Return}
 }
 ```
 
