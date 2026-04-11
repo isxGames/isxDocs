@@ -1098,77 +1098,7 @@ atom OnTargetScrambled(int64 targetID, int64 tacklerID)
 
 ### Orca-Centric Fleet
 
-```lavish
-objectdef obj_MiningFleetCoordinator
-{
-    variable string OrcaPilotName = "MyOrca"
-    variable int64 CurrentBeltID = 0
-
-    method Initialize()
-    {
-        // Orca = Master
-        // Miners = Slaves
-
-        if ${Me.Name.Equal["${This.OrcaPilotName}"]}
-        {
-            echo "I am the Orca - initializing as fleet master"
-            call This.InitializeOrcaMaster
-        }
-        else
-        {
-            echo "I am a miner - initializing as slave"
-            call This.InitializeMinerSlave
-        }
-    }
-
-    method InitializeOrcaMaster()
-    {
-        // Orca selects belt and broadcasts to fleet
-        call This.SelectBelt
-
-        // Broadcast belt location
-        relay all -event Fleet_WarpToBelt ${This.CurrentBeltID}
-
-        // Warp to belt
-        Entity[${This.CurrentBeltID}]:WarpTo[30000]
-    }
-
-    method SelectBelt()
-    {
-        variable index:entity belts
-        EVE:QueryEntities[belts, "GroupID = GROUP_ASTEROID_BELT"]
-
-        if ${belts.Used} > 0
-        {
-            This.CurrentBeltID:Set[${belts[1].ID}]
-            echo "Selected belt: ${belts[1].Name}"
-        }
-    }
-
-    method InitializeMinerSlave()
-    {
-        // Wait for Orca to broadcast belt
-        LavishScript:RegisterEvent[Fleet_WarpToBelt]
-        Event[Fleet_WarpToBelt]:AttachAtom[This:OnWarpToBelt]
-    }
-
-    atom OnWarpToBelt(int64 beltID)
-    {
-        echo "Orca orders: Warp to belt ${Entity[${beltID}].Name}"
-
-        Entity[${beltID}]:WarpTo[0]
-        wait 20
-
-        while ${Me.ToEntity.Mode} == 3
-        {
-            wait 10
-        }
-
-        // Start mining
-        This.CurrentState:Set["MINE"]
-    }
-}
-```
+The full Orca-centric mining fleet coordinator — where the Orca is designated master, broadcasts belt selection to slaved miners, and miners react to warp-to-belt events — is integrated into the complete `obj_MiningFleet` implementation shown later in this guide under [Example 2: Mining Fleet with Orca Support](#example-2-mining-fleet-with-orca-support). See that section for the complete canonical implementation (Orca presence broadcasts, miner warp-in, survey-scan requests, full-cargo reports, and ore delivery to the Orca's fleet hangar).
 
 ### Boosting Coordination
 
