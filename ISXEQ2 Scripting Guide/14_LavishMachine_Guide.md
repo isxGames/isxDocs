@@ -83,6 +83,8 @@ TaskManager:BeginTask["$$>
 
 ### Tasks
 
+> **JSON reference:** Tasks are defined as JSON and frequently manipulated via `jsonvalue` / `jsonvalueref`. For JSON syntax, creation, traversal, and serialization APIs, see [13_JSON_Guide.md](13_JSON_Guide.md).
+
 A **Task** is a unit of work that executes over time. Tasks are defined as **JSON objects** and managed by a **Task Manager**.
 
 **Simple task:**

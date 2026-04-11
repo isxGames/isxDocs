@@ -83,6 +83,8 @@ TaskManager:BeginTask["$$>
 
 ### Tasks
 
+> **JSON reference:** Tasks are defined as JSON and frequently manipulated via `jsonvalue` / `jsonvalueref`. For JSON syntax, creation, traversal, and serialization APIs, see [13_JSON_Guide.md](13_JSON_Guide.md).
+
 A **Task** is a unit of work that executes over time. Tasks are defined as **JSON objects** and managed by a **Task Manager**.
 
 **Simple task:**
@@ -697,17 +699,7 @@ break
 
 ## Audio Tasks
 
-### Setup
-
-**Create audio voice:**
-```lavishscript
-Audio:AddVoice[music]
-```
-
-**Add audio stream:**
-```lavishscript
-Audio:AddStream[tune,"path/to/music.mp3"]
-```
+> **Choose the right API:** This section documents the **LMAC `audio.playstream` and `audio.setvolume` task types** — declarative tasks defined inside a LavishMachine task JSON, useful for timed fades, looping playback, and other task-based audio automation. LavishScript also provides the imperative **`Audio:AddVoice` / `Audio:AddStream` / `Audio.Voice[...]:PlayStream` / `:SetVolume` / `:Stop` API** documented in [01_LavishScript_Fundamentals.md](01_LavishScript_Fundamentals.md#audio-system). You must create voices and streams with that API before referencing them by name from the LMAC task types below. Rule of thumb: use the LavishScript Audio API for straightforward play/stop/volume control in regular script code; use the LMAC task types documented here when you need duration-based volume transitions, looping playback managed by a task manager, or audio that fits into a larger task-based automation.
 
 ### Play Sound
 
@@ -842,6 +834,8 @@ objectdef audio_controller
 ---
 
 ## Web Request Tasks
+
+> **Choose the right API:** This section documents the **LMAC `webrequest` task type** — a declarative task you define inside a LavishMachine task JSON (`"type":"webrequest"`) with an `object`/`method` callback invoked when the request completes. LavishScript also provides an imperative **`webrequest` variable type** (`variable webrequest WR`, `WR:Begin`, poll `${WR.State}`) documented in [01_LavishScript_Fundamentals.md](01_LavishScript_Fundamentals.md). Rule of thumb: use the task type documented here when you are already building task-based automation and want an event-style callback; use the LavishScript type when you just need a one-off fetch inside regular script code.
 
 ### Basic Web Request
 
