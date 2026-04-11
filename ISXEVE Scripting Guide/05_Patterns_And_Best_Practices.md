@@ -7159,34 +7159,7 @@ The full `PeriodicCleanup` function from Yamfa is shown earlier in this guide un
 
 **File**: `Stable/EVEBot.iss` (lines 134-232)
 
-```lavish
-function main()
-{
-    ; Set turbo to 4000 per frame for startup.
-    Turbo 4000
-
-    ; ... fast initialization ...
-
-    turbo 8000
-    Logger:Log[" Loading EVEDBs...", LOG_ECHOTOO]
-    ; ... load databases ...
-    turbo 4000
-
-    ; ... more initialization ...
-
-    Turbo 125  ; Back to normal for operation
-
-    ; Main loop
-    while TRUE
-    {
-        if !${EVEBot.Paused}
-        {
-            call ${Config.Common.CurrentBehavior}.ProcessState
-        }
-        wait ${Math.Calc[5 + (${Math.Rand[399]}/100)]}
-    }
-}
-```
+The full EVEBot `main()` Turbo startup pattern (Turbo 4000 during init, 8000 during database loading, then Turbo 125 for normal operation) is shown earlier in this guide under [CPU Usage Management > Pattern 1: Turbo Control](#pattern-1-turbo-control). See that section for the complete EVEBot real example. The full implementation also dispatches to `${Config.Common.CurrentBehavior}.ProcessState` in the main loop with a randomized wait jitter of `${Math.Calc[5 + (${Math.Rand[399]}/100)]}` to spread CPU load across frames.
 
 **Pattern**: High turbo during startup, low turbo during normal operation
 
