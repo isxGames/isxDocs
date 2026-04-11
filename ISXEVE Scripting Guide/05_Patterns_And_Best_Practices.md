@@ -1419,54 +1419,9 @@ function MainPulse()
 
 ### EVEBot: Multi-Behavior State Machine
 
-**Architecture**: Behavior-based with ProcessState delegation
+**Architecture**: Behavior-based with ProcessState delegation (see [EVEBot](https://github.com/isxGames/EVEBot))
 
-```lavish
-; Main loop
-while TRUE
-{
-    if !${EVEBot.Paused} && \
-        !${EVEBot.Disabled} && \
-        ${${Config.Common.CurrentBehavior}(exists)}
-    {
-        call ${Config.Common.CurrentBehavior}.ProcessState
-    }
-    wait ${Math.Calc[5 + (${Math.Rand[399]}/100)]}
-}
-
-; Example behavior object
-objectdef obj_Miner
-{
-    variable string CurrentState = "Idle"
-
-    method ProcessState()
-    {
-        ; Process queue
-        This.m_StateQueue:ProcessQueue
-
-        ; Safety checks
-        if ${Social.IsHostileInLocal}
-        {
-            call Station.Dock
-            return
-        }
-
-        ; Execute current state
-        switch ${This.CurrentState}
-        {
-            case Idle
-                call This.State_Idle
-                break
-            case Mining
-                call This.State_Mining
-                break
-            case Hauling
-                call This.State_Hauling
-                break
-        }
-    }
-}
-```
+The full EVEBot behavior state-machine pattern (main loop dispatching to `${Config.Common.CurrentBehavior}.ProcessState` with random wait jitter, plus an `obj_Miner`-style `ProcessState` switch) is shown earlier in this guide under [Behavior-Based State Machine](#behavior-based-state-machine). See that section for the complete implementation and the EVEBot.iss real-loop snippet.
 
 **Key Pattern**: Centralized behavior objects with state machines
 
