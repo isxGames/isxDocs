@@ -1319,68 +1319,7 @@ function CheckForHostilesOnGrid()
 
 ### Emergency Actions
 
-```lavish
-function EmergencyDock()
-{
-    echo "EMERGENCY: Docking immediately"
-
-    ; Stop all modules
-    EVE:Execute[CmdStopAllModules]
-    wait 5
-
-    ; Clear targets
-    EVE:Execute[CmdClearTargets]
-    wait 5
-
-    ; Recall drones
-    if ${MyShip.UsedDroneBayCapacity} > 0
-    {
-        EVE:Execute[DroneReturnAndOrbit]
-        wait 30  ; Wait for drones
-    }
-
-    ; Dock at nearest station
-    variable entity Station = ${Entity["GroupID = GROUPID_STATION && IsNearestStation"]}
-    if ${Station(exists)}
-    {
-        echo "Docking at ${Station.Name}"
-        Station:Dock
-    }
-    else
-    {
-        echo "ERROR: No station found, warping to safe instead"
-        call EmergencyWarpOut
-    }
-}
-
-function EmergencyWarpOut()
-{
-    echo "EMERGENCY: Warping out"
-
-    ; Stop modules
-    EVE:Execute[CmdStopAllModules]
-    wait 5
-
-    ; Clear targets
-    EVE:Execute[CmdClearTargets]
-    wait 5
-
-    ; Warp to random celestial
-    variable index:entity Celestials
-    variable iterator Celestial
-
-    EVE:QueryEntities[Celestials, "GroupID = GROUPID_PLANET || GroupID = GROUPID_MOON"]
-    Celestials:GetIterator[Celestial]
-
-    if ${Celestial:First(exists)}
-    {
-        ; Pick random celestial
-        variable int randomIdx = ${Math.Rand[1,${Celestials.Used}]}
-        echo "Warping to ${Celestials.Get[${randomIdx}].Name}"
-        Celestials.Get[${randomIdx}]:WarpTo
-    }
-}
-```
+The full `EmergencyDock` and `EmergencyWarp` implementations (with scramble detection, drone recall, warp/dock timeouts, and safe-logoff fallback) are shown later in this guide under [Emergency Procedures](#emergency-procedures). See that section for the complete `Pattern 1: Emergency Dock` and `Pattern 2: Emergency Warp` functions.
 
 ---
 

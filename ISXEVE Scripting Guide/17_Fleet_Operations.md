@@ -170,23 +170,7 @@ method Shutdown()
 
 ### Emergency Stop Broadcast (EVEBot Pattern)
 
-```lavish
-// When any bot detects danger, broadcast to all
-if ${Social.PossibleHostiles}
-{
-    echo "HOSTILES DETECTED - Broadcasting emergency stop"
-    relay all -event EVEBot_HARDSTOP "${Me.Name} - ${Config.Common.CurrentBehavior} (Hostiles)"
-    EVEBot.ReturnToStation:Set[TRUE]
-}
-
-// All bots listen for emergency stop
-atom OnHardStop(string message)
-{
-    echo "HARD STOP received: ${message}"
-    EVEBot.ReturnToStation:Set[TRUE]
-    This.CurrentState:Set["FLEE"]
-}
-```
+The full `obj_FleetSafety` HARDSTOP pattern (relay event registration, `OnHardStop` atom, `ReturnToStation` flag broadcast, and real examples from `obj_Orca.iss`) is shown later in this guide under [HARDSTOP Pattern (Emergency Dock)](#hardstop-pattern-emergency-dock). See that section for the complete implementation.
 
 ### Uplink for Multi-Computer Coordination
 
