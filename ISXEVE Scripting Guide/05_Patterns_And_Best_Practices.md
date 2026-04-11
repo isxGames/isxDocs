@@ -1415,33 +1415,9 @@ while TRUE
 
 ### Expensive Operation Throttling
 
-Don't do expensive operations every pulse:
+Don't do expensive operations every pulse. A full-system `EVE:QueryEntities` call can return hundreds or thousands of entities and cost 100-500ms per invocation — running it every pulse is one of the most common causes of bot slowdowns.
 
-```lavish
-; BAD: Query all entities every pulse
-function BotPulse()
-{
-    variable index:entity AllEntities
-    EVE:QueryEntities[AllEntities]  ; EXPENSIVE! 100-1000 entities
-    ; Process...
-}
-
-; GOOD: Query once per second
-variable int LastEntityQuery = 0
-variable index:entity CachedEntities
-
-function BotPulse()
-{
-    if ${Math.Calc[${LavishScript.RunningTime} - ${LastEntityQuery}]} > 1000
-    {
-        EVE:QueryEntities[CachedEntities]
-        LastEntityQuery:Set[${LavishScript.RunningTime}]
-    }
-
-    ; Use cached entities
-    ; Process CachedEntities...
-}
-```
+The standard fix is to run the query once per refresh interval (typically 500-1000ms), store the result in a cached `index:entity`, and have the pulse logic read from the cache. The complete time-based entity query caching pattern (`obj_EntityCache` with a tracked last-update timestamp and throttled refresh) is documented later in this guide under [Pattern 1: Time-Based Cache](#pattern-1-time-based-cache) in the Caching Strategies section.
 
 ### Index vs Iterator Performance
 
@@ -3850,36 +3826,9 @@ function CheckShieldState()
 
 ### 1. Cache Expensive Queries
 
-```lavish
-; BAD: Query every pulse
-function BotPulse()
-{
-    variable int npcCount = ${GetNPCCount}  ; Queries entities every time
-    if ${npcCount} > 0
-    {
-        call ProcessCombat
-    }
-}
+Decision-making logic should never re-run expensive entity queries every pulse — cache the result and refresh it on an interval. For example, `GetNPCCount` and similar helpers that query entities internally should be called once per refresh window, with the result stored in a script-scoped variable.
 
-; GOOD: Cache and refresh periodically
-variable int CachedNPCCount = 0
-variable int LastNPCQuery = 0
-
-function BotPulse()
-{
-    ; Refresh every 1 second
-    if ${Math.Calc[${LavishScript.RunningTime} - ${LastNPCQuery}]} > 1000
-    {
-        CachedNPCCount:Set[${GetNPCCount}]
-        LastNPCQuery:Set[${LavishScript.RunningTime}]
-    }
-
-    if ${CachedNPCCount} > 0
-    {
-        call ProcessCombat
-    }
-}
-```
+The complete time-based entity query caching pattern (`obj_EntityCache` with a tracked last-update timestamp and throttled refresh) is documented in the Performance and Timing chapter under [Pattern 1: Time-Based Cache](#pattern-1-time-based-cache). See that section for the full objectdef and usage.
 
 ### 2. Short-Circuit Evaluation
 
@@ -5954,53 +5903,29 @@ EVE:QueryEntities[Entities, "CategoryID = CATEGORYID_ENTITY && IsNPC && !IsMorib
 
 ### Pattern 2: Query Result Reuse
 
+When multiple functions need the same entity query result, don't re-run the query in each one — share a single cached result.
+
 ```lavish
 ; ===== QUERY RESULT REUSE =====
 
 ; BAD: Multiple identical queries
 function ProcessTargets()
 {
-    ; Query 1
     variable index:entity NPCs
     EVE:QueryEntities[NPCs, "IsNPC && Distance < 50000"]
-
     echo "NPC count: ${NPCs.Used}"
 }
 
 function ProcessDrones()
 {
-    ; Query 2 - SAME QUERY!
+    ; Query 2 - SAME QUERY runs AGAIN!
     variable index:entity NPCs
     EVE:QueryEntities[NPCs, "IsNPC && Distance < 50000"]
-
     ; Launch drones...
 }
-
-; GOOD: Query once, reuse result
-variable(global) index:entity CachedNPCs
-variable int LastNPCQuery = 0
-
-function UpdateNPCCache()
-{
-    if ${Math.Calc[${LavishScript.RunningTime} - ${LastNPCQuery}]} > 1000
-    {
-        EVE:QueryEntities[CachedNPCs, "IsNPC && Distance < 50000"]
-        LastNPCQuery:Set[${LavishScript.RunningTime}]
-    }
-}
-
-function ProcessTargets()
-{
-    call UpdateNPCCache
-    echo "NPC count: ${CachedNPCs.Used}"
-}
-
-function ProcessDrones()
-{
-    call UpdateNPCCache
-    ; Use CachedNPCs...
-}
 ```
+
+The fix is to query once into a shared (typically global) `index:entity`, refresh it on an interval, and have both functions read from the cache instead of re-querying. The full time-based caching objectdef (`obj_EntityCache` with throttled refresh) is shown below under [Pattern 1: Time-Based Cache](#pattern-1-time-based-cache) in the Caching Strategies section.
 
 ### Pattern 3: Progressive Filtering
 
@@ -6716,24 +6641,7 @@ function BotPulse()
 }
 ```
 
-**Solution**:
-
-```lavish
-; GOOD: Cache query results
-variable(global) index:entity CachedNPCs
-variable int LastNPCQuery = 0
-
-function BotPulse()
-{
-    if ${Math.Calc[${LavishScript.RunningTime} - ${LastNPCQuery}]} > 1000
-    {
-        EVE:QueryEntities[CachedNPCs, "IsNPC"]
-        LastNPCQuery:Set[${LavishScript.RunningTime}]
-    }
-
-    echo "NPCs: ${CachedNPCs.Used}"
-}
-```
+**Solution**: Cache query results and refresh on an interval. The complete time-based entity query caching pattern (`obj_EntityCache` with a tracked last-update timestamp and throttled refresh) is shown earlier in this guide under [Pattern 1: Time-Based Cache](#pattern-1-time-based-cache) in the Caching Strategies section. See that section for the full objectdef and usage.
 
 ### Bottleneck 2: Inventory Operations
 
