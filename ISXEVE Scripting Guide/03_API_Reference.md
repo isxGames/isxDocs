@@ -4248,17 +4248,13 @@ function Evebot_ReturnToStation()
         return FALSE
     }
 
-    ; Warp to station
+    ; Warp to station (WarpToEntity handles warp start + complete polling internally)
     echo "Returning to station..."
     call WarpToEntity ${station.ID} 0
-
-    ; Wait for warp
-    wait 5000
-
-    ; Wait for arrival
-    while ${MyShip.ToEntity.Mode} == 3
+    if !${Return}
     {
-        wait 1000
+        echo "ERROR: Warp to station failed"
+        return FALSE
     }
 
     ; Dock
@@ -4284,28 +4280,12 @@ function Tehbot_WarpToAnomaly(string anomalyName)
         return FALSE
     }
 
-    ; Warp to anomaly at 50km
-    echo "Warping to ${anomalyName}"
-    anomaly:WarpTo[50000]
-
-    ; Wait for warp start
-    variable int timeout = 0
-    while ${MyShip.ToEntity.Mode} != 3 && ${timeout} < 50
+    ; Warp to anomaly at 50km (WarpToEntity handles start/complete polling)
+    call WarpToEntity ${anomaly.ID} 50000
+    if !${Return}
     {
-        wait 100
-        timeout:Inc
-    }
-
-    if ${MyShip.ToEntity.Mode} != 3
-    {
-        echo "ERROR: Failed to enter warp"
+        echo "ERROR: Warp to anomaly failed"
         return FALSE
-    }
-
-    ; Wait for warp complete
-    while ${MyShip.ToEntity.Mode} == 3
-    {
-        wait 500
     }
 
     echo "Arrived at anomaly"
