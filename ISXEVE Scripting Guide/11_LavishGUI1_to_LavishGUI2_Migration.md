@@ -2319,7 +2319,7 @@ Use a JSON validator or IDE with JSON schema support. VS Code will highlight err
 }
 ```
 
-### Issue 2: Element Not Found
+### Issue 3: Element Not Found
 
 **Problem:**
 
@@ -2346,7 +2346,7 @@ if !${LGUI2.Element[mywindow](exists)}
 }
 ```
 
-### Issue 3: Event Handler Not Firing
+### Issue 4: Event Handler Not Firing
 
 **Problem:**
 
@@ -2378,7 +2378,7 @@ variable mycontroller MyController
 }
 ```
 
-### Issue 4: Data Binding Not Updating
+### Issue 5: Data Binding Not Updating
 
 **Problem:**
 
@@ -2410,7 +2410,7 @@ objectdef mycontroller
 }
 ```
 
-### Issue 5: Checkbox State Not Syncing
+### Issue 6: Checkbox State Not Syncing
 
 **Problem:**
 
@@ -2447,7 +2447,7 @@ variable bool Enabled = FALSE
 ; Variable automatically syncs with checkbox!
 ```
 
-### Issue 6: Window Position Lost
+### Issue 7: Window Position Lost
 
 **Problem:**
 
@@ -2474,7 +2474,7 @@ method LoadWindowPosition()
 }
 ```
 
-### Issue 7: Dynamic Visual Property Changes Not Working
+### Issue 8: Dynamic Visual Property Changes Not Working
 
 **Problem:**
 
@@ -2927,7 +2927,7 @@ LGUI2.Element[myButton]:FireEventHandler[setDimmed]
 LGUI2.Element[myButton]:FireEventHandler[setRed]
 ```
 
-### Issue 8: Window Position "Jumping" on Load
+### Issue 9: Window Position "Jumping" on Load
 
 **Problem:**
 
@@ -3006,7 +3006,7 @@ function ApplyConfigWindowPosition()
 }
 ```
 
-### Issue 9: Textbox Content Doesn't Fill Window
+### Issue 10: Textbox Content Doesn't Fill Window
 
 **Problem:**
 
@@ -3045,7 +3045,7 @@ Remove `x` and `y` properties - content elements don't need positioning:
 **Key Point:**
 When elements use `"width": "100%"` and `"height": "100%"` inside a `content` property, they should NOT have `x` or `y` positioning.
 
-### Issue 10: AppendText Method Not Found
+### Issue 11: AppendText Method Not Found
 
 **Problem:**
 
@@ -3169,7 +3169,7 @@ Custom styled tooltips can be used extensively across production UIs for consist
 
 For more tooltip customization options, see the [LGUI2 UI Guide - Tooltip Customization section](10_LavishGUI2_UI_Guide.md#tooltip-customization).
 
-### Issue 11: Checkbox State Not Persisting (QueueCommand Execution)
+### Issue 12: Checkbox State Not Persisting (QueueCommand Execution)
 
 **Problem:**
 
@@ -3387,7 +3387,7 @@ function config_save()
 
 If you see the old value in both echoes, the queued command didn't execute - you forgot `ExecuteQueued` or used inline assignment instead of a function call.
 
-### Issue 12: MessageBox Command Not Available
+### Issue 13: MessageBox Command Not Available
 
 **Problem:**
 
@@ -3597,7 +3597,7 @@ Production scripts typically implement this pattern with a custom MessageBox JSO
 | No cleanup needed | Must unload on shutdown |
 | Fixed appearance | Fully customizable JSON |
 
-### Issue 13: ComboBox/ListBox Methods Not Available
+### Issue 14: ComboBox/ListBox Methods Not Available
 
 **Problem:**
 
@@ -3890,7 +3890,7 @@ UIElement[ModeSelector].ItemByText[${Config.Mode}]:Select
 5. **No sorting** - Pre-sort data before inserting
 6. **ClearItems still works** - Only method that's the same!
 
-### Issue 14: Checkbox State Management - Use Data Binding
+### Issue 15: Checkbox State Management - Use Data Binding
 
 **Problem:**
 
@@ -4002,7 +4002,7 @@ From InnerSpace's DefaultUplinkUI.json:
 
 Use **`checkedBinding`** for checkbox state management in LGUI2. It's simpler, cleaner, and the standard LGUI2 pattern.
 
-### Issue 15: Slider Styling and Templates
+### Issue 16: Slider Styling and Templates
 
 **Problem:**
 
