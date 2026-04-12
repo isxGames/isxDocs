@@ -754,36 +754,7 @@ method DoMining()
 
 ### ISXEVE Error Checking
 
-```lavish
-; Check if ISXEVE loaded
-if !${ISXEVE(exists)}
-{
-    echo "ERROR: ISXEVE extension not loaded!"
-    echo "Run: ext -require isxeve"
-    return
-}
-
-; Check if EVE ready
-if !${ISXEVE.IsSafe}
-{
-    echo "WARNING: ISXEVE not safe - waiting..."
-    wait 50
-}
-
-; Check if character loaded
-if !${Me(exists)}
-{
-    echo "ERROR: Character not loaded in game!"
-    return
-}
-
-; Check if in space
-if !${Me.InSpace} && !${Me.InStation}
-{
-    echo "ERROR: Character state unknown!"
-    return
-}
-```
+The standard ISXEVE preflight checks (extension loaded, `IsSafe`, character exists, InSpace/InStation) are documented as a reusable function under [Session Validation](#session-validation) in the ISXEVE Debugging Tools section.
 
 ### Entity Validation
 
@@ -1101,44 +1072,7 @@ objectdef obj_Metrics
 
 #### Issue: Script Won't Start
 
-```lavish
-; Diagnostic checklist
-function DiagnoseStartupFailure()
-{
-    echo "=== Startup Diagnostics ==="
-
-    ; Check ISXEVE
-    if !${ISXEVE(exists)}
-    {
-        echo "✗ ISXEVE not loaded"
-        echo "FIX: Run 'ext -require isxeve'"
-        return
-    }
-    echo "✓ ISXEVE loaded"
-
-    ; Check character
-    if !${Me(exists)}
-    {
-        echo "✗ Character not in game"
-        echo "FIX: Log into EVE first"
-        return
-    }
-    echo "✓ Character: ${Me.Name}"
-
-    ; Check files
-    if !${Script.CurrentDirectory.FileExists["config"]}
-    {
-        echo "⚠ Config directory missing"
-        echo "FIX: Creating config directory..."
-        ; Auto-fix
-        declare FP filepath "${Script.CurrentDirectory}"
-        FP:MakeSubdirectory["config"]
-    }
-
-    echo "✓ All checks passed"
-    echo "==========================="
-}
-```
+The startup diagnostic checklist (ISXEVE loaded, character in game, ready state) follows the same validation pattern as [Session Validation](#session-validation) above. For production use, add a config-directory existence check (`Script.CurrentDirectory.FileExists["config"]`) with auto-creation as a post-validation step.
 
 #### Issue: Entity Not Found
 
