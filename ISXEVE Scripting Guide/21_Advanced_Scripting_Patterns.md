@@ -1040,57 +1040,19 @@ atom(script) EmergencyStop()
 
 ### XML Settings Pattern
 
-**Complete Config System**:
+**Core LavishSettings pattern** (load or create):
 ```lavishscript
 variable(globalkeep) settingsetref BotConfig
 
-function LoadConfiguration()
+BotConfig:Set[MyBot.Config, XML]
+if !${BotConfig:Load["Scripts/MyBot/config.xml"]}
 {
-    BotConfig:Set[MyBot.Config, XML]
-
-    if !${BotConfig:Load["Scripts/MyBot/config.xml"]}
-    {
-        echo "Creating default configuration"
-        call CreateDefaultConfig
-        BotConfig:Save["Scripts/MyBot/config.xml"]
-    }
-
-    ; Load settings into variables
-    call LoadSettingsIntoVariables
-}
-
-function CreateDefaultConfig()
-{
-    ; Basic settings
-    BotConfig:Add[Version, "1.0"]
-    BotConfig:Add[MasterSession, "is1"]
-
-    ; Combat settings
-    BotConfig:AddSet[Combat]
-    BotConfig.FindSet[Combat]:Add[MaxTargets, 5]
-    BotConfig.FindSet[Combat]:Add[OrbitDistance, 15000]
-    BotConfig.FindSet[Combat]:Add[PreferredDamageType, "Thermal"]
-
-    ; Movement settings
-    BotConfig:AddSet[Movement]
-    BotConfig.FindSet[Movement]:Add[MaxWarpDistance, 1000000000]
-    BotConfig.FindSet[Movement]:Add[DockWhenDamaged, TRUE]
-
-    ; Targeting settings
-    BotConfig:AddSet[Targeting]
-    BotConfig.FindSet[Targeting]:Add[PriorityMode, "Closest"]
-    BotConfig.FindSet[Targeting]:Add[TargetFrigatesFirst, TRUE]
-}
-
-function LoadSettingsIntoVariables()
-{
-    ; Load into global variables for easy access
-    MasterSession:Set["${BotConfig.Get[MasterSession]}"]
-    MaxTargets:Set[${BotConfig.FindSet[Combat].Get[MaxTargets]}]
-    OrbitDistance:Set[${BotConfig.FindSet[Combat].Get[OrbitDistance]}]
-    ; ... etc
+    ; Create defaults — BotConfig:Add[Key, Value], BotConfig:AddSet[Section]
+    BotConfig:Save["Scripts/MyBot/config.xml"]
 }
 ```
+
+For the full config architecture -- sub-configuration objects, derived classes, the `Setting()` / `Define_ConfigItem()` macros, config migration, and validation best practices -- see the [EVEBot Configuration Architecture](07_Advanced_Patterns_And_Examples.md#evebot-configuration-architecture) and [Tehbot Configuration Architecture](07_Advanced_Patterns_And_Examples.md#tehbot-configuration-architecture) chapters in 07_Advanced_Patterns_And_Examples.md.
 
 ---
 
