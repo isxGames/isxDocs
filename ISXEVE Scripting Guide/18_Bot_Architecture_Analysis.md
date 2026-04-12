@@ -955,18 +955,7 @@ This.ClaimedAsteroids:Set[${AsteroidIterator.Value.ID}, ${Me.ID}]
 
 ### Pattern 1: Layered Pulse System
 
-```
-Frame Event (every frame)
-    ↓
-System Pulse (4-5 sec)
-    ↓
-Behavior Pulse (2-3 sec)
-```
-
-**Benefits**:
-- Performance: Don't check everything every frame
-- Responsiveness: Critical checks still fast
-- Randomization: Varies timing to avoid detection
+See [Multi-Level Timing](#multi-level-timing) for the full diagram and rationale. In short: tiered pulse rates (frame event → system pulse 4-5s → behavior pulse 2-3s) balance performance, responsiveness, and timing randomization.
 
 ### Pattern 2: SetState/ProcessState Separation
 
