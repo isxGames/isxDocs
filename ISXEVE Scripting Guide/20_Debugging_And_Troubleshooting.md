@@ -501,37 +501,7 @@ objectdef obj_RotatingLogger
 
 ### Timestamp-Based Profiling
 
-```lavish
-objectdef obj_Profiler
-{
-    variable float StartTime
-    variable collection:float Timings
-
-    method Start(string operation)
-    {
-        This.Timings:Set[${operation}, ${Time.Timestamp}]
-    }
-
-    method End(string operation)
-    {
-        variable float duration = ${Math.Calc[${Time.Timestamp} - ${This.Timings.Get[${operation}]}]}
-
-        echo "PROFILE: ${operation} took ${duration.Precision[3]}s"
-
-        if ${duration} > 1.0
-        {
-            Logger:Log["WARNING: Slow operation ${operation}: ${duration.Precision[3]}s", LOG_CRITICAL]
-        }
-    }
-}
-
-; Usage
-Profiler:Start["Entity Query"]
-EVE:QueryEntities[Targets, "CategoryID = CATEGORYID_ENTITY"]
-Profiler:End["Entity Query"]
-
-; Output: PROFILE: Entity Query took 0.342s
-```
+The basic timestamp profiler (`Start`/`End` methods with `collection:float` timings and a >1.0s slow-operation warning) is documented in its canonical, production-grade form as `obj_PerformanceProfiler` under [Example 2: Performance Profiler](#example-2-performance-profiler). That version adds `TotalTimes`, `CallCounts`, and `PrintReport` on top of the same core pattern.
 
 ### Frame Time Profiling
 
