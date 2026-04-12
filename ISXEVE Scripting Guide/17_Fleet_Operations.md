@@ -2736,23 +2736,9 @@ wait ${Math.Rand[8,15]}   ; Movement commands
 **Why Good**: Anti-detection, prevents synchronization, more human-like.
 
 **5. Global Variable Relay Pattern**
-```lavish
-; Atom can't modify function variables directly
-atom(script) YamfaTargetsRelay(string targetIDs, int64 relayactivetarget)
-{
-    ; Store in globals
-    YamfaRelayedTargets:Set[${targetIDs}]
-    YamfaRelayedActive:Set[${relayactivetarget}]
-    YamfaNewRelayData:Set[TRUE]    ; Flag for processing
-}
 
-; Process in main loop
-if ${YamfaNewRelayData}
-{
-    call ProcessRelayedTargets "${YamfaRelayedTargets}" ${YamfaRelayedActive}
-    YamfaNewRelayData:Set[FALSE]
-}
-```
+The `YamfaTargetsRelay` atom and its global-variable dirty-flag pattern are shown in detail in the [Relay Communication](#relay-communication) walkthrough above.
+
 **Why Good**: Atoms can't directly modify local variables. This pattern bridges the gap.
 
 ---
