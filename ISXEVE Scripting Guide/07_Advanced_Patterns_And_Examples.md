@@ -4551,17 +4551,7 @@ objectdef obj_Configuration_Common inherits obj_Configuration_Base
 
 **Setting() Macro:**
 
-```lavish
-#define Setting(type, name, setMethod) \
-    member:type name() \
-    { \
-        return ${This.ConfigRef.FindSetting[#name]} \
-    } \
-    method setMethod(type value) \
-    { \
-        This.ConfigRef:AddSetting[#name, ${value}] \
-    }
-```
+The `Setting(type, name, setMethod)` macro is defined under [Tehbot Setting Macro](#tehbot-setting-macro) in the Config Macros and Helpers section below. It expands to a member/method pair that reads from and writes to `This.ConfigRef`.
 
 ---
 
