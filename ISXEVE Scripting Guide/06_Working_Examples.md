@@ -647,50 +647,7 @@ public class CombatModule
 
 ### Mine Asteroid (LavishScript)
 
-```lavish
-function MineAsteroid(int64 AsteroidID)
-{
-    if !${Entity[${AsteroidID}](exists)}
-    {
-        echo "ERROR: Asteroid doesn't exist"
-        return FALSE
-    }
-
-    ; Lock asteroid
-    call LockTarget ${AsteroidID}
-
-    if !${Entity[${AsteroidID}].IsLockedTarget}
-    {
-        echo "ERROR: Failed to lock asteroid"
-        return FALSE
-    }
-
-    ; Activate mining lasers
-    variable index:module MiningLasers
-    MyShip:GetMiningLasers[MiningLasers]
-
-    variable iterator Laser
-    MiningLasers:GetIterator[Laser]
-
-    if ${Laser:First(exists)}
-    {
-        do
-        {
-            if ${Laser.Value.IsOnline} && !${Laser.Value.IsActive}
-            {
-                if ${Entity[${AsteroidID}].Distance} < 25000
-                {
-                    Laser.Value:Activate[${AsteroidID}]
-                    echo "Activated ${Laser.Value.ToItem.Name}"
-                }
-            }
-        }
-        while ${Laser:Next(exists)}
-    }
-
-    return TRUE
-}
-```
+The complete mine-asteroid pattern (entity validation, target lock, mining-laser iteration via `MyShip:GetMiningLasers`, range check, activation) is documented canonically in [16_Mining_And_Hauling.md](16_Mining_And_Hauling.md) under Mining Laser Activation. This file's version uses the cleaner `GetMiningLasers` helper; 16's version uses the more explicit `ModuleCount` loop with `IsMiningModule` -- both achieve the same result.
 
 ### Check Cargo Full (Modern API - LavishScript)
 
