@@ -2230,19 +2230,7 @@ else
 
 ### Phase 1: Bug Fixes (Immediate)
 
-1. **Fix Hardcoded Master**
-   - Load from config or detect from fleet
-
-2. **Add Error Handling**
-   - Check entity exists before operations
-   - Check targeting range
-   - Handle relay failures
-
-3. **Add Lock Cooldown**
-   - Prevent lock spam on slaves
-
-4. **Optimize Entity Queries**
-   - Query only locked targets, not all entities
+Address the critical issues documented in [Code Weaknesses and Fixes](#code-weaknesses-and-fixes) above: hardcoded master name, missing error handling, no slave lock cooldown, unoptimized entity queries, and no targeting range check. Each has a concrete before/after code snippet in that section.
 
 ### Phase 2: Feature Enhancements
 
