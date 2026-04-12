@@ -1627,62 +1627,7 @@ Session is2, is3, is4 (Receivers)
     Execute MyAtom function with parameters
 ```
 
-**Relay Syntax**:
-```lavishscript
-; In sender script:
-relay "all other" FunctionName "arg1" "arg2"
-
-; This calls FunctionName in ALL other sessions
-; With arguments "arg1" and "arg2"
-
-; Specific session:
-relay "is2" FunctionName "arg1"
-
-; All except current:
-relay "all other" FunctionName
-
-; All including current:
-relay "all" FunctionName
-```
-
-**Relay Receiver** (Atom):
-```lavishscript
-; Define an atom to receive relay
-atom(script) FunctionName(string arg1, string arg2)
-{
-    echo "Received relay: ${arg1}, ${arg2}"
-    ; Do something with the data
-}
-```
-
-### Typical Relay Use Case: Fleet Assist
-
-**Yamfa Example** (simplified):
-```lavishscript
-; MASTER session (is1):
-function BroadcastTargets()
-{
-    ; Get my locked targets
-    variable string TargetList = ""
-    ; ... build target ID list ...
-
-    ; Relay to all slaves
-    relay "all other" ReceiveTargets "${TargetList}"
-}
-
-; SLAVE sessions (is2, is3, etc.):
-atom(script) ReceiveTargets(string targetIDs)
-{
-    echo "Master says lock these targets: ${targetIDs}"
-    ; Parse target IDs and lock them
-}
-```
-
-**Why This Works**:
-- Master makes targeting decisions (complex logic)
-- Slaves just lock what master says (simple logic)
-- No need for external communication (Redis, files, etc.)
-- Real-time, same-machine communication
+For full relay syntax (destinations, `-noredirect`, `-event` flag, event registration lifecycle), atom receiver patterns, and a complete Yamfa fleet-assist walkthrough, see [Relay System and Inter-Process Communication (IPC)](17_Fleet_Operations.md#relay-system-and-inter-process-communication-ipc) and the [Yamfa Fleet Assist Analysis](17_Fleet_Operations.md#yamfa-fleet-assist-analysis) in 17_Fleet_Operations.md. That chapter is the canonical relay reference; the conceptual overview above is sufficient for understanding the remainder of this guide.
 
 ---
 
