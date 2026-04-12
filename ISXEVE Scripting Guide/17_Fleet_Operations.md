@@ -2756,52 +2756,7 @@ variable string MASTER_CHARACTER_NAME = "YourCharacterName"
 
 **Problem**: Must edit code to change master.
 
-**Fix**:
-```lavish
-; In Initialize():
-function Initialize()
-{
-    ; Load from config
-    call LoadConfig
-
-    ; Determine role from config OR fleet status
-    if ${Config.IsMaster}
-    {
-        echo "${Me.Name} is MASTER (from config)"
-    }
-    elseif ${Me.Fleet.IsMember[${Me.CharID}]} && ${Me.ToFleetMember.IsFleetCommander}
-    {
-        echo "${Me.Name} is MASTER (Fleet Commander)"
-    }
-    else
-    {
-        echo "${Me.Name} is SLAVE"
-
-        ; Get master name from fleet
-        if ${Me.Fleet.IsMember[${Me.CharID}]}
-        {
-            variable int64 fcID = ${Me.Fleet.FleetCommanderID}
-            variable queue:fleetmember members
-            Me.Fleet:GetMembers[members]
-
-            variable iterator it
-            members:GetIterator[it]
-            if ${it:First(exists)}
-            {
-                do
-                {
-                    if ${it.Value.CharID} == ${fcID}
-                    {
-                        MasterName:Set["${it.Value.Name}"]
-                        break
-                    }
-                }
-                while ${it:Next(exists)}
-            }
-        }
-    }
-}
-```
+**Fix**: Use config-based detection or fleet-status queries to determine the master at runtime. The canonical implementation (`obj_MasterElection` with fleet-commander lookup and relay-based election) is under [Master/Slave Coordination](#masterslave-coordination) in the Fleet Coordination Patterns chapter.
 
 **2. No Error Handling**
 
