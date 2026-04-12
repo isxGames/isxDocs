@@ -392,31 +392,9 @@ function MaintainTank()
 
 function FindAndLockTargets()
 {
-    ; Already at max targets
-    if ${Me.TargetCount} >= ${Me.MaxLockedTargets}
-        return
-
-    ; Find NPCs
-    variable index:entity NPCs
-    EVE:QueryEntities[NPCs, "CategoryID = CATEGORYID_ENTITY && IsNPC && !IsMoribund && Distance < ${MyShip.MaxTargetRange}"]
-
-    ; Lock up to max
-    variable iterator NPC
-    NPCs:GetIterator[NPC]
-
-    if ${NPC:First(exists)}
-        do
-        {
-            if ${Me.TargetCount} >= ${Me.MaxLockedTargets}
-                break
-
-            if !${NPC.Value.IsLockedTarget} && !${NPC.Value.BeingTargeted}
-            {
-                NPC.Value:LockTarget
-                wait 5
-            }
-        }
-        while ${NPC:Next(exists)}
+    ; Thin wrapper — see ManageTargetLocks() in the Target Management
+    ; section below for the priority-aware canonical implementation.
+    call ManageTargetLocks
 }
 
 function ManagePosition()
