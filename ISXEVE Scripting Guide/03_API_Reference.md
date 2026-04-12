@@ -931,26 +931,8 @@ for (i:Set[1]; ${i} <= ${Local.PilotCount}; i:Inc)
 ```
 
 **Common Pattern - Enemy Detection**:
-```lavish
-variable(global) string[] HOSTILE_PILOTS
-HOSTILE_PILOTS:Insert["EnemyOne"]
-HOSTILE_PILOTS:Insert["EnemyTwo"]
 
-function CheckForHostiles()
-{
-    variable int i
-    for (i:Set[1]; ${i} <= ${HOSTILE_PILOTS.Used}; i:Inc)
-    {
-        if ${Local.Pilot["${HOSTILE_PILOTS[${i}]}"](exists)}
-        {
-            echo "ALERT: Hostile ${HOSTILE_PILOTS[${i}]} in local!"
-            return TRUE
-        }
-    }
-
-    return FALSE
-}
-```
+The hostile-pilot detection pattern (global `HOSTILE_PILOTS` array + iterator check via `${Local.Pilot["name"](exists)}`) is documented canonically in the Fleet chapter under [Local Chat and Pilot Monitoring](#local-chat-and-pilot-monitoring). See that section for the complete `CheckForHostilesInLocal` implementation.
 
 ---
 
