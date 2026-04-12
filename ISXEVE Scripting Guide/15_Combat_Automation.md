@@ -86,34 +86,7 @@ Combat bots automate ship-to-ship combat against NPCs (and occasionally other pl
 
 Fight back only when attacked and taking damage above threshold.
 
-```lavish
-; ===== DEFENSIVE MODE =====
-
-variable string CombatMode = "DEFENSIVE"
-variable float DamageThreshold = 20  ; 20% damage taken
-
-function ProcessDefensiveCombat()
-{
-    ; Only fight if taking damage
-    if ${MyShip.ShieldPct} < ${Math.Calc[100 - ${DamageThreshold}]} || \
-       ${MyShip.ArmorPct} < ${Math.Calc[100 - ${DamageThreshold}]}
-    {
-        ; Find what's attacking us
-        variable index:entity Attackers
-        EVE:QueryEntities[Attackers, "IsTargetingMe && IsNPC && Distance < ${MyShip.MaxTargetRange}"]
-
-        if ${Attackers.Used} > 0
-        {
-            call LockAndEngageAttackers Attackers
-        }
-    }
-    else
-    {
-        ; Not taking damage, don't fight
-        call MaintainTankOnly
-    }
-}
-```
+The implementation is integrated into `obj_SimpleCombat` below -- `State_Fight` checks `This.CombatMode` to select the appropriate behavior. See [Simple Combat Bot](#simple-combat-bot).
 
 **Use Case**: Mining bots that can fight back if attacked
 
@@ -121,28 +94,7 @@ function ProcessDefensiveCombat()
 
 Seek out and destroy all NPCs.
 
-```lavish
-; ===== AGGRESSIVE MODE =====
-
-variable string CombatMode = "AGGRESSIVE"
-
-function ProcessAggressiveCombat()
-{
-    ; Find all nearby NPCs
-    variable index:entity NPCs
-    EVE:QueryEntities[NPCs, "CategoryID = CATEGORYID_ENTITY && IsNPC && !IsMoribund && Distance < ${MyShip.MaxTargetRange}"]
-
-    if ${NPCs.Used} > 0
-    {
-        call LockAndEngageAll NPCs
-    }
-    else
-    {
-        ; No targets, check for loot
-        call ProcessLooting
-    }
-}
-```
+The implementation is integrated into `obj_SimpleCombat` below -- `State_Fight` checks `This.CombatMode` to select the appropriate behavior. See [Simple Combat Bot](#simple-combat-bot).
 
 **Use Case**: Anomaly runners, belt ratters, mission bots
 
@@ -150,24 +102,7 @@ function ProcessAggressiveCombat()
 
 Maintain defenses but attack nothing (or only what's already locked).
 
-```lavish
-; ===== TANK MODE =====
-
-variable string CombatMode = "TANK"
-
-function ProcessTankMode()
-{
-    ; Maintain tank
-    call MaintainTankOnly
-
-    ; Don't acquire new targets
-    ; Only maintain existing locks if any
-    if ${Me.TargetCount} > 0
-    {
-        call ActivateWeaponsOnExistingTargets
-    }
-}
-```
+The implementation is integrated into `obj_SimpleCombat` below -- `State_Fight` checks `This.CombatMode` to select the appropriate behavior. See [Simple Combat Bot](#simple-combat-bot).
 
 **Use Case**: During fleet operations, or when conserving ammo/cap
 
