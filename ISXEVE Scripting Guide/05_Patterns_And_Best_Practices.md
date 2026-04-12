@@ -3310,21 +3310,11 @@ function MasterPulse()
 
 **Pattern**: Explicit priority lists with name matching
 
+The priority target list and 2-pass selection function (priority targets first, then closest) are shown in [Pattern 2: Priority List Matching](#pattern-2-priority-list-matching) above. EVEBot extends this with a **SpecialTargets** list for officer, faction, and hauler spawns that trigger alerts:
+
 ```lavish
-; Priority targets will be targeted (and killed)
-; before other targets, they often do special things
-; which we cant use (scramble / web / damp / etc)
-
-PriorityTargets:Insert["Dire Pithi Destructor"]
-PriorityTargets:Insert["Dire Pithi Wrecker"]
-PriorityTargets:Insert["Dire Pithi Plunderer"]
-PriorityTargets:Insert["Factory Defense Battery"]  /* web/scram */
-PriorityTargets:Insert["Dire Pithi Arrogator"]    /* web/scram */
-PriorityTargets:Insert["Dire Pithi Despoiler"]    /* Jamming */
-
 ; Special targets will trigger an alert
 ; This should include haulers / faction / officers
-
 SpecialTargets:Insert["Estamel Tharchon"]  ; Guristas officer
 SpecialTargets:Insert["Kaikka Peunato"]
 SpecialTargets:Insert["Thon Eney"]
@@ -3341,45 +3331,7 @@ SpecialTargets:Insert["Gatherer"]
 SpecialTargets:Insert["Harvester"]
 ```
 
-**Usage Pattern**:
-
-```lavish
-function GetNextCombatTarget()
-{
-    variable index:entity Entities
-    variable iterator Entity
-
-    EVE:QueryEntities[Entities, "IsNPC && !IsMoribund"]
-    Entities:GetIterator[Entity]
-
-    ; Pass 1: Check for priority targets
-    if ${Entity:First(exists)}
-        do
-        {
-            if ${IsPriorityTarget["${Entity.Value.Name}"]}
-            {
-                return ${Entity.Value.ID}
-            }
-        }
-        while ${Entity:Next(exists)}
-
-    ; Pass 2: Check for special targets (alerts)
-    Entity:First
-    do
-    {
-        if ${IsSpecialTarget["${Entity.Value.Name}"]}
-        {
-            call AlertSpecialTarget "${Entity.Value.Name}"
-            return ${Entity.Value.ID}
-        }
-    }
-    while ${Entity:Next(exists)}
-
-    ; Pass 3: Take closest normal target
-    Entity:First
-    return ${Entity.Value.ID}
-}
-```
+This adds a third pass to the target selection: after checking priority targets, scan for special targets and fire an alert before engaging, then fall back to the closest normal target.
 
 ### Tehbot: Query String Exclusion System
 
