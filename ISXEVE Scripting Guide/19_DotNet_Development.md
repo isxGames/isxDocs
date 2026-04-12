@@ -62,21 +62,13 @@
 
 ### Characteristics
 
-**Advantages:**
-1. **No Compilation** - Edit and run immediately
-2. **Simple Deployment** - Just copy .iss files
-3. **Easy to Share** - Text files, readable source
-4. **Quick Iteration** - Change code, restart script
-5. **Low Barrier to Entry** - Simpler language
-6. **ISXEVE Native** - Designed for ISXEVE
+**Key characteristics:**
+- **No compilation** — edit and run immediately, instant iteration cycle
+- **ISXEVE native** — the language ISXEVE was designed for, all APIs are LavishScript-first
+- **Simple deployment** — just copy .iss text files
+- **Slower execution** — interpreted (not compiled), limited debugging (echo/logs only)
 
-**Disadvantages:**
-1. **Slower Execution** - Interpreted, not compiled
-2. **Limited IDE Support** - Basic text editors only
-3. **No Type Safety** - Runtime type errors
-4. **Limited Debugging** - Echo statements mainly
-5. **No Intellisense** - Must memorize API
-6. **Limited Libraries** - Fewer third-party options
+For the complete feature-by-feature comparison, see the [Comparison Table](#comparison-table) later in this guide.
 
 ### Structure Example (Yamfa)
 
@@ -135,22 +127,13 @@ Execution: run EVEBot
 
 ### Characteristics
 
-**Advantages:**
-1. **Better Performance** - Compiled to native code
-2. **Full IDE Support** - Visual Studio, ReSharper
-3. **Type Safety** - Compile-time error detection
-4. **Advanced Debugging** - Breakpoints, watches, profiling
-5. **Intellisense** - Auto-complete, parameter hints
-6. **Rich Ecosystem** - NuGet packages, libraries
-7. **Better Architecture** - OOP, LINQ, async/await
-8. **Professional Tooling** - Git integration, refactoring
+**Key characteristics:**
+- **Compiled to native code** — significantly faster execution than interpreted LavishScript
+- **Full IDE support** — Visual Studio with IntelliSense, breakpoints, watches, refactoring
+- **Type safety** — compile-time error detection catches bugs before running
+- **Compilation required** — edit → build → run cycle is slower than LavishScript's immediate iteration
 
-**Disadvantages:**
-1. **Compilation Required** - Must build before running
-2. **Complex Deployment** - Multiple DLLs, dependencies
-3. **Higher Skill Requirement** - C# knowledge needed
-4. **Longer Iteration** - Edit → Build → Run cycle
-5. **Not Open Source** - Compiled binaries are opaque
+For the complete feature-by-feature comparison, see the [Comparison Table](#comparison-table) later in this guide.
 
 ### Structure Example ([Metatron2](https://github.com/spacekoala420/Metatron2))
 
