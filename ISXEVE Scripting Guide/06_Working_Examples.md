@@ -1337,6 +1337,8 @@ function CheckForHostiles()
 }
 ```
 
+**See also:** For a full "should I flee?" decision combining hostile detection with tank thresholds and pressure, see `CheckShouldFlee()` in [15_Combat_Automation.md](15_Combat_Automation.md).
+
 ### Warp to Safe Spot (LavishScript)
 
 ```lavish
