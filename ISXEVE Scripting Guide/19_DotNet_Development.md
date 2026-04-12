@@ -108,18 +108,7 @@ Execution: run EVEBot
 
 ### Development Cycle
 
-```
-1. Edit .iss file in text editor (Notepad++, VS Code)
-2. Save file
-3. In InnerSpace console: run ScriptName
-4. Test in game
-5. If error: echo statements for debugging
-6. Make changes
-7. endscript ScriptName
-8. Repeat from step 3
-```
-
-**Typical Iteration Time:** 10-30 seconds
+The full edit → save → run → debug iteration cycle for LavishScript development is documented in the [Development Workflow](#development-workflow) section below.
 
 ---
 
@@ -170,21 +159,7 @@ Execution: dotnet Metatron
 
 ### Development Cycle
 
-```
-1. Edit .cs files in Visual Studio
-2. Save changes (auto-saves)
-3. Build solution (Ctrl+Shift+B)
-   - Compilation errors shown inline
-   - Fix errors before running
-4. Copy built DLL to game directory
-5. In InnerSpace console: dotnet Metatron
-6. Test in game
-7. If error: View stack trace, use breakpoints
-8. Make changes
-9. Repeat from step 3
-```
-
-**Typical Iteration Time:** 1-3 minutes (compilation time)
+The full edit → build → run → debug iteration cycle for DotNet development is documented in the [Development Workflow](#development-workflow) section below.
 
 ---
 
