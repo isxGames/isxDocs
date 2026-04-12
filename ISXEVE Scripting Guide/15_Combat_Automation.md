@@ -290,7 +290,7 @@ objectdef obj_SimpleCombat
         call ActivateWeapons
 
         ; Launch drones
-        call LaunchDrones
+        call ManageDrones
     }
 
     method State_Flee()
@@ -432,16 +432,9 @@ function ActivateWeapons()
 
 function LaunchDrones()
 {
-    ; Already have drones out
-    if ${EVE.GetTargetDrones.Used} > 0
-        return
-
-    ; Have drones in bay
-    if ${MyShip.UsedDroneBayCapacity} > 0
-    {
-        EVE:Execute[DroneReturnAndOrbit]
-        wait 20  ; Wait for drones to launch
-    }
+    ; Thin wrapper — see ManageDrones() in the Drone Combat section
+    ; below for the full implementation with target assignment and recall.
+    call ManageDrones
 }
 
 function FleeToSafe()
