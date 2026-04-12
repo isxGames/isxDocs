@@ -56,15 +56,7 @@
 
 ## Introduction to Multi-Boxing
 
-### What is Multi-Boxing?
-
-Multi-boxing is running multiple EVE clients simultaneously on one or more computers, each controlled by automation. This allows:
-
-- **Mining Fleets**: One Orca + multiple miners working in coordination
-- **Combat Fleets**: DPS ships + logi + tackle working together
-- **Hauler Support**: Dedicated hauler servicing multiple miners
-- **Market Operations**: Multiple traders across different trade hubs
-- **Boosting**: Command ship providing bonuses to fleet
+Multi-boxing (running multiple EVE clients with coordinated automation) is introduced in [04_Core_Concepts.md](04_Core_Concepts.md) under Sessions and Multi-Client. This chapter focuses on the fleet-specific coordination patterns.
 
 ### Key Concepts
 
