@@ -4320,7 +4320,9 @@ Config.Miner:SetUseMiningDrones[TRUE]
 Config:Save
 ```
 
-### Sub-Configuration Pattern
+### Sub-Configuration Pattern (Approach A: Manual Member/Method Pairs)
+
+This EVEBot approach uses explicit member/method pairs for each config setting. For the alternative Tehbot approach using inheritance and the `Setting()` macro, see [Derived Configuration Classes (Approach B)](#derived-configuration-classes-approach-b-inheritance--setting-macro) below.
 
 ```lavish
 objectdef obj_Configuration_Common
@@ -4517,7 +4519,9 @@ objectdef obj_Configuration_Base
 }
 ```
 
-### Derived Configuration Classes
+### Derived Configuration Classes (Approach B: Inheritance + Setting Macro)
+
+For the alternative EVEBot approach using manual member/method pairs, see [Sub-Configuration Pattern (Approach A)](#sub-configuration-pattern-approach-a-manual-membermember-pairs) above.
 
 ```lavish
 objectdef obj_Configuration_Common inherits obj_Configuration_Base
