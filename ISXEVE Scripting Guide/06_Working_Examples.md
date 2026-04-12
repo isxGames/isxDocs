@@ -395,34 +395,7 @@ function WarpToEntity(int64 EntityID, int Distance)
 
 ### Warp to Bookmark (LavishScript)
 
-```lavish
-function WarpToBookmark(string BookmarkName, int Distance)
-{
-    if !${EVE.Bookmark["${BookmarkName}"](exists)}
-    {
-        echo "ERROR: Bookmark doesn't exist: ${BookmarkName}"
-        return FALSE
-    }
-
-    echo "Warping to bookmark: ${BookmarkName} at ${Distance}m..."
-    EVE.Bookmark["${BookmarkName}"]:WarpTo[${Distance}]
-
-    ; Wait to enter warp
-    wait 50 ${Me.ToEntity.Mode} == 3
-
-    if ${Me.ToEntity.Mode} != 3
-    {
-        echo "ERROR: Failed to enter warp"
-        return FALSE
-    }
-
-    ; Wait to exit warp
-    wait 3000 ${Me.ToEntity.Mode} != 3
-
-    echo "Arrived at bookmark: ${BookmarkName}"
-    return TRUE
-}
-```
+The canonical `WarpToBookmark` function (bookmark existence check, `:WarpTo[distance]`, warp-start wait, warp-complete wait) is documented in [16_Mining_And_Hauling.md](16_Mining_And_Hauling.md) under Autopilot and Navigation. 06's version adds a `Distance` parameter for warp-at-range; the pattern is otherwise identical.
 
 ### Movement Queue (.NET)
 
