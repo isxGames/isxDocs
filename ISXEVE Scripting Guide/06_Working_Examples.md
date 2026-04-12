@@ -951,78 +951,11 @@ public void SalvageAndLoot()
 
 ### Dock at Station (LavishScript)
 
-```lavish
-function DockAtStation(int64 StationID)
-{
-    if !${Entity[${StationID}](exists)}
-    {
-        echo "ERROR: Station doesn't exist"
-        return FALSE
-    }
-
-    echo "Docking at ${Entity[${StationID}].Name}..."
-
-    ; Warp to station if far
-    if ${Entity[${StationID}].Distance} > 200000
-    {
-        call WarpToEntity ${StationID} 0
-    }
-
-    ; Approach station
-    if ${Entity[${StationID}].Distance} > 1000
-    {
-        Entity[${StationID}]:Approach
-        wait 300 ${Entity[${StationID}].Distance} < 1000
-    }
-
-    ; Request dock
-    Entity[${StationID}]:Dock
-    echo "Docking request sent"
-
-    ; Wait to dock
-    wait 300 ${Me.InStation}
-
-    if ${Me.InStation}
-    {
-        echo "Docked successfully"
-        return TRUE
-    }
-    else
-    {
-        echo "ERROR: Docking timeout"
-        return FALSE
-    }
-}
-```
+The canonical dock-at-station implementation (warp-to-station, approach, dock request, wait-for-docked, timeout handling) is documented in [16_Mining_And_Hauling.md](16_Mining_And_Hauling.md) under Station Operations.
 
 ### Undock from Station (LavishScript)
 
-```lavish
-function UndockFromStation()
-{
-    if !${Me.InStation}
-    {
-        echo "ERROR: Not in station"
-        return FALSE
-    }
-
-    echo "Undocking from ${Me.Station.Name}..."
-
-    Me.Station:Undock
-    wait 300 ${Me.InSpace}
-
-    if ${Me.InSpace}
-    {
-        echo "Undocked successfully"
-        return TRUE
-    }
-    else
-    {
-        echo "ERROR: Undock timeout"
-        return FALSE
-    }
-}
-```
+The canonical undock implementation (`Me.Station:Undock`, wait-for-in-space, timeout handling) is documented in [16_Mining_And_Hauling.md](16_Mining_And_Hauling.md) under Station Operations.
 
 ---
 
