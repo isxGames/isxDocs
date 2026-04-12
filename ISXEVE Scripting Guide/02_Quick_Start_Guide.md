@@ -720,28 +720,30 @@ while ${Samples:Inc} <= 10 && ${MyShip.ActiveTarget(exists)}
 Leave the rest of the implementation (existence checks, NPC/PC branch, lock status) as you wrote it when following Example 3.
 
 ### Exercise 3: Cargo Space Checker
-Create a script that reports how much cargo space you have used and remaining.
 
-**Solution:**
+The quick one-line cargo summary (`${MyShip.UsedCargoCapacity}/${MyShip.CargoCapacity}`) already appeared in your first script. For this exercise, go a level deeper: **enumerate the actual items in your cargo hold** using `MyShip.Cargo[]`.
+
+Write a script that:
+
+1. Calls `MyShip:GetCargo[<index>]` / iterates `MyShip.Cargo[i]` from `1` through `${MyShip.GetCargo}` (the item count).
+2. For each item, echoes `Name`, `Quantity`, and `Volume` (unit volume) — plus the **line total** (`Quantity * Volume`).
+3. Sums the line totals and echoes the grand total at the end.
+4. Bonus: tracks the single largest line-total item and echoes it as "Biggest stack: <name> (<m3>)".
+
+**Hint — the iteration shape:**
 
 ```lavishscript
-function main()
+variable int Count = ${MyShip.GetCargo}
+variable int i = 0
+variable float Total = 0
+variable float LineVol
+while ${i:Inc} <= ${Count}
 {
-    while !${ISXEVE.IsReady}
-        wait 10
-
-    variable float UsedCapacity = ${MyShip.UsedCargoCapacity}
-    variable float TotalCapacity = ${MyShip.CargoCapacity}
-    variable float FreeCapacity = ${Math.Calc[${TotalCapacity}-${UsedCapacity}]}
-    variable float PercentUsed = ${Math.Calc[${UsedCapacity}*100/${TotalCapacity}]}
-
-    echo "===== Cargo Report ====="
-    echo "Used: ${UsedCapacity} m3"
-    echo "Free: ${FreeCapacity} m3"
-    echo "Total: ${TotalCapacity} m3"
-    echo "Capacity: ${PercentUsed.Int}% full"
-
-    if ${PercentUsed} > 90
-        echo "WARNING: Cargo almost full!"
+    LineVol:Set[${Math.Calc[${MyShip.Cargo[${i}].Quantity} * ${MyShip.Cargo[${i}].Volume}]}]
+    echo "${i}: ${MyShip.Cargo[${i}].Name} x${MyShip.Cargo[${i}].Quantity} (${LineVol} m3)"
+    Total:Inc[${LineVol}]
 }
+echo "Total item volume: ${Total} m3"
 ```
+
+Note: `MyShip.Cargo[]` is only populated after the cargo hold has been opened/scanned at least once in-session. If the loop reports zero items, open your cargo window in EVE and re-run.
