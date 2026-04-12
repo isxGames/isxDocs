@@ -5121,29 +5121,8 @@ function ActivateAllWeapons(int64 targetID)
 ### Mining Lasers
 
 **Activate on Asteroid**:
-```lavish
-function ActivateMiningLasers(int64 asteroidID)
-{
-    variable int i
-    for (i:Set[0]; ${i} < ${MyShip.HiSlots}; i:Inc)
-    {
-        variable item module = ${MyShip.Module[HiSlot, ${i}]}
 
-        if !${module(exists)}
-            continue
-
-        if !${module.Name.Find["Mining"](exists)} && !${module.Name.Find["Strip Miner"](exists)}
-            continue
-
-        if ${module.IsActive}
-            continue
-
-        module:Activate[${asteroidID}]
-        echo "Mining ${Entity[${asteroidID}].Name} with ${module.Name}"
-        wait 10
-    }
-}
-```
+See the canonical [Activating All Modules of Type](#activating-all-modules-of-type) pattern earlier in this chapter for the complete iterate-HiSlots-and-activate-by-name-filter example. Substitute `"Mining"` / `"Strip Miner"` as the name filter (or simply `"Mining Laser"`) to target mining modules.
 
 **Check Mining Cycle**:
 ```lavish
@@ -5368,44 +5347,7 @@ function ActivateTackle(int64 targetID)
 
 ### Pattern 1: Evebot - Mining Laser Management
 
-```lavish
-; Simplified from Evebot
-function Evebot_ActivateMiners(int64 asteroidID)
-{
-    if ${asteroidID} <= 0
-        return FALSE
-
-    variable entity asteroid = ${Entity[${asteroidID}]}
-
-    if !${asteroid(exists)}
-        return FALSE
-
-    ; Activate all mining lasers
-    variable int i
-    for (i:Set[0]; ${i} < ${MyShip.HiSlots}; i:Inc)
-    {
-        variable item module = ${MyShip.Module[HiSlot, ${i}]}
-
-        if !${module(exists)}
-            continue
-
-        ; Check if miner
-        if !${module.Name.Find["Mining"](exists)} && !${module.Name.Find["Strip Miner"](exists)}
-            continue
-
-        ; Skip if active
-        if ${module.IsActive}
-            continue
-
-        ; Activate
-        module:Activate[${asteroidID}]
-        echo "Mining ${asteroid.Name} with ${module.Name}"
-        wait 10
-    }
-
-    return TRUE
-}
-```
+The core module-iteration pattern (loop HiSlots, name-filter by `"Mining"`/`"Strip Miner"`, skip already-active, call `module:Activate[${asteroidID}]`) is the same as the canonical [Activating All Modules of Type](#activating-all-modules-of-type) example in Module Activation and Deactivation. Evebot's specific guard is to check `${Entity[${asteroidID}](exists)}` before entering the loop — a useful defensive addition you can apply to any activation loop.
 
 ### Pattern 2: Tehbot - Weapon Activation
 
