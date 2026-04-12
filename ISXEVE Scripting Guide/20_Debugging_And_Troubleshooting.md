@@ -1090,59 +1090,7 @@ Use `ValidateEntity(entityID)` from [Entity Validation](#entity-validation) to c
 
 #### Issue: Targeting Fails
 
-```lavish
-function DebugTargeting(int64 targetID)
-{
-    echo "=== Targeting Debug ==="
-
-    ; Check target count
-    echo "Current Targets: ${Me.TargetCount}/${Me.MaxLockedTargets}"
-
-    if ${Me.TargetCount} >= ${Me.MaxLockedTargets}
-    {
-        echo "✗ PROBLEM: At max target limit"
-        echo "SOLUTION: Unlock a target first"
-        return
-    }
-
-    ; Check entity exists
-    if !${Entity[${targetID}](exists)}
-    {
-        echo "✗ PROBLEM: Entity doesn't exist"
-        return
-    }
-
-    variable entity E = ${Entity[${targetID}]}
-
-    echo "Target: ${E.Name}"
-    echo "IsLockedTarget: ${E.IsLockedTarget}"
-    echo "BeingTargeted: ${E.BeingTargeted}"
-    echo "IsTargetingMe: ${E.IsTargetingMe}"
-    echo "Distance: ${E.Distance}m"
-    echo "Max Target Range: ${MyShip.MaxTargetRange}m"
-
-    ; Diagnose
-    if ${E.IsLockedTarget}
-    {
-        echo "⚠ Already locked (not a problem)"
-    }
-    elseif ${E.BeingTargeted}
-    {
-        echo "⚠ Already targeting (wait...)"
-    }
-    elseif ${E.Distance} > ${MyShip.MaxTargetRange}
-    {
-        echo "✗ PROBLEM: Out of range"
-        echo "SOLUTION: Approach closer"
-    }
-    else
-    {
-        echo "✓ Should be able to lock - try again"
-    }
-
-    echo "======================"
-}
-```
+The target-lock diagnostic checklist (TargetCount vs MaxLockedTargets, entity exists, IsLockedTarget, BeingTargeted, Distance vs MaxTargetRange) is implemented as a production-grade `SafeLockTarget` function under [Problem 2: Target Lock Fails Silently](#problem-2-target-lock-fails-silently). That version performs all the same checks AND actually attempts the lock with verification -- use it both for diagnosis and as the canonical lock helper.
 
 #### Issue: Slow Performance
 
