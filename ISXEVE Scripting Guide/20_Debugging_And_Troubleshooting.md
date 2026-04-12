@@ -533,56 +533,7 @@ objectdef obj_FrameProfiler
 
 ### Method Call Counter
 
-```lavish
-objectdef obj_CallCounter
-{
-    variable collection:int CallCounts
-
-    method Count(string methodName)
-    {
-        if !${This.CallCounts.Element[${methodName}](exists)}
-        {
-            This.CallCounts:Set[${methodName}, 0]
-        }
-
-        This.CallCounts:Set[${methodName}, ${Math.Calc[${This.CallCounts.Get[${methodName}]} + 1]}]
-    }
-
-    method PrintStats()
-    {
-        variable iterator Item
-        This.CallCounts:GetIterator[Item]
-
-        echo "=== Call Count Statistics ==="
-
-        if ${Item:First(exists)}
-        {
-            do
-            {
-                echo "${Item.Key}: ${Item.Value} calls"
-            }
-            while ${Item:Next(exists)}
-        }
-    }
-}
-
-; Usage in methods
-method LockTarget(int64 targetID)
-{
-    CallCounter:Count["LockTarget"]
-
-    ; ... actual logic ...
-}
-
-; After session
-CallCounter:PrintStats
-
-; Output:
-; === Call Count Statistics ===
-; LockTarget: 1523 calls
-; ActivateWeapons: 1421 calls
-; CheckCargo: 45 calls
-```
+The standalone call-counting pattern (`collection:int` with create-if-missing + increment + iterator-based `PrintStats`) is integrated into the canonical `obj_PerformanceProfiler` under [Example 2: Performance Profiler](#example-2-performance-profiler). That version combines call counting with start/end timing and a `PrintReport` method.
 
 ### Memory Usage Tracking
 
