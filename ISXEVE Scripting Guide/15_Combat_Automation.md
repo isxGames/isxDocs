@@ -1408,66 +1408,30 @@ function ProcessMining()
 
 ### Frigate Combat
 
-```lavish
-; Fast, low tank, high mobility
+| Setting | Value | Rationale |
+|---------|-------|-----------|
+| Movement | Orbit at 2,000m | Close orbit for speed tanking |
+| Tank | Afterburner (speed tank) | Low HP, rely on velocity |
 
-variable float FrigateOrbitRange = 2000  ; Close orbit
-
-function FrigateCombatPattern()
-{
-    ; Orbit close and fast
-    if ${Me.ActiveTarget(exists)}
-    {
-        Me.ActiveTarget:Orbit[${FrigateOrbitRange}]
-
-        ; Activate afterburner for speed tank
-        call ActivateAfterburner
-    }
-}
-```
+Use `OrbitActiveTarget()` from the [Movement in Combat](#movement-in-combat) section with `FrigateOrbitRange = 2000`. Activate afterburner as the defensive measure.
 
 ### Cruiser Combat
 
-```lavish
-; Medium range, medium tank
+| Setting | Value | Rationale |
+|---------|-------|-----------|
+| Movement | KeepAtRange 15,000m | Medium standoff distance |
+| Tank | Shield tank | Moderate buffer, active hardeners |
 
-variable float CruiserKeepRange = 15000
-
-function CruiserCombatPattern()
-{
-    if ${Me.ActiveTarget(exists)}
-    {
-        Me.ActiveTarget:KeepAtRange[${CruiserKeepRange}]
-
-        ; Maintain moderate tank
-        call ManageShieldTank
-    }
-}
-```
+Use `KeepRangeFromActiveTarget()` from the [Movement in Combat](#movement-in-combat) section with `CruiserKeepRange = 15000`. Run shield tank modules for defense.
 
 ### Battleship Combat
 
-```lavish
-; Long range, heavy tank, slow
+| Setting | Value | Rationale |
+|---------|-------|-----------|
+| Movement | KeepAtRange 50,000m | Kite at long range |
+| Tank | Armor tank + drones | Heavy buffer, drone DPS supplement |
 
-variable float BattleshipKeepRange = 50000
-
-function BattleshipCombatPattern()
-{
-    if ${Me.ActiveTarget(exists)}
-    {
-        ; Kite at long range
-        if ${Me.ActiveTarget.Distance} < ${BattleshipKeepRange}
-        {
-            Me.ActiveTarget:KeepAtRange[${BattleshipKeepRange}]
-        }
-
-        ; Heavy tank management
-        call ManageArmorTank
-        call ManageDrones
-    }
-}
-```
+Use `KeepRangeFromActiveTarget()` from the [Movement in Combat](#movement-in-combat) section with `BattleshipKeepRange = 50000`. Manage armor tank and deploy drones for additional damage.
 
 ---
 
