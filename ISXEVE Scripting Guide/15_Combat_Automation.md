@@ -358,36 +358,10 @@ function CheckShouldFlee()
 
 function MaintainTank()
 {
-    ; Activate shield hardeners
-    variable int i
-    for (i:Set[1]; ${i} <= ${MyShip.ModuleCount}; i:Inc)
-    {
-        variable item module = ${MyShip.Module[${i}]}
-
-        if ${module.ToItem.Group.Find["Shield Hardener"]} || \
-           ${module.ToItem.Group.Find["Shield Booster"]}
-        {
-            if !${module.IsActive} && ${module.IsOnline}
-            {
-                module:Activate
-            }
-        }
-    }
-
-    ; Activate armor hardeners/repairers
-    for (i:Set[1]; ${i} <= ${MyShip.ModuleCount}; i:Inc)
-    {
-        variable item module2 = ${MyShip.Module[${i}]}
-
-        if ${module2.ToItem.Group.Find["Armor Hardener"]} || \
-           ${module2.ToItem.Group.Find["Armor Repairer"]}
-        {
-            if !${module2.IsActive} && ${module2.IsOnline}
-            {
-                module2:Activate
-            }
-        }
-    }
+    ; Combined tank management — delegates to specialized functions
+    ; in the Tank Management section below.
+    call ManageShieldTank
+    call ManageArmorTank
 }
 
 function FindAndLockTargets()
