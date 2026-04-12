@@ -136,6 +136,8 @@ EVEBot/
     └── EVEBot.xml               # Main configuration
 ```
 
+**Logger implementations:** For the full `obj_Logger` code (EVEBot and Tehbot variants with log levels, file output, and color-coded console), see [20_Debugging_And_Troubleshooting.md](20_Debugging_And_Troubleshooting.md) under Logging Frameworks.
+
 ### File Organization Philosophy
 
 **Core Objects** (`core/`):

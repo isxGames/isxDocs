@@ -40,6 +40,8 @@
 
 ## Logging Frameworks
 
+**Architectural context:** For how these loggers fit into EVEBot and Tehbot's startup sequence, object hierarchy, and `#include` chain, see [18_Bot_Architecture_Analysis.md](18_Bot_Architecture_Analysis.md) under Project Structure and Initialization System.
+
 ### Why Logging Matters
 
 **Critical for EVE bots because:**
