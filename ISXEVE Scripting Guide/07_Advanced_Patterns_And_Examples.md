@@ -4841,10 +4841,7 @@ objectdef obj_Configuration_Combat
     Define_ConfigItem(int, OrbitDistance, 30000)
 }
 
-; Creates:
-; member:int MinimumShieldPct() { return ${This.Ref.FindSetting[MinimumShieldPct, 50]} }
-; method MinimumShieldPct(int Value) { This.Ref:AddSetting[MinimumShieldPct, ${Value}] }
-; ... etc for each config item
+; Each macro call expands to a member/method pair — see Pattern 1: Member/Method Pair above for the manual equivalent
 ```
 
 ### Tehbot Setting Macro
