@@ -692,41 +692,32 @@ function main()
 ```
 
 ### Exercise 2: Entity Info Display
-Create a script that displays detailed information about your current target.
 
-**Solution:**
+Extend **Example 3 (TargetInfo.iss)** from earlier in this guide with target motion tracking. Your enhanced script should:
+
+1. Report the target's current speed via `${Target.Velocity}` and its top speed via `${Target.MaxVelocity}`.
+2. Poll `${Target.Distance}` in a short loop (e.g., sample every 1-2 seconds for ~10 seconds) and compare successive samples.
+3. Emit a **"receding-target warning"** when distance is increasing between samples — i.e., the target is moving away from you — so a pilot can decide whether to pursue, switch targets, or disengage modules.
+4. Bonus: flag when `${Target.Velocity}` is close to `${Target.MaxVelocity}` (the target is running at full burn).
+
+**Hint — the key new echoes you'll add on top of Example 3:**
 
 ```lavishscript
-function main()
+; Sampling loop (runs after Example 3's one-shot info block)
+variable float LastDistance = ${Target.Distance}
+variable int Samples = 0
+while ${Samples:Inc} <= 10 && ${MyShip.ActiveTarget(exists)}
 {
-    while !${ISXEVE.IsReady}
-        wait 10
-
-    if !${MyShip.ActiveTarget(exists)}
-    {
-        echo "No target selected"
-        return
-    }
-
-    variable entity Target = ${MyShip.ActiveTarget.ToEntity}
-
-    echo "===== Target Information ====="
-    echo "Name: ${Target.Name}"
-    echo "Distance: ${Target.Distance}m"
-    echo "Type: ${Target.Type}"
-    echo "Group: ${Target.Group}"
-
-    if ${Target.IsNPC}
-        echo "Category: NPC"
-    elseif ${Target.IsPC}
-        echo "Category: Player"
-
-    if ${Target.IsLockedTarget}
-        echo "Status: LOCKED"
-    else
-        echo "Status: Not locked"
+    wait 10
+    variable float CurrentDistance = ${MyShip.ActiveTarget.ToEntity.Distance}
+    echo "Velocity: ${MyShip.ActiveTarget.ToEntity.Velocity} / ${MyShip.ActiveTarget.ToEntity.MaxVelocity} m/s"
+    if ${CurrentDistance} > ${LastDistance}
+        echo "WARNING: target is receding (${LastDistance.Int}m -> ${CurrentDistance.Int}m)"
+    LastDistance:Set[${CurrentDistance}]
 }
 ```
+
+Leave the rest of the implementation (existence checks, NPC/PC branch, lock status) as you wrote it when following Example 3.
 
 ### Exercise 3: Cargo Space Checker
 Create a script that reports how much cargo space you have used and remaining.
