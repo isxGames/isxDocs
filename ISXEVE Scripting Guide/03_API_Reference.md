@@ -2699,55 +2699,26 @@ if ${entity.Distance2} < 2500000000    ; 50000²
 
 ### Common Category IDs
 
-**CategoryID Reference** (verified against EVEBot, Yamfa, EVESalvage):
-```lavish
-; Ships and entities
-CategoryID = 6         ; Ship (player ships)
-CategoryID = 11        ; Entity (NPCs / rats)
+The full `Entity.CategoryID` reference table (Ship, Entity, Celestial, Asteroid, Drone, Fighter, Deployable, Starbase, Structure) lives in [Quick Reference Tables > Category IDs](#category-ids) at the end of this file. The most frequently-used values when querying entities are:
 
-; Celestials
-CategoryID = 2         ; Celestial (planets, moons, suns, stargates)
+- `CategoryID = 6` (Ship) — player ships
+- `CategoryID = 11` (Entity) — NPCs / rats
+- `CategoryID = 25` (Asteroid) — ore for mining
 
-; Mining
-CategoryID = 25        ; Asteroid (ore)
-
-; Structures
-CategoryID = 22        ; Deployable
-CategoryID = 23        ; Starbase (POS structures)
-CategoryID = 65        ; Structure (citadels, NPC stations)
-
-; Combat / utility
-CategoryID = 18        ; Drone
-CategoryID = 87        ; Fighter
-```
-
-See the canonical [Category IDs table](#quick-reference-tables) for the consolidated reference.
+See the canonical table for the complete list.
 
 ### Common Group IDs
 
-**GroupID Reference** (partial list):
-```lavish
-; Ship groups
-GroupID = 25           ; Frigate
-GroupID = 26           ; Cruiser
-GroupID = 27           ; Battleship
-GroupID = 28           ; Industrial
-GroupID = 419          ; Combat Battlecruiser
-GroupID = 463          ; Mining Barge
+The full `Entity.GroupID` reference table (Stargate, Container, Wreck, Station, ship classes, asteroid types, MTU, Warp Bubble, etc.) lives in [Quick Reference Tables > Group IDs](#group-ids) at the end of this file. Common ship-class and asteroid groups include:
 
-; Asteroid groups
-GroupID = 465          ; Veldspar
-GroupID = 466          ; Scordite
-GroupID = 467          ; Pyroxeres
-GroupID = 468          ; Plagioclase
-GroupID = 469          ; Omber
-GroupID = 450          ; Kernite
-GroupID = 451          ; Jaspet
-GroupID = 452          ; Hemorphite
-GroupID = 453          ; Hedbergite
-```
+- `GroupID = 10` (Stargate)
+- `GroupID = 14` (Asteroid Belt)
+- `GroupID = 226` (Wreck)
+- `GroupID = 25/26/27/28` (Frigate / Cruiser / Battleship / Industrial)
+- `GroupID = 463` (Mining Barge)
+- `GroupID = 465` (Veldspar) — check EVEBot source or query `${Entity.GroupID}` for the full asteroid list
 
-**Finding IDs**: Check Evebot source or use `echo ${entity.TypeID}` / `echo ${entity.GroupID}` on known entities.
+See the canonical table for the complete list.
 
 ---
 
