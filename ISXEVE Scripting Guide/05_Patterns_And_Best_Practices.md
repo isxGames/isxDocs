@@ -4072,6 +4072,10 @@ function MoveCargoToHangar(int quantity)
 
 ### Pattern 3: State Validation
 
+Unlike the [Safety-First Pulse Example](#safety-first-pulse-example) (which returns on the first failure), this pattern **accumulates all errors** into a single string so the log shows every problem at once -- useful for diagnostics.
+
+The individual safety checks (ISXEVE.IsReady, Me/MyShip existence, location, hostiles, ship integrity) follow the same layered approach described in the Safety-First section. The unique contribution here is the error-accumulation scaffolding:
+
 ```lavish
 ; ===== STATE VALIDATION PATTERN =====
 
@@ -4079,31 +4083,22 @@ function ValidateBotState()
 {
     variable string errorMessage = ""
 
-    ; Check ISXEVE
+    ; Each check appends to the error string instead of returning immediately.
+    ; Use the same checks from the Safety-First Pulse Example.
     if !${ISXEVE.IsReady}
     {
         errorMessage:Concat["ISXEVE not ready; "]
     }
 
-    ; Check character
     if !${Me(exists)}
     {
         errorMessage:Concat["Me does not exist; "]
     }
 
-    ; Check ship
-    if !${MyShip(exists)}
-    {
-        errorMessage:Concat["MyShip does not exist; "]
-    }
+    ; ... additional checks (MyShip, location, hostiles, ship integrity)
+    ;     follow the same accumulation pattern
 
-    ; Check location
-    if !${Me.InSpace} && !${Me.InStation}
-    {
-        errorMessage:Concat["Invalid location; "]
-    }
-
-    ; If any errors, log and return false
+    ; Report ALL failures at once
     if ${errorMessage.Length} > 0
     {
         echo "ERROR: Bot state invalid: ${errorMessage}"
@@ -4115,14 +4110,12 @@ function ValidateBotState()
 
 function BotPulse()
 {
-    ; Validate state every pulse
     if !${ValidateBotState}
     {
         echo "Bot state invalid, waiting..."
         return
     }
 
-    ; State valid, proceed with bot logic
     call ProcessBotLogic
 }
 ```
