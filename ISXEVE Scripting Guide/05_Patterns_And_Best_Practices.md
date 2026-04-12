@@ -236,41 +236,18 @@ method Pulse()
 
 ### Full Pattern
 
-```lavish
-; ===== YAMFA-STYLE SIMPLE LOOP =====
+This extends the [Minimal Bot Template](#minimal-bot-template) with periodic maintenance, queued UI operations, randomized pacing, and richer initialization/shutdown. The startup boilerplate (ISXEVE.IsReady wait, Me/MyShip validation, Initialize call, atexit) is identical -- see the template above.
 
-variable bool ScriptRunning = TRUE
+**Additional variables:**
+
+```lavish
 variable int LastActionTime = 0
 variable int LastCleanupTime = 0
+```
 
-function main()
-{
-    ; Startup
-    while !${ISXEVE.IsReady}
-    {
-        echo "Waiting for ISXEVE..."
-        wait 10
-    }
+**Additions inside the main loop** (after the `BotPulse` safety-check block):
 
-    while !${Me(exists)} || !${MyShip(exists)}
-    {
-        echo "Waiting for character and ship..."
-        wait 10
-    }
-
-    ; Initialize
-    echo "Initializing bot for ${Me.Name}"
-    call Initialize
-
-    ; Main loop
-    while ${ScriptRunning}
-    {
-        ; Safety checks FIRST
-        if ${Me.InSpace} && ${ISXEVE.IsReady} && ${Me(exists)}
-        {
-            call MainPulse
-        }
-
+```lavish
         ; Process queued commands
         if ${QueuedCommands}
         {
@@ -287,9 +264,11 @@ function main()
         ; Random delay + frame wait
         wait ${Math.Rand[2,6]}
         waitframe
-    }
-}
+```
 
+**Richer Initialize, MainPulse, and atexit:**
+
+```lavish
 function Initialize()
 {
     echo "Loading configuration..."
