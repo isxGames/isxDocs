@@ -417,45 +417,7 @@ redirect -append "mybot.log" echo "Line 2"
 
 **Good practice:**
 
-```lavish
-objectdef obj_MyLogger
-{
-    variable string LogFile = "./logs/${Me.Name}.log"
-
-    method Initialize()
-    {
-        ; Create logs directory
-        declare FP filepath "${Script.CurrentDirectory}"
-        if !${FP.FileExists["logs"]}
-        {
-            FP:MakeSubdirectory["logs"]
-        }
-
-        ; Write header
-        This:WriteHeader
-    }
-
-    method WriteHeader()
-    {
-        redirect "${This.LogFile}" echo "========================================"
-        redirect -append "${This.LogFile}" echo "Session: ${Time.Date} ${Time.Time24}"
-        redirect -append "${This.LogFile}" echo "Character: ${Me.Name}"
-        redirect -append "${This.LogFile}" echo "Ship: ${MyShip.ToEntity.Name}"
-        redirect -append "${This.LogFile}" echo "========================================"
-    }
-
-    method Log(string message)
-    {
-        redirect -append "${This.LogFile}" echo "[${Time.Time24}] ${message}"
-    }
-
-    method LogError(string message)
-    {
-        redirect -append "${This.LogFile}" echo "[${Time.Time24}] ERROR: ${message}"
-        echo "\ar[ERROR] ${message}\ax"
-    }
-}
-```
+See [Example 1: Complete Logging System](#example-1-complete-logging-system) for a production-grade logger (`obj_ComprehensiveLogger`) that includes `Initialize`, `WriteHeader`, `Log`, and `LogError` plus level filtering, color-coded output, and file rotation.
 
 ### Separate Log Files by Purpose
 
