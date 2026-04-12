@@ -691,7 +691,7 @@ objectdef obj_AutonomousMiner
 
 ### Pattern 3: Leader-Follower
 
-One bot leads, others follow:
+One bot leads, others follow. (For master role discovery/election, see [Master/Slave Coordination](#masterslave-coordination) in the Relay IPC chapter below.)
 
 ```lavish
 objectdef obj_FleetFollower
@@ -3778,6 +3778,8 @@ if ${Ship.IsPod}
 ### Master/Slave Coordination
 
 **Pattern 1: Master Election (EVEBot)**
+
+(For movement-based following once the master is known, see [Pattern 3: Leader-Follower](#pattern-3-leader-follower) in Master-Slave Architectures above.)
 
 ```lavish
 objectdef obj_MasterElection
