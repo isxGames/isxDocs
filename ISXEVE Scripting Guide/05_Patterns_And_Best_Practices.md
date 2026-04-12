@@ -884,7 +884,7 @@ objectdef obj_Miner
 
 ### Priority-Based Transitions
 
-**ALWAYS** check safety conditions before normal operations:
+**ALWAYS** check safety conditions before normal operations. (For a standalone action-selection variant of this pattern, see [Layered Priority](#pattern-1-layered-priority) under Priority Systems.)
 
 ```lavish
 method ProcessState()
@@ -2591,7 +2591,7 @@ method AddAllNPCs()
 
 ## Priority Systems
 
-Priority systems allow bots to handle multiple concerns simultaneously.
+Priority systems allow bots to handle multiple concerns simultaneously. The cascading-if structure used here is the same priority-ordering principle shown in [Priority-Based Transitions](#priority-based-transitions) (embedded in a state machine); the patterns below present it as standalone action-selection functions.
 
 ### Pattern 1: Layered Priority
 
