@@ -988,6 +988,8 @@ method State_Mining()
 }
 ```
 
+**Tip:** For a reusable timer wrapper that encapsulates the `${LavishScript.RunningTime}` math shown above, see Custom Timer Objects in [22_Utility_Script_Patterns.md](22_Utility_Script_Patterns.md). The `obj_TimerObject` objectdef provides `Set`, `TimeLeft`, and `Expired` methods for cleaner, less error-prone timing code.
+
 ### Condition Accumulation
 
 Require multiple conditions before transitioning:
