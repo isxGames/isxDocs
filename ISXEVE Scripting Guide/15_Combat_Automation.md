@@ -1241,16 +1241,7 @@ variable string CurrentState = "MINING"
 
 function main()
 {
-    ; Startup
-    while !${ISXEVE.IsReady}
-    {
-        wait 10
-    }
-
-    while !${Me(exists)} || !${MyShip(exists)}
-    {
-        wait 10
-    }
+    ; (Startup boilerplate — ISXEVE.IsReady + Me/MyShip wait — identical to Example 1 above)
 
     ; Initialize
     echo "Defensive Miner starting"
