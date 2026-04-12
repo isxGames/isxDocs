@@ -3418,53 +3418,7 @@ objectdef obj_FleetQuery
 
 **Use Case:** Keep fleet members in sync
 
-```lavish
-objectdef obj_FleetSync
-{
-    variable string FleetState = "IDLE"
-
-    method Initialize()
-    {
-        LavishScript:RegisterEvent[Fleet_State_Change]
-        Event[Fleet_State_Change]:AttachAtom[This:OnStateChange]
-    }
-
-    ; Master: Change fleet state
-    method SetFleetState(string newState)
-    {
-        if !${IsMaster}
-            return
-
-        This.FleetState:Set[${newState}]
-        echo "FC: Fleet state -> ${newState}"
-
-        ; Broadcast to all
-        relay all -event Fleet_State_Change "${newState}"
-    }
-
-    ; All: React to state change
-    atom OnStateChange(string newState)
-    {
-        This.FleetState:Set[${newState}]
-
-        switch ${newState}
-        {
-            case MINING
-                This:StartMining
-                break
-            case HAULING
-                This:StartHauling
-                break
-            case COMBAT
-                This:StartCombat
-                break
-            case DOCKED
-                This:ReturnToStation
-                break
-        }
-    }
-}
-```
+The fleet state synchronization pattern (master broadcasts state via relay, all members receive and switch behavior) is implemented as `obj_FleetStatus` under [Status Synchronization](#status-synchronization) in the Character Coordination section. That version includes `AllMembersStatus` collection tracking — a superset of the simple `obj_FleetSync` shown previously.
 
 ---
 
