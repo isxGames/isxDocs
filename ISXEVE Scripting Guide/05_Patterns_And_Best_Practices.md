@@ -3339,49 +3339,7 @@ This adds a third pass to the target selection: after checking priority targets,
 
 **Pattern**: Build complex exclusion query string, then filter results
 
-```lavish
-method AddAllNPCs()
-{
-    variable string QueryString="CategoryID = CATEGORYID_ENTITY && IsNPC && !IsMoribund && !("
-
-    ; Exclude specific groups
-    QueryString:Concat["GroupID = GROUP_CONCORDDRONE ||"]
-    QueryString:Concat["GroupID = GROUP_CONVOYDRONE ||"]
-    QueryString:Concat["GroupID = GROUP_CONVOY ||"]
-    QueryString:Concat["GroupID = GROUP_LARGECOLLIDABLEOBJECT ||"]
-    QueryString:Concat["GroupID = GROUP_SPAWNCONTAINER ||"]
-    QueryString:Concat["GroupID = GROUP_DEADSPACEOVERSEERSSTRUCTURE"]
-    QueryString:Concat[")"]
-
-    This:AddQueryString["${QueryString.Escape}"]
-}
-
-method AddTargetExceptionByID(int64 ID)
-{
-    ExcludeTargetID:Add[${ID}]
-
-    ; Remove from existing lists
-    variable iterator RemoveIterator
-    TargetList:GetIterator[RemoveIterator]
-    if ${RemoveIterator:First(exists)}
-    {
-        do
-        {
-            if ${RemoveIterator.Value.ID.Equal[${ID}]}
-            {
-                TargetList:Remove[${RemoveIterator.Key}]
-            }
-        }
-        while ${RemoveIterator:Next(exists)}
-    }
-
-    ; Unlock if locked
-    if ${Entity[${ID}].IsLockedTarget}
-    {
-        Entity[${ID}]:UnlockTarget
-    }
-}
-```
+The `AddAllNPCs` method and `AddTargetExceptionByID` exclusion pattern are shown in [Pattern 4: Query String Building](#pattern-4-query-string-building), which includes both the generic pattern and the real Tehbot `obj_TargetList.iss` source.
 
 ---
 
