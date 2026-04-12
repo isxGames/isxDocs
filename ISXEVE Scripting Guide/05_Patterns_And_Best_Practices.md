@@ -5024,38 +5024,7 @@ function EmergencyShutdown(string reason)
 
 **Symptoms**: Module activation fails, targeting errors
 
-**Solution**:
-
-```lavish
-function SafeModuleActivate(int moduleIndex, int64 targetID)
-{
-    ; Validate target exists
-    if !${Entity[${targetID}](exists)}
-    {
-        call Log "WARNING" "Target ${targetID} despawned"
-        return FALSE
-    }
-
-    ; Validate target locked
-    if !${Entity[${targetID}].IsLockedTarget}
-    {
-        call Log "WARNING" "Target ${targetID} not locked"
-        return FALSE
-    }
-
-    ; Validate module exists
-    if !${MyShip.Module[${moduleIndex}](exists)}
-    {
-        call Log "ERROR" "Module ${moduleIndex} does not exist"
-        return FALSE
-    }
-
-    ; Activate
-    MyShip.Module[${moduleIndex}]:Activate[${targetID}]
-
-    return TRUE
-}
-```
+**Solution**: Use the `ActivateModuleWithRetry` function from [Pattern 3: Conditional Retry](#pattern-3-conditional-retry) in the Retry Logic section. It performs all the necessary pre-activation checks (target exists, target locked, module exists, module online/not-active/not-reloading) with automatic retry and wait-for-activation -- a strict superset of a simple "safe activate" guard.
 
 ### Error 2: Inventory Lock
 
