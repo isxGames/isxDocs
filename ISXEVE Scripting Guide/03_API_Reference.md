@@ -7653,43 +7653,11 @@ wait 20
 
 **CRITICAL**: Direct item manipulation is **complex** and **fragile**.
 
-**⚠️ WARNING:** Old `MyShip.GetCargo` / `MyShip.Cargo[#]` are DEPRECATED (July 2020). Use modern EVEWindow[Inventory] API.
+**⚠️ WARNING:** Old `MyShip.GetCargo` / `MyShip.Cargo[#]` are DEPRECATED (July 2020). Use modern `EVEWindow[Inventory]` API.
 
-**Get Items in Cargo** (Modern API - July 2020+):
-```lavish
-; MODERN API: Use EVEWindow[Inventory].Child[ShipCargo]
-if !${EVEWindow[Inventory](exists)}
-{
-    EVE:Execute[CmdOpenInventory]
-    wait 20
-}
+The canonical modern cargo-iteration pattern (open inventory window → `EVEWindow[Inventory].Child[ShipCargo]:GetItems[index:item]` → iterator walk) is documented in the [MyShip Object](#myship-object) section at the top of this chapter, and summarized concisely in the [CRITICAL API CHANGE WARNING (July 2020)](#-critical-api-change-warning-july-2020-) migration section. See either for the complete pattern.
 
-if ${EVEWindow[Inventory](exists)}
-{
-    variable index:item CargoItems
-    EVEWindow[Inventory].Child[ShipCargo]:GetItems[CargoItems]
-
-    variable iterator Item
-    CargoItems:GetIterator[Item]
-
-    if ${Item:First(exists)}
-    {
-        do
-        {
-            echo "Item: ${Item.Value.Name} (${Item.Value.Quantity})"
-        }
-        while ${Item:Next(exists)}
-    }
-}
-```
-
-**Inventory Window Item Access** (Advanced, from Evebot):
-```lavish
-; This is VERY complex - Evebot has entire modules for inventory management
-; Involves ChildWindow access, item iteration, etc.
-; DEPRECATED: MyShip.Cargo, MyShip.GetHangarItems (July 2020)
-; MODERN: Use EVEWindow[Inventory].Child[name] pattern shown above
-```
+For hangar, ore hold, drone bay, and fleet hangar access, use the same pattern with the appropriate child name: `Child[ShipHangar]`, `Child[ShipOreHold]`, `Child[ShipDroneBay]`, `Child[ShipFleetHangar]`.
 
 ### Moving Items (Drag/Drop Simulation)
 
