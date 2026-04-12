@@ -1076,41 +1076,17 @@ The startup diagnostic checklist (ISXEVE loaded, character in game, ready state)
 
 #### Issue: Entity Not Found
 
-```lavish
-function DebugEntityNotFound(int64 entityID)
-{
-    echo "=== Entity Not Found Debug ==="
-    echo "Searching for: ${entityID}"
+Use `ValidateEntity(entityID)` from [Entity Validation](#entity-validation) to check whether the entity exists, then `DebugEntity(entityID)` from [Pattern 3: Entity Debugging](#pattern-3-entity-debugging) to dump its state if it does.
 
-    ; Check if ID is valid
-    if ${entityID} == 0
-    {
-        echo "✗ Entity ID is 0 (invalid)"
-        echo "CAUSE: Variable not initialized or entity despawned"
-        return
-    }
+**If the entity ID is 0:** the variable was never initialized or the entity despawned before its ID was stored.
 
-    ; Try to find entity
-    if ${Entity[${entityID}](exists)}
-    {
-        echo "✓ Entity exists (false alarm)"
-        echo "Name: ${Entity[${entityID}].Name}"
-        echo "Distance: ${Entity[${entityID}].Distance}m"
-    }
-    else
-    {
-        echo "✗ Entity definitely doesn't exist"
-        echo "CAUSES:"
-        echo "  1. Entity despawned (asteroid mined out, NPC killed)"
-        echo "  2. Entity warped away"
-        echo "  3. You warped away"
-        echo "  4. Grid changed"
-        echo "SOLUTION: Query for new entity"
-    }
+**If the entity genuinely doesn't exist**, common causes are:
+1. Entity despawned (asteroid mined out, NPC killed)
+2. Entity warped away
+3. You warped away (left the grid)
+4. Grid changed (session change)
 
-    echo "=============================="
-}
-```
+**Solution:** Re-query for a new entity using `EVE:QueryEntities` or `EVE:GetEntities`.
 
 #### Issue: Targeting Fails
 
