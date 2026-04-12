@@ -1357,40 +1357,7 @@ The full event-driven pulse pattern with module dispatch and a `while TRUE { wai
 
 ### CPU Usage
 
-```lavish
-; BAD: No delay, 100% CPU
-while TRUE
-{
-    call BotPulse
-    ; No wait! CPU at 100%!
-}
-
-; GOOD: Reasonable delay
-while TRUE
-{
-    call BotPulse
-    wait 5  ; ~50ms delay
-    waitframe
-}
-
-; BEST: Adaptive delay based on workload
-while TRUE
-{
-    variable int pulseStart = ${LavishScript.RunningTime}
-
-    call BotPulse
-
-    variable int pulseTime = ${Math.Calc[${LavishScript.RunningTime} - ${pulseStart}]}
-
-    ; If pulse took <10ms, wait longer
-    if ${pulseTime} < 10
-    {
-        wait ${Math.Calc[20 - ${pulseTime}]}
-    }
-
-    waitframe
-}
-```
+The full BAD --> GOOD --> BEST frame-wait progression (no-wait, wait-only, wait+waitframe+jitter, adaptive delay) is documented under [Pattern 1: Proper Frame Wait](#pattern-1-proper-frame-wait) in the Loop Optimization section. Key rule: always include both `wait N` and `waitframe` in your main loop to prevent 100% CPU usage.
 
 ### Expensive Operation Throttling
 
