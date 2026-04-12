@@ -2845,47 +2845,7 @@ if ${Target:First(exists)}
 
 **Workaround:**
 
-```lavish
-; Don't trust IsActivatable alone
-method ActivateModule(int64 moduleID)
-{
-    variable module M = ${Me.GetModule[${moduleID}]}
-
-    ; Check multiple conditions
-    if !${M.IsOnline}
-    {
-        return FALSE
-    }
-
-    if ${M.IsActive}
-    {
-        return TRUE    ; Already active
-    }
-
-    if ${M.IsDeactivating}
-    {
-        return FALSE    ; Wait for deactivation
-    }
-
-    if ${M.IsReloadingAmmo}
-    {
-        return FALSE    ; Wait for reload
-    }
-
-    ; Try to activate
-    M:Click
-
-    ; Verify activation started
-    wait 10
-
-    if ${M.IsActive} || ${M.IsGoingActive}
-    {
-        return TRUE
-    }
-
-    return FALSE
-}
-```
+Use the canonical `ActivateModule` from [Module Activation Errors](#module-activation-errors) with two modifications: (1) **skip the `IsActivatable` check** -- it can return TRUE even when activation will fail, and (2) **add an `IsDeactivating` check** -- attempting activation while the module is mid-deactivation will silently fail. The root cause is that `IsActivatable` doesn't account for the deactivation-in-progress state.
 
 ### Known Issue 3: Entity.Distance Can Be Wrong After Warp
 
