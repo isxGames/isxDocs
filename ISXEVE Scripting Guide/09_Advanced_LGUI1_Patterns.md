@@ -459,21 +459,21 @@ UIElement[StatusConsole@Main@WreckingTabControl@WreckingBot]:Echo["${This.Runtim
 
 **Example from Yamfa:**
 
-**XML Side:**
+**XML Side:** (wrapper/geometry same as the Defense button shown in [Dual-Action Buttons (Left/Right Click)](#dual-action-buttons-leftright-click) above — only the event handlers differ)
+
 ```xml
-<button name='Defense'>
-    <OnRender>
-        if !${Script[yamfa].VariableScope.UI.Alpha.Element[${This.Name}](exists)}
-            Script[yamfa].VariableScope.UI.Alpha:Set[${This.Name}, 0]
-        This:SetAlpha[${Script[yamfa].VariableScope.UI.Alpha.Element[${This.Name}]}]
-    </OnRender>
-    <OnMouseEnter>
-        Script[yamfa].VariableScope.UI.Alpha:Set[${This.Name}, 1]
-    </OnMouseEnter>
-    <OnMouseExit>
-        Script[yamfa].VariableScope.UI.Alpha:Set[${This.Name}, .8]
-    </OnMouseExit>
-</button>
+<!-- Inside <button name='Defense'> ... </button> -->
+<OnRender>
+    if !${Script[yamfa].VariableScope.UI.Alpha.Element[${This.Name}](exists)}
+        Script[yamfa].VariableScope.UI.Alpha:Set[${This.Name}, 0]
+    This:SetAlpha[${Script[yamfa].VariableScope.UI.Alpha.Element[${This.Name}]}]
+</OnRender>
+<OnMouseEnter>
+    Script[yamfa].VariableScope.UI.Alpha:Set[${This.Name}, 1]
+</OnMouseEnter>
+<OnMouseExit>
+    Script[yamfa].VariableScope.UI.Alpha:Set[${This.Name}, .8]
+</OnMouseExit>
 ```
 
 **Script Side (in Update method):**
