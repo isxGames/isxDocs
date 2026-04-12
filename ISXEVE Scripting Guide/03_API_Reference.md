@@ -7578,13 +7578,11 @@ EVE:Execute[CmdOpenCharactersheet]
 **Inventory Hierarchy**:
 ```
 Inventory Window
-├── Tree (left side) - Locations
-│   ├── Item Hangar
-│   ├── Ship Hangar
-│   ├── Corp Hangars (1-7)
-│   └── Active Ship (cargo, drones, etc.)
+├── Tree (left side)     - Locations navigation
 └── Content (right side) - Items in selected location
 ```
+
+See the Inventory chapter's [inventory hierarchy diagram](#inventory-system-overview) for the full location tree (Item Hangar, Ship Hangar, Corp Hangars, Active Ship > Cargo/Ore/Drones).
 
 ### Opening Inventory Locations
 
