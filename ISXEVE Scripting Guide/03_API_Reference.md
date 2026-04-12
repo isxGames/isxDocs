@@ -6723,16 +6723,7 @@ function GetFreeMiningSpace()
 
 ### Gotcha 4: Session Change Invalidates Items
 
-**Docking/undocking/jumping = session change**:
-
-```lavish
-variable item cargoItem = ${MyShip.Cargo[1]}
-
-; ... dock ...
-
-; cargoItem reference may now be invalid!
-; Re-query after session change
-```
+Docking, jumping, and undocking all trigger a session change that invalidates cached `item` and `entity` references — including items you stored from `MyShip.Cargo[#]`. After any session change, re-query all cached references. The canonical session-change tracking pattern (using `${EVE.SessionChanges}`) is documented under [Gotcha 2: Session Changes Reset State](#gotcha-2-session-changes-reset-state) in the Movement chapter.
 
 ---
 
@@ -8220,24 +8211,7 @@ if ${EVEWindow[inventory](exists)}
 
 ### Anti-Pattern 2: No Existence Check
 
-**Bad**:
-```lavish
-variable evwindow win = ${EVEWindow[inventory]}
-echo "Name: ${win.Name}"    ; CRASH if window doesn't exist!
-```
-
-**Good**:
-```lavish
-variable evwindow win = ${EVEWindow[inventory]}
-
-if !${win(exists)}
-{
-    echo "ERROR: Window not found"
-    return
-}
-
-echo "Name: ${win.Name}"    ; Safe
-```
+Always `(exists)` check any object (window, entity, target) before accessing its members — skipping the check crashes the script on the first NULL access. The canonical BAD/GOOD example (with entity context) is documented under [Anti-Pattern 2: No (exists) Check](#anti-pattern-2-no-exists-check) in the Entity chapter. The same pattern applies to `EVEWindow[name]`, `${Me.GetTarget[n]}`, and any other accessor that may return NULL.
 
 ### Anti-Pattern 3: No Timeout on Wait Loops
 
