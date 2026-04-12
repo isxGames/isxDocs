@@ -2518,7 +2518,7 @@ if ${Ship.IsPod}
 
 ### Master/Slave Coordination
 
-**Pattern 1: Master Election (EVEBot)**
+**Master Election Pattern (EVEBot)**
 
 ```lavish
 objectdef obj_MasterElection
@@ -2589,7 +2589,7 @@ objectdef obj_MasterElection
 }
 ```
 
-**Pattern 2: Target Sharing (Yamfa)**
+**Target Sharing Pattern (Yamfa)**
 
 ```lavish
 objectdef obj_YamfaTargetRelay
