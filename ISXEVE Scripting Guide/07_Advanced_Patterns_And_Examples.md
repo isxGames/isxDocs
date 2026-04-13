@@ -18,7 +18,7 @@
 8. [Fleet Combat Coordination](#fleet-combat-coordination)
 9. [Mining Fleet Coordination](#mining-fleet-coordination)
 10. [Event-Driven Coordination](#event-driven-coordination)
-11. [Complete Working Examples (Fleet)](#complete-working-examples)
+11. [Complete Working Examples (Fleet Coordination)](#complete-working-examples-fleet-coordination)
 12. [Common Problems (Fleet)](#common-problems)
 
 ### Relay System and IPC
@@ -32,7 +32,7 @@
 20. [Uplink Networking](#uplink-networking)
 21. [Performance Considerations (Relay)](#performance)
 22. [Best Practices (Relay)](#best-practices)
-23. [Complete Working Examples (Relay)](#examples)
+23. [Complete Working Examples (Relay System)](#complete-working-examples-relay-system)
 
 ### Configuration Management
 24. [Configuration and Settings Management](#configuration-and-settings-management)
@@ -1352,7 +1352,7 @@ objectdef obj_EventDrivenBot
 
 ---
 
-## Complete Working Examples
+## Complete Working Examples (Fleet Coordination)
 
 ### Example 1: Simple Mining Fleet (1 Hauler + 2 Miners)
 
@@ -3451,7 +3451,7 @@ objectdef obj_MasterFailover
 
 ---
 
-## Complete Working Examples
+## Complete Working Examples (Relay System)
 
 ### Example 1: Complete Fleet Combat Coordination
 
