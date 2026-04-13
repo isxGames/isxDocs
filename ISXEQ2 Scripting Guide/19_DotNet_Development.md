@@ -4,7 +4,7 @@
 
 This guide compares the two supported development models for ISXEQ2 automation: plain LavishScript scripts (`.iss` text files, interpreted) and compiled .NET programs (`.exe` / `.dll` assemblies written in C#/VB.NET/F#, loaded via `dotnet <program>` inside InnerSpace). It is a decision-and-orientation guide, not an API reference — for the full .NET wrapper surface see the wrapper's own help file at `ISXEQ2Wrapper/ISXEQ2Wrapper.chm`.
 
-The ISXEQ2 wrapper is shipped as `ISXEQ2Wrapper.dll` with root namespace `EQ2.ISXEQ2`. The canonical pattern it uses on the read side is `LavishScript.Objects.GetObject("TLO", ...args)` to obtain a handle to any LavishScript top-level object, then `GetMember<T>(...)` / method calls on that handle. The action side is covered in the [Hybrid Approaches](#hybrid-approaches) section below — importantly, **ISXEQ2 does NOT use a universal `Execute(ExecuteCommand)` entry point the way ISXEVE does**. There is no `ExecuteCommand` enum in `ISXEQ2Wrapper`. Interop is instead a mix of thin `Extension` static helpers and domain-method calls on specific wrapper classes.
+The ISXEQ2 wrapper is shipped as `ISXEQ2Wrapper.dll` with root namespace `EQ2.ISXEQ2`. 
 
 ## Table of Contents
 1. [Fundamental Differences](#fundamental-differences)
