@@ -2,8 +2,8 @@
 # ISXEQ2 Scripting Guide - File Manifest
 
 **Project:** ISXEQ2 Scripting Guide
-**Version:** 3.0
-**Generated:** 2025-10-25
+**Version:** 3.2
+**Generated:** 2026-04-12
 
 ---
 
@@ -40,8 +40,9 @@
 | **17_Crafting_Script_Patterns.md** | ✅ Complete | Crafting automation patterns from [EQ2Craft](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2Craft) (13 patterns: cmd-line, navigation, localization, queue mgmt, writs, etc.) |
 | **18_Navigation_Library_Patterns.md** | ✅ Complete | Navigation and pathfinding patterns from EQ2Nav (10 patterns: LavishNav, Dijkstra, regions, collision, stuck detection, doors, aggro, precision, optimization) |
 | **19_DotNet_Development.md** | ✅ Complete | Scripts vs .NET decision-and-orientation guide — language/tooling/performance/debugging/deployment tradeoffs, ISXEQ2-specific .NET interop patterns (Extension helpers, domain wrappers, no `Execute(ExecuteCommand)` enum), `ISXEQ2Wrapper.dll` namespace map |
+| **20_Debugging_And_Troubleshooting.md** | ✅ Complete | Debugging capstone — `Debug:` built-in object API, `${EQ2.Zoning}` pattern, `EQ2_StartedZoning` / `EQ2_FinishedZoning` events, ability-casting diagnosis, async-data failures, `CustomActorArray` migration, EQ2Bot class-routine `#include` gotcha, maintained-vs-effect checks, ExactName case sensitivity, LGUI1 recursion guards, LGUI2 element diagnosis, performance profiling, stuck detection, relay-event debugging |
 
-**Total Documentation:** 23 files (20 numbered guides + README + FILE_MANIFEST + How To Use Guide)
+**Total Documentation:** 24 files (21 numbered guides + README + FILE_MANIFEST + How To Use Guide)
 
 ---
 
@@ -205,9 +206,11 @@ All essential documentation files have been completed:
 18. **17_Crafting_Script_Patterns.md** - ✅ Complete crafting automation patterns from EQ2Craft
 19. **18_Navigation_Library_Patterns.md** - ✅ Complete navigation and pathfinding patterns from EQ2Nav
 20. **19_DotNet_Development.md** - ✅ Complete Scripts vs .NET decision guide with ISXEQ2 interop patterns
+21. **20_Debugging_And_Troubleshooting.md** - ✅ Complete debugging and troubleshooting capstone guide
 
-### Recent Additions (Version 2.0-3.1)
+### Recent Additions (Version 2.0-3.2)
 
+- **Version 3.2**: Debugging and Troubleshooting capstone (file 20) — `Debug:` built-in, zoning patterns, async-data diagnosis, EQ2-specific problem catalog
 - **Version 3.1**: .NET Development guide (file 19) — Scripts vs .NET decision guide
 - **Version 3.0**: Utility, Crafting, and Navigation pattern guides (files 16-18)
 - **Version 2.9**: LGUI2 Scaling System guide
@@ -301,7 +304,7 @@ This documentation set is specifically designed to serve as a knowledge base for
 
 All documentation files are contained within this ISXEQ2 Scripting Guide directory:
 
-- 22 total markdown files (19 numbered guides + README + FILE_MANIFEST + How To Use Guide)
+- 24 total markdown files (21 numbered guides + README + FILE_MANIFEST + How To Use Guide)
 - Covers beginner to advanced topics
 - Includes LavishScript fundamentals through production-grade patterns
 - Now includes LGUI2 scaling system with scalable title bars for dynamic UI resizing
@@ -309,6 +312,14 @@ All documentation files are contained within this ISXEQ2 Scripting Guide directo
 ---
 
 ## Version History
+
+- **v3.2 (2026-04-12)**
+  - Added [20_Debugging_And_Troubleshooting.md](20_Debugging_And_Troubleshooting.md) — debugging and troubleshooting capstone
+  - Documents the ISXEQ2 debug-tool landscape — explicitly calls out that ISXEVE-style TLO helpers (`Debug_LogMsg`, `IsSafe`, `LastError`, `Lag`) do NOT exist in ISXEQ2
+  - Canonical `Debug:` built-in object reference (from `EQ2Common/Debug.iss`) with full members/methods/defaults
+  - EQ2-specific problem catalog: `${EQ2.Zoning}` pattern, `EQ2_StartedZoning` / `EQ2_FinishedZoning` events, ability-casting diagnosis, async-data failures, `CreateCustomActorArray` migration, EQ2Bot class-routine `#include` parse-time gotcha, maintained-effect vs buff-check, inventory iterator invalidation, `ExactName` case sensitivity, LGUI1 recursion guards, LGUI2 element diagnosis
+  - Performance profiling, stuck detection, dead-man's switch, periodic restart, config backup, relay event debugging
+  - Designed as a capstone — cross-links heavily to 02/04/05/07/15/18 rather than duplicating
 
 - **v3.1 (2026-04-12)**
   - Added [19_DotNet_Development.md](19_DotNet_Development.md) — Scripts vs .NET decision guide

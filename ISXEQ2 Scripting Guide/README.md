@@ -89,6 +89,9 @@ This comprehensive guide provides complete documentation for creating, debugging
 20. **[19_DotNet_Development.md](19_DotNet_Development.md)** - .NET Development (Scripts vs .NET)
     Decision-and-orientation guide comparing LavishScript `.iss` scripts against compiled .NET programs for ISXEQ2 automation. Covers language, tooling, performance, debugging, deployment, and maintenance tradeoffs; documents the ISXEQ2-specific .NET interop model (`LavishScript.Objects.GetObject`, `Extension` static helpers, domain wrapper methods) and explicitly contrasts it with ISXEVE's `Execute(ExecuteCommand)` pattern. Includes namespace/assembly reference for `ISXEQ2Wrapper.dll`.
 
+21. **[20_Debugging_And_Troubleshooting.md](20_Debugging_And_Troubleshooting.md)** - Debugging and Troubleshooting (Capstone)
+    Diagnostic capstone covering the ISXEQ2 debug-tool landscape (and what ISXEVE-style helpers do NOT exist), the `Debug:` built-in object (from `EQ2Common/Debug.iss`), logging strategies with `redirect`, performance profiling, `${Script.*}` introspection, session validation, and an EQ2-specific common-problems catalog — zoning (`${EQ2.Zoning}`, `EQ2_StartedZoning` / `EQ2_FinishedZoning` events), ability casting failures, async data loading timeouts, deprecated `CreateCustomActorArray` migration, EQ2Bot class-routine `#include` gotchas, maintained-effect vs buff-check confusion, inventory iterator invalidation, `ExactName` case sensitivity, LGUI1 `_executeOnSelect` recursion, LGUI2 element-not-found diagnosis. Cross-links to existing coverage in 02/04/05/07/15/18 rather than duplicating.
+
 ---
 
 <!-- CLAUDE_SKIP_START -->
@@ -178,6 +181,12 @@ This comprehensive guide provides complete documentation for creating, debugging
 | **Track XP gains** | [16_Utility_Script_Patterns.md#progressive-xp-tracking](16_Utility_Script_Patterns.md#progressive-xp-tracking) |
 | **Prevent duplicate scripts** | [16_Utility_Script_Patterns.md#script-existence-checking](16_Utility_Script_Patterns.md#script-existence-checking) |
 | **Handle queued commands** | [16_Utility_Script_Patterns.md#executequeued-loop-patterns](16_Utility_Script_Patterns.md#executequeued-loop-patterns) |
+| **Debug a misbehaving script** | [20_Debugging_And_Troubleshooting.md](20_Debugging_And_Troubleshooting.md) |
+| **Use the `Debug:` built-in** | [20_Debugging_And_Troubleshooting.md#the-debug-built-in-object](20_Debugging_And_Troubleshooting.md#the-debug-built-in-object) |
+| **Diagnose zoning hangs** | [20_Debugging_And_Troubleshooting.md#zoning-the-eq2zoning-pattern](20_Debugging_And_Troubleshooting.md#zoning-the-eq2zoning-pattern) |
+| **Diagnose ability casting** | [20_Debugging_And_Troubleshooting.md#ability-casting-problems](20_Debugging_And_Troubleshooting.md#ability-casting-problems) |
+| **Profile script performance** | [20_Debugging_And_Troubleshooting.md#performance-profiling](20_Debugging_And_Troubleshooting.md#performance-profiling) |
+| **Validate session state** | [20_Debugging_And_Troubleshooting.md#session-validation-checklist](20_Debugging_And_Troubleshooting.md#session-validation-checklist) |
 
 ### By API Category
 
@@ -347,6 +356,15 @@ Found an error or have an improvement? This documentation was generated using ac
 
 <!-- CLAUDE_SKIP_START -->
 ## Version History
+
+- **4.2** (2026-04-12) — Added Debugging and Troubleshooting capstone guide
+  - Added [20_Debugging_And_Troubleshooting.md](20_Debugging_And_Troubleshooting.md) — diagnostic capstone
+  - Documents the ISXEQ2 debug-tool landscape — explicitly notes that ISXEVE-style TLO helpers (`Debug_LogMsg`, `IsSafe`, `LastError`, `Lag`) do NOT exist in ISXEQ2; only `${ISXEQ2.IsReady}` and `${ISXEQ2.Version}` are debug-relevant
+  - Canonical reference for the `Debug:` built-in object (`EQ2Common/Debug.iss`) with full API (members, methods, defaults)
+  - EQ2-specific common-problems catalog: zoning (`${EQ2.Zoning}` int values, `EQ2_StartedZoning` / `EQ2_FinishedZoning(string TimeInSeconds)` events), ability-casting diagnosis, async `IsItemInfoAvailable` / `IsActorInfoAvailable` timeouts, EQ2Bot class-routine `#include` parse-time evaluation gotcha, maintained-effect vs buff-check confusion, inventory iterator invalidation, `ExactName` case sensitivity, LGUI1 `_executeOnSelect` recursion (cross-links to 15), LGUI2 element-not-found diagnosis
+  - Performance profiling, stuck detection, dead-man's switch, periodic restart, config backup/restore, relay event debugging
+  - Designed as a capstone — cross-links heavily to existing coverage in 02/04/05/07/15/18 rather than duplicating
+  - Updated cross-references in FILE_MANIFEST.md, 00_MASTER_GUIDE.md, +How To Use+.md, ISXEQ2-Expert.md
 
 - **4.1** (2026-04-12) — Added .NET Development guide
   - Added [19_DotNet_Development.md](19_DotNet_Development.md) — Scripts vs .NET decision-and-orientation guide

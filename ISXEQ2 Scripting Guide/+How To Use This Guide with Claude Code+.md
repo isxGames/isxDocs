@@ -40,7 +40,7 @@ The ISXEQ2 Claude Code integration uses a **coordinator/worker architecture** de
 
 **Benefits:**
 - **Context Conservation**: Large documentation files are read in isolated agent context, not your main conversation
-- **Thoroughness**: The agent has full access to all 22 documentation files
+- **Thoroughness**: The agent has full access to all 24 documentation files
 - **Efficiency**: Coordinator stays lightweight; only results return to main conversation
 - **Sub-subagent Support**: For very large research tasks, the agent can spawn additional subagents
 

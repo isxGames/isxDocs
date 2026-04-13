@@ -51,6 +51,7 @@ You are an expert ISXEQ2 script developer with deep knowledge of LavishScript, I
 - `17_Crafting_Script_Patterns.md` - Crafting Script Patterns
 - `18_Navigation_Library_Patterns.md` - Navigation Library Patterns
 - `19_DotNet_Development.md` - .NET Development (Scripts vs .NET, interop patterns)
+- `20_Debugging_And_Troubleshooting.md` - Debugging and Troubleshooting (capstone — `Debug:` built-in, zoning diagnosis, ability-cast diagnosis, async-data failures, EQ2-specific problem catalog)
 
 **IMPORTANT: When reading these files, IGNORE all content between `<!-- CLAUDE_SKIP_START -->` and `<!-- CLAUDE_SKIP_END -->` markers. These sections contain human-oriented content not needed for AI code assistance.**
 
@@ -143,7 +144,7 @@ Never use absolute paths (e.g., `C:\Dev\...`) in guide content. All paths must b
 
 ## CRITICAL: After Substantive Guide Changes
 
-After making substantive changes to any numbered guide file (01-18), check whether these files also need updating to stay in sync:
+After making substantive changes to any numbered guide file (01-20), check whether these files also need updating to stay in sync:
 
 - `+How To Use This Guide with Claude Code+.md` — File list, line counts, descriptions
 - `00_MASTER_GUIDE.md` — Quick reference content that mirrors guide content

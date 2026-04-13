@@ -39,6 +39,7 @@ Complete quick reference for ISXEQ2 scripting. For detailed information, see the
 - **[06_Working_Examples.md](06_Working_Examples.md)** - Code examples
 - **[15_Advanced_Scripting_Patterns.md](15_Advanced_Scripting_Patterns.md)** - Production-grade patterns
 - **[19_DotNet_Development.md](19_DotNet_Development.md)** - Scripts vs .NET (decision guide)
+- **[20_Debugging_And_Troubleshooting.md](20_Debugging_And_Troubleshooting.md)** - Debugging and troubleshooting capstone
 
 ---
 
@@ -616,3 +617,5 @@ echo "Type of Target: ${Target.Type}"
 | Variable always empty | Check variable scope (script vs local) |
 | Event not firing | Verify event name and attach syntax |
 | Ability won't cast | Check `IsReady` and existence |
+
+For the full debugging-and-troubleshooting treatment — `Debug:` built-in, zoning diagnosis, ability-cast diagnostics, performance profiling, stuck detection, LGUI recursion guards, and the EQ2-specific common-problems catalog — see **[20_Debugging_And_Troubleshooting.md](20_Debugging_And_Troubleshooting.md)**.
