@@ -1,12 +1,12 @@
 # DotNet Development
 
-# Scripts vs DotNet Programs
+## Scripts vs DotNet Programs
 
 
 ## Table of Contents
 1. [Fundamental Differences](#fundamental-differences)
 2. [LavishScript Scripts (.iss files)](#lavishscript-scripts)
-3. [DotNet Programs (.exe/.dll files)](#dotnet-programs)
+3. [DotNet Programs (.exe/.dll files)](#dotnet-programs-exedll-files)
 4. [Language Comparison](#language-comparison)
 5. [Development Workflow](#development-workflow)
 6. [Performance Comparison](#performance-comparison)
@@ -140,7 +140,7 @@ Metatron_spacekoala/
 │       └── ITargetQueue.cs        # Target queue interface
 └── Metatron.sln                   # Solution file
 
-Size: 3000+ files, 100,000+ lines
+Size: a large, mature codebase (many modules across Action/Behavior/Core layers)
 Execution: dotnet Metatron
 ```
 
@@ -155,7 +155,7 @@ The full edit → build → run → debug iteration cycle for DotNet development
 ### Type Systems
 
 **LavishScript:**
-```lavish
+```lavishscript
 ; Weakly typed - runtime type checking
 variable string myString = "hello"
 variable int myInt = 123
@@ -179,7 +179,7 @@ myInt = "not a number";    // Compiler error!
 ### Object-Oriented Programming
 
 **LavishScript:**
-```lavish
+```lavishscript
 ; Basic OOP - objectdef
 objectdef obj_Ship
 {
@@ -198,7 +198,7 @@ objectdef obj_Ship
 
     method ActivateShield()
     {
-        Ship:Activate_Shield_Boosters
+        Ship:Activate_Shield_Booster
     }
 }
 
@@ -238,7 +238,7 @@ var myShipController = new Ship("Vexor");
 ### Collections
 
 **LavishScript:**
-```lavish
+```lavishscript
 ; Limited collection types
 variable index:entity Targets
 variable collection:int TargetIDs
@@ -264,7 +264,7 @@ var hostiles = targets.Where(t => t.IsHostile).OrderBy(t => t.Distance);
 ### Error Handling
 
 **LavishScript:**
-```lavish
+```lavishscript
 ; Limited error handling
 if !${Entity[${targetID}](exists)}
 {
@@ -300,7 +300,7 @@ finally
 ### Async Programming
 
 **LavishScript:**
-```lavish
+```lavishscript
 ; No async/await - must use waits
 Entity[${targetID}]:LockTarget
 wait 50 ${Entity[${targetID}].IsLockedTarget}
@@ -387,16 +387,16 @@ Edit → Save → Build → Copy DLL → Run → Test → Debug (breakpoints) �
 ### Execution Speed
 
 **LavishScript:**
-- Interpreted - ~10-100x slower than compiled
+- Interpreted — substantially slower than compiled .NET for pure computation
 - No JIT optimization
 - String operations especially slow
 - Entity queries reasonable (native ISXEVE)
 
 **Example Timing:**
-```lavish
+```lavishscript
 ; Loop 10,000 times
 variable int i
-variable float startTime = ${Time.Timestamp}
+variable int startTime = ${Script.RunningTime}
 
 for (i:Set[1]; ${i} <= 10000; i:Inc)
 {
@@ -404,49 +404,47 @@ for (i:Set[1]; ${i} <= 10000; i:Inc)
     variable int result = ${Math.Calc[${i} * 2 + 5]}
 }
 
-variable float duration = ${Math.Calc[${Time.Timestamp} - ${startTime}]}
-echo "LavishScript: ${duration}s"
-; Typical: 2-5 seconds
+variable int durationMs = ${Math.Calc[${Script.RunningTime} - ${startTime}]}
+echo "LavishScript: ${durationMs}ms"
+; Order of magnitude: seconds (interpreted loop)
 ```
 
 **.NET:**
 ```csharp
-var startTime = DateTime.Now;
+var sw = System.Diagnostics.Stopwatch.StartNew();
 
 for (int i = 1; i <= 10000; i++)
 {
     int result = i * 2 + 5;
 }
 
-var duration = (DateTime.Now - startTime).TotalSeconds;
-Console.WriteLine($".NET: {duration}s");
-// Typical: 0.001-0.01 seconds (100-1000x faster!)
+sw.Stop();
+Console.WriteLine($".NET: {sw.Elapsed.TotalMilliseconds}ms");
+// Order of magnitude: milliseconds or less (compiled, JIT-optimized)
 ```
 
 ### Memory Usage
 
 **LavishScript:**
-- ~20-50 MB for simple scripts
-- ~50-100 MB for complex scripts (EVEBot)
-- Grows over time (limited GC)
+- Low baseline footprint for simple scripts
+- Higher for complex multi-file bots (e.g. EVEBot)
+- Limited GC — footprint can grow over time
 
 **.NET:**
-- ~30-80 MB base (CLR overhead)
-- ~100-300 MB for complex apps (Metatron)
-- Better garbage collection
-- Can grow large with caching
+- Baseline CLR overhead added on top of the hosted process
+- Larger for complex apps (e.g. Metatron) depending on caching
+- Proper generational garbage collection
+- Figures vary widely by workload — measure, don't assume
 
 ### Startup Time
 
 **LavishScript:**
-- Nearly instant (< 1 second)
-- Just parse text and run
+- Near-instant — just parse text and run
 
 **.NET:**
-- 2-5 seconds startup
-- CLR initialization
-- Assembly loading
-- JIT compilation
+- Noticeably slower startup than scripts
+- CLR initialization, assembly loading, JIT compilation all add overhead
+- Exact timing varies by application size
 
 ---
 
@@ -455,7 +453,7 @@ Console.WriteLine($".NET: {duration}s");
 ### Script Debugging
 
 **Available Tools:**
-```lavish
+```lavishscript
 ; Echo statements
 echo "Current state: ${This.CurrentState}"
 echo "Target: ${Entity[${targetID}].Name}"
@@ -580,8 +578,8 @@ Metatron/
 ├── Metatron.Core.dll
 ├── Newtonsoft.Json.dll         # NuGet dependency
 ├── System.Net.Http.dll         # Framework library
-├── ISXEVE.dll                  # ISXEVE wrapper
-├── LavishScript.dll            # LavishScript wrapper
+├── EVE.ISXEVE.dll              # ISXEVE .NET wrapper
+├── Lavish.InnerSpace.dll       # InnerSpace / LavishScript .NET API
 └── Config/
     └── Settings.xml
 
@@ -614,7 +612,7 @@ Zip and share
 ```
 
 **Version Management:**
-```lavish
+```lavishscript
 ; In script
 variable string VERSION = "2.5"
 
@@ -648,11 +646,12 @@ method Initialize()
 
 **Version Management:**
 ```csharp
-// In AssemblyInfo.cs
-[assembly: AssemblyVersion("2.5.0.0")]
-[assembly: AssemblyFileVersion("2.5.0.0")]
+// Modern SDK-style .csproj:
+//   <PropertyGroup>
+//     <Version>2.5.0.0</Version>
+//   </PropertyGroup>
+// (Legacy AssemblyInfo.cs attributes also work.)
 
-// In code
 var version = Assembly.GetExecutingAssembly().GetName().Version;
 Console.WriteLine($"Metatron v{version}");
 ```
@@ -688,29 +687,27 @@ public class AutoUpdater
 
 ### Calling .NET from Scripts
 
-**Pattern:** Use .NET library from LavishScript
+**Pattern:** A .NET program, launched via `dotnet <program>`, registers LavishScript
+objects that scripts can then access. The .NET side defines LavishScript-visible
+types using the InnerSpace .NET API; the script side uses them exactly like any
+other LavishScript object.
 
 ```csharp
-// .NET DLL: MyUtilities.dll
-namespace MyUtilities
-{
-    public class Helper
-    {
-        public static int Calculate(int a, int b)
-        {
-            return a * 2 + b;
-        }
-    }
-}
+// .NET program (started from LavishScript with: dotnet MyUtilities)
+// Inside the program, register a LavishScript object that exposes members
+// and methods. Scripts then see it as ${MyUtilities.something}.
+//
+// Consult the InnerSpace .NET API documentation for the current registration
+// API — the exact type/method names have changed across InnerSpace versions,
+// so the authoritative reference is Lavish's own docs, not this guide.
 ```
 
-```lavish
-; LavishScript calls .NET
+```lavishscript
+; LavishScript side: start the .NET program, then use whatever TLO/object
+; it registers. Example assumes the program registers a "MyUtilities" TLO.
 dotnet MyUtilities
 
-variable int result = ${DotNet.Invoke[MyUtilities.Helper, "Calculate", 5, 10]}
-echo "Result: ${result}"
-; Output: Result: 20
+echo ${MyUtilities.SomeMember}
 ```
 
 **Use Cases:**
@@ -718,35 +715,52 @@ echo "Result: ${result}"
 - Use .NET libraries (JSON parsing, HTTP requests)
 - Leverage C# performance for bottlenecks
 
+> **Note:** There is no generic `${DotNet.Invoke[...]}` TLO. To call .NET code
+> from LavishScript you must run a .NET program that registers its own
+> LavishScript-visible object model. See the InnerSpace .NET API docs for
+> the current registration mechanism.
+
 ### Calling Scripts from .NET
 
 **Pattern:** Use LavishScript commands from .NET
 
+The canonical pattern used throughout ISXEVEWrapper is
+`LavishScript.Objects.GetObject(...)` to obtain a handle to any LavishScript
+object (TLO, variable, or member chain) and then read its members / invoke its
+methods via that handle. For ISXEVE specifically, most top-level actions are
+reached through the `EVE` wrapper's `Execute(ExecuteCommand)` method plus the
+`EVE.ISXEVE.ExecuteCommand` enum.
+
 ```csharp
 // .NET code
 using LavishScriptAPI;
+using EVE.ISXEVE;
 
-public class ScriptCaller
+public class ScriptExample
 {
-    public void CallScript()
+    public void ReadLavishScriptVariable(string varName)
     {
-        // Execute LavishScript command
-        LavishScript.ExecuteCommand("run MyScript");
-
-        // Wait for script to finish
-        Thread.Sleep(5000);
-
-        // End script
-        LavishScript.ExecuteCommand("endscript MyScript");
+        // Read a LavishScript variable/object by name
+        var obj = LavishScript.Objects.GetObject(varName);
+        // Inspect members, e.g. obj.GetMember<string>("Name")
     }
 
-    public string GetVariable(string varName)
+    public void TriggerEveAction()
     {
-        // Get LavishScript variable
-        return LavishScript.DataParse($"${{${varName}}}").ToString();
+        // Most ISXEVE actions are invoked via EVE.Execute() with an
+        // ExecuteCommand enum value — see EVE.ISXEVE.ExecuteCommand
+        // for the full list.
+        var eve = new EVE.ISXEVE.EVE();
+        eve.Execute(ExecuteCommand.OpenCargoHoldOfActiveShip);
     }
 }
 ```
+
+> **Note:** Invoking arbitrary LavishScript command strings (e.g. `run`,
+> `endscript`) from .NET is a LavishScript-engine feature rather than an
+> ISXEVE wrapper feature, and the exact API for doing so is not used inside
+> `ISXEVEWrapper`. Consult the current InnerSpace .NET API documentation
+> before relying on any specific method name.
 
 **Use Cases:**
 - .NET app orchestrates multiple scripts
@@ -801,7 +815,7 @@ public class ScriptCaller
 
 **Example Migration:**
 
-```lavish
+```lavishscript
 ; Original Script: obj_Miner
 objectdef obj_Miner
 {
@@ -827,6 +841,8 @@ objectdef obj_Miner
 
 ```csharp
 // .NET Port: Mining.cs
+// (Metatron-specific: ModuleBase / ShouldPulse are defined by Metatron's
+// own framework, not ISXEVE. Your own .NET bot would supply its own base.)
 namespace Metatron.BehaviorModules
 {
     public class Mining : ModuleBase
@@ -961,8 +977,7 @@ Fleet coordination: Script relay, .NET processing
 ### .NET Example: [Metatron2](https://github.com/spacekoala420/Metatron2) (Combat/Mining)
 
 **Stats:**
-- **Lines:** 100,000+
-- **Files:** 3000+
+- **Size:** large, mature codebase
 - **Complexity:** Very High
 - **Performance:** Excellent
 - **Maintenance:** Complex but manageable
