@@ -701,10 +701,10 @@ if ${IsCargoFull[90]}
 **Module Slots**:
 ```lavish
 ; High slots (weapons, mining lasers, salvagers)
-echo "High Slots: ${MyShip.HiSlots}"
+echo "High Slots: ${MyShip.HighSlots}"
 
 ; Mid slots (shield modules, prop mods, tackle)
-echo "Mid Slots: ${MyShip.MedSlots}"
+echo "Mid Slots: ${MyShip.MediumSlots}"
 
 ; Low slots (armor, damage mods, mining upgrades)
 echo "Low Slots: ${MyShip.LowSlots}"
@@ -4727,8 +4727,8 @@ variable item low0 = ${MyShip.Module[LoSlot, 0]}
 ### Counting Slots
 
 ```lavish
-echo "High Slots: ${MyShip.HiSlots}"
-echo "Mid Slots: ${MyShip.MedSlots}"
+echo "High Slots: ${MyShip.HighSlots}"
+echo "Mid Slots: ${MyShip.MediumSlots}"
 echo "Low Slots: ${MyShip.LowSlots}"
 echo "Rig Slots: ${MyShip.RigSlots}"
 ```
@@ -4739,7 +4739,7 @@ echo "Rig Slots: ${MyShip.RigSlots}"
 function ActivateAllHighSlots()
 {
     variable int i
-    for (i:Set[0]; ${i} < ${MyShip.HiSlots}; i:Inc)    ; 0-indexed!
+    for (i:Set[0]; ${i} < ${MyShip.HighSlots}; i:Inc)    ; 0-indexed!
     {
         variable item module = ${MyShip.Module[HiSlot, ${i}]}
 
@@ -5068,7 +5068,7 @@ call CheckAmmoLevel "HiSlot" 0 100
 function ActivateAllMiningLasers(int64 asteroidID)
 {
     variable int i
-    for (i:Set[0]; ${i} < ${MyShip.HiSlots}; i:Inc)
+    for (i:Set[0]; ${i} < ${MyShip.HighSlots}; i:Inc)
     {
         variable item module = ${MyShip.Module[HiSlot, ${i}]}
 
@@ -5102,7 +5102,7 @@ function ActivateAllMiningLasers(int64 asteroidID)
 function ActivateAllWeapons(int64 targetID)
 {
     variable int i
-    for (i:Set[0]; ${i} < ${MyShip.HiSlots}; i:Inc)
+    for (i:Set[0]; ${i} < ${MyShip.HighSlots}; i:Inc)
     {
         variable item weapon = ${MyShip.Module[HiSlot, ${i}]}
 
@@ -5134,14 +5134,14 @@ function ActivateAllWeapons(int64 targetID)
 
 **Activate on Asteroid**:
 
-See the canonical [Activating All Modules of Type](#activating-all-modules-of-type) pattern earlier in this chapter for the complete iterate-HiSlots-and-activate-by-name-filter example. Substitute `"Mining"` / `"Strip Miner"` as the name filter (or simply `"Mining Laser"`) to target mining modules.
+See the canonical [Activating All Modules of Type](#activating-all-modules-of-type) pattern earlier in this chapter for the complete iterate-HighSlots-and-activate-by-name-filter example. Substitute `"Mining"` / `"Strip Miner"` as the name filter (or simply `"Mining Laser"`) to target mining modules.
 
 **Check Mining Cycle**:
 ```lavish
 function AreMiningLasersActive()
 {
     variable int i
-    for (i:Set[0]; ${i} < ${MyShip.HiSlots}; i:Inc)
+    for (i:Set[0]; ${i} < ${MyShip.HighSlots}; i:Inc)
     {
         variable item module = ${MyShip.Module[HiSlot, ${i}]}
 
@@ -5171,7 +5171,7 @@ function ActivateRepairers()
 
     ; Find and activate shield booster
     variable int i
-    for (i:Set[0]; ${i} < ${MyShip.MedSlots}; i:Inc)
+    for (i:Set[0]; ${i} < ${MyShip.MediumSlots}; i:Inc)
     {
         variable item module = ${MyShip.Module[MedSlot, ${i}]}
 
@@ -5199,7 +5199,7 @@ function ActivateHardeners()
     variable int i
 
     ; Shield hardeners (mid slots)
-    for (i:Set[0]; ${i} < ${MyShip.MedSlots}; i:Inc)
+    for (i:Set[0]; ${i} < ${MyShip.MediumSlots}; i:Inc)
     {
         variable item module = ${MyShip.Module[MedSlot, ${i}]}
 
@@ -5243,7 +5243,7 @@ function ActivateHardeners()
 function ActivatePropMod()
 {
     variable int i
-    for (i:Set[0]; ${i} < ${MyShip.MedSlots}; i:Inc)
+    for (i:Set[0]; ${i} < ${MyShip.MediumSlots}; i:Inc)
     {
         variable item module = ${MyShip.Module[MedSlot, ${i}]}
 
@@ -5265,7 +5265,7 @@ function ActivatePropMod()
 function DeactivatePropMod()
 {
     variable int i
-    for (i:Set[0]; ${i} < ${MyShip.MedSlots}; i:Inc)
+    for (i:Set[0]; ${i} < ${MyShip.MediumSlots}; i:Inc)
     {
         variable item module = ${MyShip.Module[MedSlot, ${i}]}
 
@@ -5298,7 +5298,7 @@ EVE:Execute[CmdTogglePropulsionMod]
 function ActivateTackle(int64 targetID)
 {
     variable int i
-    for (i:Set[0]; ${i} < ${MyShip.MedSlots}; i:Inc)
+    for (i:Set[0]; ${i} < ${MyShip.MediumSlots}; i:Inc)
     {
         variable item module = ${MyShip.Module[MedSlot, ${i}]}
 
@@ -5359,7 +5359,7 @@ function ActivateTackle(int64 targetID)
 
 ### Pattern 1: Evebot - Mining Laser Management
 
-The core module-iteration pattern (loop HiSlots, name-filter by `"Mining"`/`"Strip Miner"`, skip already-active, call `module:Activate[${asteroidID}]`) is the same as the canonical [Activating All Modules of Type](#activating-all-modules-of-type) example in Module Activation and Deactivation. Evebot's specific guard is to check `${Entity[${asteroidID}](exists)}` before entering the loop — a useful defensive addition you can apply to any activation loop.
+The core module-iteration pattern (loop HighSlots, name-filter by `"Mining"`/`"Strip Miner"`, skip already-active, call `module:Activate[${asteroidID}]`) is the same as the canonical [Activating All Modules of Type](#activating-all-modules-of-type) example in Module Activation and Deactivation. Evebot's specific guard is to check `${Entity[${asteroidID}](exists)}` before entering the loop — a useful defensive addition you can apply to any activation loop.
 
 ### Pattern 2: Tehbot - Weapon Activation
 
@@ -5377,7 +5377,7 @@ function Tehbot_ActivateWeapons(int64 targetID)
 
     ; Activate all weapons on target
     variable int i
-    for (i:Set[0]; ${i} < ${MyShip.HiSlots}; i:Inc)
+    for (i:Set[0]; ${i} < ${MyShip.HighSlots}; i:Inc)
     {
         variable item weapon = ${MyShip.Module[HiSlot, ${i}]}
 
@@ -5453,7 +5453,7 @@ function WaitForMiningCycle()
     variable bool anyActive = FALSE
     variable int i
 
-    for (i:Set[0]; ${i} < ${MyShip.HiSlots}; i:Inc)
+    for (i:Set[0]; ${i} < ${MyShip.HighSlots}; i:Inc)
     {
         variable item module = ${MyShip.Module[HiSlot, ${i}]}
 
@@ -5482,7 +5482,7 @@ function WaitForMiningCycle()
         wait 100
 
         anyActive:Set[FALSE]
-        for (i:Set[0]; ${i} < ${MyShip.HiSlots}; i:Inc)
+        for (i:Set[0]; ${i} < ${MyShip.HighSlots}; i:Inc)
         {
             variable item module = ${MyShip.Module[HiSlot, ${i}]}
 
