@@ -424,16 +424,19 @@ if !${HasSkillLevel["Mining Barge", 3]}
 ### Wallet
 
 ```lavish
-; ISK balance
-echo "ISK: ${Me.Wallet} ISK"
+; ISK balance - Me.Wallet returns a 'wallet' object; use .Balance for the ISK amount
+echo "ISK: ${Me.Wallet.Balance} ISK"
 
 ; Check affordability
 variable float itemPrice = 1000000.00
 
-if ${Me.Wallet} < ${itemPrice}
+if ${Me.Wallet.Balance} < ${itemPrice}
 {
-    echo "Cannot afford ${itemPrice} ISK (have ${Me.Wallet})"
+    echo "Cannot afford ${itemPrice} ISK (have ${Me.Wallet.Balance})"
 }
+
+; AUR (Aurum) balance is also available
+echo "AUR: ${Me.Wallet.BalanceAUR}"
 ```
 
 ### Standings
