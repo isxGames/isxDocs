@@ -715,6 +715,8 @@ function ProcessCargoQueued()
 
 ### Example 1: Mining Session Tracker
 
+> This example is a lightweight session-stats tracker. For the full mining-bot capstone (state machine, docking, cargo handling, etc.), see [Complete Working Example: Mining Bot](05_Patterns_And_Best_Practices.md#complete-working-example-mining-bot) in 05.
+
 ```lavishscript
 variable int64 SessionStartISK
 variable int OreUnits = 0
