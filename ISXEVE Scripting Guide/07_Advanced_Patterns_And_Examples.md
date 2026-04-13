@@ -31,7 +31,7 @@
 19. [IRC Bridge Integration](#irc-bridge)
 20. [Uplink Networking](#uplink-networking)
 21. [Performance Considerations (Relay)](#performance)
-22. [Best Practices (Relay)](#best-practices)
+22. [Best Practices (Relay)](#best-practices-relay)
 23. [Complete Working Examples (Relay System)](#complete-working-examples-relay-system)
 
 ### Configuration Management
@@ -47,7 +47,7 @@
 33. [Config Migration](#migration)
 34. [Fleet Config Synchronization](#fleet-sync)
 35. [isxSQLite Configuration Storage](#isxsqlite-config)
-36. [Best Practices (Config)](#best-practices-1)
+36. [Best Practices (Configuration)](#best-practices-configuration)
 37. [Complete Examples (Config)](#examples-1)
 
 ---
@@ -3223,7 +3223,7 @@ atom OnTargets(string targetIDs)
 
 ---
 
-## Best Practices
+## Best Practices (Relay)
 
 ### 1. Always Use -noredirect for Method Calls
 
@@ -5748,7 +5748,7 @@ objectdef obj_ConfigWithHistory
 
 ---
 
-## Best Practices
+## Best Practices (Configuration)
 
 ### 1. Always Provide Defaults
 
