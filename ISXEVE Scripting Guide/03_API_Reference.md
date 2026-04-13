@@ -321,16 +321,15 @@ if !${Me.InStation}
 ; Fleet membership
 echo "In Fleet: ${Me.InFleet}"
 echo "Fleet ID: ${Me.FleetID}"
-echo "Fleet Size: ${Me.Fleet.MemberCount}"
+echo "Fleet Size: ${Me.Fleet.Size}"
 
 ; Fleet role
-echo "Is Fleet Boss: ${Me.IsFleetBoss}"
-echo "Is Fleet Leader: ${Me.Fleet.IsLeader}"
+echo "Is Fleet Commander: ${Me.Fleet.IsFleetCommander}"
 
 ; Usage
 if ${Me.InFleet}
 {
-    echo "Fleet member count: ${Me.Fleet.MemberCount}"
+    echo "Fleet member count: ${Me.Fleet.Size}"
 }
 ```
 
@@ -1417,10 +1416,12 @@ function AmIInFleetWithMaster()
         return FALSE
 
     ; Check if master is in fleet
+    variable index:fleetmember FleetMembers
     variable int i
-    for (i:Set[1]; ${i} <= ${Me.Fleet.MemberCount}; i:Inc)
+    Me.Fleet:GetMembers[FleetMembers]
+    for (i:Set[1]; ${i} <= ${FleetMembers.Used}; i:Inc)
     {
-        if ${Me.Fleet.Member[${i}].Name.Equal["Bob"]}
+        if ${FleetMembers.Get[${i}].Name.Equal["Bob"]}
             return TRUE
     }
 
@@ -8310,7 +8311,7 @@ Fleet (up to 256 members)
 **Key TLOs**:
 - `${Me.InFleet}` - Am I in a fleet?
 - `${Me.Fleet}` - Fleet object (if in fleet)
-- `${Me.IsFleetBoss}` - Am I fleet boss?
+- `${Me.Fleet.IsFleetCommander}` - Am I fleet commander?
 
 **Wiki Reference**: `IsxeveWiki/ISXEVE/Fleet_(Object_Type).html`
 
@@ -8343,7 +8344,7 @@ if ${Me.InFleet}
 ```lavish
 if ${Me.InFleet}
 {
-    echo "Fleet members: ${Me.Fleet.MemberCount}"
+    echo "Fleet members: ${Me.Fleet.Size}"
 }
 ```
 
@@ -8368,18 +8369,18 @@ if !${Me.InFleet}
 
 variable fleet myFleet = ${Me.Fleet}
 
-echo "Fleet has ${myFleet.MemberCount} members"
+echo "Fleet has ${myFleet.Size} members"
 ```
 
 ### Fleet Members
 
 **Get member count**:
 ```lavish
-variable int memberCount = ${Me.Fleet.MemberCount}
+variable int memberCount = ${Me.Fleet.Size}
 echo "Fleet size: ${memberCount}"
 ```
 
-**Iterate fleet members** (1-indexed!):
+**Iterate fleet members** (canonical — use `GetMembers` with `index:fleetmember`):
 ```lavish
 function ListFleetMembers()
 {
@@ -8389,13 +8390,14 @@ function ListFleetMembers()
         return
     }
 
-    variable int memberCount = ${Me.Fleet.MemberCount}
-    echo "Fleet members (${memberCount}):"
+    variable index:fleetmember FleetMembers
+    Me.Fleet:GetMembers[FleetMembers]
+    echo "Fleet members (${FleetMembers.Used}):"
 
     variable int i
-    for (i:Set[1]; ${i} <= ${memberCount}; i:Inc)
+    for (i:Set[1]; ${i} <= ${FleetMembers.Used}; i:Inc)
     {
-        variable fleetmember member = ${Me.Fleet.Member[${i}]}
+        variable fleetmember member = ${FleetMembers.Get[${i}]}
 
         if ${member(exists)}
         {
@@ -8411,9 +8413,11 @@ function ListFleetMembers()
 
 ### Getting Fleet Member Objects
 
-**By index**:
+**By index** (canonical — populate `index:fleetmember` via `GetMembers`):
 ```lavish
-variable fleetmember member = ${Me.Fleet.Member[1]}
+variable index:fleetmember FleetMembers
+Me.Fleet:GetMembers[FleetMembers]
+variable fleetmember member = ${FleetMembers.Get[1]}
 ```
 
 **By name**:
@@ -8435,7 +8439,9 @@ variable fleetmember member = ${Me.Fleet.Member[${charID}]}
 ### Fleet Member Properties
 
 ```lavish
-variable fleetmember member = ${Me.Fleet.Member[1]}
+variable index:fleetmember FleetMembers
+Me.Fleet:GetMembers[FleetMembers]
+variable fleetmember member = ${FleetMembers.Get[1]}
 
 ; Identity
 echo "Name: ${member.Name}"
@@ -8539,17 +8545,11 @@ function GetFleetMemberEntity(string memberName)
 
 ### Checking Roles
 
-**Fleet Boss**:
+**Fleet Commander**:
 ```lavish
-if ${Me.IsFleetBoss}
+if ${Me.Fleet.IsFleetCommander}
 {
-    echo "I am fleet boss"
-}
-
-; Alternative
-if ${Me.Fleet.IsLeader}
-{
-    echo "I am fleet leader"
+    echo "I am fleet commander"
 }
 ```
 
@@ -9113,12 +9113,14 @@ function CheckFleetOnGrid()
         return TRUE
 
     variable int membersOnGrid = 0
-    variable int totalMembers = ${Me.Fleet.MemberCount}
+    variable index:fleetmember FleetMembers
+    Me.Fleet:GetMembers[FleetMembers]
+    variable int totalMembers = ${FleetMembers.Used}
     variable int i
 
     for (i:Set[1]; ${i} <= ${totalMembers}; i:Inc)
     {
-        variable fleetmember member = ${Me.Fleet.Member[${i}]}
+        variable fleetmember member = ${FleetMembers.Get[${i}]}
 
         if !${member(exists)}
             continue
@@ -9219,28 +9221,32 @@ relay "all other" SynchronizedWarp ${stationID} 0
 **Fleet members join/leave**:
 
 ```lavish
-; DANGEROUS - Fleet size might change during iteration
-variable int memberCount = ${Me.Fleet.MemberCount}
+; DANGEROUS - Fleet composition might change between reads of Me.Fleet
+variable index:fleetmember FleetMembers
+Me.Fleet:GetMembers[FleetMembers]
 
 variable int i
-for (i:Set[1]; ${i} <= ${memberCount}; i:Inc)
+for (i:Set[1]; ${i} <= ${FleetMembers.Used}; i:Inc)
 {
-    ; If member leaves, memberCount changes!
+    ; If you re-query Me.Fleet mid-loop, indices may not match!
 }
 
-; SAFER - Snapshot member IDs
+; SAFER - Snapshot CharIDs, then look up fresh by CharID each iteration
+variable index:fleetmember FleetMembersSnapshot
+Me.Fleet:GetMembers[FleetMembersSnapshot]
+
 variable int64[] memberIDs
 variable int i
 
-for (i:Set[1]; ${i} <= ${Me.Fleet.MemberCount}; i:Inc)
+for (i:Set[1]; ${i} <= ${FleetMembersSnapshot.Used}; i:Inc)
 {
-    if ${Me.Fleet.Member[${i}](exists)}
+    if ${FleetMembersSnapshot.Get[${i}](exists)}
     {
-        memberIDs:Insert[${Me.Fleet.Member[${i}].CharID}]
+        memberIDs:Insert[${FleetMembersSnapshot.Get[${i}].CharID}]
     }
 }
 
-; Process snapshot
+; Process snapshot — Member[CharID] is the only valid index-accessor
 for (i:Set[1]; ${i} <= ${memberIDs.Used}; i:Inc)
 {
     variable fleetmember member = ${Me.Fleet.Member[${memberIDs[${i}]}]}
@@ -9368,16 +9374,18 @@ function atom atexit()
 if ${Me.InFleet}
 
 ; Fleet size
-variable int members = ${Me.Fleet.MemberCount}
+variable int members = ${Me.Fleet.Size}
 
-; Am I fleet boss?
-if ${Me.IsFleetBoss}
+; Am I fleet commander?
+if ${Me.Fleet.IsFleetCommander}
 
 ; Iterate fleet members
+variable index:fleetmember FleetMembers
+Me.Fleet:GetMembers[FleetMembers]
 variable int i
-for (i:Set[1]; ${i} <= ${Me.Fleet.MemberCount}; i:Inc)
+for (i:Set[1]; ${i} <= ${FleetMembers.Used}; i:Inc)
 {
-    variable fleetmember m = ${Me.Fleet.Member[${i}]}
+    variable fleetmember m = ${FleetMembers.Get[${i}]}
     echo "${m.Name}"
 }
 
