@@ -217,11 +217,7 @@ function Cleanup()
 ;==============================================================================
 ; RELAY HANDLERS
 ;==============================================================================
-atom(script) EmergencyStop()
-{
-    echo "EMERGENCY STOP received from master!"
-    ScriptRunning:Set[FALSE]
-}
+; atom(script) EmergencyStop() — see "Emergency Stop Pattern" section below for full implementation
 ```
 
 ### Multi-File Organization
