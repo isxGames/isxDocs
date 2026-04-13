@@ -339,14 +339,16 @@ if ${Me.InFleet}
 ```lavish
 ; Target counts
 echo "Max Targets: ${Me.MaxLockedTargets}"
-echo "Current Targets: ${Me.GetTargets}"
+echo "Current Targets: ${Me.TargetCount}"
 echo "Max Target Range: ${Me.MaxTargetRange}m"
 
 ; Accessing targets (1-indexed!)
+variable index:entity MyTargets
 variable int i
-for (i:Set[1]; ${i} <= ${Me.GetTargets}; i:Inc)
+Me:GetTargets[MyTargets]
+for (i:Set[1]; ${i} <= ${MyTargets.Used}; i:Inc)
 {
-    echo "Target ${i}: ${Me.GetTarget[${i}].Name} at ${Me.GetTarget[${i}].Distance}m"
+    echo "Target ${i}: ${MyTargets.Get[${i}].Name} at ${MyTargets.Get[${i}].Distance}m"
 }
 
 ; Active target (what you're currently selected on)
@@ -361,14 +363,16 @@ if ${Me.ActiveTarget(exists)}
 function GetAllTargetIDs()
 {
     variable int64[] targetIDs
+    variable index:entity MyTargets
     variable int i
-    variable int count = ${Me.GetTargets}
+    Me:GetTargets[MyTargets]
+    variable int count = ${MyTargets.Used}
 
     for (i:Set[1]; ${i} <= ${count}; i:Inc)
     {
-        if ${Me.GetTarget[${i}](exists)}
+        if ${MyTargets.Get[${i}](exists)}
         {
-            targetIDs:Insert[${Me.GetTarget[${i}].ID}]
+            targetIDs:Insert[${MyTargets.Get[${i}].ID}]
         }
     }
 
@@ -1359,23 +1363,25 @@ if ${ShouldRetreat}
 ```lavish
 function GetTargetCount()
 {
-    return ${Me.GetTargets}
+    return ${Me.TargetCount}
 }
 
 function HasMaxTargets()
 {
-    return ${Math.Calc[${Me.GetTargets} >= ${Me.MaxLockedTargets}]}
+    return ${Math.Calc[${Me.TargetCount} >= ${Me.MaxLockedTargets}]}
 }
 
 function GetNearestTarget()
 {
+    variable index:entity MyTargets
     variable int i
     variable int64 nearestID = 0
     variable float nearestDist = 999999999
 
-    for (i:Set[1]; ${i} <= ${Me.GetTargets}; i:Inc)
+    Me:GetTargets[MyTargets]
+    for (i:Set[1]; ${i} <= ${MyTargets.Used}; i:Inc)
     {
-        variable entity target = ${Me.GetTarget[${i}]}
+        variable entity target = ${MyTargets.Get[${i}]}
 
         if !${target(exists)}
             continue
@@ -1443,7 +1449,7 @@ if ${Me.InFleet}
 if ${MyShip.ShieldPct} < 50
 
 ; Targeting → use ${Me}
-variable int targets = ${Me.GetTargets}
+variable int targets = ${Me.TargetCount}
 
 ; Cargo → use ${MyShip}
 if ${MyShip.FreeCargoCapacity} < 100
@@ -1477,11 +1483,11 @@ if ${MyShip.ToEntity.Mode} == 3
 
 **Bad**:
 ```lavish
-if ${Me.GetTargets} > 0
+if ${Me.TargetCount} > 0
 {
-    echo "Targets: ${Me.GetTargets}"    ; Queried again!
+    echo "Targets: ${Me.TargetCount}"    ; Queried again!
 
-    if ${Me.GetTargets} >= ${Me.MaxLockedTargets}    ; Queried again!
+    if ${Me.TargetCount} >= ${Me.MaxLockedTargets}    ; Queried again!
     {
         echo "Max targets"
     }
@@ -1490,7 +1496,7 @@ if ${Me.GetTargets} > 0
 
 **Good**:
 ```lavish
-variable int targetCount = ${Me.GetTargets}
+variable int targetCount = ${Me.TargetCount}
 
 if ${targetCount} > 0
 {
@@ -1515,7 +1521,7 @@ if ${targetCount} > 0
 - ${Me.InStation}
 
 **Slower** (computed):
-- ${Me.GetTargets} - Iterates target list
+- `Me:GetTargets[index]` - Iterates target list (use `${Me.TargetCount}` for just the count)
 - ${MyShip.GetCargo} - Iterates cargo
 - ${Local.PilotCount} - Iterates local pilots
 
@@ -1527,11 +1533,11 @@ if ${targetCount} > 0
 
 ### Gotcha 1: State Can Change Between Checks
 
-Game state (targets, modules, pilots, inventory, entities) can change between an `(exists)` check and a subsequent use — especially across any `wait`. The mitigation is the same for all cases: cache the reference, then re-check `(exists)` after the wait before accessing members. The canonical BAD/GOOD code example lives at [Existence Changes During Execution](#existence-changes-during-execution) in the Entity Lifecycle chapter; the pattern applies equally to `Me.GetTarget`, modules, fleet members, and any other stateful accessor.
+Game state (targets, modules, pilots, inventory, entities) can change between an `(exists)` check and a subsequent use — especially across any `wait`. The mitigation is the same for all cases: cache the reference, then re-check `(exists)` after the wait before accessing members. The canonical BAD/GOOD code example lives at [Existence Changes During Execution](#existence-changes-during-execution) in the Entity Lifecycle chapter; the pattern applies equally to entities returned from `Me:GetTargets[index]`, modules, fleet members, and any other stateful accessor.
 
 ### Gotcha 2: 1-Indexed Collections
 
-**CRITICAL**: ${Me.GetTarget}, ${MyShip.Cargo}, and other ISXEVE collection accessors are **1-indexed** (first item at index 1, not 0). Starting a for-loop at 0 crashes on the first iteration. See [Gotcha 4: 1-Indexed Collections](#gotcha-4-1-indexed-collections) in the Entity chapter for the full WRONG/RIGHT code example.
+**CRITICAL**: `index:entity` collections (populated by `Me:GetTargets[MyTargets]`), `${MyShip.Cargo}`, and other ISXEVE collection accessors are **1-indexed** (first item at index 1, not 0). Starting a for-loop at 0 crashes on the first iteration. See [Gotcha 4: 1-Indexed Collections](#gotcha-4-1-indexed-collections) in the Entity chapter for the full WRONG/RIGHT code example.
 
 ### Gotcha 3: (exists) is Required for Optional Objects
 
@@ -1601,8 +1607,10 @@ variable float capPct = ${MyShip.CapacitorPct}
 variable float cargoUsed = ${MyShip.UsedCargoCapacity}
 
 ; Targeting
-variable int targets = ${Me.GetTargets}
-variable entity target = ${Me.GetTarget[1]}
+variable int targets = ${Me.TargetCount}
+variable index:entity MyTargets
+Me:GetTargets[MyTargets]
+variable entity target = ${MyTargets.Get[1]}
 
 ; UI interaction
 EVE:Execute[CmdOpenInventory]
@@ -2436,9 +2444,9 @@ echo "Unlocking all targets"
 **Check max targets**:
 ```lavish
 echo "Max Locked Targets: ${Me.MaxLockedTargets}"
-echo "Current Targets: ${Me.GetTargets}"
+echo "Current Targets: ${Me.TargetCount}"
 
-if ${Me.GetTargets} >= ${Me.MaxLockedTargets}
+if ${Me.TargetCount} >= ${Me.MaxLockedTargets}
 {
     echo "At max targets"
 }
@@ -2536,7 +2544,7 @@ function FillTargetSlots()
     for (i:Set[1]; ${i} <= ${npcs.Used}; i:Inc)
     {
         ; Stop if at max targets
-        if ${Me.GetTargets} >= ${Me.MaxLockedTargets}
+        if ${Me.TargetCount} >= ${Me.MaxLockedTargets}
         {
             echo "Max targets reached"
             return
@@ -2953,7 +2961,7 @@ function ProcessCombatTargets()
     variable int i
     for (i:Set[1]; ${i} <= ${npcs.Used}; i:Inc)
     {
-        if ${Me.GetTargets} >= ${Me.MaxLockedTargets}
+        if ${Me.TargetCount} >= ${Me.MaxLockedTargets}
             break
 
         variable entity npc = ${npcs.Get[${i}]}
@@ -2977,7 +2985,7 @@ function ProcessCombatTargets()
     ; Fill remaining slots with any NPC
     for (i:Set[1]; ${i} <= ${npcs.Used}; i:Inc)
     {
-        if ${Me.GetTargets} >= ${Me.MaxLockedTargets}
+        if ${Me.TargetCount} >= ${Me.MaxLockedTargets}
             break
 
         variable entity npc = ${npcs.Get[${i}]}
@@ -8135,7 +8143,7 @@ if ${EVEWindow[inventory](exists)}
 
 ### Anti-Pattern 2: No Existence Check
 
-Always `(exists)` check any object (window, entity, target) before accessing its members — skipping the check crashes the script on the first NULL access. The canonical BAD/GOOD example (with entity context) is documented under [Anti-Pattern 2: No (exists) Check](#anti-pattern-2-no-exists-check) in the Entity chapter. The same pattern applies to `EVEWindow[name]`, `${Me.GetTarget[n]}`, and any other accessor that may return NULL.
+Always `(exists)` check any object (window, entity, target) before accessing its members — skipping the check crashes the script on the first NULL access. The canonical BAD/GOOD example (with entity context) is documented under [Anti-Pattern 2: No (exists) Check](#anti-pattern-2-no-exists-check) in the Entity chapter. The same pattern applies to `EVEWindow[name]`, `${MyTargets.Get[n]}` (after `Me:GetTargets[MyTargets]`), and any other accessor that may return NULL.
 
 ### Anti-Pattern 3: No Timeout on Wait Loops
 
