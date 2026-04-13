@@ -41,20 +41,7 @@
 
 ### DotNet Programs (.exe/.dll)
 
-**What They Are:**
-- Compiled .NET assemblies (executable or library)
-- Run via `dotnet programname` command in InnerSpace
-- Written in C# or VB.NET
-
-**Technology:**
-- **Language:** C#, VB.NET, F#
-- **Execution:** Compiled to IL, JIT compiled
-- **Compilation:** Required (Visual Studio, MSBuild)
-- **Runtime:** .NET Framework CLR
-
-**Examples:**
-- [Metatron2](https://github.com/spacekoala420/Metatron2) (combat/mining) - C# .NET application
-- Custom utilities and tools
+Compiled .NET assemblies (C#, VB.NET, or F#) run via `dotnet programname` in InnerSpace. See [DotNet Programs (.exe/.dll files)](#dotnet-programs-exedll-files) below for characteristics, Metatron2 example, and development cycle.
 
 ---
 
