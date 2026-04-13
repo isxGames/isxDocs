@@ -165,27 +165,20 @@ Use `@` for simple, frequently accessed elements. Use `FindUsableChild` for:
 </checkbox>
 ```
 
-**The Listbox (triggers the same sync on selection):**
+**The Listbox (triggers the same sync on selection):** (wrapper/geometry same as the canonical `FleetMembers` listbox shown in [Advanced List Management](#advanced-list-management) below — only the `<OnSelect>` handler differs)
 
 ```xml
-<listbox Name='FleetMembers'>
-  <X>10</X>
-  <Y>90</Y>
-  <Width>530</Width>
-  <Height>175</Height>
-  <Sort>Text</Sort>
+<!-- Inside <listbox Name='FleetMembers'> ... </listbox> -->
+<OnSelect>
+  ; Copy selected item text into the TextEntry
+  UIElement[tbAddFleetMember@Fleet@EVEBotOptionsTab@EVEBot]:SetText[${This.SelectedItem.Text}]
 
-  <OnSelect>
-    ; Copy selected item text into the TextEntry
-    UIElement[tbAddFleetMember@Fleet@EVEBotOptionsTab@EVEBot]:SetText[${This.SelectedItem.Text}]
-
-    ; Run the identical IsWing check to sync cbWing
-    if ${Script[EVEBot].VariableScope.Config.Fleet.IsWing[${UIElement[tbAddFleetMember@Fleet@EVEBotOptionsTab@EVEBot].Text}]}
-      UIElement[cbWing@Fleet@EVEBotOptionsTab@EVEBot]:SetChecked
-    else
-      UIElement[cbWing@Fleet@EVEBotOptionsTab@EVEBot]:UnsetChecked
-  </OnSelect>
-</listbox>
+  ; Run the identical IsWing check to sync cbWing
+  if ${Script[EVEBot].VariableScope.Config.Fleet.IsWing[${UIElement[tbAddFleetMember@Fleet@EVEBotOptionsTab@EVEBot].Text}]}
+    UIElement[cbWing@Fleet@EVEBotOptionsTab@EVEBot]:SetChecked
+  else
+    UIElement[cbWing@Fleet@EVEBotOptionsTab@EVEBot]:UnsetChecked
+</OnSelect>
 ```
 
 **The Script-Side Lookup Method:**
