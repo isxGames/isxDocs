@@ -3337,7 +3337,7 @@ objectdef obj_FleetQuery
     ; Slave: Respond with shield status
     atom OnShieldRequest()
     {
-        variable float shieldPct = ${MyShip.Shield.Pct}
+        variable float shieldPct = ${MyShip.ShieldPct}
         relay "${MasterName}" -event Fleet_Shield_Response "${Me.Name}" ${shieldPct}
     }
 
@@ -3844,9 +3844,9 @@ objectdef obj_OrcaService
     ; MINER: Request shield boost
     method RequestShieldBoost()
     {
-        if ${MyShip.Shield.Pct} < 50
+        if ${MyShip.ShieldPct} < 50
         {
-            relay "${OrcaName}" -event Orca_Shield_Request ${Me.ToEntity.ID} ${MyShip.Shield.Pct}
+            relay "${OrcaName}" -event Orca_Shield_Request ${Me.ToEntity.ID} ${MyShip.ShieldPct}
         }
     }
 
@@ -4101,8 +4101,8 @@ method ReportFleetStatus()
     ; Build status report
     status:Concat["${Me.Name}: "]
     status:Concat["State=${CurrentState} "]
-    status:Concat["Shield=${MyShip.Shield.Pct.Precision[0]}% "]
-    status:Concat["Cap=${MyShip.Capacitor.Pct.Precision[0]}% "]
+    status:Concat["Shield=${MyShip.ShieldPct.Precision[0]}% "]
+    status:Concat["Cap=${MyShip.CapacitorPct.Precision[0]}% "]
     status:Concat["Cargo=${Ship.CargoFull.Precision[0]}%"]
 
     ; Send to IRC
@@ -4293,7 +4293,7 @@ objectdef obj_ThrottledRelay
 
     method BroadcastStatus()
     {
-        relay "all other" -event Fleet_Status "${Me.Name}" ${MyShip.Shield.Pct}
+        relay "all other" -event Fleet_Status "${Me.Name}" ${MyShip.ShieldPct}
     }
 }
 ```
@@ -5261,7 +5261,7 @@ objectdef obj_MultiComputerFleet
     atom OnStatusRequest()
     {
         ; Build status report
-        variable string status = "${Me.Name}|${This.ComputerRole}|${CurrentState}|${MyShip.Shield.Pct.Precision[0]}|${Ship.CargoFull.Precision[0]}"
+        variable string status = "${Me.Name}|${This.ComputerRole}|${CurrentState}|${MyShip.ShieldPct.Precision[0]}|${Ship.CargoFull.Precision[0]}"
 
         ; Send to FC (same computer)
         relay "${This.FleetCommander}" -event Fleet_Status_Report "${status}"

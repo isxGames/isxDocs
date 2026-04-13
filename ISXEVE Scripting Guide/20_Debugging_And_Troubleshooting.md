@@ -339,7 +339,7 @@ echo "Hello World"
 echo "Target: ${Entity[${targetID}].Name} at ${Entity[${targetID}].Distance}m"
 
 ; Formatted
-echo "Shield: ${MyShip.Shield.Pct.Precision[1]}%"
+echo "Shield: ${MyShip.ShieldPct.Precision[1]}%"
 ```
 
 ### Echo with Formatting
@@ -609,7 +609,7 @@ method DebugDump()
     echo "InStation: ${Me.InStation}"
     echo "CargoUsed: ${MyShip.Cargo.UsedCapacity}"
     echo "CargoFree: ${MyShip.Cargo.FreeSpace}"
-    echo "Shield: ${MyShip.Shield.Pct.Precision[1]}%"
+    echo "Shield: ${MyShip.ShieldPct.Precision[1]}%"
     echo "Targets: ${Me.GetTargets}"
     echo "=================="
 }
@@ -659,7 +659,7 @@ call DebugEntity ${Me.ActiveTarget.ID}
 ```lavish
 method CheckCondition()
 {
-    if ${MyShip.Shield.Pct} < 20
+    if ${MyShip.ShieldPct} < 20
     {
         echo "\arCRITICAL SHIELD - BREAKPOINT\ax"
         echo "Press any key to continue..."
@@ -992,8 +992,8 @@ objectdef obj_StatusMonitor
         echo "│ Ship: ${MyShip.ToEntity.Name.Left[25]}"
         echo "│ State: ${This.CurrentState.Left[20]}"
         echo "├─────────────────────────────────────┤"
-        echo "│ Shield: ${MyShip.Shield.Pct.Precision[0]}%   Armor: ${MyShip.Armor.Pct.Precision[0]}%"
-        echo "│ Cap: ${MyShip.Capacitor.Pct.Precision[0]}%      Cargo: ${Ship.CargoFull.Precision[0]}%"
+        echo "│ Shield: ${MyShip.ShieldPct.Precision[0]}%   Armor: ${MyShip.ArmorPct.Precision[0]}%"
+        echo "│ Cap: ${MyShip.CapacitorPct.Precision[0]}%      Cargo: ${Ship.CargoFull.Precision[0]}%"
         echo "├─────────────────────────────────────┤"
         echo "│ Targets: ${Me.TargetCount}/${Me.MaxLockedTargets}"
         echo "│ Uptime: ${Math.Calc[${Script.RunningTime}/1000/60].Int} minutes"
@@ -1189,17 +1189,17 @@ method CheckShield()
 {
     variable static int lastShieldPct = -1
 
-    if ${MyShip.Shield.Pct.Int} != ${lastShieldPct}
+    if ${MyShip.ShieldPct.Int} != ${lastShieldPct}
     {
-        Logger:Log["Shield: ${MyShip.Shield.Pct.Precision[0]}%"]
-        lastShieldPct:Set[${MyShip.Shield.Pct.Int}]
+        Logger:Log["Shield: ${MyShip.ShieldPct.Precision[0]}%"]
+        lastShieldPct:Set[${MyShip.ShieldPct.Int}]
     }
 }
 
 ; BAD - logs every frame
 method CheckShield()
 {
-    Logger:Log["Shield: ${MyShip.Shield.Pct.Precision[0]}%"]
+    Logger:Log["Shield: ${MyShip.ShieldPct.Precision[0]}%"]
 }
 ```
 
@@ -1826,7 +1826,7 @@ function DiagnoseModuleActivation(int64 moduleID)
     echo "IsReloadingAmmo: ${M.IsReloadingAmmo}"
     echo "IsGoingOnline: ${M.IsGoingOnline}"
     echo "CurrentCharges: ${M.Charge.Quantity}"
-    echo "Ship Cap: ${MyShip.Capacitor.Pct.Precision[0]}%"
+    echo "Ship Cap: ${MyShip.CapacitorPct.Precision[0]}%"
     echo "========================="
 
     ; Specific fixes
@@ -1854,7 +1854,7 @@ function DiagnoseModuleActivation(int64 moduleID)
         }
 
         ; Check capacitor
-        if ${MyShip.Capacitor.Pct} < 5
+        if ${MyShip.CapacitorPct} < 5
         {
             echo "FIX: Insufficient capacitor"
         }
@@ -1995,7 +1995,7 @@ method SafeWarpTo(int64 destID, int distance)
     }
 
     ; Check capacitor
-    if ${MyShip.Capacitor.Pct} < 10
+    if ${MyShip.CapacitorPct} < 10
     {
         Logger:Log["Insufficient capacitor for warp"]
         return FALSE

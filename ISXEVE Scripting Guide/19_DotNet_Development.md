@@ -193,7 +193,7 @@ objectdef obj_Ship
 
     member:float GetShield()
     {
-        return ${MyShip.Shield.Pct}
+        return ${MyShip.ShieldPct}
     }
 
     method ActivateShield()
@@ -222,7 +222,7 @@ public class Ship
 
     public float GetShield()
     {
-        return MyShip.Shield.Pct;
+        return MyShip.ShieldPct;
     }
 
     public void ActivateShield()
@@ -467,7 +467,7 @@ method DebugDump()
     echo "=== Debug ==="
     echo "State: ${This.CurrentState}"
     echo "InSpace: ${Me.InSpace}"
-    echo "Shield: ${MyShip.Shield.Pct}%"
+    echo "Shield: ${MyShip.ShieldPct}%"
     echo "============="
 }
 ```
