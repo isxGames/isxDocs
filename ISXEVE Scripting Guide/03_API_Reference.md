@@ -716,7 +716,7 @@ echo "Rig Slots: ${MyShip.RigSlots}"
 **Accessing Modules**:
 ```lavish
 ; Get module by slot type and index (0-indexed!)
-variable item module = ${MyShip.Module[HiSlot, 0]}
+variable item module = ${MyShip.Module[HiSlot0]}
 
 if ${module(exists)}
 {
@@ -737,13 +737,13 @@ if ${miner(exists)}
 **Module Patterns** (see [06_Working_Examples.md](06_Working_Examples.md)):
 ```lavish
 ; Activate module
-MyShip.Module[HiSlot, 0]:Activate
+MyShip.Module[HiSlot0]:Activate
 
 ; Deactivate module
-MyShip.Module[HiSlot, 0]:Deactivate
+MyShip.Module[HiSlot0]:Deactivate
 
 ; Click module (toggle)
-MyShip.Module[HiSlot, 0]:Click
+MyShip.Module[HiSlot0]:Click
 ```
 
 ### Drones
@@ -4618,7 +4618,7 @@ See the canonical [Movement Modes table](#quick-reference-tables) for the consol
 **By Slot Type and Index**:
 ```lavish
 ; Get module in high slot 0 (0-indexed!)
-variable item module = ${MyShip.Module[HiSlot, 0]}
+variable item module = ${MyShip.Module[HiSlot0]}
 
 if ${module(exists)}
 {
@@ -4626,10 +4626,10 @@ if ${module(exists)}
 }
 
 ; Get module in mid slot 2
-variable item midModule = ${MyShip.Module[MedSlot, 2]}
+variable item midModule = ${MyShip.Module[MedSlot2]}
 
 ; Get module in low slot 1
-variable item lowModule = ${MyShip.Module[LoSlot, 1]}
+variable item lowModule = ${MyShip.Module[LoSlot1]}
 ```
 
 **By Module Type Name**:
@@ -4656,7 +4656,7 @@ variable item shield = ${MyShip.Module[Shield Booster]}
 
 **Identity**:
 ```lavish
-variable item module = ${MyShip.Module[HiSlot, 0]}
+variable item module = ${MyShip.Module[HiSlot0]}
 
 echo "Name: ${module.Name}"
 echo "Type ID: ${module.TypeID}"
@@ -4714,14 +4714,14 @@ echo "Damage Multiplier: ${module.DamageMultiplier}"
 
 ```lavish
 ; High slots: 0, 1, 2, 3, 4, 5, 6, 7
-variable item hi0 = ${MyShip.Module[HiSlot, 0]}    ; First high slot
-variable item hi7 = ${MyShip.Module[HiSlot, 7]}    ; Last high slot (if ship has 8 highs)
+variable item hi0 = ${MyShip.Module[HiSlot0]}    ; First high slot
+variable item hi7 = ${MyShip.Module[HiSlot7]}    ; Last high slot (if ship has 8 highs)
 
 ; Mid slots: 0, 1, 2, 3, 4, 5, 6, 7
-variable item mid0 = ${MyShip.Module[MedSlot, 0]}
+variable item mid0 = ${MyShip.Module[MedSlot0]}
 
 ; Low slots: 0, 1, 2, 3, 4, 5, 6, 7
-variable item low0 = ${MyShip.Module[LoSlot, 0]}
+variable item low0 = ${MyShip.Module[LoSlot0]}
 ```
 
 ### Counting Slots
@@ -4741,7 +4741,7 @@ function ActivateAllHighSlots()
     variable int i
     for (i:Set[0]; ${i} < ${MyShip.HighSlots}; i:Inc)    ; 0-indexed!
     {
-        variable item module = ${MyShip.Module[HiSlot, ${i}]}
+        variable item module = ${MyShip.Module[HiSlot${i}]}
 
         if !${module(exists)}
             continue
@@ -4777,7 +4777,7 @@ function ActivateAllHighSlots()
 ### Checking States
 
 ```lavish
-variable item module = ${MyShip.Module[HiSlot, 0]}
+variable item module = ${MyShip.Module[HiSlot0]}
 
 ; Online check (can it be activated?)
 if ${module.IsOnline}
@@ -4864,7 +4864,7 @@ if ${asteroidID} > 0
 **Method 3: EVE:Execute Command**:
 ```lavish
 ; Need SlotID (numeric ID of slot)
-variable int slotID = ${MyShip.Module[HiSlot, 0].ToItem.SlotID}
+variable int slotID = ${MyShip.Module[HiSlot0].ToItem.SlotID}
 EVE:Execute[CmdActivateModule, ${slotID}]
 ```
 
@@ -4885,7 +4885,7 @@ if ${miner.IsActive}
 
 **Method 2: EVE:Execute Command**:
 ```lavish
-variable int slotID = ${MyShip.Module[HiSlot, 0].ToItem.SlotID}
+variable int slotID = ${MyShip.Module[HiSlot0].ToItem.SlotID}
 EVE:Execute[CmdDeactivateModule, ${slotID}]
 ```
 
@@ -4893,7 +4893,7 @@ EVE:Execute[CmdDeactivateModule, ${slotID}]
 
 **Click = Activate if inactive, deactivate if active**:
 ```lavish
-variable item module = ${MyShip.Module[HiSlot, 0]}
+variable item module = ${MyShip.Module[HiSlot0]}
 module:Click
 
 ; This toggles the module state
@@ -4975,7 +4975,7 @@ function SafeActivateModule(string slotType, int slotIndex, int64 targetID)
 ### Checking Current Charge
 
 ```lavish
-variable item module = ${MyShip.Module[HiSlot, 0]}
+variable item module = ${MyShip.Module[HiSlot0]}
 
 echo "Charge: ${module.Charge}"
 echo "Charge Type ID: ${module.Charge.ID}"
@@ -5070,7 +5070,7 @@ function ActivateAllMiningLasers(int64 asteroidID)
     variable int i
     for (i:Set[0]; ${i} < ${MyShip.HighSlots}; i:Inc)
     {
-        variable item module = ${MyShip.Module[HiSlot, ${i}]}
+        variable item module = ${MyShip.Module[HiSlot${i}]}
 
         if !${module(exists)}
             continue
@@ -5104,7 +5104,7 @@ function ActivateAllWeapons(int64 targetID)
     variable int i
     for (i:Set[0]; ${i} < ${MyShip.HighSlots}; i:Inc)
     {
-        variable item weapon = ${MyShip.Module[HiSlot, ${i}]}
+        variable item weapon = ${MyShip.Module[HiSlot${i}]}
 
         if !${weapon(exists)}
             continue
@@ -5143,7 +5143,7 @@ function AreMiningLasersActive()
     variable int i
     for (i:Set[0]; ${i} < ${MyShip.HighSlots}; i:Inc)
     {
-        variable item module = ${MyShip.Module[HiSlot, ${i}]}
+        variable item module = ${MyShip.Module[HiSlot${i}]}
 
         if !${module(exists)}
             continue
@@ -5173,7 +5173,7 @@ function ActivateRepairers()
     variable int i
     for (i:Set[0]; ${i} < ${MyShip.MediumSlots}; i:Inc)
     {
-        variable item module = ${MyShip.Module[MedSlot, ${i}]}
+        variable item module = ${MyShip.Module[MedSlot${i}]}
 
         if !${module(exists)}
             continue
@@ -5201,7 +5201,7 @@ function ActivateHardeners()
     ; Shield hardeners (mid slots)
     for (i:Set[0]; ${i} < ${MyShip.MediumSlots}; i:Inc)
     {
-        variable item module = ${MyShip.Module[MedSlot, ${i}]}
+        variable item module = ${MyShip.Module[MedSlot${i}]}
 
         if !${module(exists)}
             continue
@@ -5219,7 +5219,7 @@ function ActivateHardeners()
     ; Armor hardeners (low slots)
     for (i:Set[0]; ${i} < ${MyShip.LowSlots}; i:Inc)
     {
-        variable item module = ${MyShip.Module[LoSlot, ${i}]}
+        variable item module = ${MyShip.Module[LoSlot${i}]}
 
         if !${module(exists)}
             continue
@@ -5245,7 +5245,7 @@ function ActivatePropMod()
     variable int i
     for (i:Set[0]; ${i} < ${MyShip.MediumSlots}; i:Inc)
     {
-        variable item module = ${MyShip.Module[MedSlot, ${i}]}
+        variable item module = ${MyShip.Module[MedSlot${i}]}
 
         if !${module(exists)}
             continue
@@ -5267,7 +5267,7 @@ function DeactivatePropMod()
     variable int i
     for (i:Set[0]; ${i} < ${MyShip.MediumSlots}; i:Inc)
     {
-        variable item module = ${MyShip.Module[MedSlot, ${i}]}
+        variable item module = ${MyShip.Module[MedSlot${i}]}
 
         if !${module(exists)}
             continue
@@ -5300,7 +5300,7 @@ function ActivateTackle(int64 targetID)
     variable int i
     for (i:Set[0]; ${i} < ${MyShip.MediumSlots}; i:Inc)
     {
-        variable item module = ${MyShip.Module[MedSlot, ${i}]}
+        variable item module = ${MyShip.Module[MedSlot${i}]}
 
         if !${module(exists)}
             continue
@@ -5379,7 +5379,7 @@ function Tehbot_ActivateWeapons(int64 targetID)
     variable int i
     for (i:Set[0]; ${i} < ${MyShip.HighSlots}; i:Inc)
     {
-        variable item weapon = ${MyShip.Module[HiSlot, ${i}]}
+        variable item weapon = ${MyShip.Module[HiSlot${i}]}
 
         if !${weapon(exists)}
             continue
@@ -5439,7 +5439,7 @@ function ProcessDefenseModules()
 
 **Cycle Time**:
 ```lavish
-variable item module = ${MyShip.Module[HiSlot, 0]}
+variable item module = ${MyShip.Module[HiSlot0]}
 echo "Cycle time: ${module.Duration}ms"
 ```
 
@@ -5455,7 +5455,7 @@ function WaitForMiningCycle()
 
     for (i:Set[0]; ${i} < ${MyShip.HighSlots}; i:Inc)
     {
-        variable item module = ${MyShip.Module[HiSlot, ${i}]}
+        variable item module = ${MyShip.Module[HiSlot${i}]}
 
         if !${module(exists)}
             continue
@@ -5484,7 +5484,7 @@ function WaitForMiningCycle()
         anyActive:Set[FALSE]
         for (i:Set[0]; ${i} < ${MyShip.HighSlots}; i:Inc)
         {
-            variable item module = ${MyShip.Module[HiSlot, ${i}]}
+            variable item module = ${MyShip.Module[HiSlot${i}]}
 
             if !${module(exists)}
                 continue
@@ -5518,15 +5518,15 @@ function WaitForMiningCycle()
 ; BAD - Re-fetches module every check
 while TRUE
 {
-    if ${MyShip.Module[HiSlot, 0].IsActive}
+    if ${MyShip.Module[HiSlot0].IsActive}
     {
-        echo "Active: ${MyShip.Module[HiSlot, 0].Name}"
+        echo "Active: ${MyShip.Module[HiSlot0].Name}"
     }
     wait 10
 }
 
 ; GOOD - Cache module reference
-variable item miner = ${MyShip.Module[HiSlot, 0]}
+variable item miner = ${MyShip.Module[HiSlot0]}
 
 while TRUE
 {
@@ -5576,17 +5576,17 @@ while TRUE
 
 ```lavish
 ; WRONG - 1-indexed assumption
-variable item module = ${MyShip.Module[HiSlot, 1]}    ; This is SECOND high slot!
+variable item module = ${MyShip.Module[HiSlot1]}    ; This is SECOND high slot!
 
 ; RIGHT - 0-indexed
-variable item module = ${MyShip.Module[HiSlot, 0]}    ; First high slot
+variable item module = ${MyShip.Module[HiSlot0]}    ; First high slot
 ```
 
 ### Gotcha 2: Module Can Despawn (Ship Destruction/Refit)
 
 ```lavish
 ; BAD - Module reference can become invalid
-variable item miner = ${MyShip.Module[HiSlot, 0]}
+variable item miner = ${MyShip.Module[HiSlot0]}
 
 ; ... later ...
 miner:Activate    ; CRASH if ship changed/destroyed!
@@ -5705,7 +5705,7 @@ else
 
 ```lavish
 ; Get module
-variable item module = ${MyShip.Module[HiSlot, 0]}
+variable item module = ${MyShip.Module[HiSlot0]}
 
 ; Check state
 if ${module.IsOnline} && !${module.IsActive}
