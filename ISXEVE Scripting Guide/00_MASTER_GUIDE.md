@@ -399,13 +399,7 @@ Event[OnActiveTargetChanged]:AttachAtom[OnTargetChanged]
 
 ### Common Patterns
 
-**NULL/Existence Checking:**
-```lavishscript
-if ${Entity[${ID}](exists)}
-{
-    ; Safe to use entity
-}
-```
+**NULL/Existence Checking:** See [Existence Checks](README.md#existence-checks) in the README for the canonical `if ${X(exists)}` pattern.
 
 **Wait for Condition:**
 ```lavishscript
