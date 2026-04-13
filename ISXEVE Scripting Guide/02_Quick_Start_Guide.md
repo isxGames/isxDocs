@@ -445,25 +445,7 @@ InnerSpace/
 <!-- CLAUDE_SKIP_START -->
 ## Next Steps
 
-### Beginner Path
-
-1. **Learn more LavishScript** - [01_LavishScript_Fundamentals.md](01_LavishScript_Fundamentals.md)
-2. **Explore the API** - [03_API_Reference.md](03_API_Reference.md)
-3. **Study core concepts** - [04_Core_Concepts.md](04_Core_Concepts.md)
-4. **Try working examples** - [06_Working_Examples.md](06_Working_Examples.md)
-
-### Intermediate Path
-
-1. **Learn patterns** - [05_Patterns_And_Best_Practices.md](05_Patterns_And_Best_Practices.md)
-2. **Build simple automation** - [06_Working_Examples.md](06_Working_Examples.md)
-3. **Study bot architectures** - [18_Bot_Architecture_Analysis.md](18_Bot_Architecture_Analysis.md)
-
-### Advanced Path
-
-1. **Combat automation** - [15_Combat_Automation.md](15_Combat_Automation.md)
-2. **Mining automation** - [16_Mining_And_Hauling.md](16_Mining_And_Hauling.md)
-3. **Fleet coordination** - [17_Fleet_Operations.md](17_Fleet_Operations.md)
-4. **Advanced patterns** - [07_Advanced_Patterns_And_Examples.md](07_Advanced_Patterns_And_Examples.md)
+Work through the **Practice Exercises** above first to cement what you've just learned. When you're ready to pick the next guide, see the canonical **Beginner / Intermediate / Advanced** learning paths in [README.md#learning-paths](README.md#learning-paths).
 <!-- CLAUDE_SKIP_END -->
 
 ---
