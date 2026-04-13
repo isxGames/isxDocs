@@ -1823,39 +1823,6 @@ _randomDelay.Wait(1000, 3000);  // Wait 1-3 seconds
 
 This collection provides **ready-to-use code snippets** for the most common EVE Online bot operations.
 
-### Quick Reference
-
-**Entity Management:**
-- Get closest NPC
-- Filter by type
-- Safe entity access
-
-**Combat:**
-- Lock targets
-- Activate weapons
-- Combat state machine
-
-**Mining:**
-- Mine asteroids
-- Check cargo full
-- Mining loop
-
-**Movement:**
-- Warp to entity/bookmark
-- Orbit entity
-- Movement queue
-
-**Safety:**
-- Check for hostiles
-- Auto-flee
-- Warp to safe spot
-
-**Utilities:**
-- Logging
-- Profiling
-- Configuration
-- Distance calculation
-
 ### Usage Tips
 
 1. **Copy snippets** into your own scripts
