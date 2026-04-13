@@ -3565,17 +3565,6 @@ function DiagnosticReport()
 
 ## Summary
 
-This file covered:
-
-1. **Autopilot and Navigation**: Route planning, system-to-system travel, bookmark warping
-2. **Station Operations**: Docking, undocking, cargo transfer patterns
-3. **Hauler State Machine**: Safety-first design with FLEE and HARDSTOP states
-4. **Fleet Hauling**: Jetcan pickup, tractor beams, on-demand service
-5. **Orca Service**: Fleet hangar transfers, cargo monitoring
-6. **Stealth Hauling**: Covops cloak mechanics, gate jump protocol
-7. **Route Safety**: Low-sec detection, gank risk calculation
-8. **Cargo Optimization**: Value calculation, priority loading
-9. **Working Examples**: Station hauler, mining support hauler
-10. **Common Problems**: Navigation timeouts, cargo transfer issues, session changes
+See the [Table of Contents](#table-of-contents) above for the full topic list.
 
 **Key Takeaway**: Hauling bots prioritize **SAFETY FIRST** - always check for hostiles, have emergency dock procedures, and use the FLEE state liberally. A successful hauler is one that doesn't get blown up!
