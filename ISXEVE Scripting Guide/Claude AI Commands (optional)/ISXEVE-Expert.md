@@ -61,7 +61,6 @@ You MUST also check whether these index/meta files need corresponding updates:
 - `GUIDE_DIR\..\ISXEVE_QuickReference.md` (quick reference — may summarize content from the changed guide)
 - `GUIDE_DIR\+How To Use This Guide with Claude Code+.md` (usage instructions — references guide structure)
 - `GUIDE_DIR\00_MASTER_GUIDE.md` (master guide — aggregates/references all numbered guides)
-- `GUIDE_DIR\FILE_MANIFEST.md` (manifest — lists all files with descriptions and line counts)
 - `GUIDE_DIR\README.md` (readme — navigation and guide overview)
 - `GUIDE_DIR\Claude AI Commands (optional)\isxeve.md` (coordinator command — lists guide files and sizes)
 - `GUIDE_DIR\Claude AI Commands (optional)\ISXEVE-Expert.md` (this file — Knowledge Base section lists all guides)

@@ -112,7 +112,7 @@ When reviewing scripts over ~200 lines:
 - Always validate existence with `(exists)` before accessing members
 - Use LavishGUI 2 (JSON) for new UIs, not LavishGUI 1 (XML)
 - Verify API details against CHANGES_FILE — it is the definitive source
-- **Guide file changes**: When adding, removing, or reordering guide files, update ALL cross-references across ALL files. When making substantive changes to any numbered guide (01–22), also check/update the index files (ISXEVE_QuickReference.md, +How To Use This Guide with Claude Code+.md, 00_MASTER_GUIDE.md, FILE_MANIFEST.md, README.md, isxeve.md, ISXEVE-Expert.md). See ISXEVE-Expert.md for the full list.
+- **Guide file changes**: When adding, removing, or reordering guide files, update ALL cross-references across ALL files. When making substantive changes to any numbered guide (01–22), also check/update the index files (ISXEVE_QuickReference.md, +How To Use This Guide with Claude Code+.md, 00_MASTER_GUIDE.md, README.md, isxeve.md, ISXEVE-Expert.md). See ISXEVE-Expert.md for the full list.
 
 ## Workflow
 

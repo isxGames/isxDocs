@@ -300,7 +300,6 @@ Found an error or have an improvement? This documentation was generated using ac
   - Merged Extension Reference navigation content into README for single entry point
   - Enhanced README with comprehensive learning paths, quick start guides, and checklists
   - Improved organization and cross-referencing
-  - Added FILE_MANIFEST for documentation tracking
   
 - **v1.0 (2024)**
 
