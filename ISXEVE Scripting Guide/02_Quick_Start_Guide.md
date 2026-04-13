@@ -296,14 +296,14 @@ function main()
     }
 
     ; Check if we have a target
-    if !${MyShip.ActiveTarget(exists)}
+    if !${Me.ActiveTarget(exists)}
     {
         echo "No active target!"
         return
     }
 
     ; Get target as entity
-    variable entity Target = ${MyShip.ActiveTarget.ToEntity}
+    variable entity Target = ${Me.ActiveTarget.ToEntity}
 
     echo "====================================="
     echo "TARGET INFORMATION"
@@ -358,14 +358,14 @@ function main()
     }
 
     ; Check if we have a target
-    if !${MyShip.ActiveTarget(exists)}
+    if !${Me.ActiveTarget(exists)}
     {
         echo "No active target!"
         return
     }
 
     ; Get target entity
-    variable entity Target = ${MyShip.ActiveTarget.ToEntity}
+    variable entity Target = ${Me.ActiveTarget.ToEntity}
 
     echo "Locking target: ${Target.Name}"
 
@@ -599,11 +599,11 @@ EVE:Execute[CmdStopShip]
 
 ```lavishscript
 ; BAD - Will error if no target
-echo ${MyShip.ActiveTarget.Name}
+echo ${Me.ActiveTarget.Name}
 
 ; GOOD - Checks existence first
-if ${MyShip.ActiveTarget(exists)}
-    echo ${MyShip.ActiveTarget.Name}
+if ${Me.ActiveTarget(exists)}
+    echo ${Me.ActiveTarget.Name}
 ```
 
 ### 2. Case Sensitivity in Strings
@@ -688,11 +688,11 @@ Extend **Example 3 (TargetInfo.iss)** from earlier in this guide with target mot
 ; Sampling loop (runs after Example 3's one-shot info block)
 variable float LastDistance = ${Target.Distance}
 variable int Samples = 0
-while ${Samples:Inc} <= 10 && ${MyShip.ActiveTarget(exists)}
+while ${Samples:Inc} <= 10 && ${Me.ActiveTarget(exists)}
 {
     wait 10
-    variable float CurrentDistance = ${MyShip.ActiveTarget.ToEntity.Distance}
-    echo "Velocity: ${MyShip.ActiveTarget.ToEntity.Velocity} / ${MyShip.ActiveTarget.ToEntity.MaxVelocity} m/s"
+    variable float CurrentDistance = ${Me.ActiveTarget.ToEntity.Distance}
+    echo "Velocity: ${Me.ActiveTarget.ToEntity.Velocity} / ${Me.ActiveTarget.ToEntity.MaxVelocity} m/s"
     if ${CurrentDistance} > ${LastDistance}
         echo "WARNING: target is receding (${LastDistance.Int}m -> ${CurrentDistance.Int}m)"
     LastDistance:Set[${CurrentDistance}]
