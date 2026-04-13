@@ -52,15 +52,7 @@ Detailed per-file descriptions of each numbered guide have been moved to README.
 
 ### Primary Sources
 
-| Source | Type | Purpose |
-|--------|------|---------|
-| **ISXEVE Extension** | API/Extension | Complete API reference |
-| **EVEBot** | Script | Multi-purpose automation |
-| **Yamfa** | Script | Fleet assist patterns |
-| **Tehbot** | Script | Combat automation |
-| **[Metatron2](https://github.com/spacekoala420/Metatron2)** | .NET Framework | .NET development patterns |
-| **InnerSpace Documentation** | Web resource | Platform reference |
-| **LavishScript Documentation** | Web resource | Language reference |
+See [Source Materials](README.md#source-materials) in the README for the canonical list.
 
 ---
 
