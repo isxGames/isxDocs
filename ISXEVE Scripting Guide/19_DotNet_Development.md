@@ -494,6 +494,8 @@ method DebugDump()
 - No step-through debugging
 - Manual variable dumping
 
+See [Common Debugging Patterns](20_Debugging_And_Troubleshooting.md#common-debugging-patterns) in 20 for the canonical LavishScript debugging workflow and tooling.
+
 ### .NET Debugging
 
 **Available Tools:**
