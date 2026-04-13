@@ -38,6 +38,7 @@ Complete quick reference for ISXEQ2 scripting. For detailed information, see the
 - **[05_Patterns_And_Best_Practices.md](05_Patterns_And_Best_Practices.md)** - Best practices
 - **[06_Working_Examples.md](06_Working_Examples.md)** - Code examples
 - **[15_Advanced_Scripting_Patterns.md](15_Advanced_Scripting_Patterns.md)** - Production-grade patterns
+- **[19_DotNet_Development.md](19_DotNet_Development.md)** - Scripts vs .NET (decision guide)
 
 ---
 

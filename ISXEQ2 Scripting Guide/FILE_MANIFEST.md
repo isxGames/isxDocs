@@ -39,8 +39,9 @@
 | **16_Utility_Script_Patterns.md** | ✅ Complete | Utility patterns from EQ2BJCommon (18 patterns: timers, tracking, validation, etc.) |
 | **17_Crafting_Script_Patterns.md** | ✅ Complete | Crafting automation patterns from [EQ2Craft](https://github.com/isxGames/isxScripts/tree/master/EverQuest2/Scripts/EQ2Craft) (13 patterns: cmd-line, navigation, localization, queue mgmt, writs, etc.) |
 | **18_Navigation_Library_Patterns.md** | ✅ Complete | Navigation and pathfinding patterns from EQ2Nav (10 patterns: LavishNav, Dijkstra, regions, collision, stuck detection, doors, aggro, precision, optimization) |
+| **19_DotNet_Development.md** | ✅ Complete | Scripts vs .NET decision-and-orientation guide — language/tooling/performance/debugging/deployment tradeoffs, ISXEQ2-specific .NET interop patterns (Extension helpers, domain wrappers, no `Execute(ExecuteCommand)` enum), `ISXEQ2Wrapper.dll` namespace map |
 
-**Total Documentation:** 22 files (19 numbered guides + README + FILE_MANIFEST + How To Use Guide)
+**Total Documentation:** 23 files (20 numbered guides + README + FILE_MANIFEST + How To Use Guide)
 
 ---
 
@@ -203,9 +204,11 @@ All essential documentation files have been completed:
 17. **16_Utility_Script_Patterns.md** - ✅ Complete utility patterns from EQ2BJCommon
 18. **17_Crafting_Script_Patterns.md** - ✅ Complete crafting automation patterns from EQ2Craft
 19. **18_Navigation_Library_Patterns.md** - ✅ Complete navigation and pathfinding patterns from EQ2Nav
+20. **19_DotNet_Development.md** - ✅ Complete Scripts vs .NET decision guide with ISXEQ2 interop patterns
 
-### Recent Additions (Version 2.0-3.0)
+### Recent Additions (Version 2.0-3.1)
 
+- **Version 3.1**: .NET Development guide (file 19) — Scripts vs .NET decision guide
 - **Version 3.0**: Utility, Crafting, and Navigation pattern guides (files 16-18)
 - **Version 2.9**: LGUI2 Scaling System guide
 - **Version 2.5**: Advanced LGUI1 Patterns and LGUI2 limitations documentation
@@ -306,6 +309,12 @@ All documentation files are contained within this ISXEQ2 Scripting Guide directo
 ---
 
 ## Version History
+
+- **v3.1 (2026-04-12)**
+  - Added [19_DotNet_Development.md](19_DotNet_Development.md) — Scripts vs .NET decision guide
+  - Documents ISXEQ2-specific .NET interop (`LavishScript.Objects.GetObject`, `Extension` helpers, domain wrapper methods)
+  - Explicitly contrasts with ISXEVE's `Execute(ExecuteCommand)` pattern (does NOT exist in `ISXEQ2Wrapper`)
+  - Includes `ISXEQ2Wrapper.dll` namespace/assembly reference
 
 - **v3.0 (2025-10-25)**
   - **MAJOR UPDATE:** Scalable Title Bars now standard for all LGUI2 scripts

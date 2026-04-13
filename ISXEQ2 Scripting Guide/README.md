@@ -86,6 +86,9 @@ This comprehensive guide provides complete documentation for creating, debugging
 19. **[18_Navigation_Library_Patterns.md](18_Navigation_Library_Patterns.md)** - Navigation and Pathfinding
     Production-grade navigation patterns from EQ2Nav library. Covers LavishNav integration, Dijkstra pathfinding, region-based navigation, collision detection, stuck detection/recovery, door automation, aggro detection integration, direct vs pathfinding movement, dual precision system, and performance optimization. 10 major patterns with 3 complete working examples (simple nav, waypoints, aggro handling).
 
+20. **[19_DotNet_Development.md](19_DotNet_Development.md)** - .NET Development (Scripts vs .NET)
+    Decision-and-orientation guide comparing LavishScript `.iss` scripts against compiled .NET programs for ISXEQ2 automation. Covers language, tooling, performance, debugging, deployment, and maintenance tradeoffs; documents the ISXEQ2-specific .NET interop model (`LavishScript.Objects.GetObject`, `Extension` static helpers, domain wrapper methods) and explicitly contrasts it with ISXEVE's `Execute(ExecuteCommand)` pattern. Includes namespace/assembly reference for `ISXEQ2Wrapper.dll`.
+
 ---
 
 <!-- CLAUDE_SKIP_START -->
@@ -344,6 +347,14 @@ Found an error or have an improvement? This documentation was generated using ac
 
 <!-- CLAUDE_SKIP_START -->
 ## Version History
+
+- **4.1** (2026-04-12) — Added .NET Development guide
+  - Added [19_DotNet_Development.md](19_DotNet_Development.md) — Scripts vs .NET decision-and-orientation guide
+  - Covers language/tooling/performance/debugging/deployment tradeoffs for ISXEQ2 automation
+  - Documents the ISXEQ2-specific .NET interop model: `LavishScript.Objects.GetObject`, `EQ2.ISXEQ2.Extension` static helpers, domain wrapper methods
+  - Explicitly contrasts with ISXEVE's `Execute(ExecuteCommand)` pattern — **no `ExecuteCommand` enum or universal `Execute(enum)` method exists in `ISXEQ2Wrapper`**; attempting that pattern will fail
+  - Includes `ISXEQ2Wrapper.dll` namespace/assembly reference map
+  - Updated cross-references in FILE_MANIFEST.md, 00_MASTER_GUIDE.md, +How To Use+.md, ISXEQ2-Expert.md
 
 - **4.0** (2026-04-09) — Comprehensive Accuracy Audit and QuickReference Overhaul
   - **MAJOR UPDATE:** Line-by-line accuracy audit of all guides and QuickReference against ISXEQ2 source code and ISXEQ2Changes.txt

@@ -50,6 +50,7 @@ You are an expert ISXEQ2 script developer with deep knowledge of LavishScript, I
 - `16_Utility_Script_Patterns.md` - Utility Script Patterns
 - `17_Crafting_Script_Patterns.md` - Crafting Script Patterns
 - `18_Navigation_Library_Patterns.md` - Navigation Library Patterns
+- `19_DotNet_Development.md` - .NET Development (Scripts vs .NET, interop patterns)
 
 **IMPORTANT: When reading these files, IGNORE all content between `<!-- CLAUDE_SKIP_START -->` and `<!-- CLAUDE_SKIP_END -->` markers. These sections contain human-oriented content not needed for AI code assistance.**
 
