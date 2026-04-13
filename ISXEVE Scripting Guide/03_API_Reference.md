@@ -725,8 +725,8 @@ if ${module(exists)}
     echo "Is online: ${module.IsOnline}"
 }
 
-; Get module by type name
-variable item miner = ${MyShip.Module[=MiningLaser]}
+; Get module by slot (use the iterate-and-filter pattern below for type-name lookup)
+variable item miner = ${MyShip.Module[HiSlot0]}
 
 if ${miner(exists)}
 {
@@ -1310,7 +1310,7 @@ function ActivateMiningLaser(int64 asteroidID)
     }
 
     ; Safe to proceed
-    variable item miner = ${MyShip.Module[=MiningLaser]}
+    variable item miner = ${MyShip.Module[HiSlot0]}
     miner:Activate[${asteroidID}]
     return TRUE
 }
@@ -4632,25 +4632,39 @@ variable item midModule = ${MyShip.Module[MedSlot2]}
 variable item lowModule = ${MyShip.Module[LoSlot1]}
 ```
 
-**By Module Type Name**:
+**By Module Type Name (canonical iterate-and-filter pattern)**:
+
+The `${MyShip.Module[...]}` member accepts only two index forms (verified against ISXEVE C++ source DT-Ship.cpp + EVERetrievalUtils.cpp `GetModuleIDBySlotName`): a numeric module ItemID, or a slot-flag name like `HiSlot0`, `MedSlot3`, `LoSlot1`, `RigSlot0`..`RigSlot7`. There is NO type-name/partial-name/equals-prefix indexing. To find a module by type or name, iterate and filter:
+
 ```lavish
-; Find first module matching type
-variable item miner = ${MyShip.Module[=MiningLaser]}
+; Find first module whose item name contains "Mining Laser"
+variable index:module Modules
+MyShip:GetModules[Modules]
+
+variable iterator ModIterator
+Modules:GetIterator[ModIterator]
+
+variable item miner
+if ${ModIterator:First(exists)}
+{
+    do
+    {
+        if ${ModIterator.Value.ToItem.Name.Find["Mining Laser"]} > 0
+        {
+            miner:Set[${ModIterator.Value.ToItem.ID}]
+            break
+        }
+    }
+    while ${ModIterator:Next(exists)}
+}
 
 if ${miner(exists)}
 {
     echo "Found mining laser: ${miner.Name}"
 }
-
-; Find first weapon
-variable item weapon = ${MyShip.Module[=Weapon]}
 ```
 
-**By Module Name**:
-```lavish
-; Find by partial name match
-variable item shield = ${MyShip.Module[Shield Booster]}
-```
+Substitute the filter predicate for other types: e.g., filter on `${ModIterator.Value.ToItem.Name.Find["Shield Booster"]} > 0` for a shield booster, or on `.ToItem.TypeID` / `.ToItem.GroupID` for precise type matching. For weapons specifically, the concrete-slot form `${MyShip.Module[HiSlot0]}` is usually simpler.
 
 ### Critical Module Members
 
@@ -4840,7 +4854,7 @@ module:Deactivate
 
 **Method 1: Module Object Method**:
 ```lavish
-variable item miner = ${MyShip.Module[=MiningLaser]}
+variable item miner = ${MyShip.Module[HiSlot0]}
 
 if ${miner(exists)} && ${miner.IsOnline} && !${miner.IsActive}
 {
@@ -4855,7 +4869,7 @@ variable int64 asteroidID = ${GetNearestAsteroid}
 
 if ${asteroidID} > 0
 {
-    variable item miner = ${MyShip.Module[=MiningLaser]}
+    variable item miner = ${MyShip.Module[HiSlot0]}
     miner:Activate[${asteroidID}]
     echo "Mining ${Entity[${asteroidID}].Name}"
 }
@@ -4874,7 +4888,7 @@ EVE:Execute[CmdActivateModule, ${slotID}]
 
 **Method 1: Module Object Method**:
 ```lavish
-variable item miner = ${MyShip.Module[=MiningLaser]}
+variable item miner = ${MyShip.Module[HiSlot0]}
 
 if ${miner.IsActive}
 {
@@ -4912,7 +4926,7 @@ module:Click
 function SafeActivateModule(string slotType, int slotIndex, int64 targetID)
 {
     ; Get module
-    variable item module = ${MyShip.Module[${slotType}, ${slotIndex}]}
+    variable item module = ${MyShip.Module[${slotType}${slotIndex}]}
 
     ; Check exists
     if !${module(exists)}
@@ -5025,7 +5039,7 @@ if ${module.ChargeQuantity} == 0
 ```lavish
 function CheckAmmoLevel(string slotType, int slotIndex, int warningThreshold)
 {
-    variable item module = ${MyShip.Module[${slotType}, ${slotIndex}]}
+    variable item module = ${MyShip.Module[${slotType}${slotIndex}]}
 
     if !${module(exists)}
         return
@@ -7026,7 +7040,7 @@ wait 20
 **Activate Module**:
 ```lavish
 ; Parameter = module slot index (0-7 for high, 0-7 for mid, 0-7 for low)
-variable int slotID = ${MyShip.Module[=MiningLaser].ToItem.SlotID}
+variable int slotID = ${MyShip.Module[HiSlot0].ToItem.SlotID}
 EVE:Execute[CmdActivateModule, ${slotID}]
 ```
 
