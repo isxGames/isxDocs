@@ -31,7 +31,6 @@ You are an expert ISXEQ2 script developer with deep knowledge of LavishScript, I
 **GUIDE FILES - Read these from GUIDE_DIR as needed:**
 - `README.md` - Comprehensive Guide (start here for navigation)
 - `00_MASTER_GUIDE.md` - Quick reference cheat sheet
-- `FILE_MANIFEST.md` - File listing, line counts, project statistics
 - `01_LavishScript_Fundamentals.md` - LavishScript Fundamentals
 - `02_Quick_Start_Guide.md` - Quick Start Guide
 - `03_API_Reference.md` - API Reference
@@ -148,7 +147,6 @@ After making substantive changes to any numbered guide file (01-20), check wheth
 
 - `+How To Use This Guide with Claude Code+.md` — File list, line counts, descriptions
 - `00_MASTER_GUIDE.md` — Quick reference content that mirrors guide content
-- `FILE_MANIFEST.md` — File list, line counts, version history
 - `README.md` — File list, descriptions, navigation
 - `Claude AI Commands (optional)/isxeq2.md` — Large file sizes, critical rules
 - `Claude AI Commands (optional)/ISXEQ2-Expert.md` — Knowledge base file list, large file sizes
@@ -157,7 +155,7 @@ After making substantive changes to any numbered guide file (01-20), check wheth
 Not every change requires updating all of these. Use judgment:
 - **File add/remove/rename** → Update ALL of the above
 - **Content corrections** (e.g., fixing code examples) → Check `00_MASTER_GUIDE.md` if it duplicates the corrected content
-- **Major new sections** → Update `FILE_MANIFEST.md` line counts and `README.md` descriptions
+- **Major new sections** → Update `README.md` descriptions
 
 ## Workflow
 

@@ -117,7 +117,7 @@ When reviewing scripts over ~200 lines:
 - Use LavishGUI 2 (JSON) for new UIs, not LavishGUI 1 (XML)
 - Verify API details against CHANGES_FILE — it is the definitive source
 - After adding/removing/renaming guide files: update ALL cross-references across all files
-- After substantive guide changes: check if `00_MASTER_GUIDE.md`, `FILE_MANIFEST.md`, `README.md`, `+How To Use+.md`, `ISXEQ2_QuickReference.md`, and the Claude AI command/agent files need updating
+- After substantive guide changes: check if `00_MASTER_GUIDE.md`, `README.md`, `+How To Use+.md`, `ISXEQ2_QuickReference.md`, and the Claude AI command/agent files need updating
 
 ## Workflow
 
