@@ -641,7 +641,6 @@ if ${NPC.Owner.Name.Find["Guristas"]}
 ; Example: Sort by distance
 variable iterator Target
 EVE:QueryEntities[Target, "(CategoryID = CATEGORY_ENTITY) && IsNPC && !IsMoribund"]
-Target:GetTargets
 if ${Target:First(exists)}
 {
     ; Sort by distance
