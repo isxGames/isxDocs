@@ -336,20 +336,28 @@ function OrbitEntity(int64 EntityID, int Distance)
 
 function ActivatePropulsionModule()
 {
-    variable index:module PropMods
-    MyShip:GetModulesByGroupID[PropMods, 46]  ; Afterburner
-    MyShip:GetModulesByGroupID[PropMods, 51]  ; MWD
+    variable index:module AllModules
+    MyShip:GetModules[AllModules]
 
     variable iterator Mod
-    PropMods:GetIterator[Mod]
+    AllModules:GetIterator[Mod]
 
     if ${Mod:First(exists)}
     {
-        if !${Mod.Value.IsActive} && ${Mod.Value.IsOnline}
+        do
         {
-            Mod.Value:Activate
-            echo "Activated propulsion module"
+            ; GroupID 46 = Afterburner, 51 = MicroWarpdrive
+            if ${Mod.Value.ToItem.GroupID} == 46 || ${Mod.Value.ToItem.GroupID} == 51
+            {
+                if !${Mod.Value.IsActive} && ${Mod.Value.IsOnline}
+                {
+                    Mod.Value:Activate
+                    echo "Activated propulsion module: ${Mod.Value.ToItem.Name}"
+                    return
+                }
+            }
         }
+        while ${Mod:Next(exists)}
     }
 }
 ```
@@ -488,10 +496,9 @@ function ActivateWeaponsOnTarget(int64 TargetID)
         return FALSE
     }
 
-    ; Get all weapon modules (turrets + launchers)
+    ; Enumerate all modules; filter to weapons (turrets + missile launchers)
     variable index:module Weapons
-    MyShip:GetTurretModules[Weapons]
-    MyShip:GetLauncherModules[Weapons]
+    MyShip:GetModules[Weapons]
 
     variable iterator Weapon
     Weapons:GetIterator[Weapon]
@@ -500,10 +507,14 @@ function ActivateWeaponsOnTarget(int64 TargetID)
     {
         do
         {
+            ; Match turret and missile launcher groups by name substring
+            if !${Weapon.Value.ToItem.Group.Find["Turret"]} && !${Weapon.Value.ToItem.Group.Find["Missile Launcher"]}
+                continue
+
             ; Only activate if online, not active, and in range
             if ${Weapon.Value.IsOnline} && !${Weapon.Value.IsActive}
             {
-                variable float MaxRange = ${Math.Calc[${Weapon.Value.OptimalRange} + ${Weapon.Value.FalloffRange}]}
+                variable float MaxRange = ${Math.Calc[${Weapon.Value.OptimalRange} + ${Weapon.Value.AccuracyFalloff}]}
 
                 if ${Entity[${TargetID}].Distance} < ${MaxRange}
                 {
@@ -844,9 +855,9 @@ function SalvageWreck(int64 WreckID)
     ; Lock wreck
     call LockTarget ${WreckID}
 
-    ; Activate salvagers
+    ; Enumerate all modules; filter to salvagers
     variable index:module Salvagers
-    MyShip:GetSalvagerModules[Salvagers]
+    MyShip:GetModules[Salvagers]
 
     variable iterator Salvager
     Salvagers:GetIterator[Salvager]
@@ -855,6 +866,10 @@ function SalvageWreck(int64 WreckID)
     {
         do
         {
+            ; Match Salvager group by name substring
+            if !${Salvager.Value.ToItem.Group.Find["Salvager"]}
+                continue
+
             if ${Salvager.Value.IsOnline} && !${Salvager.Value.IsActive}
             {
                 Salvager.Value:Activate[${WreckID}]
