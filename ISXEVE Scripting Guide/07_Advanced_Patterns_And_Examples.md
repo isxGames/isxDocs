@@ -3877,9 +3877,9 @@ objectdef obj_MiningFleet
         echo "Miner: Orca arrived in belt!"
         This.OrcaInBelt:Set[TRUE]
 
-        ; Warp to Orca
+        ; Warp to Orca — wait up to 5s while not yet warping (Mode 3 = warping)
         Entity[${orcaID}]:WarpTo[0]
-        wait 50 !${Me.ToEntity.Mode} == 3
+        wait 50 ${Me.ToEntity.Mode} != 3
 
         ; Request survey on current target
         if ${Me.ActiveTarget.ID} > 0
