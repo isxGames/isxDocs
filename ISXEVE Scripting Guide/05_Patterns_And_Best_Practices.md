@@ -5021,25 +5021,31 @@ function SafeMoveItem(item itemToMove, string destination, int quantity)
         return FALSE
     }
 
-    ; Wait for inventory to be ready
+    ; Capture the source item's ID so we can verify the move after it completes.
+    ; (There is no pre-move "inventory busy" flag in ISXEVE -- the correct
+    ; approach is to fire the move, wait, and verify via the item state.)
+    variable int64 sourceID = ${itemToMove.ID}
+
+    ; Move item
+    itemToMove:MoveTo[${destination},${quantity}]
+
+    ; Wait for the server round-trip, then poll for completion by checking
+    ; whether the original item handle still resolves in its source location.
+    ; For partial/stack moves, the handle may still exist with a reduced
+    ; Quantity -- callers that need strict verification should re-query the
+    ; destination container.
     variable int waitTime = 0
-    while ${EVE.InventoryOperationInProgress} && ${waitTime} < 10000
+    while ${Item[${sourceID}](exists)} && ${waitTime} < 10000
     {
         wait 10
         waitTime:Inc[100]
     }
 
-    if ${EVE.InventoryOperationInProgress}
+    if ${Item[${sourceID}](exists)} && ${quantity} == 0
     {
-        call Log "ERROR" "Inventory locked after 10 seconds"
+        call Log "WARNING" "Move did not complete within 10 seconds"
         return FALSE
     }
-
-    ; Move item
-    itemToMove:MoveTo[${destination},${quantity}]
-
-    ; Wait for operation to complete
-    wait 10
 
     return TRUE
 }
