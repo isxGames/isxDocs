@@ -797,8 +797,12 @@ function KeepRangeFromActiveTarget()
         return
     }
 
-    ; In good range, maintain
-    if !${Me.ToEntity.Mode} == MOVE_APPROACH && !${Me.ToEntity.Mode} == MOVE_KEEP_AT_RANGE
+    ; In good range -- issue KeepAtRange if we're not already moving toward
+    ; or orbiting the target. Entity Mode values: 0=Aligned, 1=Approaching,
+    ; 2=Stopped, 3=Warping, 4=Orbiting. The KeepAtRange command produces
+    ; Mode 4 (Orbiting), so skipping Mode 1 and 4 avoids re-issuing the
+    ; command every pulse while we're already maintaining range.
+    if ${Me.ToEntity.Mode} != 1 && ${Me.ToEntity.Mode} != 4
     {
         Me.ActiveTarget:KeepAtRange[${OptimalKeepRange}]
         wait 10
