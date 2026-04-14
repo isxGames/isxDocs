@@ -163,7 +163,7 @@ function GetOptimalMiningRange()
 
     for (i:Set[1]; ${i} <= ${MyShip.ModuleCount}; i:Inc)
     {
-        variable item module = ${MyShip.Module[${i}]}
+        variable module module = ${MyShip.Module[${i}]}
 
         if ${IsMiningModule[module]}
         {
@@ -522,7 +522,7 @@ function ActivateSurveyScanner()
     variable int i
     for (i:Set[1]; ${i} <= ${MyShip.ModuleCount}; i:Inc)
     {
-        variable item module = ${MyShip.Module[${i}]}
+        variable module module = ${MyShip.Module[${i}]}
 
         if ${module.ToItem.Group.Equal["Survey Scanner"]}
         {
@@ -661,7 +661,7 @@ function ActivateMinersOnTarget(int64 asteroidID)
 
     for (i:Set[1]; ${i} <= ${MyShip.ModuleCount}; i:Inc)
     {
-        variable item module = ${MyShip.Module[${i}]}
+        variable module module = ${MyShip.Module[${i}]}
 
         if ${IsMiningModule[module]}
         {
@@ -1054,7 +1054,7 @@ function MineIce()
     variable int i
     for (i:Set[1]; ${i} <= ${MyShip.ModuleCount}; i:Inc)
     {
-        variable item module = ${MyShip.Module[${i}]}
+        variable module module = ${MyShip.Module[${i}]}
 
         if ${module.ToItem.Group.Equal["Ice Harvester"]}
         {
@@ -1279,7 +1279,7 @@ function AdvancedMiningPulse()
 ```lavish
 function DiagnoseMinerFailure(int moduleIndex, int64 asteroidID)
 {
-    variable item module = ${MyShip.Module[${moduleIndex}]}
+    variable module module = ${MyShip.Module[${moduleIndex}]}
 
     ; Module offline
     if !${module.IsOnline}
