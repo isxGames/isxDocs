@@ -6813,7 +6813,7 @@ EVE (top-level UI system)
 
 **By Name**:
 ```lavish
-variable evwindow inventoryWin = ${EVEWindow[inventory]}
+variable evewindow inventoryWin = ${EVEWindow[inventory]}
 
 if ${inventoryWin(exists)}
 {
@@ -6824,13 +6824,13 @@ if ${inventoryWin(exists)}
 **By Partial Name (First Match)**:
 ```lavish
 ; Finds first window with "invent" in name
-variable evwindow win = ${EVEWindow[invent]}
+variable evewindow win = ${EVEWindow[invent]}
 ```
 
 **By ID**:
 ```lavish
 variable int64 windowID = 123456789
-variable evwindow win = ${EVEWindow[${windowID}]}
+variable evewindow win = ${EVEWindow[${windowID}]}
 ```
 
 **All Windows**:
@@ -6850,7 +6850,7 @@ for (i:Set[1]; ${i} <= ${EVEWindow.Count}; i:Inc)
 
 **Common Members**:
 ```lavish
-variable evwindow win = ${EVEWindow[inventory]}
+variable evewindow win = ${EVEWindow[inventory]}
 
 ; Basic info
 echo "Name: ${win.Name}"
@@ -6927,7 +6927,7 @@ win:SetSize[400, 300]
 **CRITICAL PATTERN** - Always check if window exists before using:
 
 ```lavish
-variable evwindow win = ${EVEWindow[inventory]}
+variable evewindow win = ${EVEWindow[inventory]}
 
 if !${win(exists)}
 {
@@ -7150,7 +7150,7 @@ EVE:Execute[CmdLookAtItem, ${entityID}]
 
 **Exact Name**:
 ```lavish
-variable evwindow win = ${EVEWindow[inventory]}
+variable evewindow win = ${EVEWindow[inventory]}
 
 if !${win(exists)}
 {
@@ -7162,26 +7162,26 @@ if !${win(exists)}
 **Partial Name** (First Match):
 ```lavish
 ; Matches "inventory", "inventoryPrimary", etc.
-variable evwindow win = ${EVEWindow[invent]}
+variable evewindow win = ${EVEWindow[invent]}
 ```
 
 **By Caption** (Window Title):
 ```lavish
 ; Some windows identified by title text
-variable evwindow win = ${EVEWindow[ByCaption,Item Hangar]}
+variable evewindow win = ${EVEWindow[ByCaption,Item Hangar]}
 ```
 
 ### Finding Specific Inventory Windows
 
 **Primary Inventory**:
 ```lavish
-variable evwindow win = ${EVEWindow[inventory]}
+variable evewindow win = ${EVEWindow[inventory]}
 ```
 
 **Cargo Hold**:
 ```lavish
 ; Cargo of YOUR ship
-variable evwindow win = ${EVEWindow[MyShipCargo]}
+variable evewindow win = ${EVEWindow[MyShipCargo]}
 
 ; Alternative
 win:Set[${EVEWindow[ByItemID,${MyShip.ID}]}]
@@ -7189,7 +7189,7 @@ win:Set[${EVEWindow[ByItemID,${MyShip.ID}]}]
 
 **Ship Hangar** (in station):
 ```lavish
-variable evwindow win = ${EVEWindow[ShipHangar]}
+variable evewindow win = ${EVEWindow[ShipHangar]}
 
 ; Alternative
 win:Set[${EVEWindow[ByCaption,Ship Hangar]}]
@@ -7198,7 +7198,7 @@ win:Set[${EVEWindow[ByCaption,Ship Hangar]}]
 **Corp Hangar Division**:
 ```lavish
 ; Find corp hangar division 1
-variable evwindow win = ${EVEWindow[ByCaption,Corporation Hangar]}
+variable evewindow win = ${EVEWindow[ByCaption,Corporation Hangar]}
 
 ; Check child windows for specific division
 ; (This is complex - Evebot has extensive corp hangar code)
@@ -7210,7 +7210,7 @@ variable evwindow win = ${EVEWindow[ByCaption,Corporation Hangar]}
 ```lavish
 function IsWindowReady(string windowName)
 {
-    variable evwindow win = ${EVEWindow[${windowName}]}
+    variable evewindow win = ${EVEWindow[${windowName}]}
 
     if !${win(exists)}
         return FALSE
@@ -7315,7 +7315,7 @@ function OpenInventory()
 
 **Close by EVEWindow Object**:
 ```lavish
-variable evwindow win = ${EVEWindow[inventory]}
+variable evewindow win = ${EVEWindow[inventory]}
 
 if ${win(exists)}
 {
@@ -7375,7 +7375,7 @@ function atom atexit()
 
 **Click by Button Text**:
 ```lavish
-variable evwindow win = ${EVEWindow[inventory]}
+variable evewindow win = ${EVEWindow[inventory]}
 
 if ${win.Button["OK"](exists)}
 {
@@ -7394,7 +7394,7 @@ win:ClickButton[1]
 ```lavish
 function ClickButton(string windowName, string buttonText)
 {
-    variable evwindow win = ${EVEWindow[${windowName}]}
+    variable evewindow win = ${EVEWindow[${windowName}]}
 
     if !${win(exists)}
     {
@@ -7423,7 +7423,7 @@ call ClickButton "inventory" "OK"
 ```lavish
 function ListWindowButtons(string windowName)
 {
-    variable evwindow win = ${EVEWindow[${windowName}]}
+    variable evewindow win = ${EVEWindow[${windowName}]}
 
     if !${win(exists)}
     {
@@ -7545,8 +7545,8 @@ wait 20
 ```lavish
 ; This is complex - inventory locations accessed via ChildWindow
 ; Example from Evebot:
-variable evwindow invWin = ${EVEWindow[inventory]}
-variable evwindow itemHangar = ${invWin.ChildWindow[itemHangar]}
+variable evewindow invWin = ${EVEWindow[inventory]}
+variable evewindow itemHangar = ${invWin.ChildWindow[itemHangar]}
 
 if ${itemHangar(exists)}
 {
@@ -7626,7 +7626,7 @@ wait 50    ; Market window is slow to load
 ```lavish
 function IsMarketReady()
 {
-    variable evwindow market = ${EVEWindow[market]}
+    variable evewindow market = ${EVEWindow[market]}
 
     if !${market(exists)}
         return FALSE
@@ -7705,7 +7705,7 @@ wait 50
 
 **Repairing** (using window):
 ```lavish
-variable evwindow repair = ${EVEWindow[repairshop]}
+variable evewindow repair = ${EVEWindow[repairshop]}
 
 if ${repair(exists)}
 {
@@ -7830,7 +7830,7 @@ wait 50
 function ClickButtonSafe(string windowName, string buttonText)
 {
     ; Validate window exists
-    variable evwindow win = ${EVEWindow[${windowName}]}
+    variable evewindow win = ${EVEWindow[${windowName}]}
     if !${win(exists)}
     {
         echo "ERROR: Window not found"
@@ -7854,7 +7854,7 @@ function ClickButtonSafe(string windowName, string buttonText)
 ```lavish
 function CloseWindowSafe(string windowName)
 {
-    variable evwindow win = ${EVEWindow[${windowName}]}
+    variable evewindow win = ${EVEWindow[${windowName}]}
 
     if !${win(exists)}
     {
@@ -8008,7 +8008,7 @@ function ClickButtonWithRetry(string windowName, string buttonText, int maxAttem
     {
         attempt:Inc
 
-        variable evwindow win = ${EVEWindow[${windowName}]}
+        variable evewindow win = ${EVEWindow[${windowName}]}
 
         if !${win(exists)}
         {
@@ -8045,7 +8045,7 @@ function ClickButtonWithRetry(string windowName, string buttonText, int maxAttem
 
 **Solution**: Use multiple name attempts or ByCaption:
 ```lavish
-variable evwindow win = ${EVEWindow[inventory]}
+variable evewindow win = ${EVEWindow[inventory]}
 
 if !${win(exists)}
 {
@@ -8071,7 +8071,7 @@ EVE:Execute[OpenCargoHold, ${containerID}]
 wait 20
 
 ; Find window by item ID
-variable evwindow containerWin = ${EVEWindow[ByItemID,${containerID}]}
+variable evewindow containerWin = ${EVEWindow[ByItemID,${containerID}]}
 
 if ${containerWin(exists)}
 {
@@ -8099,7 +8099,7 @@ EVE:Execute[CmdOpenMarket]
 wait 50    ; Initial wait
 
 ; Additional validation
-variable evwindow market = ${EVEWindow[market]}
+variable evewindow market = ${EVEWindow[market]}
 variable int attempts = 0
 
 ; Wait for market to have content (example - actual check varies)
