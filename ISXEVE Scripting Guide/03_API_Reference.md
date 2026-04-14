@@ -6827,22 +6827,36 @@ if ${inventoryWin(exists)}
 variable evewindow win = ${EVEWindow[invent]}
 ```
 
-**By ID**:
+**By Item ID** (2-arg ByItemID key form):
 ```lavish
+; Single-arg ${EVEWindow[${numericID}]} does NOT work -- the EVEWindow
+; TLO's single-arg path only resolves by window name (EVERetrievalUtils.cpp
+; GetEVEWindowByName). Use the 2-arg ByItemID key form instead:
 variable int64 windowID = 123456789
-variable evewindow win = ${EVEWindow[${windowID}]}
+variable evewindow win = ${EVEWindow[ByItemID, ${windowID}]}
 ```
 
-**All Windows**:
+**By Caption** (2-arg ByCaption key form -- substring match, used for windows whose name is not stable like cargo containers):
 ```lavish
-; Get count of all open windows
-variable int count = ${EVEWindow.Count}
+variable evewindow win = ${EVEWindow[ByCaption, "Agent Conversation"]}
+```
 
-; Iterate all windows
+**All Windows** (canonical index-population pattern):
+```lavish
+; There is NO ${EVEWindow.Count} member and NO ${EVEWindow[${numeric_index}]}
+; numeric-index accessor on the EVEWindow TLO. To enumerate all open
+; windows, use the EVE:GetEVEWindows method (verified against DataTypes.h
+; EVEType line 3590 enum and 3670 TypeMethod registration):
+
+variable index:evewindow Windows
+EVE:GetEVEWindows[Windows]
+
+echo "Open windows: ${Windows.Used}"
+
 variable int i
-for (i:Set[1]; ${i} <= ${EVEWindow.Count}; i:Inc)
+for (i:Set[1]; ${i} <= ${Windows.Used}; i:Inc)
 {
-    echo "Window ${i}: ${EVEWindow[${i}].Name}"
+    echo "Window ${i}: ${Windows.Get[${i}].Name}"
 }
 ```
 
@@ -7328,16 +7342,20 @@ if ${win(exists)}
 ```lavish
 function CloseAllWindowsByName(string windowName)
 {
-    variable int i
-    variable int count = ${EVEWindow.Count}
+    ; Populate an index:evewindow via EVE:GetEVEWindows (there is no
+    ; ${EVEWindow.Count} and no ${EVEWindow[${numeric}]} index form).
+    variable index:evewindow Windows
+    EVE:GetEVEWindows[Windows]
 
-    ; Iterate backwards (closing changes indices)
-    for (i:Set[${count}]; ${i} >= 1; i:Dec)
+    variable int i
+    ; Iterate backwards (closing a window may invalidate later index entries)
+    for (i:Set[${Windows.Used}]; ${i} >= 1; i:Dec)
     {
-        if ${EVEWindow[${i}].Name.Find[${windowName}](exists)}
+        variable evewindow win = ${Windows.Get[${i}]}
+        if ${win(exists)} && ${win.Name.Find[${windowName}](exists)}
         {
-            echo "Closing ${EVEWindow[${i}].Name}"
-            EVEWindow[${i}]:Close
+            echo "Closing ${win.Name}"
+            win:Close
             wait 10
         }
     }
