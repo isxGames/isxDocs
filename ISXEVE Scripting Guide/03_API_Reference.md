@@ -850,53 +850,54 @@ See this guide for Execute command coverage.
 ### Time and Server
 
 ```lavish
-; EVE server time
+; EVE server time -- ${EVE.Time} returns a STRING, not an object
 echo "EVE Time: ${EVE.Time}"
-
-; Session started time
-echo "Session Start Time: ${EVE.SessionStartTime}"
-
-; Session duration
-variable int sessionSeconds = ${Math.Calc[${EVE.Time} - ${EVE.SessionStartTime}]}
-echo "Session duration: ${sessionSeconds} seconds"
 ```
 
-**Time Format**:
+**Important:** `${EVE.Time}` is a plain string. It has no `.Year` / `.Month` / `.Day` / `.Hour` sub-field accessors — attempting to chain them returns NULL. If you need structured date/time parsing, parse the string downstream (e.g., with `.Token[...]`) or use the LavishScript host `Time` TLO (which is separate from the EVE server clock and may drift from it).
+
+There is no `EVE.SessionStartTime` member. To measure script/session runtime, use `${Script.RunningTime}` (milliseconds since the script started) instead:
+
 ```lavish
-; ${EVE.Time} returns a 'time' object
-echo "Year: ${EVE.Time.Year}"
-echo "Month: ${EVE.Time.Month}"
-echo "Day: ${EVE.Time.Day}"
-echo "Hour: ${EVE.Time.Hour}"
-echo "Minute: ${EVE.Time.Minute}"
-echo "Second: ${EVE.Time.Second}"
+variable int startMs = ${Script.RunningTime}
+; ... some work ...
+echo "Elapsed ms: ${Math.Calc[${Script.RunningTime} - ${startMs}]}"
 ```
 
 ### Session Info
 
-```lavish
-; Session change counter
-echo "Session Changes: ${EVE.SessionChanges}"
+EVE "session changes" happen on dock, undock, jump, character log-in, etc. — any event that rebuilds the ship/location context and invalidates cached entity/item references. ISXEVE does NOT expose a session-change **counter** (there is no `${EVE.SessionChanges}` member) and does NOT register a LavishScript event for session changes. Two mechanisms are available:
 
-; When you dock/undock/jump, session changes increment
-; Useful for detecting when state changes
+**1. `${EVE.NextSessionChange}` — countdown to next imminent change**. Returns int seconds until the next scheduled session change, clamped to 0 (verified against ISXEVE C++ source DT-Members.cpp case NextSessionChange, lines 254-268). Use this to detect that a session change is **about to fire** (value transitions from 0 to a positive countdown), so you can persist state before caches are invalidated:
+
+```lavish
+if ${EVE.NextSessionChange} > 0
+{
+    echo "Session change in ${EVE.NextSessionChange} seconds - persist state"
+    call SaveStateBeforeSessionChange
+}
 ```
 
-**Session Change Pattern**:
+Note: `NextSessionChange` resets to 0 **after** the change fires, so you cannot use it to detect "did a session change happen since last tick" — only "is one pending now."
+
+**2. Track location sentinels to detect that a session change already happened**. Poll `${Me.SolarSystemID}` / `${Me.StationID}` / `${Me.InStation}` / `${Me.InSpace}` and compare against a captured snapshot. These values flip precisely on real location-affecting session changes (dock, undock, jump) and are the canonical way to gate post-session-change re-initialization:
+
 ```lavish
-variable int lastSessionChange = ${EVE.SessionChanges}
+variable int64 lastSystemID = ${Me.SolarSystemID}
+variable bool lastInStation = ${Me.InStation}
 
-; ... some time later ...
+; ... perform action or let time pass ...
 
-if ${EVE.SessionChanges} != ${lastSessionChange}
+if ${Me.SolarSystemID} != ${lastSystemID} || ${Me.InStation} != ${lastInStation}
 {
-    echo "Session changed (docked/undocked/jumped)"
-    lastSessionChange:Set[${EVE.SessionChanges}]
-
-    ; Re-initialize state that depends on location
+    echo "Location changed (session-change fired) - re-initializing"
+    lastSystemID:Set[${Me.SolarSystemID}]
+    lastInStation:Set[${Me.InStation}]
     call RefreshLocalData
 }
 ```
+
+This is the correct replacement for the older (fabricated) `${EVE.SessionChanges}` counter pattern.
 
 ### Universe Queries
 
@@ -3811,17 +3812,17 @@ function WaitForJumpComplete(int timeoutSeconds)
     variable int startTime = ${Script.RunningTime}
     variable int elapsed
 
-    ; Wait for session change (indicates jump happened)
-    variable int lastSession = ${EVE.SessionChanges}
+    ; Wait for location change (indicates jump happened) -- poll SolarSystemID
+    variable int64 lastSystemID = ${Me.SolarSystemID}
 
     echo "Waiting for jump..."
 
     while TRUE
     {
-        ; Check if session changed
-        if ${EVE.SessionChanges} != ${lastSession}
+        ; Check if system changed (jump completed)
+        if ${Me.SolarSystemID} != ${lastSystemID}
         {
-            echo "Jump complete (session changed)"
+            echo "Jump complete (SolarSystemID changed)"
             wait 2000    ; Wait for grid load
             return TRUE
         }
@@ -4344,16 +4345,18 @@ else
 
 **Docking, jumping, undocking = session change**:
 ```lavish
-; Entity references may become invalid
-; Must re-query entities after session change
+; Entity references may become invalid after a session change.
+; Must re-query entities. Detect the change via location sentinels
+; (there is no EVE.SessionChanges counter in ISXEVE).
 
-variable int lastSession = ${EVE.SessionChanges}
+variable int64 lastSystemID = ${Me.SolarSystemID}
+variable bool lastInStation = ${Me.InStation}
 
 ; ... dock/jump/undock ...
 
-if ${EVE.SessionChanges} != ${lastSession}
+if ${Me.SolarSystemID} != ${lastSystemID} || ${Me.InStation} != ${lastInStation}
 {
-    echo "Session changed - re-querying entities"
+    echo "Session changed (location changed) - re-querying entities"
     ; Re-query all entities here
 }
 ```
@@ -4430,10 +4433,10 @@ call JumpToNextSystem
 ; Continue using old entity references (may be invalid!)
 
 ; GOOD
-variable int lastSession = ${EVE.SessionChanges}
+variable int64 lastSystemID = ${Me.SolarSystemID}
 call JumpToNextSystem
 
-if ${EVE.SessionChanges} != ${lastSession}
+if ${Me.SolarSystemID} != ${lastSystemID}
 {
     ; Re-query entities
 }
@@ -6660,7 +6663,7 @@ function GetFreeMiningSpace()
 
 ### Gotcha 4: Session Change Invalidates Items
 
-Docking, jumping, and undocking all trigger a session change that invalidates cached `item` and `entity` references — including items you stored from `MyShip.Cargo[#]`. After any session change, re-query all cached references. The canonical session-change tracking pattern (using `${EVE.SessionChanges}`) is documented under [Gotcha 2: Session Changes Reset State](#gotcha-2-session-changes-reset-state) in the Movement chapter.
+Docking, jumping, and undocking all trigger a session change that invalidates cached `item` and `entity` references — including items you stored from `MyShip.Cargo[#]`. After any session change, re-query all cached references. The canonical session-change tracking pattern (polling `${Me.SolarSystemID}` / `${Me.InStation}` sentinels; ISXEVE does not expose a session-change counter) is documented under [Gotcha 2: Session Changes Reset State](#gotcha-2-session-changes-reset-state) in the Movement chapter.
 
 ---
 
