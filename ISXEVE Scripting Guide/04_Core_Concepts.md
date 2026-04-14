@@ -551,7 +551,11 @@ MyShip:LaunchAllDrones[]
 wait 30  ; Wait for launch
 
 ; Verify drones in space
-if ${Me.GetDrones} > 0
+; NOTE: GetDrones is a METHOD that populates drone-BAY inventory, NOT a count
+; of drones in space. Use GetActiveDroneIDs (or GetActiveDrones) for launched drones.
+variable index:int64 DroneIDs
+Me:GetActiveDroneIDs[DroneIDs]
+if ${DroneIDs.Used} > 0
 {
     ; Command drones to engage
     Me.ActiveTarget:EngageMyTarget[]
@@ -561,10 +565,14 @@ if ${Me.GetDrones} > 0
 ; Later: Return drones
 EVE:Execute[CmdDronesReturnToBay]
 wait 30  ; Wait for return
-while ${Me.GetDrones} > 0
+DroneIDs:Clear
+Me:GetActiveDroneIDs[DroneIDs]
+while ${DroneIDs.Used} > 0
 {
     wait 10
     ; Timeout after 30 seconds
+    DroneIDs:Clear
+    Me:GetActiveDroneIDs[DroneIDs]
 }
 ```
 
