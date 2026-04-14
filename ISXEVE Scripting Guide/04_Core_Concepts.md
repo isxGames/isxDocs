@@ -500,7 +500,7 @@ Hit Chance = f(Angular Velocity, Signature Radius, Tracking Speed, Range)
 ; - Result: Can't hit frigate
 ;
 ; Solution: Orbit at optimal range to create our own angular
-MyShip.ActiveTarget:Orbit[20000]  ; Orbit at 20km
+Me.ActiveTarget:Orbit[20000]  ; Orbit at 20km
 ```
 
 #### Missiles
@@ -554,7 +554,7 @@ wait 30  ; Wait for launch
 if ${Me.GetDrones} > 0
 {
     ; Command drones to engage
-    MyShip.ActiveTarget:EngageMyTarget[]
+    Me.ActiveTarget:EngageMyTarget[]
     wait 10
 }
 
@@ -2158,7 +2158,7 @@ variable string MyName = ${Me.ToEntity.Name}
 **Deep Chains**:
 ```lavishscript
 ; Get active target's owner's alliance name
-${MyShip.ActiveTarget.ToEntity.Owner.Alliance.Name}
+${Me.ActiveTarget.ToEntity.Owner.Alliance.Name}
 
 ; Breakdown:
 ; MyShip                   -> ship object
@@ -2688,7 +2688,7 @@ Event[OnActiveTargetChanged]:AttachAtom[OnTargetChanged]
 ; Define atom to handle event
 atom OnTargetChanged()
 {
-    echo "Active target changed to: ${MyShip.ActiveTarget.ToEntity.Name}"
+    echo "Active target changed to: ${Me.ActiveTarget.ToEntity.Name}"
 }
 
 ; Attach atom to event
