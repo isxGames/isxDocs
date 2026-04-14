@@ -5775,32 +5775,38 @@ if ${module.Charge(exists)}
 
 ---
 
-## ⚠️ CRITICAL API CHANGE WARNING (July 2020) ⚠️
+## Ship-Cargo and Inventory-Window API Overview
 
-**THIS DOCUMENT CONTAINS DEPRECATED API EXAMPLES!**
+**Two supported paths for ship-cargo access.** Both are current in the ISXEVE C++ source and both are used in production scripts. Choose based on what you need:
 
-Most cargo/inventory methods shown in this file were **DEPRECATED in July 2020** and should **NOT** be used in new scripts:
+### Legacy ShipType members (canonical for ship-cargo item iteration)
 
-**DEPRECATED (Do Not Use):**
-- `${MyShip.GetCargo}` → Use `EVEWindow[Inventory].Child[ShipCargo]:GetItems[index:item]`
-- `${MyShip.Cargo[#]}` → Use iterator pattern on index:item
-- `${MyShip.UsedOreHoldCapacity}` → Use `EVEWindow[Inventory].Child[ShipOreHold].UsedCapacity`
-- `${MyShip.OreHoldCapacity}` → Use `EVEWindow[Inventory].Child[ShipOreHold].Capacity`
-- All `Get*HoldCargo` methods → Use unified inventory window children
+The following ShipType members and methods are **current, not deprecated** (verified against DataTypes.h ShipType 1607-1651 and DT-Ship.cpp cases 108-754):
 
-**MODERN API (Use This Instead):**
+- `${MyShip.CargoCapacity}` — total cargo capacity, double (flagCargo)
+- `${MyShip.UsedCargoCapacity}` — used cargo capacity, double
+- `${MyShip.Cargo[<index>]}` — item by 1-based numeric index, or `${MyShip.Cargo["<name>"]}` by name
+- `MyShip:GetCargo[<index:item>]` — method populating an `index:item` with all cargo items
+
+These are the **canonical ship-cargo item-iteration API** and are used by EVEBot and all other production scripts. The ~40 examples throughout this chapter use these members; they remain correct.
+
+### Modern unified inventory-window API (for non-cargo holds and cross-hold uniformity)
+
+For specialized holds (ore hold, fleet hangar, corp hangars, etc.) and for cross-hold code paths where you want the same iteration idiom regardless of which hold, use the EVEWindow-based API:
+
 ```lavish
-; Open inventory window
+; Open inventory window once before use
 if !${EVEWindow[Inventory](exists)}
     EVE:Execute[CmdOpenInventory]
-
 wait 10
 
-; Access cargo via inventory window
+; Access a specific hold via ChildWindow["<ShipCargoHoldName>"]
+; (Note: the member is ChildWindow, NOT Child -- verified against
+; DataTypes.h EVEInvWindowType line 2161 TypeMember(ChildWindow).)
 variable index:item CargoItems
-EVEWindow[Inventory].Child[ShipCargo]:GetItems[CargoItems]
+EVEWindow[Inventory].ChildWindow[ShipCargo]:GetItems[CargoItems]
 
-; Iterate using iterator
+; Iterate
 variable iterator CargoIterator
 CargoItems:GetIterator[CargoIterator]
 if ${CargoIterator:First(exists)}
@@ -5812,20 +5818,28 @@ if ${CargoIterator:First(exists)}
     while ${CargoIterator:Next(exists)}
 }
 
-; Check capacity (still works)
-echo "Cargo: ${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity} m³"
+; Capacity members on the ChildWindow (EVEInvChildWindowType): Capacity,
+; UsedCapacity, HasCapacity. There is no .FreeSpace or .UsedSpace --
+; free space is Math.Calc[${Capacity} - ${UsedCapacity}]. Same shape
+; applies to ShipOreHold, ShipFleetHangar, StationItems, etc.
+echo "Ore Hold: ${EVEWindow[Inventory].ChildWindow[ShipOreHold].UsedCapacity} / ${EVEWindow[Inventory].ChildWindow[ShipOreHold].Capacity} m³"
 ```
 
-**Why This Section Still Exists:**
+### What is NOT on ShipType (and what to use instead)
 
-1. **Understanding legacy scripts** - Evebot and other old scripts use this API
-2. **Conceptual understanding** - The patterns are still valid, just the API changed
-3. **Migration reference** - Helps convert old scripts to new API
+Some members documented in older materials do **not** exist on ShipType (verified absent from DataTypes.h ShipType registrations):
 
-**Recommendation**: Read this file to understand inventory concepts, then refer to:
-- This guide - Modern cargo API examples throughout
+- `${MyShip.OreHoldCapacity}` / `${MyShip.UsedOreHoldCapacity}` → fabricated. Use `${EVEWindow[Inventory].ChildWindow[ShipOreHold].Capacity}` / `.UsedCapacity`. Only `MyShip.HasOreHold` (bool) exists as a direct ship-level ore-hold member.
+- `${MyShip.FreeCargoCapacity}` → fabricated. Compute as `${Math.Calc[${MyShip.CargoCapacity} - ${MyShip.UsedCargoCapacity}]}`.
+- Specialized-hold scalar shortcuts for Fleet Hangar, Ship Maintenance Bay, etc. → use the `EVEWindow[Inventory].ChildWindow[<HoldName>]` path for all of them.
 
-**For New Scripts**: Use the modern `EVEWindow[Inventory]` pattern exclusively!
+### Recommendation
+
+- **For ship cargo item iteration**, prefer the legacy ShipType API (`MyShip.Cargo[#]` / `MyShip:GetCargo[...]`) — it is concise, current, and widely used.
+- **For ore hold, fleet hangar, and any non-cargo specialized hold**, use the `EVEWindow[Inventory].ChildWindow[...]` API.
+- **For unified code paths** that treat any hold the same way (e.g., a mining bot that fills ore hold when present and cargo otherwise), use `EVEWindow[Inventory].ChildWindow[...]` for both to keep one iteration idiom.
+
+Examples throughout the rest of this chapter use the legacy ShipType API for brevity. Where ore-hold access is needed, the modern ChildWindow pattern is shown.
 
 ---
 
