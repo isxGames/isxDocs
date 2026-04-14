@@ -226,7 +226,7 @@ function LockTarget(int64 EntityID)
 ```lavish
 function UnlockAllTargets()
 {
-    variable index:int64 LockedTargets
+    variable index:entity LockedTargets
     Me:GetTargets[LockedTargets]
 
     variable iterator Target
@@ -236,10 +236,10 @@ function UnlockAllTargets()
     {
         do
         {
-            if ${Entity[${Target.Value}](exists)}
+            if ${Target.Value(exists)}
             {
-                Entity[${Target.Value}]:UnlockTarget
-                echo "Unlocking ${Entity[${Target.Value}].Name}"
+                Target.Value:UnlockTarget
+                echo "Unlocking ${Target.Value.Name}"
             }
         }
         while ${Target:Next(exists)}
