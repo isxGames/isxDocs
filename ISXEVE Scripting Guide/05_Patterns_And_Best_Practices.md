@@ -1916,20 +1916,25 @@ function ActivateMiners()
     }
 
     ; Activate all mining lasers on asteroid
-    variable int i
-    for (i:Set[1]; ${i} <= ${MyShip.ModuleCount}; i:Inc)
+    variable index:module modules
+    MyShip:GetModules[modules]
+    variable iterator m
+    modules:GetIterator[m]
+    if ${m:First(exists)}
     {
-        variable item module = ${MyShip.Module[${i}]}
-
-        if ${module.ToItem.Group.Equal["Mining Laser"]}
+        do
         {
-            if !${module.IsActive} && !${module.IsOnline}
+            if ${m.Value.ToItem.Group.Equal["Mining Laser"]}
             {
-                echo "Activating ${module.ToItem.Name}"
-                module:Activate[${CurrentAsteroid}]
-                wait 5
+                if !${m.Value.IsActive} && !${m.Value.IsOnline}
+                {
+                    echo "Activating ${m.Value.ToItem.Name}"
+                    m.Value:Activate[${CurrentAsteroid}]
+                    wait 5
+                }
             }
         }
+        while ${m:Next(exists)}
     }
 }
 
@@ -3385,21 +3390,26 @@ function ProcessMining()
 
 function ActivateMinersOn(int64 asteroidID)
 {
-    variable int i
-    for (i:Set[1]; ${i} <= ${MyShip.ModuleCount}; i:Inc)
+    variable index:module modules
+    MyShip:GetModules[modules]
+    variable iterator m
+    modules:GetIterator[m]
+    if ${m:First(exists)}
     {
-        variable item module = ${MyShip.Module[${i}]}
-
-        if ${module.ToItem.Group.Equal["Mining Laser"]} || \
-           ${module.ToItem.Group.Equal["Strip Miner"]}
+        do
         {
-            if !${module.IsActive} && ${module.IsOnline}
+            if ${m.Value.ToItem.Group.Equal["Mining Laser"]} || \
+               ${m.Value.ToItem.Group.Equal["Strip Miner"]}
             {
-                echo "Activating ${module.ToItem.Name}"
-                module:Activate[${asteroidID}]
-                wait 10
+                if !${m.Value.IsActive} && ${m.Value.IsOnline}
+                {
+                    echo "Activating ${m.Value.ToItem.Name}"
+                    m.Value:Activate[${asteroidID}]
+                    wait 10
+                }
             }
         }
+        while ${m:Next(exists)}
     }
 }
 ```

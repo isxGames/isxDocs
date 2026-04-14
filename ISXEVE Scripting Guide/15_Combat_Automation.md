@@ -345,23 +345,28 @@ function ActivateWeapons()
         return
 
     ; Activate all weapons on active target
-    variable int i
-    for (i:Set[1]; ${i} <= ${MyShip.ModuleCount}; i:Inc)
+    variable index:module modules
+    MyShip:GetModules[modules]
+    variable iterator m
+    modules:GetIterator[m]
+    if ${m:First(exists)}
     {
-        variable item module = ${MyShip.Module[${i}]}
-
-        ; Check if weapon module
-        if ${module.ToItem.Group.Find["Projectile Weapon"]} || \
-           ${module.ToItem.Group.Find["Energy Weapon"]} || \
-           ${module.ToItem.Group.Find["Hybrid Weapon"]} || \
-           ${module.ToItem.Group.Find["Missile Launcher"]}
+        do
         {
-            if !${module.IsActive} && ${module.IsOnline}
+            ; Check if weapon module
+            if ${m.Value.ToItem.Group.Find["Projectile Weapon"]} || \
+               ${m.Value.ToItem.Group.Find["Energy Weapon"]} || \
+               ${m.Value.ToItem.Group.Find["Hybrid Weapon"]} || \
+               ${m.Value.ToItem.Group.Find["Missile Launcher"]}
             {
-                module:Activate[${Me.ActiveTarget.ID}]
-                wait 5
+                if !${m.Value.IsActive} && ${m.Value.IsOnline}
+                {
+                    m.Value:Activate[${Me.ActiveTarget.ID}]
+                    wait 5
+                }
             }
         }
+        while ${m:Next(exists)}
     }
 }
 
@@ -579,21 +584,26 @@ function ActivateTurrets(int64 targetID)
     if !${Entity[${targetID}](exists)}
         return
 
-    variable int i
-    for (i:Set[1]; ${i} <= ${MyShip.ModuleCount}; i:Inc)
+    variable index:module modules
+    MyShip:GetModules[modules]
+    variable iterator m
+    modules:GetIterator[m]
+    if ${m:First(exists)}
     {
-        variable item module = ${MyShip.Module[${i}]}
-
-        ; Check if turret
-        if ${module.ToItem.Group.Find["Projectile Weapon"]} || \
-           ${module.ToItem.Group.Find["Energy Weapon"]} || \
-           ${module.ToItem.Group.Find["Hybrid Weapon"]}
+        do
         {
-            if !${module.IsActive} && ${module.IsOnline}
+            ; Check if turret
+            if ${m.Value.ToItem.Group.Find["Projectile Weapon"]} || \
+               ${m.Value.ToItem.Group.Find["Energy Weapon"]} || \
+               ${m.Value.ToItem.Group.Find["Hybrid Weapon"]}
             {
-                module:Activate[${targetID}]
+                if !${m.Value.IsActive} && ${m.Value.IsOnline}
+                {
+                    m.Value:Activate[${targetID}]
+                }
             }
         }
+        while ${m:Next(exists)}
     }
 }
 
@@ -621,22 +631,27 @@ function CheckTurretTracking(int64 targetID)
 function CheckAmmo()
 {
     ; Check if need to reload
-    variable int i
-    for (i:Set[1]; ${i} <= ${MyShip.ModuleCount}; i:Inc)
+    variable index:module modules
+    MyShip:GetModules[modules]
+    variable iterator m
+    modules:GetIterator[m]
+    if ${m:First(exists)}
     {
-        variable item module = ${MyShip.Module[${i}]}
-
-        ; Check if weapon with charges
-        if ${module.ToItem.Group.Find["Weapon"]} && ${module.MaxCharges} > 0
+        do
         {
-            ; Below 30% ammo and not currently active
-            if ${module.Charge} < ${Math.Calc[${module.MaxCharges} * 0.3]} && !${module.IsActive}
+            ; Check if weapon with charges
+            if ${m.Value.ToItem.Group.Find["Weapon"]} && ${m.Value.MaxCharges} > 0
             {
-                echo "Reloading ${module.ToItem.Name}"
-                module:ReloadCycle
-                wait 50  ; Wait for reload (varies by weapon)
+                ; Below 30% ammo and not currently active
+                if ${m.Value.Charge} < ${Math.Calc[${m.Value.MaxCharges} * 0.3]} && !${m.Value.IsActive}
+                {
+                    echo "Reloading ${m.Value.ToItem.Name}"
+                    m.Value:ReloadCycle
+                    wait 50  ; Wait for reload (varies by weapon)
+                }
             }
         }
+        while ${m:Next(exists)}
     }
 }
 ```
@@ -651,20 +666,25 @@ function ActivateMissiles(int64 targetID)
     if !${Entity[${targetID}](exists)}
         return
 
-    variable int i
-    for (i:Set[1]; ${i} <= ${MyShip.ModuleCount}; i:Inc)
+    variable index:module modules
+    MyShip:GetModules[modules]
+    variable iterator m
+    modules:GetIterator[m]
+    if ${m:First(exists)}
     {
-        variable item module = ${MyShip.Module[${i}]}
-
-        ; Check if missile launcher
-        if ${module.ToItem.Group.Find["Missile Launcher"]}
+        do
         {
-            if !${module.IsActive} && ${module.IsOnline}
+            ; Check if missile launcher
+            if ${m.Value.ToItem.Group.Find["Missile Launcher"]}
             {
-                module:Activate[${targetID}]
-                wait 5  ; Missiles activate slower than turrets
+                if !${m.Value.IsActive} && ${m.Value.IsOnline}
+                {
+                    m.Value:Activate[${targetID}]
+                    wait 5  ; Missiles activate slower than turrets
+                }
             }
         }
+        while ${m:Next(exists)}
     }
 }
 
@@ -878,39 +898,49 @@ function ManageShieldTank()
 
 function ActivatePassiveHardeners()
 {
-    variable int i
-    for (i:Set[1]; ${i} <= ${MyShip.ModuleCount}; i:Inc)
+    variable index:module modules
+    MyShip:GetModules[modules]
+    variable iterator m
+    modules:GetIterator[m]
+    if ${m:First(exists)}
     {
-        variable item module = ${MyShip.Module[${i}]}
-
-        if ${module.ToItem.Group.Find["Shield Hardener"]}
+        do
         {
-            if !${module.IsActive} && ${module.IsOnline}
+            if ${m.Value.ToItem.Group.Find["Shield Hardener"]}
             {
-                module:Activate
+                if !${m.Value.IsActive} && ${m.Value.IsOnline}
+                {
+                    m.Value:Activate
+                }
             }
         }
+        while ${m:Next(exists)}
     }
 }
 
 function ActivateShieldBoosters()
 {
-    variable int i
-    for (i:Set[1]; ${i} <= ${MyShip.ModuleCount}; i:Inc)
+    variable index:module modules
+    MyShip:GetModules[modules]
+    variable iterator m
+    modules:GetIterator[m]
+    if ${m:First(exists)}
     {
-        variable item module = ${MyShip.Module[${i}]}
-
-        if ${module.ToItem.Group.Find["Shield Booster"]}
+        do
         {
-            ; Check capacitor before activating
-            if ${MyShip.CapacitorPct} > 30
+            if ${m.Value.ToItem.Group.Find["Shield Booster"]}
             {
-                if !${module.IsActive} && ${module.IsOnline}
+                ; Check capacitor before activating
+                if ${MyShip.CapacitorPct} > 30
                 {
-                    module:Activate
+                    if !${m.Value.IsActive} && ${m.Value.IsOnline}
+                    {
+                        m.Value:Activate
+                    }
                 }
             }
         }
+        while ${m:Next(exists)}
     }
 }
 ```
@@ -953,39 +983,49 @@ function ManageArmorTank()
 
 function ActivateArmorHardeners()
 {
-    variable int i
-    for (i:Set[1]; ${i} <= ${MyShip.ModuleCount}; i:Inc)
+    variable index:module modules
+    MyShip:GetModules[modules]
+    variable iterator m
+    modules:GetIterator[m]
+    if ${m:First(exists)}
     {
-        variable item module = ${MyShip.Module[${i}]}
-
-        if ${module.ToItem.Group.Find["Armor Hardener"]}
+        do
         {
-            if !${module.IsActive} && ${module.IsOnline}
+            if ${m.Value.ToItem.Group.Find["Armor Hardener"]}
             {
-                module:Activate
+                if !${m.Value.IsActive} && ${m.Value.IsOnline}
+                {
+                    m.Value:Activate
+                }
             }
         }
+        while ${m:Next(exists)}
     }
 }
 
 function ActivateArmorRepairers()
 {
-    variable int i
-    for (i:Set[1]; ${i} <= ${MyShip.ModuleCount}; i:Inc)
+    variable index:module modules
+    MyShip:GetModules[modules]
+    variable iterator m
+    modules:GetIterator[m]
+    if ${m:First(exists)}
     {
-        variable item module = ${MyShip.Module[${i}]}
-
-        if ${module.ToItem.Group.Find["Armor Repairer"]}
+        do
         {
-            ; Check capacitor
-            if ${MyShip.CapacitorPct} > 25
+            if ${m.Value.ToItem.Group.Find["Armor Repairer"]}
             {
-                if !${module.IsActive} && ${module.IsOnline}
+                ; Check capacitor
+                if ${MyShip.CapacitorPct} > 25
                 {
-                    module:Activate
+                    if !${m.Value.IsActive} && ${m.Value.IsOnline}
+                    {
+                        m.Value:Activate
+                    }
                 }
             }
         }
+        while ${m:Next(exists)}
     }
 }
 ```
@@ -1337,9 +1377,10 @@ Use `KeepRangeFromActiveTarget()` from the [Movement in Combat](#movement-in-com
 **Solutions**:
 
 ```lavish
-function DiagnoseWeaponFailure(int moduleIndex, int64 targetID)
+; moduleSlot is a slot-name token, e.g. "HiSlot0".."HiSlot7" (NOT numeric).
+function DiagnoseWeaponFailure(string moduleSlot, int64 targetID)
 {
-    variable item module = ${MyShip.Module[${moduleIndex}]}
+    variable module module = ${MyShip.Module[${moduleSlot}]}
 
     ; Not online
     if !${module.IsOnline}

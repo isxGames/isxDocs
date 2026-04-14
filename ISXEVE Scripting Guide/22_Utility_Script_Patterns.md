@@ -480,7 +480,9 @@ function RandomWait(int MinMS, int MaxMS)
 ### Verifying Module Activation
 
 ```lavishscript
-function ActivateModuleWithVerification(int Slot)
+; Slot is a slot-name token, e.g. "HiSlot0".."HiSlot7", "MedSlot0"..,
+; "LoSlot0"..,  "RigSlot0"..,  "SubSystemSlot0"..  (NOT a numeric index).
+function ActivateModuleWithVerification(string Slot)
 {
 	variable int Attempts = 0
 	variable int MaxAttempts = 3
