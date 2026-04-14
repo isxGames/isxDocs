@@ -754,7 +754,8 @@ objectdef obj_FleetFollower
         if !${Entity[${This.LeaderEntityID}](exists)}
         {
             variable index:entity entities
-            EVE:QueryEntities[entities, "Name = \"${This.LeaderName}\" && CategoryID = CATEGORYID_SHIP"]
+            ; CategoryID 6 = Ship
+            EVE:QueryEntities[entities, "Name = \"${This.LeaderName}\" && CategoryID = 6"]
 
             if ${entities.Used} > 0
             {
@@ -1210,7 +1211,8 @@ atom OnBoostsActive(int64 boosterID)
 method CheckBeltDepletion()
 {
     variable index:entity asteroids
-    EVE:QueryEntities[asteroids, "GroupID = GROUP_ASTEROID && Distance < 200000"]
+    ; CategoryID 25 = Asteroid/Ore (covers all asteroid GroupIDs: Veldspar, Scordite, etc.)
+    EVE:QueryEntities[asteroids, "CategoryID = 25 && Distance < 200000"]
 
     if ${asteroids.Used} < 5
     {
@@ -1643,7 +1645,8 @@ objectdef obj_FleetMiner
     method FindAsteroid()
     {
         variable index:entity asteroids
-        EVE:QueryEntities[asteroids, "GroupID = GROUP_ASTEROID && Distance < 50000", "Distance"]
+        ; CategoryID 25 = Asteroid/Ore
+        EVE:QueryEntities[asteroids, "CategoryID = 25 && Distance < 50000", "Distance"]
 
         if ${asteroids.Used} > 0
         {
@@ -1690,7 +1693,8 @@ objectdef obj_FleetMiner
 
         // Find my jetcan
         variable index:entity cans
-        EVE:QueryEntities[cans, "GroupID = GROUP_CARGO_CONTAINER && Distance < 5000", "Distance"]
+        ; GroupID 12 = Cargo Container
+        EVE:QueryEntities[cans, "GroupID = 12 && Distance < 5000", "Distance"]
 
         if ${cans.Used} > 0
         {
@@ -3725,7 +3729,8 @@ objectdef obj_FleetCombat
         variable index:entity Threats
         variable iterator Threat
 
-        EVE:QueryEntities[Threats, "CategoryID = CATEGORYID_ENTITY && IsNPC"]
+        ; CategoryID 11 = Entity (NPCs, structures, etc.); IsNPC filters to NPC-owned only
+        EVE:QueryEntities[Threats, "CategoryID = 11 && IsNPC"]
         Threats:GetIterator[Threat]
 
         if ${Threat:First(exists)}
@@ -3741,7 +3746,7 @@ objectdef obj_FleetCombat
         }
 
         ; Priority 2: Closest
-        variable int64 closestID = ${Entity["CategoryID = CATEGORYID_ENTITY && IsNPC"].ID}
+        variable int64 closestID = ${Entity["CategoryID = 11 && IsNPC"].ID}
         return ${closestID}
     }
 }
@@ -3936,7 +3941,8 @@ objectdef obj_MiningFleet
             {
                 do
                 {
-                    if ${Item.Value.Group.Equal["Ice"]} || ${Item.Value.CategoryID} == CATEGORYID_ORE
+                    ; CategoryID 25 = Asteroid/Ore
+                    if ${Item.Value.Group.Equal["Ice"]} || ${Item.Value.CategoryID} == 25
                     {
                         Item.Value:MoveTo[OtherCargo, ${Item.Value.Quantity}]
                     }
