@@ -850,6 +850,11 @@ function GetCargoFreeSpace()
     return 0
 }
 
+; Declare the mining laser we'll check below. MyShip.Module returns the
+; 'module' datatype (NOT 'item'). For a fleet of lasers, iterate with
+; MyShip:GetModules[<index:module>] instead of a single variable.
+variable module MiningLaser = ${MyShip.Module[HiSlot0]}
+
 while ${GetCargoFreeSpace} > 100
 {
     ; Find asteroid
