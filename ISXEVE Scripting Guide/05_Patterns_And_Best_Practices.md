@@ -5139,13 +5139,14 @@ function WarpToWithTimeout(int64 entityID, int timeout)
 **Solutions**:
 
 ```lavish
-function DiagnoseModuleFailure(int moduleIndex)
+; moduleSlot is a slot-name token, e.g. "HiSlot0".."HiSlot7" (NOT numeric).
+function DiagnoseModuleFailure(string moduleSlot)
 {
-    variable item module = ${MyShip.Module[${moduleIndex}]}
+    variable module module = ${MyShip.Module[${moduleSlot}]}
 
     if !${module(exists)}
     {
-        call Log "ERROR" "Module ${moduleIndex} does not exist"
+        call Log "ERROR" "Module ${moduleSlot} does not exist"
         return "NOT_EXISTS"
     }
 
