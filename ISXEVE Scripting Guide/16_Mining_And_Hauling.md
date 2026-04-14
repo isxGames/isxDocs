@@ -286,7 +286,7 @@ function WarpToBookmarkedBelt()
     variable bookmark targetBookmark = ${FilteredBookmarks.Get[${randomIdx}]}
 
     echo "Warping to bookmark: ${targetBookmark.Label}"
-    EVE:WarpToBookMarkID[${targetBookmark.ID}]
+    targetBookmark:WarpTo[0]
 
     LastUsedBookmarkID:Set[${targetBookmark.ID}]
 
@@ -303,21 +303,22 @@ function WarpToBookmarkedBelt()
 
 function WarpToOreAnomaly()
 {
-    ; Scan for probe results (ore anomalies)
-    variable index:systemsite ProbeResults
-    EVE:GetProbeResults[ProbeResults]
+    ; Scan for system anomalies (requires probes/scanner data populated by the client)
+    variable index:systemanomaly Anomalies
+    EVE:GetAnomalies[Anomalies]
 
     variable iterator Site
-    ProbeResults:GetIterator[Site]
+    Anomalies:GetIterator[Site]
 
-    variable index:systemsite OreAnomalies
+    variable index:systemanomaly OreAnomalies
 
     if ${Site:First(exists)}
         do
         {
-            ; Check if ore anomaly
+            ; Filter to ore/asteroid anomalies by Name or Group
             if ${Site.Value.Name.Find["Ore"]} || \
-               ${Site.Value.Name.Find["Asteroid"]}
+               ${Site.Value.Name.Find["Asteroid"]} || \
+               ${Site.Value.Group.Find["Ore"]}
             {
                 OreAnomalies:Insert[${Site.Value}]
             }
@@ -330,11 +331,17 @@ function WarpToOreAnomaly()
         return FALSE
     }
 
-    ; Pick first ore anomaly
-    variable systemsite targetAnomaly = ${OreAnomalies.Get[1]}
+    ; Pick first ore anomaly and warp to it (0 = warp to zero)
+    variable systemanomaly targetAnomaly = ${OreAnomalies.Get[1]}
+
+    if !${targetAnomaly.IsWarpable}
+    {
+        echo "Anomaly not warpable: ${targetAnomaly.Name}"
+        return FALSE
+    }
 
     echo "Warping to anomaly: ${targetAnomaly.Name}"
-    EVE:WarpToSite[${targetAnomaly.ID}]
+    targetAnomaly:WarpTo[0, FALSE]
 
     wait 100
 
