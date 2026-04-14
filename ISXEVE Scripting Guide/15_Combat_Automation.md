@@ -152,7 +152,7 @@ objectdef obj_SimpleCombat
         }
 
         ; In pod (emergency!)
-        if ${MyShip.ToEntity.GroupID} == GROUPID_CAPSULE
+        if ${MyShip.ToEntity.GroupID} == 29  ; Capsule (pod)
         {
             This.CurrentState:Set["FLEE"]
             return
@@ -381,8 +381,15 @@ function LaunchDrones()
 
 function FleeToSafe()
 {
-    ; Find nearest station
-    variable entity station = ${Entity["GroupID = GROUPID_STATION && IsNearestStation"]}
+    ; Find nearest station. QueryEntities returns results sorted by distance
+    ; (ISXEVEChanges.txt line 5321), so Stations.Get[1] is the closest.
+    variable index:entity Stations
+    EVE:QueryEntities[Stations, "GroupID = 15"]  ; Station
+
+    if ${Stations.Used} == 0
+        return
+
+    variable entity station = ${Stations.Get[1]}
 
     if ${station(exists)}
     {
@@ -842,7 +849,7 @@ function MoveAwayFromTarget(int64 targetID)
 {
     ; Find celestial opposite to target
     variable index:entity Celestials
-    EVE:QueryEntities[Celestials, "GroupID = GROUPID_PLANET || GroupID = GROUPID_MOON"]
+    EVE:QueryEntities[Celestials, "GroupID = 7 || GroupID = 8"]  ; Planet, Moon
 
     ; Find furthest from target
     variable float maxDistance = 0
