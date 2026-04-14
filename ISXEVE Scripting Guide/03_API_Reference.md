@@ -7815,7 +7815,7 @@ EVE:Execute[CmdWarpToBookmark, ${bookmarkID}]
 wait 100   ; Ship state changes (server round-trip)
 
 ; Then wait for warp to complete (separate check)
-while !${MyShip.ToEntity.Mode} == 3    ; Mode 3 = Warping
+while ${MyShip.ToEntity.Mode} != 3    ; Mode 3 = Warping. Wait while NOT yet in warp.
 {
     wait 100
 }
