@@ -1283,7 +1283,7 @@ function main()
             Combat:Pulse
         }
 
-        wait ${Math.Rand[8,15]}
+        wait ${Math.Calc[${Math.Rand[8]} + 8]}  ; 8..15 inclusive
         waitframe
     }
 }
@@ -1348,7 +1348,7 @@ function main()
             }
         }
 
-        wait ${Math.Rand[5,10]}
+        wait ${Math.Calc[${Math.Rand[6]} + 5]}  ; 5..10 inclusive
         waitframe
     }
 }
