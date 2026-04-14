@@ -4609,7 +4609,7 @@ member:string CurrentBehavior()
 ; Constant default
 member:int MaxTargets()
 {
-    return ${This.ConfigRef.FindSetting[MaxTargets, ${EVE.MaxLockedTargets}]}
+    return ${This.ConfigRef.FindSetting[MaxTargets, ${Me.MaxLockedTargets}]}
 }
 
 ; Calculated default
