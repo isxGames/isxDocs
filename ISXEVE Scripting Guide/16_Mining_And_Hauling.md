@@ -201,7 +201,7 @@ function WarpToRandomBelt()
     variable iterator Belt
 
     ; Find all asteroid belts
-    EVE:QueryEntities[Belts, "GroupID = GROUPID_ASTEROIDBELT"]
+    EVE:QueryEntities[Belts, "GroupID = 9"]
     Belts:GetIterator[Belt]
 
     if ${Belts.Used} == 0
@@ -357,7 +357,7 @@ function GetNearestAsteroid()
     variable iterator Asteroid
 
     ; Query all asteroids
-    EVE:QueryEntities[Asteroids, "CategoryID = CATEGORYID_ASTEROID"]
+    EVE:QueryEntities[Asteroids, "CategoryID = 25"]
     Asteroids:GetIterator[Asteroid]
 
     ; Find nearest unlocked
@@ -391,7 +391,7 @@ function GetBestAsteroidByOreType()
     variable index:entity Asteroids
     variable iterator Asteroid
 
-    EVE:QueryEntities[Asteroids, "CategoryID = CATEGORYID_ASTEROID && Distance < ${GetOptimalMiningRange}"]
+    EVE:QueryEntities[Asteroids, "CategoryID = 25 && Distance < ${GetOptimalMiningRange}"]
     Asteroids:GetIterator[Asteroid]
 
     variable int64 BestAsteroid = 0
@@ -440,7 +440,7 @@ function GetGroupedAsteroid()
     variable index:entity Asteroids
     variable iterator Asteroid
 
-    EVE:QueryEntities[Asteroids, "CategoryID = CATEGORYID_ASTEROID && Distance < ${GetOptimalMiningRange}"]
+    EVE:QueryEntities[Asteroids, "CategoryID = 25 && Distance < ${GetOptimalMiningRange}"]
     Asteroids:GetIterator[Asteroid]
 
     if !${Asteroid:First(exists)}
@@ -574,7 +574,7 @@ function ProcessSurveyResults()
 
     ; Get all asteroids
     variable index:entity Asteroids
-    EVE:QueryEntities[Asteroids, "CategoryID = CATEGORYID_ASTEROID"]
+    EVE:QueryEntities[Asteroids, "CategoryID = 25"]
 
     ; Survey scanner marks asteroids with quantity data
     variable iterator Asteroid
@@ -858,12 +858,15 @@ function ReturnToStation()
     wait 10
 
     ; Find home station
-    variable entity station = ${Entity["GroupID = GROUPID_STATION && Name = \"${HomeStation}\""]}
+    variable entity station = ${Entity["GroupID = 15 && Name = \"${HomeStation}\""]}
 
     if !${station(exists)}
     {
         echo "ERROR: Home station not found, docking at nearest"
-        station:Set[${Entity["GroupID = GROUPID_STATION && IsNearestStation"]}]
+        variable index:entity nearestStations
+        EVE:QueryEntities[nearestStations, "GroupID = 15"]
+        if ${nearestStations.Used} > 0
+            station:Set[${nearestStations.Get[1]}]
     }
 
     if !${station(exists)}
@@ -972,7 +975,7 @@ function IsIceBelt()
 {
     ; Check for ice entities
     variable index:entity IceAsteroids
-    EVE:QueryEntities[IceAsteroids, "CategoryID = 423"]  ; Ice category
+    EVE:QueryEntities[IceAsteroids, "GroupID = 465"]  ; Ice group
 
     if ${IceAsteroids.Used} > 0
     {
@@ -987,7 +990,7 @@ function GetNearestIce()
     variable index:entity IceAsteroids
     variable iterator Ice
 
-    EVE:QueryEntities[IceAsteroids, "CategoryID = 423 && Distance < ${GetOptimalMiningRange}"]
+    EVE:QueryEntities[IceAsteroids, "GroupID = 465 && Distance < ${GetOptimalMiningRange}"]
     IceAsteroids:GetIterator[Ice]
 
     if ${Ice:First(exists)}
@@ -2449,7 +2452,7 @@ objectdef obj_OrcaDelivery
     {
         // Try to find Orca by pilot name
         variable index:entity orcas
-        EVE:QueryEntities[orcas, "Name = \"${This.OrcaPilotName}\" && CategoryID = CATEGORYID_SHIP"]
+        EVE:QueryEntities[orcas, "Name = \"${This.OrcaPilotName}\" && CategoryID = 6"]
 
         if ${orcas.Used} > 0
         {
