@@ -1683,8 +1683,8 @@ Game World
     ├── Entity[ID] - Get by unique ID
     ├── Entity[Name] - Get first match by name
     └── Query System
-        ├── QueryEntities - Returns index of matching entities
-        └── GetEntities - Populates index with entities matching criteria
+        ├── QueryEntities - Populates index:entity; supports precompiled QueryID for reuse
+        └── GetEntities    - Populates index:entity from a query string (simpler one-off form)
 ```
 
 ### Entity Identification
@@ -1837,53 +1837,52 @@ function LogEntityInfo(int64 entityID)
 
 ### Two Query Methods
 
-**ISXEVE provides TWO ways to query entities**:
+**ISXEVE provides TWO methods for querying entities**. Both are TLO methods on `EVE` (method-call syntax with `:`), and both populate an `index:entity` with full entity objects — there is no "IDs-only / full-objects" distinction. The difference is in the query-string compilation path (see below).
 
-1. **QueryEntities** - Returns `iterator` with entity IDs
-2. **GetEntities** - Populates `index:entity` with full entity objects
+1. **QueryEntities** — `EVE:QueryEntities[<index:entity>, "query_string"]`  populates an `index:entity` with matches. Supports a precompiled QueryID (integer) as the second argument for performance; if the argument is non-numeric it is treated as a query string and compiled on the fly.
+2. **GetEntities** — `EVE:GetEntities[<index:entity>, "query_string"]` also populates an `index:entity` with matches. Simpler API — query string only.
 
 **When to use which**:
-- **QueryEntities**: When you need IDs only, or will filter further before accessing entities
-- **GetEntities**: When you need full entity objects immediately
+- **QueryEntities**: When you want to reuse a compiled query across many calls (precompile via `ISInterface.CreateQuery`, then pass the QueryID) — avoids recompiling the query string every call. Preferred in performance-critical loops (EVEBot uses this pattern heavily).
+- **GetEntities**: Simpler default for one-off queries. No precompile step.
 
 ### QueryEntities
 
 **Syntax**:
 ```lavish
-variable iterator entities = ${EVE.QueryEntities[query_string]}
+EVE:QueryEntities[<index:entity>, "<query_string>"]
 ```
 
-**Returns**: Iterator of entity **IDs** (not entity objects).
+**Populates**: the passed `index:entity` with matching entity objects. Returns bool (true on success).
 
 **Example**:
 ```lavish
-; Query all asteroids
-variable iterator asteroids = ${EVE.QueryEntities[CategoryID = 25]}
+; Declare index
+variable index:entity asteroids
+
+; Populate with query
+EVE:QueryEntities[asteroids, "CategoryID = 25"]
 
 echo "Found ${asteroids.Used} asteroids"
 
-; Iterate IDs
-asteroids:First
-
-while ${asteroids:IsValid}
+; Iterate entities directly (1-indexed)
+variable int i
+for (i:Set[1]; ${i} <= ${asteroids.Used}; i:Inc)
 {
-    variable int64 asteroidID = ${asteroids.Value}
-    variable entity asteroid = ${Entity[${asteroidID}]}
+    variable entity asteroid = ${asteroids.Get[${i}]}
 
     if ${asteroid(exists)}
     {
         echo "Asteroid: ${asteroid.Name} at ${asteroid.Distance}m"
     }
-
-    asteroids:Next
 }
 ```
 
 **Key Points**:
-- Returns **iterator** (use :First, :Next, :IsValid pattern)
-- Contains **IDs** (int64), not entity objects
-- Must manually get entity object: `${Entity[${id}]}`
-- Lightweight (IDs only until you request entity)
+- METHOD, not a member. Use `EVE:QueryEntities[...]` (colon), not `${EVE.QueryEntities[...]}` (dot) — the dot-form does not exist on EVEType.
+- Populates an **index:entity** — 1-indexed, access via `.Get[${i}]` or `:GetIterator[]`.
+- Returns entity objects directly; no manual `${Entity[${id}]}` lookup required.
+- Query-string form vs precompiled-QueryID form are both supported in argv[1].
 
 ### GetEntities
 
@@ -1925,22 +1924,20 @@ for (i:Set[1]; ${i} <= ${asteroids.Used}; i:Inc)
 
 ### QueryEntities vs GetEntities - When to Use
 
+Both methods produce an `index:entity` of full entity objects. The choice is about query-compile overhead, not return-type:
+
 **Use QueryEntities when**:
-- You only need entity IDs
-- You'll do further filtering before accessing entities
-- Memory/performance is critical
-- You want iterator pattern
+- You need to reuse a query many times in a tight loop — precompile once via `ISInterface.CreateQuery["..."]`, then pass the QueryID (int) as argv[1]. Avoids recompiling on each call.
+- You want to reuse the same query-compile pipeline EVEBot uses (ISXEVE hosts both a query-string path and a QueryID path in the same method).
 
 **Use GetEntities when**:
-- You need entity data immediately
-- You'll access most/all results
-- Code simplicity is more important than performance
-- You want index pattern (1-indexed access)
+- One-off query with no reuse.
+- Code simplicity is more important than saving the query-compile tick.
 
 **Example Scripts Usage**:
-- **Evebot**: Uses QueryEntities heavily (performance-critical)
-- **Yamfa**: Uses GetEntities (simpler code, fewer entities)
-- **Tehbot**: Mix of both
+- **Evebot**: Uses QueryEntities with precompiled QueryIDs in performance-critical loops (mining, combat target selection).
+- **Yamfa**: Uses GetEntities (simpler code, fewer entities).
+- **Tehbot**: Mix of both.
 
 ---
 
@@ -2339,28 +2336,30 @@ function ProcessAllAsteroids()
 - Array doesn't change if entities despawn
 - Each iteration re-fetches entity and checks (exists)
 
-### Solution 3: Iterator Pattern (QueryEntities)
+### Solution 3: Iterator Pattern (QueryEntities with :GetIterator)
 
 ```lavish
-variable iterator asteroids = ${EVE.QueryEntities[CategoryID = 25]}
+variable index:entity asteroids
+EVE:QueryEntities[asteroids, "CategoryID = 25"]
 
-asteroids:First
+variable iterator AstIter
+asteroids:GetIterator[AstIter]
 
-while ${asteroids:IsValid}
+if ${AstIter:First(exists)}
 {
-    variable int64 asteroidID = ${asteroids.Value}
-    variable entity asteroid = ${Entity[${asteroidID}]}
-
-    if ${asteroid(exists)}
+    do
     {
-        echo "Asteroid: ${asteroid.Name}"
+        variable entity asteroid = ${AstIter.Value}
+        if ${asteroid(exists)}
+        {
+            echo "Asteroid: ${asteroid.Name}"
+        }
     }
-
-    asteroids:Next
+    while ${AstIter:Next(exists)}
 }
 ```
 
-**Note**: Iterator is still susceptible to entity despawn, but less fragile than index iteration.
+**Note**: The iterator obtained from `index:entity:GetIterator[]` walks live entity objects, not IDs — no manual `${Entity[${id}]}` lookup needed. Entities may still despawn between the `.Value` access and a member access; keep the `(exists)` guard.
 
 ---
 
@@ -2845,10 +2844,10 @@ if ${ent.Distance} < 50000
 ### Memory Usage
 
 **Large queries use memory**:
-- QueryEntities: Returns IDs only (lightweight)
-- GetEntities: Returns full entities (heavier)
+- Both QueryEntities and GetEntities populate an `index:entity` of full entity objects — there is no "IDs-only vs full-objects" tradeoff. Memory cost scales with `.Used` count.
+- For tight inner loops that re-run the same filter many times, use `QueryEntities` with a precompiled QueryID (via `ISInterface.CreateQuery`) to avoid recompiling the query string on each call.
 
-**For large result sets** (100+ entities), prefer QueryEntities and fetch entities on-demand.
+**For large result sets** (100+ entities), consider narrowing the query (add `Distance <= N` or other predicates) rather than iterating the full returned index.
 
 ---
 
@@ -3150,7 +3149,7 @@ if ${ent.Distance} < 50000
 ### Essential Concepts
 
 1. **Entities = Objects in space** - Asteroids, NPCs, ships, structures, etc.
-2. **Two query methods**: QueryEntities (IDs) vs GetEntities (full objects)
+2. **Two query methods**: QueryEntities (supports precompiled QueryID for reuse) and GetEntities (one-off query string) — both populate an `index:entity` of full entity objects
 3. **Query syntax**: `Field Operator Value && Field Operator Value`
 4. **Always check (exists)** before accessing entity members
 5. **Snapshot IDs** for safe iteration (Evebot pattern)
