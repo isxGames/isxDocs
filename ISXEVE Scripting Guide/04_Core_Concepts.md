@@ -557,8 +557,11 @@ variable index:int64 DroneIDs
 Me:GetActiveDroneIDs[DroneIDs]
 if ${DroneIDs.Used} > 0
 {
-    ; Command drones to engage
-    Me.ActiveTarget:EngageMyTarget[]
+    ; Command drones to engage the active target
+    ; NOTE: EngageMyTarget is an ENTITY method and does NOT command drones.
+    ; Use EVE:DronesEngageMyTarget[<index:int64>] with active drone IDs,
+    ; or EVE:Execute[CmdDronesEngage] to engage the current active target.
+    EVE:DronesEngageMyTarget[DroneIDs]
     wait 10
 }
 
