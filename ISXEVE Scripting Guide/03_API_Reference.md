@@ -901,14 +901,32 @@ This is the correct replacement for the older (fabricated) `${EVE.SessionChanges
 
 ### Universe Queries
 
-```lavish
-; Get system info by ID
-variable int64 systemID = 30000142    ; Jita
-echo "System Name: ${EVE.GetSystemName[${systemID}]}"
+Neither `${EVE.GetSystemName[id]}` nor `${EVE.GetItemTypeName[id]}` exists on the EVE datatype. Use the correct TLO/member paths instead, verified against ISXEVE C++ source:
 
-; Get item type name by ID
-variable int typeID = 34
-echo "Type Name: ${EVE.GetItemTypeName[${typeID}]}"
+```lavish
+; Get solar-system name by ID via the Universe TLO.
+; Universe[id] returns a solarsystem / region / constellation / planet
+; / interstellar object depending on the ID type (TopLevelObjects.cpp
+; TLO_Universe). For a solar-system ID, .Name is inherited from
+; InterstellarType (DataTypes.h InterstellarType line 2583/2592).
+variable int64 systemID = 30000142    ; Jita
+echo "System Name: ${Universe[${systemID}].Name}"
+
+; You can also look up by name -- Universe["Jita"] resolves through
+; GetInterstellarObjectIDByName and returns the same solarsystem object.
+echo "Jita ID: ${Universe["Jita"].ID}"
+
+; Get item type name by TypeID via the EVE.ItemInfo member.
+; EVE.ItemInfo[typeID] returns an iteminfo object (DataTypes.h EVEType
+; line 3537/3619; ItemInfoType 871-924). .Name resolves via
+; GetTypeNameByID(m_TypeID). This is the canonical TypeID->Name lookup.
+variable int typeID = 34    ; Tritanium
+echo "Type Name: ${EVE.ItemInfo[${typeID}].Name}"
+
+; The iteminfo object also exposes Group, GroupID, Volume, Capacity,
+; Radius, MarketGroupID, BasePrice, IsContraband, Description, etc. --
+; useful for looking up static type metadata without holding a live item.
+echo "Group: ${EVE.ItemInfo[${typeID}].Group} / Volume: ${EVE.ItemInfo[${typeID}].Volume}"
 ```
 
 ---
