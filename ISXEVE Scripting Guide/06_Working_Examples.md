@@ -1811,7 +1811,7 @@ function FormatISK(float Amount)
 }
 
 ; Usage
-echo "Balance: ${FormatISK[${Me.Wallet}]}"
+echo "Balance: ${FormatISK[${Me.Wallet.Balance}]}"
 ```
 
 ### Random Delay (.NET)

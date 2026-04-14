@@ -156,7 +156,7 @@ function CalculateISKPerHour()
 	variable int64 ISKPerHour
 
 	; Get current ISK
-	CurrentISK:Set[${Me.Wallet}]
+	CurrentISK:Set[${Me.Wallet.Balance}]
 	ISKGained:Set[${Math.Calc64[${CurrentISK}-${StartingISK}]}]
 
 	; Calculate runtime in hours
@@ -187,14 +187,14 @@ variable int64 TotalISKGained
 
 function InitializeISKTracking()
 {
-	SessionStartISK:Set[${Me.Wallet}]
+	SessionStartISK:Set[${Me.Wallet.Balance}]
 	TotalISKGained:Set[0]
 	echo Session started with ${SessionStartISK.Comma} ISK
 }
 
 function UpdateISKGained()
 {
-	TotalISKGained:Set[${Math.Calc64[${Me.Wallet}-${SessionStartISK}]}]
+	TotalISKGained:Set[${Math.Calc64[${Me.Wallet.Balance}-${SessionStartISK}]}]
 	echo ISK Gained This Session: ${TotalISKGained.Comma} ISK
 }
 ```
@@ -206,7 +206,7 @@ variable int64 ISKThreshold = 100000000
 
 function CheckISKThreshold()
 {
-	if ${Me.Wallet} >= ${ISKThreshold}
+	if ${Me.Wallet.Balance} >= ${ISKThreshold}
 	{
 		echo ALERT: Wallet has reached ${Me.Wallet.Comma} ISK!
 		call AudioAlert
@@ -590,7 +590,7 @@ function ValidateISKAmount(string Input)
 		return FALSE
 	}
 
-	if ${Amount} > ${Me.Wallet}
+	if ${Amount} > ${Me.Wallet.Balance}
 	{
 		echo ERROR: Insufficient ISK (${Amount.Comma} requested, ${Me.Wallet.Comma} available)
 		return FALSE
@@ -727,7 +727,7 @@ variable TimerObject MiningTimer
 function main()
 {
 	; Initialize
-	SessionStartISK:Set[${Me.Wallet}]
+	SessionStartISK:Set[${Me.Wallet.Balance}]
 	MiningTimer:Set[3600000]  ; 1 hour
 
 	echo Mining session started
@@ -757,7 +757,7 @@ function MineCycle()
 
 function DisplayStats()
 {
-	variable int64 ISKGained = ${Math.Calc64[${Me.Wallet}-${SessionStartISK}]}
+	variable int64 ISKGained = ${Math.Calc64[${Me.Wallet.Balance}-${SessionStartISK}]}
 	variable int MinutesLeft = ${Math.Calc[${MiningTimer.TimeLeft}/1000/60]}
 
 	echo Ore Mined: ${OreUnits} units
@@ -767,7 +767,7 @@ function DisplayStats()
 
 function DisplayFinalStats()
 {
-	variable int64 ISKGained = ${Math.Calc64[${Me.Wallet}-${SessionStartISK}]}
+	variable int64 ISKGained = ${Math.Calc64[${Me.Wallet.Balance}-${SessionStartISK}]}
 	variable int RunMinutes = ${Math.Calc[${Script.RunningTime}/1000/60]}
 
 	echo ===== MINING SESSION COMPLETE =====
