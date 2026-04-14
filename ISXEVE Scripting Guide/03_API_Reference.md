@@ -2018,10 +2018,10 @@ GroupID = 25 && TargetingMe = TRUE
 GroupID = 25 || GroupID = 26
 
 ; Wrecks I have loot rights to
-GroupID = 226 && (HaveLootRights = 1 || IsOwnedByCorpMember = 1)
+GroupID = 186 && (HaveLootRights = 1 || IsOwnedByCorpMember = 1)
 
 ; Asteroids OR ore-containing wrecks within 50km
-(CategoryID = 25 || GroupID = 226) && Distance < 50000
+(CategoryID = 25 || GroupID = 186) && Distance < 50000
 ```
 
 **Real-world example** (from EVESalvage):
@@ -2158,9 +2158,9 @@ if ${gates.Used} > 0
 ### Pattern 7: Get Wrecks
 
 ```lavish
-; Wrecks are GroupID = 226
+; Wrecks are GroupID = 186
 variable index:entity wrecks
-EVE:GetEntities[wrecks, GroupID = 226 && Distance < 50000]
+EVE:GetEntities[wrecks, GroupID = 186 && Distance < 50000]
 
 echo "Wrecks in range: ${wrecks.Used}"
 ```
@@ -2694,10 +2694,10 @@ The full `Entity.GroupID` reference table (Stargate, Container, Wreck, Station, 
 
 - `GroupID = 10` (Stargate)
 - `GroupID = 14` (Asteroid Belt)
-- `GroupID = 226` (Wreck)
+- `GroupID = 186` (Wreck)
 - `GroupID = 25/26/27/28` (Frigate / Cruiser / Battleship / Industrial)
 - `GroupID = 463` (Mining Barge)
-- `GroupID = 465` (Veldspar) — check EVEBot source or query `${Entity.GroupID}` for the full asteroid list
+- `GroupID = 462` (Veldspar) — `460` Scordite, `458` Plagioclase, `459` Pyroxeres, `469` Omber. Query `${Entity.GroupID}` on a live asteroid to discover others.
 
 See the canonical table for the complete list.
 
@@ -6280,9 +6280,9 @@ else
 
 **Find wrecks**:
 ```lavish
-; Wrecks are CategoryID = 9
+; Wrecks are GroupID = 186 (CategoryID 9 is Blueprint, not Wreck)
 variable index:entity wrecks
-EVE:GetEntities[wrecks, CategoryID = 9 && Distance < 50000]
+EVE:GetEntities[wrecks, GroupID = 186 && Distance < 50000]
 
 echo "Found ${wrecks.Used} wrecks"
 ```
@@ -9469,7 +9469,7 @@ Cross-chapter lookup tables for common numeric IDs and enumeration values used t
 | 26 | Cruiser | Cruiser-class ship |
 | 27 | Battleship | Battleship-class ship |
 | 28 | Industrial | Industrial ship |
-| 226 | Wreck | Ship wreck |
+| 186 | Wreck | Ship wreck |
 | 365 | Station | NPC station |
 | 463 | Mining Barge | Mining barge |
 | 941 | Mobile Warp Disruptor | Warp bubble |
@@ -9485,7 +9485,7 @@ Cross-chapter lookup tables for common numeric IDs and enumeration values used t
 | 35 | Pyerite | Common ore mineral |
 | 36 | Mexallon | Common ore mineral |
 | 1230 | Veldspar | Common asteroid type |
-| 17470 | Scordite | Common asteroid type |
+| 1228 | Scordite | Common asteroid type |
 
 ### Movement Modes
 
