@@ -4044,7 +4044,7 @@ function IsGateCamped()
 {
     ; Check for hostile players near gate
     variable index:entity ships
-    EVE:GetEntities[ships, CategoryID = 11 && Distance < 50000]    ; Ships within 50km
+    EVE:GetEntities[ships, CategoryID = 6 && Distance < 50000]    ; Ships within 50km (CategoryID 6 = Ship; 11 is Entity/NPC)
 
     variable int i
     for (i:Set[1]; ${i} <= ${ships.Used}; i:Inc)
