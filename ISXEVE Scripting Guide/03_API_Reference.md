@@ -7093,8 +7093,20 @@ EVE:Execute[CmdAlignTo, ${entityID}]
 
 **Dock at Station**:
 ```lavish
-variable int64 stationID = ${Entity[Name = "Jita IV - Moon 4"](exists),ID}
-EVE:Execute[CmdDock, ${stationID}]
+; Note: ${Entity[...](exists),ID} is invalid LavishScript -- the
+; (exists) check and a comma-separated ",ID" member access cannot be
+; combined inside one bracket expression. Cache the entity, then guard
+; on (exists) before reading members.
+variable entity Station = ${Entity["Jita IV - Moon 4"]}
+
+if ${Station(exists)}
+{
+    EVE:Execute[CmdDock, ${Station.ID}]
+}
+else
+{
+    echo "ERROR: station entity not found in current system"
+}
 ```
 
 **Undock**:
@@ -7104,8 +7116,14 @@ EVE:Execute[CmdUndock]
 
 **Jump Through Stargate**:
 ```lavish
-variable int64 gateID = ${Entity[GroupID = 10](exists),ID}    ; GroupID 10 = stargates (CategoryID 6 is Ship)
-EVE:Execute[CmdJumpThroughStargate, ${gateID}]
+; GroupID 10 = stargates (CategoryID 6 is Ship). Cache the entity before
+; guarding -- ${Entity[...](exists),ID} one-liner is invalid LavishScript.
+variable entity Gate = ${Entity["GroupID = 10"]}
+
+if ${Gate(exists)}
+{
+    EVE:Execute[CmdJumpThroughStargate, ${Gate.ID}]
+}
 ```
 
 ### Warping
