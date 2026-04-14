@@ -4622,19 +4622,26 @@ function ProcessCombat()
 
 function TryUseDrones()
 {
-    if !${MyShip.DroneCapacity} > 0
+    if ${MyShip.DroneCapacity} <= 0
     {
-        return FALSE  ; Ship has no drones
+        return FALSE  ; Ship has no drone bay
     }
 
-    ; Try to launch drones
-    if ${MyShip.UsedDroneBayCapacity} > 0 && ${EVE.GetTargetDrones.Used} == 0
+    ; Query currently-active drones via the canonical activedrone index
+    variable index:activedrone MyDrones
+    Me:GetActiveDrones[MyDrones]
+
+    ; Try to launch drones if bay has drones but none are deployed
+    if ${MyShip.UsedDroneBayCapacity} > 0 && ${MyDrones.Used} == 0
     {
-        EVE:Execute[DroneReturnAndOrbit]
+        EVE:Execute[CmdDronesLaunch]
 
         wait 30  ; Wait for drones
 
-        if ${EVE.GetTargetDrones.Used} > 0
+        ; Re-query after the launch attempt
+        Me:GetActiveDrones[MyDrones]
+
+        if ${MyDrones.Used} > 0
         {
             return TRUE
         }
