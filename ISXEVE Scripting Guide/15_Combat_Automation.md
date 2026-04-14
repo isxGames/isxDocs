@@ -1064,8 +1064,11 @@ function ManageDrones()
     if ${MyShip.DroneBayCapacity} == 0
         return
 
+    variable index:activedrone MyDrones
+    Me:GetActiveDrones[MyDrones]
+
     ; Drones not launched yet
-    if ${EVE.GetTargetDrones.Used} == 0
+    if ${MyDrones.Used} == 0
     {
         if ${Me.TargetCount} > 0
         {
@@ -1082,7 +1085,7 @@ function ManageDrones()
 function LaunchDrones()
 {
     echo "Launching drones"
-    EVE:Execute[DroneReturnAndOrbit]
+    MyShip:LaunchAllDrones
     wait 30  ; Wait for launch
 }
 
@@ -1102,14 +1105,17 @@ function RecallDrones()
     EVE:Execute[CmdDronesReturnToBay]
 
     ; Wait for drones to return
+    variable index:activedrone MyDrones
     variable int waitTime = 0
-    while ${EVE.GetTargetDrones.Used} > 0 && ${waitTime} < 30000
+    Me:GetActiveDrones[MyDrones]
+    while ${MyDrones.Used} > 0 && ${waitTime} < 30000
     {
         wait 10
         waitTime:Inc[100]
+        Me:GetActiveDrones[MyDrones]
     }
 
-    if ${EVE.GetTargetDrones.Used} > 0
+    if ${MyDrones.Used} > 0
     {
         echo "WARNING: Drones did not return in time!"
     }
@@ -1466,7 +1472,9 @@ function DiagnoseDroneProblem()
     }
 
     ; Already launched
-    if ${EVE.GetTargetDrones.Used} > 0
+    variable index:activedrone MyDrones
+    Me:GetActiveDrones[MyDrones]
+    if ${MyDrones.Used} > 0
     {
         echo "Drones already launched"
         return
@@ -1480,7 +1488,7 @@ function DiagnoseDroneProblem()
     }
 
     echo "Drones should be able to launch, trying again"
-    EVE:Execute[DroneReturnAndOrbit]
+    MyShip:LaunchAllDrones
 }
 ```
 
