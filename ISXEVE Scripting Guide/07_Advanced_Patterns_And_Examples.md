@@ -3927,8 +3927,8 @@ objectdef obj_MiningFleet
             wait 50 ${Entity[${orcaID}].Distance} <= 2500
         }
 
-        ; Open Orca fleet hangar
-        Entity[${orcaID}]:OpenCargo
+        ; Open Orca fleet hangar — :Open auto-dispatches to OpenFleetHangar for Industrial Command Ships
+        Entity[${orcaID}]:Open
         wait 30 ${EVEWindow[ByName, "Fleet Hangar"](exists)}
 
         if ${EVEWindow[ByName, "Fleet Hangar"](exists)}
