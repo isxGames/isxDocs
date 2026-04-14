@@ -1104,6 +1104,9 @@ if ${Me.Ship.ShieldPct} < 50
 
 ```lavish
 // Tackle reports warp scrambled targets
+// For multi-module iteration, see MyShip:GetModules[idx] pattern elsewhere in this guide.
+variable module MyModule = ${MyShip.Module[HiSlot0]}
+
 if ${MyModule.IsActive} && ${MyModule.ToItem.Group.Equal["Warp Scramblers"]}
 {
     relay all -event Fleet_TargetScrambled ${Me.ActiveTarget.ID} ${Me.CharID}
