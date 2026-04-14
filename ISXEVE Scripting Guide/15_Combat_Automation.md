@@ -314,7 +314,9 @@ function ManagePosition()
         if ${Me.TargetCount} > 0
         {
             ; Set first locked target as active
-            Me.GetTargets.Get[1]:MakeActiveTarget
+            variable index:entity MyTargets
+            Me:GetTargets[MyTargets]
+            MyTargets.Get[1]:MakeActiveTarget
         }
         return
     }
@@ -517,12 +519,15 @@ function ManageTargetLocks()
 
 function CheckActiveTargetSwitch()
 {
+    variable index:entity MyTargets
+    Me:GetTargets[MyTargets]
+
     ; No active target
     if !${Me.ActiveTarget(exists)}
     {
-        if ${Me.TargetCount} > 0
+        if ${MyTargets.Used} > 0
         {
-            Me.GetTargets.Get[1]:MakeActiveTarget
+            MyTargets.Get[1]:MakeActiveTarget
         }
         return
     }
@@ -539,9 +544,9 @@ function CheckActiveTargetSwitch()
     if !${IsPriorityTarget["${Me.ActiveTarget.Name}"]}
     {
         variable int i
-        for (i:Set[1]; ${i} <= ${Me.TargetCount}; i:Inc)
+        for (i:Set[1]; ${i} <= ${MyTargets.Used}; i:Inc)
         {
-            variable entity target = ${Me.GetTargets.Get[${i}]}
+            variable entity target = ${MyTargets.Get[${i}]}
 
             if ${IsPriorityTarget["${target.Name}"]} && !${target.IsMoribund}
             {
@@ -555,11 +560,14 @@ function CheckActiveTargetSwitch()
 
 function SwitchToNextTarget()
 {
+    variable index:entity MyTargets
+    Me:GetTargets[MyTargets]
+
     ; Find first non-dead locked target
     variable int i
-    for (i:Set[1]; ${i} <= ${Me.TargetCount}; i:Inc)
+    for (i:Set[1]; ${i} <= ${MyTargets.Used}; i:Inc)
     {
-        variable entity target = ${Me.GetTargets.Get[${i}]}
+        variable entity target = ${MyTargets.Get[${i}]}
 
         if !${target.IsMoribund}
         {
