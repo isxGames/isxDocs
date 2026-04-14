@@ -744,8 +744,10 @@ if ${CargoItem:First(exists)}
     {
         if ${CargoItem.Value.Name.Equal["Veldspar"]}
         {
-            ; Move to item hangar
-            CargoItem.Value:MoveTo[${Me.Station.ID}, MyItemHangar]
+            ; Move to personal station item hangar.
+            ; Canonical form: MoveTo[<ID#>, <Destination>] where Destination
+            ; is "Hangar" (personal item hangar — any positive int ID works).
+            CargoItem.Value:MoveTo[${MyShip.ID}, Hangar]
             wait 5  ; Small delay per item
         }
     }
