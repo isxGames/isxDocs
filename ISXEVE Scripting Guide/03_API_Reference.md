@@ -575,65 +575,59 @@ function LogDefenseStatus()
 
 ### Cargo and Inventory
 
-**⚠️ CRITICAL DEPRECATION WARNING (July 2020)**
-The following cargo/inventory methods were deprecated and may be removed:
-- `${MyShip.GetCargo}` - DEPRECATED
-- `${MyShip.Cargo[#]}` - DEPRECATED
-- `${MyShip.UsedOreHoldCapacity}` - DEPRECATED
-- `${MyShip.OreHoldCapacity}` - DEPRECATED
-- All `Get*HoldCargo` methods - DEPRECATED
+**Two supported paths for cargo access.** See the full rationale in [Ship-Cargo and Inventory-Window API Overview](#ship-cargo-and-inventory-window-api-overview) later in this chapter. Short version: `MyShip.Cargo[#]` / `MyShip:GetCargo[...]` / `MyShip.CargoCapacity` / `MyShip.UsedCargoCapacity` are **current** (not deprecated) per ISXEVE C++ source; specialized holds like ore hold must use the `EVEWindow[Inventory].ChildWindow[<HoldName>]` path because no ShipType-level ore-hold capacity scalars exist. See [06_Working_Examples.md](06_Working_Examples.md) for extended cargo/inventory patterns.
 
-**Modern Replacement**: Use `EVEWindow[Inventory].Child[name]` pattern (unified inventory system).
-See [06_Working_Examples.md](06_Working_Examples.md) for cargo and inventory examples.
-
-**Cargo Hold (Modern API)**:
+**Cargo Hold (two canonical forms)**:
 ```lavish
-; MODERN API: Access via inventory window (recommended)
-if ${EVEWindow[Inventory](exists)}
-{
-    echo "Cargo Used: ${EVEWindow[Inventory].Child[ShipCargo].UsedSpace}"
-    echo "Cargo Max: ${EVEWindow[Inventory].Child[ShipCargo].Capacity}"
-    echo "Cargo Free: ${EVEWindow[Inventory].Child[ShipCargo].FreeSpace}"
+; Canonical legacy ShipType scalars (current; used throughout this chapter).
+echo "Cargo Used: ${MyShip.UsedCargoCapacity}"
+echo "Cargo Max: ${MyShip.CargoCapacity}"
+echo "Cargo Free: ${Math.Calc[${MyShip.CargoCapacity} - ${MyShip.UsedCargoCapacity}]}"
 
-    ; Check if cargo full
-    if ${EVEWindow[Inventory].Child[ShipCargo].FreeSpace} < 100
-    {
-        echo "Cargo nearly full"
-    }
+; Check if cargo full
+if ${Math.Calc[${MyShip.CargoCapacity} - ${MyShip.UsedCargoCapacity}]} < 100
+{
+    echo "Cargo nearly full"
 }
 
-; LEGACY (may still work but deprecated):
-; echo "Cargo Used: ${MyShip.UsedCargoCapacity}"
-; echo "Cargo Max: ${MyShip.CargoCapacity}"
-; echo "Cargo Free: ${MyShip.FreeCargoCapacity}"
+; Equivalent modern inventory-window form (requires inventory window open).
+; Note: the member is .ChildWindow (not .Child), and the capacity members
+; are .Capacity / .UsedCapacity (not .FreeSpace / .UsedSpace, which do not
+; exist on EVEInvChildWindowType).
+if ${EVEWindow[Inventory](exists)}
+{
+    echo "Cargo Used: ${EVEWindow[Inventory].ChildWindow[ShipCargo].UsedCapacity}"
+    echo "Cargo Max: ${EVEWindow[Inventory].ChildWindow[ShipCargo].Capacity}"
+}
 
-; Access cargo items (MODERN METHOD - requires inventory window)
+; Access cargo items -- legacy ShipType form (concise, current):
 variable index:item CargoItems
-if ${EVEWindow[Inventory](exists)}
-{
-    EVEWindow[Inventory].Child[ShipCargo]:GetItems[CargoItems]
-    echo "Cargo has ${CargoItems.Used} item stacks"
+MyShip:GetCargo[CargoItems]
+echo "Cargo has ${CargoItems.Used} item stacks"
 
-    ; Iterate using iterator (modern pattern)
-    variable iterator CargoIterator
-    CargoItems:GetIterator[CargoIterator]
-    if ${CargoIterator:First(exists)}
+variable iterator CargoIterator
+CargoItems:GetIterator[CargoIterator]
+if ${CargoIterator:First(exists)}
+{
+    do
     {
-        do
-        {
-            echo "Item: ${CargoIterator.Value.Name} x${CargoIterator.Value.Quantity}"
-        }
-        while ${CargoIterator:Next(exists)}
+        echo "Item: ${CargoIterator.Value.Name} x${CargoIterator.Value.Quantity}"
     }
+    while ${CargoIterator:Next(exists)}
 }
+
+; Equivalent modern inventory-window form:
+; EVEWindow[Inventory].ChildWindow[ShipCargo]:GetItems[CargoItems]
 ```
 
-**Ore Hold (Modern API)**:
+**Ore Hold (modern inventory-window API only -- no ShipType scalars exist)**:
 ```lavish
-; Access ore hold via inventory window
+; There is no ${MyShip.OreHoldCapacity} / ${MyShip.UsedOreHoldCapacity} --
+; only ${MyShip.HasOreHold} (bool) exists at the ship level. Use
+; EVEWindow[Inventory].ChildWindow[ShipOreHold] for the actual values.
 if ${EVEWindow[Inventory](exists)}
 {
-    variable eveinvchildwindow OreHold = EVEWindow[Inventory].Child[ShipOreHold]
+    variable eveinvchildwindow OreHold = EVEWindow[Inventory].ChildWindow[ShipOreHold]
 
     if ${OreHold(exists)}
     {
@@ -646,15 +640,6 @@ if ${EVEWindow[Inventory](exists)}
         echo "Ore stacks: ${OreItems.Used}"
     }
 }
-```
-
-**Legacy API (Deprecated - Do Not Use in New Code)**:
-```lavish
-; DEPRECATED - Shown only for understanding old scripts
-; variable int itemCount = ${MyShip.GetCargo}
-; echo "Item ${i}: ${MyShip.Cargo[${i}].Name}"
-;
-; Replace with modern inventory window API (see above)
 ```
 
 **Common Pattern - Check Cargo Full (Modern API)**:
@@ -673,8 +658,8 @@ function IsCargoFull(int thresholdPercent)
         return FALSE  ; Cannot check without inventory
     }
 
-    variable float usedSpace = ${EVEWindow[Inventory].Child[ShipCargo].UsedSpace}
-    variable float capacity = ${EVEWindow[Inventory].Child[ShipCargo].Capacity}
+    variable float usedSpace = ${EVEWindow[Inventory].ChildWindow[ShipCargo].UsedCapacity}
+    variable float capacity = ${EVEWindow[Inventory].ChildWindow[ShipCargo].Capacity}
 
     if ${capacity} == 0
     {
@@ -1475,7 +1460,7 @@ if ${MyShip.ShieldPct} < 50
 variable int targets = ${Me.TargetCount}
 
 ; Cargo → use ${MyShip}
-if ${MyShip.FreeCargoCapacity} < 100
+if ${Math.Calc[${MyShip.CargoCapacity} - ${MyShip.UsedCargoCapacity}]} < 100
 
 ; Movement state → use ${MyShip.ToEntity}
 if ${MyShip.ToEntity.Mode} == 3
@@ -5991,7 +5976,7 @@ echo "Is Active: ${cargoItem.IsActive}"
 ```lavish
 echo "Cargo Used: ${MyShip.UsedCargoCapacity} m³"
 echo "Cargo Max: ${MyShip.CargoCapacity} m³"
-echo "Cargo Free: ${MyShip.FreeCargoCapacity} m³"
+echo "Cargo Free: ${Math.Calc[${MyShip.CargoCapacity} - ${MyShip.UsedCargoCapacity}]} m³"
 ```
 
 **Calculate cargo percent full**:
@@ -6105,7 +6090,7 @@ if ${IsCargoFull[90]}
 ```lavish
 function HasCargoSpace(float requiredSpace)
 {
-    return ${Math.Calc[${MyShip.FreeCargoCapacity} >= ${requiredSpace}]}
+    return ${Math.Calc[${Math.Calc[${MyShip.CargoCapacity} - ${MyShip.UsedCargoCapacity}]} >= ${requiredSpace}]}
 }
 
 ; Usage - Check if space for one more Veldspar cycle
@@ -6131,7 +6116,7 @@ function GetRemainingMiningCycles()
     variable float volumePerCycle = ${Math.Calc[${oreVolumePerUnit} * ${yieldPerCycle}]}
 
     ; Calculate cycles
-    variable float remainingCycles = ${Math.Calc[${MyShip.FreeCargoCapacity} / ${volumePerCycle}]}
+    variable float remainingCycles = ${Math.Calc[${Math.Calc[${MyShip.CargoCapacity} - ${MyShip.UsedCargoCapacity}]} / ${volumePerCycle}]}
 
     return ${Math.Calc[${remainingCycles}]}    ; Returns int
 }
@@ -6218,16 +6203,16 @@ echo "Opened corp hangar division 1"
 
 **Check ore hold capacity**:
 ```lavish
-echo "Ore Hold Used: ${MyShip.UsedOreHoldCapacity} m³"
-echo "Ore Hold Max: ${MyShip.OreHoldCapacity} m³"
-echo "Ore Hold Free: ${Math.Calc[${MyShip.OreHoldCapacity} - ${MyShip.UsedOreHoldCapacity}]} m³"
+echo "Ore Hold Used: ${EVEWindow[Inventory].ChildWindow[ShipOreHold].UsedCapacity} m³"
+echo "Ore Hold Max: ${EVEWindow[Inventory].ChildWindow[ShipOreHold].Capacity} m³"
+echo "Ore Hold Free: ${Math.Calc[${EVEWindow[Inventory].ChildWindow[ShipOreHold].Capacity} - ${EVEWindow[Inventory].ChildWindow[ShipOreHold].UsedCapacity}]} m³"
 ```
 
 **Check if ship has ore hold**:
 ```lavish
-if ${MyShip.OreHoldCapacity} > 0
+if ${EVEWindow[Inventory].ChildWindow[ShipOreHold].Capacity} > 0
 {
-    echo "Ship has ore hold (${MyShip.OreHoldCapacity} m³)"
+    echo "Ship has ore hold (${EVEWindow[Inventory].ChildWindow[ShipOreHold].Capacity} m³)"
 }
 else
 {
@@ -6239,13 +6224,13 @@ else
 ```lavish
 function IsOreHoldFull(int threshold)
 {
-    if ${MyShip.OreHoldCapacity} <= 0
+    if ${EVEWindow[Inventory].ChildWindow[ShipOreHold].Capacity} <= 0
     {
         ; No ore hold - use cargo instead
         return ${IsCargoFull[${threshold}]}
     }
 
-    variable float usedPercent = ${Math.Calc[${MyShip.UsedOreHoldCapacity} * 100.0 / ${MyShip.OreHoldCapacity}]}
+    variable float usedPercent = ${Math.Calc[${EVEWindow[Inventory].ChildWindow[ShipOreHold].UsedCapacity} * 100.0 / ${EVEWindow[Inventory].ChildWindow[ShipOreHold].Capacity}]}
 
     return ${Math.Calc[${usedPercent} >= ${threshold}]}
 }
@@ -6262,7 +6247,7 @@ echo "Fleet Hangar Capacity: ${MyShip.FleetHangarCapacity}"
 **Specialized bay detection**:
 ```lavish
 ; Check various bay capacities to determine ship type
-if ${MyShip.OreHoldCapacity} > 0
+if ${EVEWindow[Inventory].ChildWindow[ShipOreHold].Capacity} > 0
     echo "Mining ship"
 if ${MyShip.FleetHangarCapacity} > 0
     echo "Command ship (Orca/Rorqual)"
@@ -6406,9 +6391,9 @@ echo "Total Veldspar in cargo: ${totalVeldspar} units"
 function Evebot_CheckCargoFull()
 {
     ; Check ore hold if available
-    if ${MyShip.OreHoldCapacity} > 0
+    if ${EVEWindow[Inventory].ChildWindow[ShipOreHold].Capacity} > 0
     {
-        variable float oreHoldPercent = ${Math.Calc[${MyShip.UsedOreHoldCapacity} * 100.0 / ${MyShip.OreHoldCapacity}]}
+        variable float oreHoldPercent = ${Math.Calc[${EVEWindow[Inventory].ChildWindow[ShipOreHold].UsedCapacity} * 100.0 / ${EVEWindow[Inventory].ChildWindow[ShipOreHold].Capacity}]}
 
         if ${oreHoldPercent} >= 90
         {
@@ -6477,7 +6462,7 @@ function CanMineCycle()
     variable float cycleVolume = ${Math.Calc[${oreVolumePerUnit} * ${estimatedYield}]}
 
     ; Check if enough space
-    if ${MyShip.FreeCargoCapacity} < ${cycleVolume}
+    if ${Math.Calc[${MyShip.CargoCapacity} - ${MyShip.UsedCargoCapacity}]} < ${cycleVolume}
     {
         echo "Insufficient cargo space for mining cycle"
         return FALSE
@@ -6665,7 +6650,7 @@ for (i:Set[1]; ${i} <= ${itemCount}; i:Inc)
 ```lavish
 ; Account for small rounding errors
 variable float requiredSpace = 1000.5
-variable float freeSpace = ${MyShip.FreeCargoCapacity}
+variable float freeSpace = ${Math.Calc[${MyShip.CargoCapacity} - ${MyShip.UsedCargoCapacity}]}
 
 ; BAD
 if ${freeSpace} >= ${requiredSpace}
@@ -6682,13 +6667,13 @@ if ${freeSpace} >= ${Math.Calc[${requiredSpace} + 0.1]}
 ; MUST check which to use
 function GetFreeMiningSpace()
 {
-    if ${MyShip.OreHoldCapacity} > 0
+    if ${EVEWindow[Inventory].ChildWindow[ShipOreHold].Capacity} > 0
     {
-        return ${Math.Calc[${MyShip.OreHoldCapacity} - ${MyShip.UsedOreHoldCapacity}]}
+        return ${Math.Calc[${EVEWindow[Inventory].ChildWindow[ShipOreHold].Capacity} - ${EVEWindow[Inventory].ChildWindow[ShipOreHold].UsedCapacity}]}
     }
     else
     {
-        return ${MyShip.FreeCargoCapacity}
+        return ${Math.Calc[${MyShip.CargoCapacity} - ${MyShip.UsedCargoCapacity}]}
     }
 }
 ```
@@ -6728,8 +6713,8 @@ echo "Cargo: ${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity} m³"
 variable float percent = ${Math.Calc[${MyShip.UsedCargoCapacity} * 100.0 / ${MyShip.CargoCapacity}]}
 
 ; Ore hold (mining ships)
-if ${MyShip.OreHoldCapacity} > 0
-    echo "Ore Hold: ${MyShip.UsedOreHoldCapacity} / ${MyShip.OreHoldCapacity} m³"
+if ${EVEWindow[Inventory].ChildWindow[ShipOreHold].Capacity} > 0
+    echo "Ore Hold: ${EVEWindow[Inventory].ChildWindow[ShipOreHold].UsedCapacity} / ${EVEWindow[Inventory].ChildWindow[ShipOreHold].Capacity} m³"
 
 ; Iterate cargo
 variable int count = ${MyShip.GetCargo}
@@ -7623,7 +7608,7 @@ wait 20
 
 **⚠️ WARNING:** Old `MyShip.GetCargo` / `MyShip.Cargo[#]` are DEPRECATED (July 2020). Use modern `EVEWindow[Inventory]` API.
 
-The canonical modern cargo-iteration pattern (open inventory window → `EVEWindow[Inventory].Child[ShipCargo]:GetItems[index:item]` → iterator walk) is documented in the [MyShip Object](#myship-object) section at the top of this chapter, and summarized concisely in the [CRITICAL API CHANGE WARNING (July 2020)](#-critical-api-change-warning-july-2020-) migration section. See either for the complete pattern.
+The canonical modern cargo-iteration pattern (open inventory window → `EVEWindow[Inventory].ChildWindow[ShipCargo]:GetItems[index:item]` → iterator walk) is documented in the [MyShip Object](#myship-object) section at the top of this chapter, and summarized concisely in the [Ship-Cargo and Inventory-Window API Overview](#ship-cargo-and-inventory-window-api-overview) section. See either for the complete pattern.
 
 For hangar, ore hold, drone bay, and fleet hangar access, use the same pattern with the appropriate child name: `Child[ShipHangar]`, `Child[ShipOreHold]`, `Child[ShipDroneBay]`, `Child[ShipFleetHangar]`.
 
@@ -8029,7 +8014,7 @@ function ProcessCargoItems()
 
     ; MODERN API: Get cargo items via inventory window
     variable index:item CargoItems
-    EVEWindow[Inventory].Child[ShipCargo]:GetItems[CargoItems]
+    EVEWindow[Inventory].ChildWindow[ShipCargo]:GetItems[CargoItems]
 
     echo "Cargo has ${CargoItems.Used} items"
 
