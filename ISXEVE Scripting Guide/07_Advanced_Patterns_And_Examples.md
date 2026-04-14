@@ -3381,8 +3381,8 @@ atom OnFleetCommand(string command, string params)
 ```lavish
 atom OnRemoteBookmark(string bookmarkName)
 {
-    ; DANGER - arbitrary bookmark warp!
-    EVE.ExecuteCommand["/warp ${bookmarkName}"]
+    ; DANGER - remote peer controls the command string (command injection)
+    EVE:DoCommand["${bookmarkName}"]
 
     ; SAFER - validate bookmark exists and is safe
     if ${EVE.Bookmark[${bookmarkName}](exists)}

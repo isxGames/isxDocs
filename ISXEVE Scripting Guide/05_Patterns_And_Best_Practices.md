@@ -4634,7 +4634,7 @@ function TryUseDrones()
     ; Try to launch drones if bay has drones but none are deployed
     if ${MyShip.UsedDroneBayCapacity} > 0 && ${MyDrones.Used} == 0
     {
-        EVE:Execute[CmdDronesLaunch]
+        MyShip:LaunchAllDrones
 
         wait 30  ; Wait for drones
 
