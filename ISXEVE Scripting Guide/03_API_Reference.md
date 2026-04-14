@@ -3156,7 +3156,7 @@ EVE:GetEntities[npcs, IsNPC = TRUE && Distance < 100000]
 EVE:GetEntities[targets, IsLockedTarget = TRUE]
 
 ; Stargates
-EVE:GetEntities[gates, CategoryID = 6]
+EVE:GetEntities[gates, GroupID = 10]
 ```
 
 ### Most Common Entity Members
@@ -3782,9 +3782,9 @@ EVE:Execute[CmdStopShip]
 
 **Find and jump gate**:
 ```lavish
-; Find stargate (CategoryID = 6)
+; Find stargate (GroupID = 10; CategoryID 6 is Ship, not Stargate)
 variable index:entity gates
-EVE:GetEntities[gates, CategoryID = 6]
+EVE:GetEntities[gates, GroupID = 10]
 
 if ${gates.Used} == 0
 {
@@ -3843,9 +3843,9 @@ function WaitForJumpComplete(int timeoutSeconds)
 ```lavish
 function JumpToNextSystem()
 {
-    ; Find gate
+    ; Find gate (GroupID = 10)
     variable index:entity gates
-    EVE:GetEntities[gates, CategoryID = 6]
+    EVE:GetEntities[gates, GroupID = 10]
 
     if ${gates.Used} == 0
     {
@@ -4078,7 +4078,7 @@ function SafeUndock()
 
     ; Immediately align away from station (avoid bump)
     variable index:entity gates
-    EVE:GetEntities[gates, CategoryID = 6]
+    EVE:GetEntities[gates, GroupID = 10]
 
     if ${gates.Used} > 0
     {
@@ -7069,7 +7069,7 @@ EVE:Execute[CmdUndock]
 
 **Jump Through Stargate**:
 ```lavish
-variable int64 gateID = ${Entity[CategoryID = 6](exists),ID}    ; Category 6 = stargates
+variable int64 gateID = ${Entity[GroupID = 10](exists),ID}    ; GroupID 10 = stargates (CategoryID 6 is Ship)
 EVE:Execute[CmdJumpThroughStargate, ${gateID}]
 ```
 
@@ -9470,7 +9470,7 @@ Cross-chapter lookup tables for common numeric IDs and enumeration values used t
 | 27 | Battleship | Battleship-class ship |
 | 28 | Industrial | Industrial ship |
 | 186 | Wreck | Ship wreck |
-| 365 | Station | NPC station |
+| 15 | Station | NPC station |
 | 463 | Mining Barge | Mining barge |
 | 941 | Mobile Warp Disruptor | Warp bubble |
 | 1246 | Mobile Tractor Unit | MTU |
