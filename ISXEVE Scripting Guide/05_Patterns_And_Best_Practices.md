@@ -1926,7 +1926,7 @@ function ActivateMiners()
         {
             if ${m.Value.ToItem.Group.Equal["Mining Laser"]}
             {
-                if !${m.Value.IsActive} && !${m.Value.IsOnline}
+                if !${m.Value.IsActive} && ${m.Value.IsOnline}
                 {
                     echo "Activating ${m.Value.ToItem.Name}"
                     m.Value:Activate[${CurrentAsteroid}]
