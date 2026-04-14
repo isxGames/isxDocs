@@ -2040,30 +2040,18 @@ EVE:GetEntities[cruisers, GroupID = 26]
 ; Process or combine as needed
 ```
 
-### Negation Workaround
+### Negation (`!=`)
 
-**Query syntax does NOT support NOT (!=)**:
+The query parser **does** support `!=` as a negation / inequality operator. It can be chained with `&&` and `||` like any other comparison. Example — all ships except frigates, within range:
 
 ```lavish
-; CANNOT do: GroupID != 25
-
-; Workaround: Query all, filter manually
-variable index:entity entities
-EVE:GetEntities[entities, CategoryID = 11]    ; All ships
-
 variable index:entity notFrigates
-variable int i
+EVE:GetEntities[notFrigates, "CategoryID = 11 && GroupID != 25 && Distance < 100000"]
 
-for (i:Set[1]; ${i} <= ${entities.Used}; i:Inc)
-{
-    variable entity ent = ${entities.Get[${i}]}
-
-    if ${ent.GroupID} != 25    ; Manual filter
-    {
-        notFrigates:Insert[${ent}]
-    }
-}
+echo "Non-frigate ships in range: ${notFrigates.Used}"
 ```
+
+Production scripts use this pattern extensively — e.g., EVEBot-old's `obj_IRC.iss` and `obj_Targets.iss` chain `!=` predicates in their query strings. Prefer in-query `!=` over post-filter loops when you can express the exclusion directly.
 
 ---
 
