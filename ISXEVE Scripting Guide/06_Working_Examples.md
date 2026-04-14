@@ -190,7 +190,7 @@ function LockTarget(int64 EntityID)
     }
 
     ; Check range
-    if ${Entity[${EntityID}].Distance} > ${Me.TargetingRange}
+    if ${Entity[${EntityID}].Distance} > ${MyShip.MaxTargetRange}
     {
         echo "ERROR: Out of targeting range"
         return FALSE
