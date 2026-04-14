@@ -920,29 +920,41 @@ echo "Group: ${EVE.ItemInfo[${typeID}].Group} / Volume: ${EVE.ItemInfo[${typeID}
 
 ### Overview
 
-**${Local}** represents the local chat channel:
+**${Local}** is a Top-Level Object that resolves directly to a `pilot` object. It takes either a numeric CharID or a pilot name as its single argument (verified against ISXEVE C++ source TopLevelObjects.cpp TLO_Local lines 468-485). There are no `.PilotCount`, `.Pilot[...]`, or other sub-members on Local -- every indexing form returns a pilot directly.
 
 ```lavish
-; Number of pilots in local
-echo "Pilots in local: ${Local.PilotCount}"
-
-; Check if specific pilot in local
-if ${Local.Pilot["EnemyName"](exists)}
+; Check if a specific pilot is in local. Local["Name"] returns a pilot
+; object; the (exists) guard tells you whether that pilot is present.
+if ${Local["EnemyName"](exists)}
 {
     echo "WARNING: Enemy in local!"
 }
 
-; Iterate all pilots
-variable int i
-for (i:Set[1]; ${i} <= ${Local.PilotCount}; i:Inc)
+; Also works with a CharID:
+if ${Local[${enemyCharID}](exists)}
 {
-    echo "Pilot ${i}: ${Local.Pilot[${i}].Name}"
+    echo "Enemy present by CharID"
+}
+
+; To enumerate ALL pilots in local, use the EVE:GetLocalPilots method
+; (DataTypes.h EVEType GetLocalPilots registered at line 3571/3626)
+; which populates an index:pilot. There is no ${Local.PilotCount} and
+; no ${Local.Pilot[${i}]} numeric-index accessor.
+variable index:pilot Pilots
+EVE:GetLocalPilots[Pilots]
+
+echo "Pilots in local: ${Pilots.Used}"
+
+variable int i
+for (i:Set[1]; ${i} <= ${Pilots.Used}; i:Inc)
+{
+    echo "Pilot ${i}: ${Pilots.Get[${i}].Name}"
 }
 ```
 
 **Common Pattern - Enemy Detection**:
 
-The hostile-pilot detection pattern (global `HOSTILE_PILOTS` array + iterator check via `${Local.Pilot["name"](exists)}`) is documented canonically in the Fleet chapter under [Local Chat and Pilot Monitoring](#local-chat-and-pilot-monitoring). See that section for the complete `CheckForHostilesInLocal` implementation.
+The hostile-pilot detection pattern (global `HOSTILE_PILOTS` array + presence check via `${Local["name"](exists)}`) is documented canonically in the Fleet chapter under [Local Chat and Pilot Monitoring](#local-chat-and-pilot-monitoring). See that section for the complete `CheckForHostilesInLocal` implementation.
 
 ---
 
@@ -1531,7 +1543,7 @@ if ${targetCount} > 0
 **Slower** (computed):
 - `Me:GetTargets[index]` - Iterates target list (use `${Me.TargetCount}` for just the count)
 - ${MyShip.GetCargo} - Iterates cargo
-- ${Local.PilotCount} - Iterates local pilots
+- `EVE:GetLocalPilots[idx]` / `${idx.Used}` - Iterates local pilots (Local TLO does not expose a PilotCount member; you must populate an index:pilot to get the count)
 
 **Rule**: For computed queries, cache the result if used multiple times.
 
@@ -8734,10 +8746,12 @@ if ${ship.AllianceID} == ${Me.AllianceID} && ${Me.AllianceID} > 0
 
 ### Local Chat Object
 
-**${Local}** = Local chat channel (all pilots in system).
+**${Local}** = Top-Level Object that resolves to a `pilot` when given a pilot name or CharID. It has no sub-members like `.PilotCount` or `.Pilot[...]` -- to enumerate all pilots in local, use `EVE:GetLocalPilots[<index:pilot>]` which populates an index.
 
 ```lavish
-echo "Pilots in local: ${Local.PilotCount}"
+variable index:pilot Pilots
+EVE:GetLocalPilots[Pilots]
+echo "Pilots in local: ${Pilots.Used}"
 ```
 
 ### Iterating Local Pilots
@@ -8745,12 +8759,15 @@ echo "Pilots in local: ${Local.PilotCount}"
 ```lavish
 function ListLocalPilots()
 {
-    echo "Pilots in local (${Local.PilotCount}):"
+    variable index:pilot Pilots
+    EVE:GetLocalPilots[Pilots]
+
+    echo "Pilots in local (${Pilots.Used}):"
 
     variable int i
-    for (i:Set[1]; ${i} <= ${Local.PilotCount}; i:Inc)
+    for (i:Set[1]; ${i} <= ${Pilots.Used}; i:Inc)
     {
-        variable pilot localPilot = ${Local.Pilot[${i}]}
+        variable pilot localPilot = ${Pilots.Get[${i}]}
 
         if ${localPilot(exists)}
         {
@@ -8765,7 +8782,10 @@ function ListLocalPilots()
 ```lavish
 function IsPilotInLocal(string pilotName)
 {
-    variable pilot p = ${Local.Pilot["${pilotName}"]}
+    ; Local["name"] returns a pilot object directly (see TLO_Local at
+    ; TopLevelObjects.cpp line 468-485). The (exists) guard tells you
+    ; whether that pilot is present in local.
+    variable pilot p = ${Local["${pilotName}"]}
     return ${p(exists)}
 }
 
@@ -9449,8 +9469,8 @@ for (i:Set[1]; ${i} <= ${FleetMembers.Used}; i:Inc)
     echo "${m.Name}"
 }
 
-; Check if pilot in local
-if ${Local.Pilot["Enemy"](exists)}
+; Check if pilot in local (Local["name"] returns a pilot directly)
+if ${Local["Enemy"](exists)}
     echo "Enemy in local!"
 ```
 
