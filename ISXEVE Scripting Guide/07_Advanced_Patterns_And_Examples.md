@@ -3923,7 +3923,7 @@ objectdef obj_MiningFleet
         ; Approach Orca
         if ${Entity[${orcaID}].Distance} > 2500
         {
-            Entity[${orcaID}]:KeepAtRange[2500]
+            Entity[${orcaID}]:Approach[2500]
             wait 50 ${Entity[${orcaID}].Distance} <= 2500
         }
 
