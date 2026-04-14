@@ -5951,17 +5951,29 @@ echo "Total Volume: ${Math.Calc[${cargoItem.Quantity} * ${cargoItem.Volume}]}"
 
 **Location**:
 ```lavish
-echo "Location ID: ${cargoItem.LocationID}"    ; Where item is located
-echo "Container ID: ${cargoItem.ContainerID}"  ; Container holding item
+; ItemType has LocationID (real, DataTypes.h ItemType line 935/999)
+; which returns the item ID of the container holding this item
+; (e.g., the ship ID for cargo, the station ID for hangar, the
+; parent module ID for loaded charges). There is no .ContainerID
+; member -- LocationID IS the container reference.
+echo "Location ID: ${cargoItem.LocationID}"
 ```
 
-**Modules** (if item is a module):
+**Fitted-slot info** (when the item is a fitted module):
 ```lavish
-; If item is fitted module, has additional module members
-; See 06_Working_Examples.md for module examples
-
+; ItemType.Slot / ItemType.SlotID are real members (DataTypes.h
+; ItemType lines 938-939 / 1002-1003). They return the slot-flag
+; string (e.g., "HiSlot0") and numeric slot-flag ID for fitted
+; modules. For un-fitted cargo items these may be empty/zero.
 echo "Slot: ${cargoItem.Slot}"
-echo "Is Active: ${cargoItem.IsActive}"
+echo "Slot ID: ${cargoItem.SlotID}"
+
+; NOTE: ${cargoItem.IsActive} does NOT exist on ItemType -- IsActive
+; is a ModuleType member (DataTypes.h ModuleType line 1219). To check
+; activation state, fetch the fitted module via the slot flag:
+; variable module m = ${MyShip.Module[${cargoItem.Slot}]}
+; if ${m(exists)} && ${m.IsActive} ...
+; See 06_Working_Examples.md for full module examples.
 ```
 
 ### Inventory Flags
