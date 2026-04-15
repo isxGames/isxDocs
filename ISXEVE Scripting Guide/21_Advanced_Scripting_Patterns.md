@@ -62,7 +62,7 @@ variable(global) int WARP_TIMEOUT = 1200     ; 2 minutes
 ;==============================================================================
 variable(global) bool ScriptRunning = TRUE
 variable(global) string CurrentState = "${STATE_IDLE}"
-variable(global) settingsetref Config
+variable(global) settingsetref ConfigRef
 
 ; Session identification
 variable(global) bool IsMaster = FALSE
@@ -113,24 +113,32 @@ function Initialize()
 ;==============================================================================
 function LoadConfig()
 {
-    Config:Set[${SCRIPT_NAME}.Config, XML]
+    ; Create (or attach to) the root settings set by name
+    LavishSettings:AddSet[${SCRIPT_NAME}.Config]
+    ConfigRef:Set[${LavishSettings[${SCRIPT_NAME}.Config]}]
 
-    if !${Config:Load["Scripts/${SCRIPT_NAME}/config.xml"]}
+    ; Import existing XML if present; seed defaults otherwise and write it out
+    variable string ConfigFile = "Scripts/${SCRIPT_NAME}/config.xml"
+    if ${ConfigFile.FileExists}
+    {
+        LavishSettings[${SCRIPT_NAME}.Config]:Import["${ConfigFile}"]
+    }
+    else
     {
         echo "No config found, creating defaults"
         call CreateDefaultConfig
-        Config:Save["Scripts/${SCRIPT_NAME}/config.xml"]
+        LavishSettings[${SCRIPT_NAME}.Config]:Export["${ConfigFile}"]
     }
 
-    ; Load master session
-    MasterSession:Set["${Config.Get[MasterSession]}"]
+    ; Read a value via FindSetting (the second arg is the default if the key is absent)
+    MasterSession:Set["${LavishSettings[${SCRIPT_NAME}.Config].FindSetting[MasterSession, "is1"]}"]
 }
 
 function CreateDefaultConfig()
 {
-    Config:Add[MasterSession, "is1"]
-    Config:Add[MaxTargets, 5]
-    Config:Add[OrbitDistance, 15000]
+    LavishSettings[${SCRIPT_NAME}.Config]:AddSetting[MasterSession, "is1"]
+    LavishSettings[${SCRIPT_NAME}.Config]:AddSetting[MaxTargets, 5]
+    LavishSettings[${SCRIPT_NAME}.Config]:AddSetting[OrbitDistance, 15000]
 }
 
 ;==============================================================================
@@ -1101,12 +1109,29 @@ atom(script) EmergencyStop()
 ```lavishscript
 variable(globalkeep) settingsetref BotConfig
 
-BotConfig:Set[MyBot.Config, XML]
-if !${BotConfig:Load["Scripts/MyBot/config.xml"]}
+; Create (or re-attach to) the named root set; LavishSettings persists across scripts
+LavishSettings:AddSet[MyBot.Config]
+BotConfig:Set[${LavishSettings[MyBot.Config]}]
+
+variable string ConfigFile = "Scripts/MyBot/config.xml"
+if ${ConfigFile.FileExists}
 {
-    ; Create defaults — BotConfig:Add[Key, Value], BotConfig:AddSet[Section]
-    BotConfig:Save["Scripts/MyBot/config.xml"]
+    ; Load existing config
+    LavishSettings[MyBot.Config]:Import["${ConfigFile}"]
 }
+else
+{
+    ; Seed defaults with AddSetting[Key, Value]; nested sections use AddSet[Name]
+    LavishSettings[MyBot.Config]:AddSetting[MasterSession, "is1"]
+    LavishSettings[MyBot.Config]:AddSetting[MaxTargets, 5]
+    LavishSettings[MyBot.Config]:AddSet[Combat]
+    LavishSettings[MyBot.Config].FindSet[Combat]:AddSetting[OrbitDistance, 15000]
+    LavishSettings[MyBot.Config]:Export["${ConfigFile}"]
+}
+
+; Read values via FindSetting (second arg = default when the key is absent)
+variable string Master = "${LavishSettings[MyBot.Config].FindSetting[MasterSession, "is1"]}"
+variable int MaxTgt   = ${LavishSettings[MyBot.Config].FindSetting[MaxTargets, 5]}
 ```
 
 For the full config architecture -- sub-configuration objects, derived classes, the `Setting()` / `Define_ConfigItem()` macros, config migration, and validation best practices -- see the [EVEBot Configuration Architecture](07_Advanced_Patterns_And_Examples.md#evebot-configuration-architecture) and [Tehbot Configuration Architecture](07_Advanced_Patterns_And_Examples.md#tehbot-configuration-architecture) chapters in 07_Advanced_Patterns_And_Examples.md.
