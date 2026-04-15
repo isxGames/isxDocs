@@ -668,7 +668,7 @@ function main()
         elseif ${CapPct} < 50
             echo "CAUTION: Capacitor at ${CapPct.Int}%"
 
-        wait 2000
+        wait 20
     }
 }
 ```
