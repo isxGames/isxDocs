@@ -1856,6 +1856,19 @@ Based on EVEBot `obj_Hauler.iss`:
 // DROPOFF     - Cargo full, returning to station
 ```
 
+> **Framework dependency — `Navigator`, `Config`, `Cargo`, `Station`, `Safespots`, `Social`:** The hauler object below (and the station-hauler examples later in this chapter) uses helper objects from the EVEBot/Tehbot frameworks — notably `Navigator:FlyToBookmark`, `Navigator:FlyToEntityID`, `Navigator:Clear`, and `${Navigator.Busy}`. **These are NOT ISXEVE built-ins.** If you copy this code into a standalone script without those frameworks loaded, you will get undefined-object errors.
+>
+> **Built-in equivalents for `Navigator`:**
+>
+> | EVEBot / Tehbot call | Pure-ISXEVE equivalent |
+> |---|---|
+> | `Navigator:FlyToBookmark["Label", 0, TRUE]` | `EVE.Bookmark["Label"]:WarpTo[0]` then `wait until ${Me.ToEntity.Mode} != 3` (Mode 3 = Warping) |
+> | `Navigator:FlyToEntityID[id, 0]` | `Entity[${id}]:WarpTo[0]` then `wait until ${Me.ToEntity.Mode} != 3` |
+> | `${Navigator.Busy}` | `${Me.ToEntity.Mode} == 3` (true while warping), or a script-maintained state flag for multi-step travel |
+> | `Navigator:Clear` | No direct equivalent — EVEBot-specific (clears the Navigator's internal destination queue). For standalone scripts, just stop calling `:WarpTo` and let the existing warp complete or use `EVE:Execute[CmdStopShip]` to abort. |
+>
+> For multi-jump travel (across systems), the built-ins do not chain automatically — you must loop: add waypoint, warp to gate, jump, repeat. See the waypoint APIs earlier in this chapter.
+
 ### Simple Hauler Object
 
 ```lavish
@@ -2684,6 +2697,8 @@ method ReportCargoLevel()
 
 Based on EVEBot `obj_StealthHauler.iss`:
 
+> **Framework dependency:** This example uses EVEBot helpers (`Station.Docked`, `Station.Undock`, `Ship.HasCovOpsCloak`, `Ship.Activate_Cloak`, `Ship.Activate_AfterBurner`, `Navigator:FlyToEntityID`). `Navigator` is NOT an ISXEVE built-in — see the framework-dependency callout in [Basic Hauler State Machine](#basic-hauler-state-machine) earlier in this chapter for pure-ISXEVE equivalents (e.g., `Entity[${id}]:WarpTo[0]` + `wait until ${Me.ToEntity.Mode} != 3` in place of `Navigator:FlyToEntityID` / `${Navigator.Busy}`).
+
 ```lavish
 objectdef obj_StealthHauler
 {
@@ -3160,6 +3175,8 @@ call This.CalculateOptimalLoad "Veldspar"
 
 ### Example 1: Simple Station-to-Station Hauler
 
+> **Framework dependency:** This example uses EVEBot/Tehbot helpers including `Navigator:FlyToBookmark` / `${Navigator.Busy}`, `Station.DockAtStation`, `Cargo.TransferCargoToStationHangar`, `Station.Undock`, and `Safespots.WarpTo`. `Navigator` is NOT an ISXEVE built-in. To run this as a standalone script, substitute the built-in equivalents from the callout in [Basic Hauler State Machine](#basic-hauler-state-machine) earlier in this chapter (chiefly: `EVE.Bookmark["Label"]:WarpTo[0]` + `wait until ${Me.ToEntity.Mode} != 3` in place of `Navigator:FlyToBookmark` / `${Navigator.Busy}`).
+
 ```lavish
 objectdef obj_SimpleStationHauler
 {
@@ -3382,24 +3399,34 @@ These adaptations layer cleanly onto the `obj_SimpleStationHauler` skeleton — 
 
 ## Common Problems
 
-### Problem 1: Navigator Gets Stuck
+### Problem 1: Warp Wait Gets Stuck
 
-**Symptom**: Bot warps to location but Navigator.Busy never becomes false
+**Symptom**: Bot initiates warp but the wait loop never exits — ship never reaches destination, or `${Me.ToEntity.Mode}` never leaves Warping (3).
 
-**Diagnosis**:
+**Diagnosis** (pure ISXEVE — no framework required):
 ```lavish
-echo "Navigator.Busy: ${Navigator.Busy}"
-echo "Navigator.DestinationID: ${Navigator.DestinationID}"
-echo "Navigator.DestinationType: ${Navigator.DestinationType}"
+echo "Ship Mode: ${Me.ToEntity.Mode}  (0=Idle, 1=Approaching, 3=Warping, 4=Orbiting)"
+echo "Velocity: ${Me.ToEntity.Velocity}"
+echo "In warp: ${Me.ToEntity.Mode} == 3"
+echo "Warp scrambled: ${Me.ToEntity.IsWarpScrambled}"
 ```
 
-**Solution**:
+**Solution** — always add a timeout to warp-wait loops:
 ```lavish
-// Add timeout to navigation waits
-Navigator:FlyToBookmark["MyBookmark", 0, TRUE]
+; Initiate warp using built-in bookmark API
+EVE.Bookmark["MyBookmark"]:WarpTo[0]
 
+; Wait for warp to START (Mode becomes 3), with short timeout
 variable int timeout = 0
-while ${Navigator.Busy} && ${timeout} < 600
+while ${Me.ToEntity.Mode} != 3 && ${timeout} < 100
+{
+    wait 5
+    timeout:Inc[5]
+}
+
+; Wait for warp to END (Mode leaves 3), with long timeout
+timeout:Set[0]
+while ${Me.ToEntity.Mode} == 3 && ${timeout} < 600
 {
     wait 10
     timeout:Inc[10]
@@ -3407,10 +3434,12 @@ while ${Navigator.Busy} && ${timeout} < 600
 
 if ${timeout} >= 600
 {
-    echo "Navigation timeout - clearing Navigator"
-    Navigator:Clear
+    echo "Warp timeout - aborting"
+    EVE:Execute[CmdStopShip]
 }
 ```
+
+**Note (EVEBot/Tehbot users):** If you are inside the EVEBot/Tehbot frameworks, substitute `${Navigator.Busy}` for the Mode check and `Navigator:Clear` for `CmdStopShip`. `Navigator` is not a built-in ISXEVE object — see the framework-dependency callout earlier in this chapter.
 
 ### Problem 2: Cargo Transfer Fails
 
