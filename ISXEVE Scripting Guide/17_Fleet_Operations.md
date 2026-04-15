@@ -349,51 +349,6 @@ function WarpFleetTo(string locationName, int distance)
 }
 ```
 
-### Fleet Broadcast Monitoring
-
-```lavish
-// Watch for fleet broadcasts
-atom OnFleetBroadcast(string broadcastType, int64 broadcasterID)
-{
-    echo "Fleet broadcast: ${broadcastType} from ${broadcasterID}"
-
-    switch ${broadcastType}
-    {
-        case "NeedShieldRepair"
-            echo "Shield repair needed on ${Entity[${broadcasterID}].Name}"
-            call This.RepShields ${broadcasterID}
-            break
-
-        case "NeedArmorRepair"
-            echo "Armor repair needed on ${Entity[${broadcasterID}].Name}"
-            call This.RepArmor ${broadcasterID}
-            break
-
-        case "NeedCapacitor"
-            echo "Capacitor needed on ${Entity[${broadcasterID}].Name}"
-            call This.TransferCap ${broadcasterID}
-            break
-
-        case "InPosition"
-            echo "${Entity[${broadcasterID}].Name} reports in position"
-            break
-
-        case "HoldPosition"
-            echo "Fleet broadcast: Hold position"
-            EVE:Execute[CmdStopShip]
-            break
-
-        case "WarpTo"
-            echo "Fleet broadcast: Warp to target"
-            // Handled by FleetWarpTo
-            break
-    }
-}
-
-// Register fleet broadcast handler
-Event[EVE_OnFleetBroadcast]:AttachAtom[This:OnFleetBroadcast]
-```
-
 ---
 
 ## Character Coordination Patterns
