@@ -1774,7 +1774,7 @@ echo "Distance to other: ${ent.DistanceTo[${otherID}]}m"
 **State**:
 ```lavish
 echo "Velocity: ${ent.Velocity} m/s"
-echo "Mode: ${ent.Mode}"    ; 0=stopped, 1=moving, 3=warping, etc.
+echo "Mode: ${ent.Mode}"    ; see canonical Movement Modes table in Quick Reference Tables
 echo "Owner ID: ${ent.OwnerID}"
 echo "Corp ID: ${ent.CorpID}"
 echo "Alliance ID: ${ent.AllianceID}"
