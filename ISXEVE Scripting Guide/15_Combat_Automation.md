@@ -15,17 +15,18 @@
 6. [Movement in Combat](#movement-in-combat)
 7. [Tank Management](#tank-management)
 8. [Drone Combat](#drone-combat)
-9. [Advanced Combat Computer](#advanced-combat-computer)
-10. [Module Control Layer (Production Patterns)](#module-control-layer-production-patterns)
+9. [Panic State Machine (Emergency Patterns)](#panic-state-machine-emergency-patterns)
+10. [Advanced Combat Computer](#advanced-combat-computer)
+11. [Module Control Layer (Production Patterns)](#module-control-layer-production-patterns)
     - [Self-Maintaining Locked-Target Lists (`obj_TargetList`)](#self-maintaining-locked-target-lists-obj_targetlist)
     - [Per-Module Instruction Queue (`obj_Module`)](#per-module-instruction-queue-obj_module)
     - [Group Control over Module Wrappers (`obj_ModuleList`)](#group-control-over-module-wrappers-obj_modulelist)
     - [Declarative Module Registration (`AddModuleList`)](#declarative-module-registration-addmodulelist)
     - [Module Overload by Module HP](#module-overload-by-module-hp)
     - [Static Module Classification on Init (EVEBot Stable)](#static-module-classification-on-init-evebot-stable)
-11. [Complete Working Examples](#complete-working-examples)
-12. [Combat Patterns by Ship Type](#combat-patterns-by-ship-type)
-13. [Common Combat Problems](#common-combat-problems)
+12. [Complete Working Examples](#complete-working-examples)
+13. [Combat Patterns by Ship Type](#combat-patterns-by-ship-type)
+14. [Common Combat Problems](#common-combat-problems)
 
 **See also:** For architectural analysis of Tehbot's StateQueue and MiniMode system, see [18_Bot_Architecture_Analysis.md](18_Bot_Architecture_Analysis.md#tehbot-combat-analysis).
 
@@ -1128,6 +1129,178 @@ function RecallDrones()
     }
 }
 ```
+
+---
+
+## Panic State Machine (Emergency Patterns)
+
+**Reference implementation:** see `EVEBot/Branches/Stable/Behaviors/obj_Miner.iss` and `core/obj_Social.iss`.
+
+A combat bot needs more than one "stop" button. Production bots layer three distinct emergency tiers, each with its own trigger conditions and exit criteria. Conflating them -- e.g. always hard-stopping on any threat -- turns every fleet warp into a 20-minute recovery ordeal. Conversely, trying to finish the current activity when a Dreadnought lands in the belt is how you lose a ship.
+
+### The Three Tiers
+
+| Tier | Intent | Trigger Examples | Recovery |
+|---|---|---|---|
+| **SOFTSTOP** | Finish current activity cleanly, then stop. | Planned break timer; user-configured quota reached; lag above threshold. | Automatic once activity completes; user resumes manually. |
+| **FLEE** | Abandon activity, warp to panic bookmark, idle. | Low-standings pilot in system; NPC Dreadnought / Titan / Invasion NPC visible; unsafe local. | Automatic once threat clears (e.g. pilot leaves local). |
+| **HARDSTOP** | Immediate emergency: dock / log out / panic measures. No self-recovery. | Hostiles on grid; ship destroyed, now in pod; critical config error; user pressed break button. | **User intervention required.** |
+
+The key discipline is that tier escalation is one-way during a single threat episode -- if you enter HARDSTOP, `FLEE` conditions that subsequently clear do not pull you back down to `SOFTSTOP`; the user must manually resume.
+
+### Trigger Pattern
+
+The simple form looks like this (derived from the EVEBot Miner behavior):
+
+```lavishscript
+; Checked every combat pulse, early in the state machine.
+method EvaluatePanicState()
+{
+    ; --- HARDSTOP: immediate, non-recoverable ---
+    if ${This.PossibleHostiles}
+    {
+        This.CurrentState:Set["HARDSTOP"]
+        Logger:Log["HARD STOP: Possible hostiles, notifying fleet"]
+        relay all -event MyBot_HARDSTOP "${Me.Name} (Hostiles)"
+        This.ReturnToStation:Set[TRUE]
+        return
+    }
+
+    if ${MyShip.ToEntity.GroupID} == 29  ; Capsule (pod)
+    {
+        This.CurrentState:Set["HARDSTOP"]
+        Logger:Log["HARD STOP: Ship lost, I am in a pod"]
+        relay all -event MyBot_HARDSTOP "${Me.Name} (InPod)"
+        This.ReturnToStation:Set[TRUE]
+        return
+    }
+
+    ; If HARDSTOP already latched, only transition out when in station or at panic BM.
+    if ${This.ReturnToStation}
+    {
+        if ${Me.InStation} || ${This.AtPanicBookmark}
+        {
+            This.CurrentState:Set["IDLE"]
+            return
+        }
+        This.CurrentState:Set["HARDSTOP"]
+        return
+    }
+
+    ; --- FLEE: abandon activity, warp to panic bookmark ---
+    if !${This.LocalSafe}
+    {
+        if ${This.AtPanicBookmark}
+        {
+            This.CurrentState:Set["IDLE"]
+            return
+        }
+        This.CurrentState:Set["FLEE"]
+        Logger:Log["FLEE: Local unsafe, warping to panic bookmark"]
+        return
+    }
+
+    ; Big NPCs on grid
+    if ${Entity["GroupID = GROUP_DREADNOUGHT && CategoryID = CATEGORYID_ENTITY"](exists)} || \
+       ${Entity["GroupID = GROUP_TITAN && CategoryID = CATEGORYID_ENTITY"](exists)}
+    {
+        This.CurrentState:Set["FLEE"]
+        Logger:Log["FLEE: Dreadnought/Titan detected"]
+        return
+    }
+
+    ; --- SOFTSTOP: planned / quota-based, no escalation needed ---
+    if ${This.QuotaReached} || ${This.BreakTimerElapsed}
+    {
+        This.CurrentState:Set["SOFTSTOP"]
+        return
+    }
+
+    ; Normal operation
+    This.CurrentState:Set["HUNTING"]
+}
+```
+
+Note the ordering: HARDSTOP checks come first because they are non-recoverable, then the HARDSTOP latch guard, then FLEE, then SOFTSTOP. A single pulse can only transition in one direction along this severity axis.
+
+### The Panic Bookmark
+
+Both FLEE and HARDSTOP reference a **panic bookmark** -- a pre-configured safe bookmark the bot warps to and idles at until further instruction. Structurally it is just a string stored in the bot's config (`Config.Miner.PanicLocation` in EVEBot); the bot reads it at panic time and dispatches through its normal navigation layer:
+
+```lavishscript
+; Called from FLEE / HARDSTOP states
+method WarpToPanicBookmark()
+{
+    variable string bmName = ${Config.PanicLocation}
+    if !${EVE.Bookmark[${bmName}](exists)}
+    {
+        Logger:Log["CRITICAL: No panic bookmark configured!"]
+        return
+    }
+
+    ; Same-system: warp to it (or dock if it's a station bookmark)
+    if ${EVE.Bookmark[${bmName}].SolarSystemID} == ${Me.SolarSystemID}
+    {
+        if ${EVE.Bookmark[${bmName}].TypeID} == 5   ; station bookmark
+        {
+            call Station.DockAtStation ${EVE.Bookmark[${bmName}].ItemID}
+        }
+        else
+        {
+            EVE.Bookmark[${bmName}]:WarpTo[0]
+        }
+        return
+    }
+
+    ; Cross-system: autopilot to the bookmark's system first
+    call Ship.TravelToSystem ${EVE.Bookmark[${bmName}].SolarSystemID}
+}
+
+member:bool AtPanicBookmark()
+{
+    variable string bmName = ${Config.PanicLocation}
+    if !${EVE.Bookmark[${bmName}](exists)}
+        return FALSE
+    ; Distance threshold -- within 5 km of the bookmark counts as "there"
+    return ${Math.Distance[${Me.ToEntity.X}, ${Me.ToEntity.Y}, ${Me.ToEntity.Z}, ${EVE.Bookmark[${bmName}].X}, ${EVE.Bookmark[${bmName}].Y}, ${EVE.Bookmark[${bmName}].Z}]} < 5000
+}
+```
+
+Two conventions from EVEBot worth adopting:
+
+- **Bookmark name is user-configurable**, not a hardcoded label. Different ships operate in different regions and need different safes.
+- **Station bookmarks dock; celestial bookmarks just warp.** EVE bookmark `TypeID = 5` identifies station types; warping to a station bookmark and stopping at 0 km does not auto-dock.
+
+### Fleet-Wide HARDSTOP via Relay Event
+
+The line `relay all -event MyBot_HARDSTOP "..."` in the trigger pattern above broadcasts a HARDSTOP across every InnerSpace session on the relay network. Receiving sessions latch their own `ReturnToStation` flag, so a single character spotting a hostile pulls the whole fleet to safety automatically.
+
+Setup on the receiving side:
+
+```lavishscript
+method Initialize()
+{
+    LavishScript:RegisterEvent[MyBot_HARDSTOP]
+    Event[MyBot_HARDSTOP]:AttachAtom[This:TriggerHARDSTOP]
+
+    LavishScript:RegisterEvent[MyBot_ABORTHARDSTOP]
+    Event[MyBot_ABORTHARDSTOP]:AttachAtom[This:AbortHARDSTOP]
+}
+
+method TriggerHARDSTOP(string SourceInfo)
+{
+    Logger:Log["TriggerHARDSTOP called by ${SourceInfo}", LOG_CRITICAL]
+    This.ReturnToStation:Set[TRUE]
+}
+
+method AbortHARDSTOP()
+{
+    ; Manual override from the user -- clear the latch.
+    This.ReturnToStation:Set[FALSE]
+}
+```
+
+A paired `MyBot_ABORTHARDSTOP` event lets one character (typically the fleet master) clear the flag on every bot in one command -- useful once the threat has cleared and you want to resume operations without walking to each session.
 
 ---
 

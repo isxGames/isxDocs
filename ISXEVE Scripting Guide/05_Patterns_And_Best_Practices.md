@@ -21,53 +21,54 @@
 9. [Timing and Frame Management](#timing-and-frame-management)
 10. [Safety-First Architecture](#safety-first-architecture)
 11. [Common Patterns from Example Bots](#common-patterns-from-example-bots)
-12. [Performance Considerations (Main Loop)](#performance-considerations)
-13. [Common Mistakes and Gotchas](#common-mistakes-and-gotchas)
+12. [Configuration and Reference-Data Patterns](#configuration-and-reference-data-patterns)
+13. [Performance Considerations (Main Loop)](#performance-considerations)
+14. [Common Mistakes and Gotchas](#common-mistakes-and-gotchas)
 
 ### Decision Making and Logic
-14. [Decision Making and Logic Patterns](#decision-making-and-logic-patterns)
-15. [Decision-Making Overview](#decision-making-overview)
-16. [Target Selection Patterns](#target-selection-patterns)
-17. [Priority Systems](#priority-systems)
-18. [Condition Checking Patterns](#condition-checking-patterns)
-19. [Decision Trees](#decision-trees)
-20. [Weighted Scoring Systems](#weighted-scoring-systems)
-21. [Real Examples from Bots (Decision)](#real-examples-from-bots)
-22. [Mining Decision Logic](#mining-decision-logic)
-23. [Combat Decision Logic](#combat-decision-logic)
-24. [Movement Decision Logic](#movement-decision-logic)
-25. [Common Patterns (Decision)](#common-patterns)
-26. [Performance Considerations (Decision)](#performance-considerations-1)
+15. [Decision Making and Logic Patterns](#decision-making-and-logic-patterns)
+16. [Decision-Making Overview](#decision-making-overview)
+17. [Target Selection Patterns](#target-selection-patterns)
+18. [Priority Systems](#priority-systems)
+19. [Condition Checking Patterns](#condition-checking-patterns)
+20. [Decision Trees](#decision-trees)
+21. [Weighted Scoring Systems](#weighted-scoring-systems)
+22. [Real Examples from Bots (Decision)](#real-examples-from-bots)
+23. [Mining Decision Logic](#mining-decision-logic)
+24. [Combat Decision Logic](#combat-decision-logic)
+25. [Movement Decision Logic](#movement-decision-logic)
+26. [Common Patterns (Decision)](#common-patterns)
+27. [Performance Considerations (Decision)](#performance-considerations-1)
 
 ### Error Handling and Recovery
-27. [Error Handling and Recovery](#error-handling-and-recovery)
-28. [Error Handling Overview](#error-handling-overview)
-29. [Types of Errors](#types-of-errors)
-30. [Error Detection Patterns](#error-detection-patterns)
-31. [Logging Patterns](#logging-patterns)
-32. [Recovery Strategies](#recovery-strategies)
-33. [Retry Logic](#retry-logic)
-34. [Graceful Degradation](#graceful-degradation)
-35. [Emergency Procedures](#emergency-procedures)
-36. [Common Errors and Solutions](#common-errors-and-solutions)
-37. [Failsafes and Sanity Checks](#failsafes-and-sanity-checks)
-38. [Real Examples from Bots (Error)](#real-examples-from-bots-1)
-39. [Testing Error Handling](#testing-error-handling)
+28. [Error Handling and Recovery](#error-handling-and-recovery)
+29. [Error Handling Overview](#error-handling-overview)
+30. [Types of Errors](#types-of-errors)
+31. [Error Detection Patterns](#error-detection-patterns)
+32. [Logging Patterns](#logging-patterns)
+33. [Recovery Strategies](#recovery-strategies)
+34. [Retry Logic](#retry-logic)
+35. [Graceful Degradation](#graceful-degradation)
+36. [Emergency Procedures](#emergency-procedures)
+37. [Common Errors and Solutions](#common-errors-and-solutions)
+38. [Failsafes and Sanity Checks](#failsafes-and-sanity-checks)
+39. [Real Examples from Bots (Error)](#real-examples-from-bots-1)
+40. [Testing Error Handling](#testing-error-handling)
 
 ### Performance and Timing
-40. [Performance and Timing](#performance-and-timing)
-41. [Performance Overview](#performance-overview)
-42. [Timing Fundamentals](#timing-fundamentals)
-43. [Loop Optimization](#loop-optimization)
-44. [Query Optimization](#query-optimization)
-45. [Caching Strategies](#caching-strategies)
-46. [CPU Usage Management](#cpu-usage-management)
-47. [Memory Management](#memory-management)
-48. [Profiling and Measurement](#profiling-and-measurement)
-49. [Common Performance Bottlenecks](#common-performance-bottlenecks)
-50. [Optimization Patterns](#optimization-patterns)
-51. [Real Examples from Bots (Performance)](#real-examples-from-bots-2)
-52. [Performance Checklist](#performance-checklist)
+41. [Performance and Timing](#performance-and-timing)
+42. [Performance Overview](#performance-overview)
+43. [Timing Fundamentals](#timing-fundamentals)
+44. [Loop Optimization](#loop-optimization)
+45. [Query Optimization](#query-optimization)
+46. [Caching Strategies](#caching-strategies)
+47. [CPU Usage Management](#cpu-usage-management)
+48. [Memory Management](#memory-management)
+49. [Profiling and Measurement](#profiling-and-measurement)
+50. [Common Performance Bottlenecks](#common-performance-bottlenecks)
+51. [Optimization Patterns](#optimization-patterns)
+52. [Real Examples from Bots (Performance)](#real-examples-from-bots-2)
+53. [Performance Checklist](#performance-checklist)
 
 ---
 
@@ -1352,6 +1353,121 @@ The full EVEBot behavior state-machine pattern (main loop dispatching to `${Conf
 The full event-driven pulse pattern with module dispatch and a `while TRUE { wait 10 }` main loop is shown earlier in this guide under [Event-Driven Architecture](#event-driven-architecture). See that section for the complete implementation and surrounding context.
 
 **Key Pattern**: Event-driven with modular independent pulsers
+
+---
+
+## Configuration and Reference-Data Patterns
+
+### Per-Character Configuration File
+
+**Reference implementation:** see `EVEBot/Branches/Stable/core/obj_Configuration.iss`.
+
+Any bot that will be run on more than one character needs a per-character configuration file -- hardcoding a single shared `config.xml` means every alt stomps on the previous character's settings (mining belt preferences, panic bookmark, fleet role, etc.). EVEBot's convention is to build the filename from `${Me.Name}` at object init:
+
+```lavishscript
+variable filepath CONFIG_PATH = "${Script.CurrentDirectory}/Config"
+variable string ORG_CONFIG_FILE = "mybot.xml"                    ; legacy shared name
+variable string NEW_CONFIG_FILE = "${Me.Name} Config.xml"        ; per-character name
+variable string CONFIG_FILE = "${Me.Name} Config.xml"
+
+method Initialize()
+{
+    LavishSettings[MyBotSettings]:Remove
+    LavishSettings:AddSet[MyBotSettings]
+    LavishSettings[MyBotSettings]:AddSet[${Me.Name}]
+
+    CONFIG_FILE:Set["${CONFIG_PATH}/${NEW_CONFIG_FILE}"]
+
+    ; One-time migration: if the new per-character file does not exist yet,
+    ; import settings from the legacy shared file so old users do not lose
+    ; their configuration on first run after the upgrade.
+    if !${CONFIG_PATH.FileExists[${NEW_CONFIG_FILE}]}
+    {
+        Logger:Log["Configuration will be copied from ${ORG_CONFIG_FILE} to ${NEW_CONFIG_FILE}"]
+        LavishSettings[MyBotSettings]:Import[${CONFIG_PATH}/${ORG_CONFIG_FILE}]
+    }
+    else
+    {
+        LavishSettings[MyBotSettings]:Import[${CONFIG_FILE}]
+    }
+
+    ; All subsequent :Export calls write to the per-character path.
+}
+```
+
+Three details worth teaching:
+
+1. **Use `${Me.Name}`, not `${Me.CharID}`**, for the filename. CharIDs are opaque and make manual file inspection painful; character names are stable and human-readable.
+2. **Keep the legacy-file migration path for one release**, then you can delete the `ORG_CONFIG_FILE` branch. Without the migration, every existing user has to redo their configuration after the upgrade.
+3. **Scope the settings under a `${Me.Name}` subset** inside the XML root, so multiple characters' data can coexist in a single file if needed later (useful for team-configured profiles).
+
+Related files that follow the same convention in production bots: `${Me.Name} Agents.xml`, `${Me.Name} Mission Blacklist.xml`, `${Me.Name} Whitelist.xml`.
+
+---
+
+### External XML Data Lookup via `LavishSettings:Import`
+
+**Reference implementation:** see `Tehbot/core/obj_NPCData.iss` (and related `obj_FactionData.iss`).
+
+Static reference data -- NPC group-ID to faction mapping, damage-type-per-faction tables, item-type-to-category lookups, mission-specific drop priorities -- belongs in an XML file alongside your script, not hard-coded in LavishScript. Tehbot's convention: one `obj_NPCData`-style object per data file, loaded at startup, exposing named lookup members.
+
+The Initialize/Shutdown pattern:
+
+```lavishscript
+objectdef obj_MyReferenceData
+{
+    variable string SetName = "MyReferenceData"
+    variable filepath DATA_PATH = "${Script.CurrentDirectory}/data"
+    variable string DATA_FILE = "my_reference.xml"
+    variable settingsetref BaseRef
+
+    method Initialize()
+    {
+        ; Clean slate each time the script loads
+        LavishSettings[MyReferenceData]:Clear
+        LavishSettings:AddSet[MyReferenceData]
+
+        if ${DATA_PATH.FileExists["${DATA_FILE}"]}
+        {
+            LavishSettings[MyReferenceData]:Import["${DATA_PATH}/${DATA_FILE}"]
+        }
+
+        ; Grab a stable reference to the root set so lookups don't re-traverse.
+        BaseRef:Set[${LavishSettings[MyReferenceData].FindSet[SomeTopLevelGroupInXML]}]
+    }
+
+    method Shutdown()
+    {
+        LavishSettings[MyReferenceData]:Clear
+    }
+
+    ; Example lookup: find which named category contains a given key.
+    member:string LookupCategory(int key)
+    {
+        variable iterator categories
+        BaseRef:GetSetIterator[categories]
+        if ${categories:First(exists)}
+        {
+            do
+            {
+                if ${categories.Value.FindSetting[${key}](exists)}
+                {
+                    return ${categories.Key}
+                }
+            }
+            while ${categories:Next(exists)}
+        }
+    }
+}
+```
+
+**Why this pattern wins over inline data:**
+
+- **Edit-without-reload.** Reference data grows over time (new NPC groups, new faction IDs after each expansion). With external XML, updates ship as a new data file; no LavishScript changes, no diff churn in the main script.
+- **Shareable.** Multiple bots in the same codebase can import the same data file without duplicating the tables.
+- **Testable at rest.** You can open the XML in any editor, verify entries, and catch missing IDs before runtime.
+
+The XML itself is typically a `LavishSettings` export, which has a conventional shape of `Set` -> `Set` -> `Setting` nesting. For lookups that only need keyed access (no category grouping), you can flatten to a single `Set` with `FindSetting[${key}]` returning the value directly -- but keep the iterator pattern above in your toolkit for data that does need category structure.
 
 ---
 
@@ -4203,6 +4319,66 @@ call LogContext "INFO" "Mining started"
 call LogContext "ERROR" "Failed to lock asteroid"
 ; Output: [InSpace 30000142] [Retriever] [State: MINING] Failed to lock asteroid
 ```
+
+### Pattern 5: Colored Severity + Log-Level Bar (Tehbot-style)
+
+**Reference implementation:** see `Tehbot/core/obj_Logger.iss`.
+
+Two small conventions make console output much more readable when your bot produces hundreds of lines per minute:
+
+1. **A configurable log-level "bar"** -- a threshold (`LogLevelBar`) below which messages are silently dropped. Bound to a config setting so the user can raise it to `LOG_INFO` for quiet production runs, or drop it to `LOG_DEBUG` when diagnosing a problem.
+2. **InnerSpace echo color codes** -- single-letter arguments to `UI:Update` (or directly to `echo -t`, depending on your framework) that tint the console line. The conventional palette in production bots:
+
+| Code | Color | Use |
+|---|---|---|
+| `g` | green | Info / routine success |
+| `-g` | dim green | Continuation line beneath a green heading |
+| `o` | orange | Warning / attention |
+| `r` | red | Critical / error |
+| `y` | yellow | State change / section marker |
+| `w` | white | Default / neutral |
+
+A minimal log wrapper that combines the two:
+
+```lavishscript
+; Level constants -- numeric, small integers so comparisons are cheap.
+#define LOG_DEBUG    0
+#define LOG_INFO     1
+#define LOG_CRITICAL 2
+
+objectdef obj_MyLogger
+{
+    variable int LogLevelBar = LOG_INFO   ; bound to config at init
+
+    method Log(string CallingModule, string StatusMessage, string Color = "w", int level = LOG_INFO)
+    {
+        if ${level} < ${This.LogLevelBar}
+        {
+            return  ; filtered out by the bar
+        }
+
+        ; Timestamp + level tag + module tag + message
+        variable string Prefix = "${Time.Time24} "
+        switch ${level}
+        {
+            case LOG_DEBUG    ; Prefix:Concat["DEBUG    "]
+                break
+            case LOG_INFO     ; Prefix:Concat["INFO     "]
+                break
+            case LOG_CRITICAL ; Prefix:Concat["CRITICAL "]
+                break
+        }
+        UI:Update["${CallingModule}", "${Prefix}${StatusMessage}", "${Color}"]
+    }
+}
+
+; Usage -- the caller picks the color and level per call:
+MyLogger:Log["Combat", "Acquired primary target", "g", LOG_INFO]
+MyLogger:Log["Tank",   "Shields below 30%",       "o", LOG_INFO]
+MyLogger:Log["Social", "Hostile in system!",      "r", LOG_CRITICAL]
+```
+
+Tehbot additionally wraps this in per-object `LogInfo` / `LogDebug` / `LogCritical` methods that auto-fill `CallingModule` from `This.ObjectName`, so each object's messages are already tagged with its class name without the caller having to repeat it. Once you have that, filtering the console in InnerSpace's UI by `CallingModule` becomes trivial.
 
 ---
 

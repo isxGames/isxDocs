@@ -895,6 +895,23 @@ ISXEVE.Debug_LogMsg["Movement", "Warping to ${bookmark}"]
 ISXEVE.Debug_LogMsg["Combat", "Activating weapons on ${Entity[${targetID}].Name}"]
 ```
 
+### Disabling ISXEVE's Entity Cache
+
+**Reference implementation:** see `EVEBot/Branches/Stable/EVEBot.iss` (near the top of `function main`).
+
+ISXEVE caches entity query results between calls to reduce API cost. This is almost always what you want, but it can mask a class of bugs where your script thinks an entity is still on grid when the game client has already removed it. When you suspect a stale-cache issue -- e.g. `Entity[${id}](exists)` returns TRUE for something the overview clearly no longer shows -- disable the cache at startup to force every query to go fresh to the game:
+
+```lavish
+function main()
+{
+    Turbo 4000
+    ISXEVE:Debug_SetEntityCacheDisabled[TRUE]   ; debugging only
+    ; ... rest of main ...
+}
+```
+
+Trade-off: every entity query now performs full API work, which slows down tight loops noticeably (especially multi-pulse `EVE:QueryEntities` iterations). Leave this on only while diagnosing a suspected stale-cache bug; re-enable caching for production by removing the call or passing `FALSE`.
+
 ### ISXEVE Diagnostics
 
 ```lavish
