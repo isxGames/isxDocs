@@ -2326,30 +2326,52 @@ function ProcessAllAsteroids()
 - Array doesn't change if entities despawn
 - Each iteration re-fetches entity and checks (exists)
 
-### Solution 3: Iterator Pattern (QueryEntities with :GetIterator)
+### Solution 3: For-Loop Over Populated Index (and optional iterator)
+
+**IMPORTANT**: `EVE:QueryEntities` does NOT return an iterator. It **populates** an `index:entity` passed by reference. Iteration is a separate step — either a for-loop over the index, or (optionally) an iterator obtained via the index's own `:GetIterator[]` method.
+
+**Canonical for-loop pattern** (preferred — simplest, matches the rest of the guide):
 
 ```lavish
 variable index:entity asteroids
+variable int i
 EVE:QueryEntities[asteroids, "CategoryID = 25"]
 
+for (i:Set[1]; ${i} <= ${asteroids.Used}; i:Inc)
+{
+    if ${asteroids.Get[${i}](exists)}
+    {
+        echo "Asteroid: ${asteroids.Get[${i}].Name}"
+    }
+}
+```
+
+- Index is **1-based**; use `${asteroids.Used}` for the count.
+- Re-check `(exists)` each iteration — entities may despawn mid-loop.
+
+**Optional iterator variant** (if your logic prefers an iterator object — note the iterator is obtained from the populated INDEX as a SEPARATE step, NOT from `EVE:QueryEntities` directly):
+
+```lavish
+variable index:entity asteroids
+EVE:QueryEntities[asteroids, "CategoryID = 25"]    ; Step 1: populate the index
+
 variable iterator AstIter
-asteroids:GetIterator[AstIter]
+asteroids:GetIterator[AstIter]                      ; Step 2: get an iterator from the index
 
 if ${AstIter:First(exists)}
 {
     do
     {
-        variable entity asteroid = ${AstIter.Value}
-        if ${asteroid(exists)}
+        if ${AstIter.Value(exists)}
         {
-            echo "Asteroid: ${asteroid.Name}"
+            echo "Asteroid: ${AstIter.Value.Name}"
         }
     }
     while ${AstIter:Next(exists)}
 }
 ```
 
-**Note**: The iterator obtained from `index:entity:GetIterator[]` walks live entity objects, not IDs — no manual `${Entity[${id}]}` lookup needed. Entities may still despawn between the `.Value` access and a member access; keep the `(exists)` guard.
+Entities may still despawn between `.Value` access and a member access; keep the `(exists)` guard.
 
 ---
 
