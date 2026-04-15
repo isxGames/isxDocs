@@ -539,39 +539,9 @@ The standalone call-counting pattern (`collection:int` with create-if-missing + 
 
 ### Memory Usage Tracking
 
-```lavish
-objectdef obj_MemoryTracker
-{
-    variable int LastMemory
+LavishScript does not expose script-memory diagnostics -- there is no `Script.MemUsage` member or equivalent. If you need to track your bot's memory footprint over time, use OS-level tools (Task Manager, Process Explorer, `Get-Process` in PowerShell) against the InnerSpace host process. Spikes in that number correlate with collections that are not being cleared, event atoms that are not being detached, or unbounded log buffers -- the common LavishScript leak sources.
 
-    method Check()
-    {
-        variable int currentMem = ${Script.MemUsage}
-        variable int delta = ${Math.Calc[${currentMem} - ${This.LastMemory}]}
-
-        if ${delta} > 10000000    ; 10MB increase
-        {
-            echo "WARNING: Memory increased by ${Math.Calc[${delta}/1000000]}MB"
-            echo "Current usage: ${Math.Calc[${currentMem}/1000000]}MB"
-        }
-
-        This.LastMemory:Set[${currentMem}]
-    }
-}
-
-; Check periodically. Use elapsed-since-last, not `RunningTime % N == 0`
-; (which would only match the exact-millisecond tick and is almost never
-; hit given jittery pulse scheduling).
-variable int LastMemoryCheck = 0
-
-method Pulse()
-{
-    if ${Math.Calc[${Script.RunningTime} - ${LastMemoryCheck}]} >= 60000
-    {
-        LastMemoryCheck:Set[${Script.RunningTime}]
-        MemoryTracker:Check
-    }
-}
+For script-level leak detection without true memory numbers, track collection sizes as a proxy: log `${MyCache.Used}`, `${RegisteredEvents.Used}`, etc. on a periodic tick and look for unbounded growth.
 ```
 
 ---
@@ -1132,18 +1102,11 @@ function DiagnosePerformance()
     variable float runtime = ${Math.Calc[${Script.RunningTime} / 1000]}
     echo "Script Uptime: ${runtime.Precision[0]}s"
 
-    ; Check memory usage
-    variable int memMB = ${Math.Calc[${Script.MemUsage} / 1000000]}
-    echo "Memory Usage: ${memMB}MB"
-
-    if ${memMB} > 100
-    {
-        echo "⚠ HIGH MEMORY USAGE"
-        echo "CAUSES:"
-        echo "  - Memory leak (collections not cleared)"
-        echo "  - Too many cached objects"
-        echo "SOLUTION: Restart script periodically"
-    }
+    ; (Memory usage is not exposed by LavishScript -- use OS-level tools
+    ; like Process Explorer or PowerShell Get-Process against the InnerSpace
+    ; host if you need a real memory number. As a script-side proxy, log
+    ; collection sizes -- unbounded growth in any `.Used` count is the
+    ; usual signature of a leak.)
 
     ; Check entity count
     variable index:entity AllEntities
