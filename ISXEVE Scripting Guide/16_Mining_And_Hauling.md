@@ -2965,24 +2965,16 @@ function AnalyzeRoute(int64 destinationSystemID)
 
 ### Set Waypoint Preferences
 
-```lavish
-// Prefer shorter routes (may go through low-sec)
-EVE:SetWaypointPreference[Shorter]
+**Note:** Autopilot route preference (Shortest vs. Safer vs. Less Secure) is a client-side EVE UI setting and is **not exposed through ISXEVE**. Set the preference manually in-game before running your script (Map -> Autopilot -> Route preference).
 
-// Prefer safer routes (stay in high-sec even if longer)
-EVE:SetWaypointPreference[Safer]
+For programmatic route control, ISXEVE exposes real waypoint methods — use these to inspect and modify the route yourself:
 
-// Example: Always use safer routes for valuable cargo
-if ${Ship.Cargo.Value} > 1000000000  // 1 billion ISK
-{
-    echo "Valuable cargo - using safer route"
-    EVE:SetWaypointPreference[Safer]
-}
-else
-{
-    EVE:SetWaypointPreference[Shorter]
-}
-```
+- `EVE:AddWaypoint[<SolarSystemID>]` / `Bookmark:AddWaypoint` / `Entity:AddWaypoint` — append a waypoint
+- `EVE:ClearAllWaypoints` / `EVE:ClearWaypoint[<ID>]` — clear route
+- `EVE:GetWaypoints[index:int]` — populate an index with the SystemIDs currently in your route
+- `EVE:OptimizeAutopilotRoute` — ask the client to re-optimize the current route
+
+If you need "safer" behavior, evaluate each waypoint's security (via `Universe[<SystemID>].Security`) and rebuild the route manually with only high-sec systems.
 
 ### Gank Avoidance
 
@@ -3473,17 +3465,25 @@ if ${Local[${FleetMemberName}](exists)}
 
 **Symptom**: Route calculation includes dangerous systems
 
-**Solution**:
-```lavish
-// Set route preference to safer
-EVE:SetWaypointPreference[Safer]
+**Solution**: Route preference (Shortest vs. Safer) is a client-side EVE UI setting and is not exposed through ISXEVE. Set the preference in-game before running the script. To programmatically avoid low-sec, inspect each waypoint's security status and rebuild the route yourself:
 
-// Verify route before traveling
-if ${Autopilot.LowSecRoute}
-{
-    echo "ERROR: Route includes low-sec - cannot travel safely"
-    return FALSE
-}
+```lavish
+; Inspect current route and refuse to travel if any waypoint is low/null-sec
+variable index:int Waypoints
+EVE:GetWaypoints[Waypoints]
+
+variable iterator WP
+Waypoints:GetIterator[WP]
+if ${WP:First(exists)}
+    do
+    {
+        if ${Universe[${WP.Value}].Security} < 0.5
+        {
+            echo "ERROR: Route includes low-sec system ${Universe[${WP.Value}].Name} - aborting"
+            return FALSE
+        }
+    }
+    while ${WP:Next(exists)}
 ```
 
 ### Problem 5: Tractor Beam Doesn't Activate
