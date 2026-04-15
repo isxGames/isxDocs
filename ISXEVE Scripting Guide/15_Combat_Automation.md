@@ -16,9 +16,16 @@
 7. [Tank Management](#tank-management)
 8. [Drone Combat](#drone-combat)
 9. [Advanced Combat Computer](#advanced-combat-computer)
-10. [Complete Working Examples](#complete-working-examples)
-11. [Combat Patterns by Ship Type](#combat-patterns-by-ship-type)
-12. [Common Combat Problems](#common-combat-problems)
+10. [Module Control Layer (Production Patterns)](#module-control-layer-production-patterns)
+    - [Self-Maintaining Locked-Target Lists (`obj_TargetList`)](#self-maintaining-locked-target-lists-obj_targetlist)
+    - [Per-Module Instruction Queue (`obj_Module`)](#per-module-instruction-queue-obj_module)
+    - [Group Control over Module Wrappers (`obj_ModuleList`)](#group-control-over-module-wrappers-obj_modulelist)
+    - [Declarative Module Registration (`AddModuleList`)](#declarative-module-registration-addmodulelist)
+    - [Module Overload by Module HP](#module-overload-by-module-hp)
+    - [Static Module Classification on Init (EVEBot Stable)](#static-module-classification-on-init-evebot-stable)
+11. [Complete Working Examples](#complete-working-examples)
+12. [Combat Patterns by Ship Type](#combat-patterns-by-ship-type)
+13. [Common Combat Problems](#common-combat-problems)
 
 **See also:** For architectural analysis of Tehbot's StateQueue and MiniMode system, see [18_Bot_Architecture_Analysis.md](18_Bot_Architecture_Analysis.md#tehbot-combat-analysis).
 
@@ -1244,6 +1251,381 @@ objectdef obj_AdvancedCombat
     }
 }
 ```
+
+---
+
+## Module Control Layer (Production Patterns)
+
+The patterns earlier in this guide call `Module:Activate` and friends directly each pulse. Production bots (Tehbot, combot, EVEBot) instead build a thin abstraction layer between the bot's combat logic and raw module commands. This chapter documents six of the most useful pieces of that layer, all grounded in real production code. Use these when the simple patterns earlier in the guide stop scaling -- typically once you have more than a handful of modules, more than one ship fit, or any need for priority/retry behavior.
+
+### Self-Maintaining Locked-Target Lists (`obj_TargetList`)
+
+Reference implementation: see `Tehbot/core/obj_TargetList.iss`.
+
+A pulse-driven combat bot needs a continuously updated list of "things I am locked onto and may want to shoot," filtered to the current situation (NPCs only, not fleet members, in range, not pod, not CONCORD, not on the bot's exception list, etc.). Tehbot's `obj_TargetList` does this by holding a list of composable query strings, re-running them on a timer, and exposing three ready-to-iterate result indexes.
+
+**Public surface (verified):**
+
+| Member / Method | Purpose |
+|---|---|
+| `LockedTargetList` (`index:entity`) | Entities currently locked that match the composed query. |
+| `LockedAndLockingTargetList` (`index:entity`) | Same, plus entities the lock is being acquired on. |
+| `TargetList` (`index:entity`) | All matching candidates (locked or not). |
+| `MinLockCount`, `MaxLockCount` (`int`) | Bounds for `AutoLock`. |
+| `AutoLock` (`bool`) | When TRUE, the object will issue `:LockTarget` on candidates to reach `MinLockCount`. |
+| `MaxRange`, `MinRange` (`int`) | Distance window. Targets outside `MaxRange` get a lower priority but still appear if `ListOutOfRange` is TRUE. |
+| `LockTop` (`bool`) | When TRUE, only acquires locks on the top entries by priority order. |
+| `ClearQueryString` | Empty the composed query. |
+| `AddQueryString[QueryString]` | Append a raw filter string (combined with logical AND across separate calls is not done -- each string is a separate independent query that contributes its matches). |
+| `AddTargetingMe` | Convenience: add `Distance < 150000 && IsTargetingMe && IsNPC && !IsMoribund`. |
+| `AddPCTargetingMe` | Convenience: same but PCs only, excluding fleet members. |
+| `AddAllPC` | Convenience: all PCs in 150 km, excluding fleet members. |
+| `AddAllNPCs` | Convenience: all NPCs except common non-combat groups (CONCORD, large collidables, etc.). |
+| `AddTargetExceptionByID[int64]` | Permanently exclude a specific entity ID from results, and unlock it if currently locked. |
+| `AddTargetExceptionByPartOfName[string]` | Permanently exclude any entity whose name contains the given substring. |
+| `ClearExcludeTarget` | Reset both exception sets. |
+| `RequestUpdate` | Force the next pulse to re-run all queries. |
+
+`obj_TargetList` inherits from `obj_StateQueue` and pulses on its own (~150 ms). The bot does not poll it -- it just reads `LockedTargetList` whenever it needs to dispatch modules.
+
+**Abstract example -- registering a target list and using its locked output:**
+
+```lavishscript
+; Defined as part of an objectdef somewhere in the bot
+variable obj_TargetList MyHostileNPCs
+
+method InitializeBot()
+{
+    ; Compose the filter at startup
+    MyHostileNPCs:ClearQueryString
+    MyHostileNPCs:AddAllNPCs
+    MyHostileNPCs:AddTargetingMe
+
+    ; Auto-lock between 2 and 4 hostiles within 50 km
+    MyHostileNPCs.MinLockCount:Set[2]
+    MyHostileNPCs.MaxLockCount:Set[4]
+    MyHostileNPCs.MaxRange:Set[50000]
+    MyHostileNPCs.AutoLock:Set[TRUE]
+}
+
+; Called every combat pulse -- iterate the up-to-date locked list
+method PulseDispatchModules()
+{
+    variable iterator t
+    MyHostileNPCs.LockedTargetList:GetIterator[t]
+    if ${t:First(exists)}
+    {
+        do
+        {
+            ; Fire weapons at this locked target. Module-control layer below
+            ; (obj_ModuleList) handles the actual dispatch and avoids
+            ; double-activation.
+            MyOffensiveModules:ActivateOne[${t.Value.ID}]
+        }
+        while ${t:Next(exists)}
+    }
+}
+```
+
+**Why this beats hand-rolled `Me:GetTargets[...]` per pulse:**
+
+- The list is **debounced and deduped** behind a `RequestUpdate`/`Updated` handshake, so combat code reads stable data instead of racing the lock-acquisition cycle.
+- Targets that are dead (`IsMoribund`) or destroyed are removed via a 5-second dead-delay, eliminating the "fired at a corpse" failure mode.
+- Multiple separately-tagged query strings can co-exist: e.g. one filter for NPCs targeting me, another for priority frigates, a third for healing buddies in the fleet -- each contributes its own matches with its own `Priority` weight, and `ManageLocks` resolves contention automatically.
+- Adding/removing exceptions at runtime (`AddTargetExceptionByID`, `AddTargetExceptionByPartOfName`) does not require rebuilding the query string -- the object honors the exception sets on every refresh and unlocks newly-excluded entities.
+
+If your bot has more than one combat role (mission runner, anomaly clearer, defender) you typically declare one `obj_TargetList` per role, populate each with the appropriate convenience methods, and let them all run in parallel.
+
+---
+
+### Per-Module Instruction Queue (`obj_Module`)
+
+Reference implementation: see `Tehbot/core/obj_Module.iss`.
+
+Calling `MyShip.Module[HiSlot0]:Activate[${targetID}]` directly each pulse has well-known failure modes: double-activation racing the cycle timer, retry-spam when the server lags, ammo swaps mid-cycle that get ignored, overload toggles that flip back and forth. Tehbot wraps each module in an `obj_Module` object that owns a single pending **instruction**, drains it on a state-queue pulse (~100 ms with random delta), and uses retry timers to avoid command spam.
+
+**Instruction enum (verified, from `Tehbot/core/Defines.iss`):**
+
+| Constant | Value | Meaning |
+|---|---|---|
+| `INSTRUCTION_NONE` | 0 | No pending action; module is idle (but may still process overload toggling). |
+| `INSTRUCTION_ACTIVATE_ON` | 1 | Activate against a specific target; deactivate-and-reactivate if target changes. |
+| `INSTRUCTION_DEACTIVATE` | 2 | Deactivate the module. |
+| `INSTRUCTION_RELOAD_AMMO` | 3 | Reload current charge type. |
+| `INSTRUCTION_ACTIVATE_FOR` | 4 | Activate self-targeted (shield boosters, armor reps, etc.). `targetID` is `MyShip.ID` semantically, passed as `TARGET_NA = 0`. |
+| `INSTRUCTION_ACTIVATE_ONCE` | 5 | One-shot activation; clears instruction after a single fire. |
+
+`TARGET_NA = 0` and `TARGET_ANY = 0` are sentinel values used for self-targeted or "any target" instructions.
+
+**Public surface (verified):**
+
+| Member / Method | Purpose |
+|---|---|
+| `GiveInstruction[instruction, targetID]` | Submit a new instruction. No-op if the same instruction+target is already pending and the module is mid-cycle. |
+| `IsInstructionMatch[instruction, targetID]` | TRUE iff this is the pending instruction. |
+| `IsModuleActiveOn[targetID]` | TRUE iff `IsActive` AND the module's current target matches. |
+| `OverloadIfHPAbovePercent` (`int`, default 100) | When the module's own HP is above this percent, the instruction loop will toggle overload on; when at/below, toggle it off. (See "Module Overload by Module HP" below.) |
+| `ConfigureAmmo[shortRange, longRange]` | Set the two ammo types the module should pick from. The `Operate` state picks the optimal one per target via `_pickOptimalAmmo`. |
+| `Ammo`, `LongRangeAmmo` (`string`) | Direct access to the configured ammo names. |
+| `ModuleID` (`int64`) | The underlying module item ID (resolved via `MyShip.Module[${ModuleID}]` through `GetFallthroughObject`). |
+
+The state-queue pulse calls a `member:bool Operate()` that:
+
+1. Bails out when the ship is in station, the module is offline, being repaired, reloading, or `_tooSoon` (within the per-instruction retry interval, typically 2 seconds).
+2. Switches on the pending `Instruction` and dispatches to the appropriate `OperateActivateOn` / `OperateDeactivate` / `OperateReloadAmmo` / `OperateActivateFor` handler.
+3. Even at `INSTRUCTION_NONE`, runs `_toggleOverload` so overload state tracks `OverloadIfHPAbovePercent`.
+
+**Why this beats raw `Module:Activate`:**
+
+- The retry interval (`_activationRetryInterval = 2000`, `_deactivationRetryInterval = 2000`, `_changeAmmoRetryInterval = 2000`) prevents the bot from spamming `:Activate` every pulse while the server has not yet acknowledged the previous attempt. Without this, modules look "stuck off" for several pulses then suddenly all activate at once.
+- `IsInstructionMatch` is the no-op guard: `GiveInstruction` checks "did you already ask for this?" before mutating state, so combat code can call `module:GiveInstruction[INSTRUCTION_ACTIVATE_ON, ${activeTarget}]` every pulse without consequence.
+- Target switches are handled gracefully: `OperateActivateOn` first deactivates if the current target does not match, then re-activates on the new target -- preserving cycle progress when possible.
+- Overload management piggybacks on the same pulse loop, so combat code never has to know about it.
+
+**Abstract example -- registering a module and keeping it on the active target:**
+
+```lavishscript
+variable obj_Module MyHardener
+
+method InitializeBot()
+{
+    ; Bind the wrapper to a specific module ID at undock time.
+    MyHardener:Initialize[${MyShip.Module[MedSlot0].ID}]
+    MyHardener.OverloadIfHPAbovePercent:Set[80]  ; only overload if heat HP > 80%
+}
+
+method PulseDefenseLayer()
+{
+    ; Self-targeted activation -- pass TARGET_NA.
+    if ${MyShip.ShieldPct} < 50
+    {
+        MyHardener:GiveInstruction[INSTRUCTION_ACTIVATE_FOR, 0]  ; TARGET_NA
+    }
+    else
+    {
+        MyHardener:GiveInstruction[INSTRUCTION_DEACTIVATE]
+    }
+}
+```
+
+In production you almost never instantiate `obj_Module` directly -- you let `obj_Ship` build them as a side effect of `AddModuleList` (see "Declarative Module Registration" below) and dispatch through `obj_ModuleList` group methods.
+
+---
+
+### Group Control over Module Wrappers (`obj_ModuleList`)
+
+Reference implementation: see `Tehbot/core/obj_ModuleList.iss`.
+
+`obj_ModuleList` is a thin index of module IDs that fans `GiveInstruction` calls out to the underlying `obj_Module` wrappers. It exists so combat code can talk to "all my offensive modules" or "all my repair modules" in one call instead of iterating manually.
+
+**Public surface (verified):**
+
+| Member / Method | Purpose |
+|---|---|
+| `Insert[int64 ID]` | Add a module ID to the group. |
+| `ActivateAll[targetID = 0]` | `INSTRUCTION_ACTIVATE_ON` to every member. |
+| `ActivateOne[targetID = 0]` | `INSTRUCTION_ACTIVATE_ON` to the first idle member only. |
+| `ForceActivateOne[targetID = 0]` | Re-target the first member to `targetID` even if currently busy on a different target. |
+| `ActivateFor[targetID = 0]` | `INSTRUCTION_ACTIVATE_FOR` (self-targeted) to every member. |
+| `DeactivateAll` | `INSTRUCTION_DEACTIVATE` to every member that is currently active. |
+| `DeactivateOn[targetID]` | Deactivate every member currently active on `targetID`. |
+| `DeactivateOneNotOn[targetID]` | Deactivate one member that is active on something other than `targetID` (target switch helper). |
+| `ReloadDefaultAmmo` | `INSTRUCTION_RELOAD_AMMO` to every member. |
+| `ConfigureAmmo[shortRange, longRange]` | Push the same ammo configuration to every member. |
+| `SetOverloadHPThreshold[int threshold]` | Set `OverloadIfHPAbovePercent` on every member. |
+| `IsActiveOn[targetID]` (`bool`) | TRUE iff any member has a pending or active `INSTRUCTION_ACTIVATE_ON` for `targetID`. |
+| `Count` (`int`) | Number of registered modules. |
+| `ActiveCount` (`int`) | Number of members where the underlying module reports `IsActive`. |
+| `ActiveCountOn[targetID]` (`int`) | Number of members currently active on `targetID`. |
+| `InactiveCount` (`int`) | Number of members at `INSTRUCTION_NONE`. |
+| `Allowed` (`bool`, default TRUE) | When FALSE, all `Activate*` calls are no-ops. Use to soft-disable a group from external code. |
+
+Several "fallthrough" members (`Range`, `OptimalRange`, `TrackingSpeed`, `AccuracyFalloff`, `DamageEfficiency[targetID]`, `FallbackAmmo`, `IsUsingLongRangeAmmo`) read off the **first** registered module, on the assumption that grouped modules in EVE share fit attributes.
+
+**Abstract example -- combat dispatch via grouped wrappers:**
+
+```lavishscript
+; Registered elsewhere (see "Declarative Module Registration" next).
+; Ship.ModuleList_Turret holds the bot's primary turret group.
+; Ship.ModuleList_Repair_Shield holds shield boosters.
+
+method PulseCombatDispatch(int64 primaryTargetID)
+{
+    ; Fire turrets at the primary target -- safe to call every pulse.
+    Ship.ModuleList_Turret:ActivateAll[${primaryTargetID}]
+
+    ; Self-repair if shields below threshold; otherwise stop.
+    if ${MyShip.ShieldPct} < 60
+    {
+        Ship.ModuleList_Repair_Shield:ActivateFor[0]  ; TARGET_NA
+    }
+    else
+    {
+        Ship.ModuleList_Repair_Shield:DeactivateAll
+    }
+}
+```
+
+---
+
+### Declarative Module Registration (`AddModuleList`)
+
+Reference implementation: see `combot/core/obj_Ship.iss` (also inherited/used in `Tehbot/core/obj_Ship.iss`).
+
+`obj_Ship:AddModuleList[Name, QueryString]` is a small piece of LavishScript metaprogramming: it pre-compiles a query against the ship's module list and creates an `obj_ModuleList` member named `ModuleList_<Name>`, populated automatically every time the bot redocks and re-fits.
+
+The implementation is three lines:
+
+```lavishscript
+method AddModuleList(string Name, string QueryString)
+{
+    This.ModuleLists:Insert[${Name}]
+    This.ModuleQueries:Set[${This.ModuleLists.Used}, ${LavishScript.CreateQuery[${QueryString.Escape}]}]
+    declarevariable ModuleList_${Name} obj_ModuleList object
+    This:Clear
+    This:QueueState["WaitForSpace"]
+    This:QueueState["UpdateModules"]
+}
+```
+
+Two LavishScript features make this work:
+
+- **`LavishScript.CreateQuery[expr]`** -- compiles a query expression into a query handle, then `LavishScript.QueryEvaluate[handle, candidate]` evaluates it against any object. Cheaper than re-parsing the string per module per pulse.
+- **`declarevariable Name Type Scope`** -- declares a new variable at runtime, using a name composed via `${...}` substitution. After this call, `This.ModuleList_Turret` exists as an `obj_ModuleList` object and can be referenced by name from anywhere.
+
+The companion `UpdateModules` state runs `MyShip:GetModules[ModuleList]`, then for each module evaluates every registered query against it via `LavishScript.QueryEvaluate` and inserts matches into the corresponding `ModuleList_<Name>`. Result: dynamic per-fit module classification driven entirely by query strings declared at startup.
+
+**Abstract example -- one-time registration at undock:**
+
+```lavishscript
+; Inside obj_Ship:Initialize or an undock handler
+method RegisterModuleGroups()
+{
+    This:AddModuleList[Turret, "ToItem.GroupID = GROUP_ENERGYWEAPON || ToItem.GroupID = GROUP_PROJECTILEWEAPON || ToItem.GroupID = GROUP_HYBRIDWEAPON"]
+    This:AddModuleList[Repair_Shield, "ToItem.GroupID = GROUP_SHIELD_BOOSTER"]
+    This:AddModuleList[ActiveResists, "ToItem.GroupID = GROUP_SHIELD_HARDENER || ToItem.GroupID = GROUP_ARMOR_HARDENERS"]
+    This:AddModuleList[TractorBeams, "ToItem.GroupID = GROUP_TRACTOR_BEAM"]
+    ; ...etc
+}
+
+; Anywhere afterward
+Ship.ModuleList_Turret:ActivateAll[${primary}]
+Ship.ModuleList_Repair_Shield:ActivateFor[0]
+```
+
+The `declarevariable + ${LavishScript.CreateQuery}` idiom is reusable beyond modules: any time a script needs a named, query-filtered, dynamically-registered collection (entity pools, drone pools, item-cache buckets), the same three-line pattern applies. Substitute `index:entity`, `index:item`, etc. for the underlying type, and use `EVE:QueryEntities` or whatever populator fits.
+
+---
+
+### Module Overload by Module HP
+
+Reference implementation: see `Tehbot/core/obj_Module.iss` (`OverloadIfHPAbovePercent` and `_toggleOverload`).
+
+Overload management in production scripts is driven by the **module's own HP**, not the ship's shield/armor. The reasoning: a module with full overload HP can be safely flipped on for the burst cycle and let cool when HP drops, but coupling it to ship HP confuses the burn-in/burn-out economy.
+
+The relevant state on each `obj_Module`:
+
+- `OverloadIfHPAbovePercent` (`int`, default `100`) -- when the module's HP percentage is **strictly greater than** this threshold, the per-module pulse will issue `ToggleOverload` to enable overheat. When HP is at or below the threshold, it issues `ToggleOverload` again to disable.
+- `_overloadToggledOn` (`bool`) -- internal latch tracking whether the script believes overload is currently on. Prevents redundant toggles.
+
+The default of `100` means "never overload" -- you must explicitly lower the threshold to opt in. A value of, say, `80` means "stay overloaded as long as the module's HP is above 80%; cool off below."
+
+`obj_ModuleList:SetOverloadHPThreshold[int]` is the convenience setter that pushes a single threshold to every module in a group.
+
+**Abstract example -- overload guns above 75% module HP:**
+
+```lavishscript
+method InitializeOverload()
+{
+    ; Aggressive: keep guns overloaded as long as racks are above 75% HP
+    Ship.ModuleList_Turret:SetOverloadHPThreshold[75]
+
+    ; Cautious: only overload prop mod when HP is essentially full
+    Ship.ModuleList_AB_MWD:SetOverloadHPThreshold[95]
+}
+```
+
+Once configured, the per-module pulse loop handles toggling on its own; combat code never needs to call overload on/off explicitly.
+
+---
+
+### Static Module Classification on Init (EVEBot Stable)
+
+Reference implementation: see `EVEBot/Branches/Stable/core/obj_Ship.iss` (`UpdateModuleList`).
+
+EVEBot Stable predates the `AddModuleList` pattern and uses a more conservative but equally valid approach: declare every `index:module` field statically, then populate them once per fit with a single iteration over `MyShip:GetModules`, dispatching by `GroupID` and `TypeID`.
+
+The pattern is three pieces:
+
+1. **Static field declarations** at object scope -- one `variable index:module ModuleList_<X>` for each pool the bot recognizes (Weapon, MiningLaser, ActiveResists, Repair_Armor, AB_MWD, Salvagers, TractorBeams, Cloaks, etc.).
+2. **A `Clear` block** that empties every pool before re-populating, called on undock or when modules change.
+3. **A single `GetModules` iteration** with a `switch ${GroupID}` (and special-case checks like `MiningAmount(exists)`) that inserts each module into the correct pool. Dual-pool insertion is allowed if the module logically belongs in two groups.
+
+**Abstract example with two representative pools:**
+
+```lavishscript
+objectdef obj_Ship
+{
+    variable index:module ModuleList
+    variable index:module ModuleList_Weapon
+    variable index:module ModuleList_Repair_Shield
+
+    method UpdateModuleList()
+    {
+        ; Clear
+        This.ModuleList:Clear
+        This.ModuleList_Weapon:Clear
+        This.ModuleList_Repair_Shield:Clear
+
+        ; Populate the master list
+        if !${MyShip:GetModules[This.ModuleList]}
+        {
+            return
+        }
+
+        ; Single pass classification
+        variable iterator m
+        This.ModuleList:GetIterator[m]
+        if ${m:First(exists)}
+        {
+            do
+            {
+                if !${m.Value(exists)}
+                    continue
+
+                variable int gid = ${m.Value.ToItem.GroupID}
+                switch ${gid}
+                {
+                    case 53   ; Energy Weapon
+                    case 55   ; Projectile Weapon
+                    case 74   ; Hybrid Weapon
+                        This.ModuleList_Weapon:Insert[${m.Value.ID}]
+                        break
+
+                    case 40   ; Shield Booster
+                        This.ModuleList_Repair_Shield:Insert[${m.Value.ID}]
+                        break
+                }
+            }
+            while ${m:Next(exists)}
+        }
+    }
+}
+```
+
+**When to prefer this over `AddModuleList`:**
+
+- You want compile-time visibility of every module group your bot understands (no metaprogramming, no `declarevariable`).
+- You only support a fixed set of fits and the GroupID/TypeID dispatch is well-defined.
+- You need to encode multi-attribute classification (e.g. "shield booster but not capital-class") that does not fit naturally into a single query string.
+
+**When to prefer `AddModuleList`:**
+
+- The bot must support an open-ended set of user-configured module roles.
+- You want one-line registration of new groups without touching the iterator.
+- Your filters fit naturally as query strings against the `module` datatype's accessible members.
+
+Both approaches end with the same shape: typed `index:module` (or `obj_ModuleList`) pools that combat code iterates per pulse, never calling `MyShip:GetModules` in the hot path.
 
 ---
 
