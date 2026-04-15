@@ -521,7 +521,7 @@ function ActivateModuleWithVerification(string Slot)
 		if !${MyShip.Module[${Slot}].IsActive}
 		{
 			echo Activating module in slot ${Slot}
-			MyShip.Module[${Slot}]:Click
+			MyShip.Module[${Slot}]:Activate
 
 			wait 20
 
