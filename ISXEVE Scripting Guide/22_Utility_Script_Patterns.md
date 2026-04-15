@@ -458,7 +458,7 @@ atom OnChatMessage(string Message, string Channel)
 	if ${Channel.Equal["local"]}
 	{
 		; Check for hostile keywords
-		if ${Message.Find["gf"](exists)} || ${Message.Find["o/"](exists)}
+		if ${Message.Find["gf"]} > 0 || ${Message.Find["o/"]} > 0
 		{
 			echo Possible hostile communication detected in local
 			HostileDetected:Set[TRUE]
