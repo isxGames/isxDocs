@@ -26,6 +26,7 @@
 14. [What Is InnerSpace](#what-is-innerspace)
 15. [Architecture and Components](#architecture-and-components)
 16. [LavishScript Engine](#lavishscript-engine)
+    - [Metaprogramming: GetFallthroughObject](#metaprogramming-getfallthroughobject)
 17. [Extension System](#extension-system)
 18. [Sessions and Multi-Client](#sessions-and-multi-client)
 19. [Uplink and Relay](#uplink-and-relay)
@@ -1488,6 +1489,44 @@ echo "Negated: ${MyBool.Not}"  ; FALSE
 - **Get value**: `${Object.Property}` or `${Object.Method}`
 - **Set value**: `Object:Method[parameters]`
 - **Method call**: `Object:Method[]` (empty brackets for no params)
+
+### Metaprogramming: GetFallthroughObject
+
+**Reference implementation:** see Tehbot's `core/obj_Module.iss` and the LavishScript wiki on member fallthrough.
+
+`GetFallthroughObject` is a **special member name** that LavishScript looks for whenever a requested member is NOT explicitly declared on an objectdef. If present, the engine evaluates it to get the name of a *target object* and transparently forwards the unknown member access to that target. This lets you build a thin wrapper that adds behavior (methods, cached state, pulse hooks) while still allowing callers to reach every member of the underlying object — without hand-writing a passthrough for each one.
+
+**Signature** — the canonical ISXEVE form returns a **string** naming the target object (LavishScript re-evaluates the string to resolve the fallthrough each access):
+
+```lavishscript
+objectdef obj_MyWrapper
+{
+    variable int64 TargetID
+
+    ; Wrapper-specific state / methods can go here.
+    method Pulse()
+    {
+        ; ... custom logic ...
+    }
+
+    ; Unknown member accesses on obj_MyWrapper fall through to the
+    ; object named by this string. LavishScript re-resolves the name
+    ; each access, so ${TargetID} can change at runtime.
+    member:string GetFallthroughObject()
+    {
+        return "MyShip.Module[${TargetID}]"
+    }
+}
+```
+
+With the above, a consumer can write `${MyWrapper.IsActive}`, `${MyWrapper.Charge.Name}`, or `MyWrapper:Click` and each call proxies to `MyShip.Module[<id>]` as if the wrapper were the module itself.
+
+**Why it's powerful**:
+- **Zero-boilerplate delegation** — no need to re-declare every member of the underlying type on the wrapper.
+- **Dynamic targets** — because the return is a string re-evaluated on each access, the wrapper can point at different underlying objects over time (e.g., refitting, swapping modules) with no re-binding.
+- **Composable layering** — a wrapper over a wrapper still fully fall-throughs.
+
+**Shadowing gotcha**: members declared explicitly on the wrapper **shadow** the fallthrough — the engine only consults `GetFallthroughObject` when a member isn't found locally. This is a feature, not a bug: it lets you selectively override specific members (e.g., a stricter `IsActive` that also checks reload state) while leaving everything else transparent.
 
 ---
 
