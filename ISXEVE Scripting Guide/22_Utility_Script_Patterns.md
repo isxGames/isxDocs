@@ -345,7 +345,10 @@ function LoadCharacterProfile()
 	}
 
 	echo Loading profile: ${ProfileFile}
-	#include ${ProfileFile}
+	; Use `runscript` (runtime) -- NOT `#include`, which is a preprocessor
+	; directive evaluated at script-load time and cannot see runtime
+	; variables like ${ProfileFile}.
+	runscript "${ProfileFile}"
 }
 ```
 
