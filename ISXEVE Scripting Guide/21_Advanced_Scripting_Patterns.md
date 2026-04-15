@@ -936,7 +936,7 @@ function SwitchToNewTarget(int64 newTargetID)
     }
 
     ; Do switch
-    MyShip:SetActiveTarget[${newTargetID}]
+    Entity[${newTargetID}]:MakeActiveTarget
 
     ; Update cooldown
     LastTargetSwitch:Set[${Time.Timestamp}]
@@ -1072,7 +1072,7 @@ atom(script) ReceiveTargets(string targetIDList, int64 activeTargetID)
     ; Set active target
     if ${activeTargetID} > 0 && ${Entity[${activeTargetID}](exists)}
     {
-        MyShip:SetActiveTarget[${activeTargetID}]
+        Entity[${activeTargetID}]:MakeActiveTarget
     }
 }
 ```
