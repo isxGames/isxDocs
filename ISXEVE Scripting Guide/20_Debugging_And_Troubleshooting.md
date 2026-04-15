@@ -2280,7 +2280,8 @@ function UnloadCargo()
     call Dock
 
     ; Wait for hangar
-    if !${call WaitForHangar 30}
+    call WaitForHangar 30
+    if !${Return}
     {
         Logger:Log["Failed to access hangar"]
         return
@@ -2348,7 +2349,8 @@ function GetCargoSpace()
 }
 
 ; Usage
-variable float cargoFree = ${call GetCargoSpace}
+call GetCargoSpace
+variable float cargoFree = ${Return}
 Logger:Log["Cargo free: ${cargoFree}m3"]
 ```
 
@@ -2852,12 +2854,14 @@ function GetTarget()
     return ${targetID}
 }
 
-variable int64 myTarget = ${call GetTarget}    ; Works
+call GetTarget
+variable int64 myTarget = ${Return}    ; Works
 
 echo ${targetID}    ; ERROR: targetID doesn't exist here!
 
 ; RIGHT - use return value
-variable int64 myTarget = ${call GetTarget}
+call GetTarget
+variable int64 myTarget = ${Return}
 echo ${myTarget}    ; Works
 ```
 
@@ -3148,16 +3152,19 @@ function main()
 ; Add environment detection
 function DetectEnvironment()
 {
+    call CountEntities
+    variable int entityCount = ${Return}
+
     echo "=== Environment Detection ==="
     echo "System: ${Me.SolarSystem.Name}"
     echo "Security: ${Me.SolarSystem.Security}"
     echo "Ship: ${MyShip.ToEntity.Name}"
-    echo "Entities on Grid: ${call CountEntities}"
+    echo "Entities on Grid: ${entityCount}"
     echo "FPS: ${Display.FPS}"
     echo "============================="
 
     ; Adjust settings based on environment
-    if ${call CountEntities} > 500
+    if ${entityCount} > 500
     {
         Logger:Log["High entity count - increasing query intervals"]
         This.QueryInterval:Set[10.0]    ; Slower queries
