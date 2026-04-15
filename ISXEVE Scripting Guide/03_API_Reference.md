@@ -1069,18 +1069,16 @@ variable evewindow LocalChat = ${EVEWindow[Local]}
 **${Chat}** provides access to chat system:
 
 ```lavish
-; Get channel count
-echo "Channels: ${Chat.ChannelCount}"
-
 ; Access channel by name
 variable chatchannel LocalChannel = ${Chat[Local]}
 
 ; Access channel by ID
 variable chatchannel CorpChannel = ${Chat[123456]}
 
-; Get all channels
+; Get all channels (and derive the channel count)
 variable index:chatchannel AllChannels
 Chat:GetChannels[AllChannels]
+echo "Channels: ${AllChannels.Used}"
 ```
 
 **Common Use**: Monitor chat for commands, enemy detection, fleet coordination
