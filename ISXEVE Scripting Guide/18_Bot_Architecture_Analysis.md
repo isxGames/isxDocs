@@ -29,11 +29,10 @@
 15. [Tehbot Overview](#tehbot-overview)
 16. [StateQueue Architecture](#statequeue-architecture)
 17. [MiniMode System](#minimode-system)
-18. [Combat Computer Deep Dive](#combat-computer-deep-dive)
-19. [Comparison: Tehbot vs EVEBot vs Yamfa](#comparison-tehbot-vs-evebot-vs-yamfa)
-20. [Key Patterns](#key-patterns)
-21. [When to Use Which Architecture](#when-to-use-which-architecture)
-22. [Community Takeaways](#community-takeaways)
+18. [Comparison: Tehbot vs EVEBot vs Yamfa](#comparison-tehbot-vs-evebot-vs-yamfa)
+19. [Key Patterns](#key-patterns)
+20. [When to Use Which Architecture](#when-to-use-which-architecture)
+21. [Community Takeaways](#community-takeaways)
 
 ---
 
@@ -1380,45 +1379,67 @@ For a complete working fleet-assist bot as a study reference, see `Scripts\++isx
 
 ### File Structure
 
+Directory listing from the current Tehbot repository:
+
 ```
 Tehbot/
-├── Tehbot.iss                    # Main entry (includes all files)
-├── core/                         # Core objects (20+ files)
+├── Tehbot.iss                    # Main entry (orchestrator)
+├── Tehbot.xml                    # Main UI
+├── TehbotUpdater.cs              # Auto-updater
+├── TehbotUpdater.xml
+│
+├── core/                         # Core objects
 │   ├── Defines.iss               # Constants
 │   ├── Macros.iss                # Macros
 │   ├── obj_Tehbot.iss            # Main controller
-│   ├── obj_StateQueue.iss        # State queue pattern ★
+│   ├── obj_StateQueue.iss        # State queue pattern
 │   ├── obj_Configuration.iss     # Config system
-│   ├── obj_Client.iss            # Client management
+│   ├── obj_Client.iss            # Client/session management
+│   ├── obj_Login.iss             # Login / session lifecycle
+│   ├── obj_Busy.iss              # Busy-state tracking
+│   ├── obj_Logger.iss            # Logging
+│   ├── obj_TehbotUI.iss          # UI helpers
 │   ├── obj_Module.iss            # Module control
-│   ├── obj_CombatComputer.iss    # Damage calculation ★
-│   ├── obj_TargetList.iss        # Target management
-│   ├── obj_PrioritizedTargets.iss# Priority system ★
+│   ├── obj_ModuleList.iss        # Classified module indexes
+│   ├── obj_Ship.iss              # Ship wrapper
+│   ├── obj_Cargo.iss             # Cargo handling
+│   ├── obj_Drones.iss            # Drone control
+│   ├── obj_Move.iss              # Movement
+│   ├── obj_TargetList.iss        # Target enumeration/filtering
+│   ├── obj_PrioritizedTargets.iss# Target prioritization
 │   ├── obj_NPCData.iss           # NPC database
 │   ├── obj_FactionData.iss       # Faction database
-│   └── ... (15+ more core objects)
+│   ├── obj_MissionParser.iss     # Mission text parsing
+│   ├── obj_Dynamic.iss           # Dynamic minimode registration
+│   └── obj_Utility.iss           # Miscellaneous utilities
 │
 ├── behavior/                     # Full behaviors
 │   ├── Mission.iss               # Mission running
-│   ├── Abyssal.iss               # Abyssal deadspace
-│   ├── CombatAnoms.iss           # Anomaly combat
-│   ├── Mining.iss                # Mining
-│   ├── Salvager.iss              # Salvaging
-│   └── Observer.iss              # Observation mode
+│   ├── Salvager.iss              # Salvaging behavior
+│   └── MiniMode.iss              # Minimode-only runtime host
 │
-└── minimode/                     # MiniModes (small modules)
-    ├── TargetManager.iss         # Auto-targeting
-    ├── DroneControl.iss          # Auto-drones
-    ├── AutoModule.iss            # Auto-activate modules
-    ├── FightOrFlight.iss         # Safety system
-    ├── AutoThrust.iss            # Speed control
-    ├── InstaWarp.iss             # Instant warp tricks
-    ├── RemoteRepManagement.iss   # Logi support
-    ├── Salvage.iss               # Auto-salvage
-    ├── LocalCheck.iss            # Local monitoring
-    ├── UndockWarp.iss            # Undock automation
-    └── ... (10+ more minimodes)
+├── minimode/                     # MiniModes (small feature modules)
+│   ├── AutoModule.iss            # Auto-activate hardeners / reps / gang links / etc.
+│   ├── AutoThrust.iss            # Speed control
+│   ├── Automate.iss              # General automation helpers
+│   ├── DroneControl.iss          # Drone management
+│   ├── FightOrFlight.iss         # Safety / retreat system
+│   ├── InstaWarp.iss             # Insta-warp maneuvers
+│   ├── Salvage.iss               # Auto-salvage
+│   └── UndockWarp.iss            # Undock-and-warp automation
+│
+├── config/                       # (user config, populated at runtime)
+│
+└── data/                         # Static data
+    ├── NPCData.xml
+    ├── FactionData.xml
+    ├── DroneData.xml
+    └── MissionDataExample.iss
 ```
+
+**Note on targeting:** Tehbot does NOT ship a dedicated "TargetManager" minimode. Target selection is split across `core/obj_TargetList.iss` (enumeration / filtering) and `core/obj_PrioritizedTargets.iss` (priority logic), and behaviors / minimodes call into those objects directly rather than going through a separate targeting minimode.
+
+**Note on combat optimization:** There is no `obj_CombatComputer.iss` in the real Tehbot. Ammo / damage decisions live inside the behaviors and minimodes themselves using the static `data/NPCData.xml` and `data/FactionData.xml` tables loaded by `obj_NPCData` and `obj_FactionData`.
 
 ### Architecture Type
 
@@ -1747,128 +1768,49 @@ Mission:QueueState["StartMission"]:
 
 ### What are MiniModes?
 
-**MiniModes** = Small, focused modules that run independently and coordinate via global variables.
+**MiniModes** = Small, focused modules that run independently and coordinate through shared object references.
 
-**Examples**:
-- TargetManager - Auto-targeting
-- DroneControl - Auto-drone deployment
-- AutoModule - Auto-activate modules
-- FightOrFlight - Safety system
-- LocalCheck - Monitor local for hostiles
+**Real minimodes shipped with Tehbot** (from the `minimode/` directory):
+- `AutoModule` — auto-activate hardeners / shield boosters / armor reps / gang links / cloaks
+- `AutoThrust` — speed and propulsion control
+- `Automate` — general-purpose automation helpers
+- `DroneControl` — drone deployment and management
+- `FightOrFlight` — combat vs. retreat safety logic
+- `InstaWarp` — insta-warp maneuvers
+- `Salvage` — auto-salvage wrecks
+- `UndockWarp` — undock-and-warp automation
 
-**Pattern**: Each minimode is a StateQueue that pulses independently.
+**Pattern**: Each minimode is an `obj_StateQueue` subclass that pulses independently at its own `PulseFrequency` and registers through `DynamicAddMiniMode`.
 
-### Global Variable Coordination
+### Minimode Registration and Coordination
 
-File: `Tehbot.iss` (lines 170-195)
+Tehbot does not rely on a large pool of named `global` variables for minimode coordination. Minimodes register themselves into a shared registry via `DynamicAddMiniMode(...)` from `core/obj_Dynamic.iss`, and the registry (`obj_Dynamic`) owns collections of known behaviors and minimodes. Each minimode is a StateQueue that pulses on its own `PulseFrequency` and reaches for shared state through well-known object references (`Tehbot`, `Config`, `Drones`, `Ship`, `NPCData`, `FactionData`, `PrioritizedTargets`, `ActiveNPC` / `obj_TargetList` instances) rather than a flat variable namespace.
 
-```lavish
-; Global variables for information sharing between minimodes
-declarevariable CurrentOffenseRange float global
-declarevariable CurrentRepRange float global
-declarevariable CurrentOffenseTarget int64 global
-declarevariable CurrentRepTarget int64 global
-declarevariable AllowSiegeModule bool global
+Where cross-module coordination is needed — "what is the current offense target?", "am I in combat?", "should drones engage?" — the source of truth tends to be a member on one of those shared objects (e.g. a minimode reads `PrioritizedTargets.GetBestTarget` or consults its own `obj_TargetList`), not a top-level `global` primitive.
 
-; Finalization flags (target choice is FINAL)
-declarevariable finalizedTM bool global        ; TargetManager finalized
-declarevariable finalizedDC bool global        ; DroneControl finalized
+### Where Targeting Lives
 
-; Safety flags
-declarevariable FriendlyLocal bool global      ; LocalCheck sets this
-declarevariable TargetManagerInhibited bool global  ; Inhibit targeting
-
-; Ammo override
-declarevariable AmmoOverride string global
-```
-
-**Coordination Pattern**:
-```
-TargetManager → Sets CurrentOffenseTarget, finalizedTM
-       ↓
-DroneControl → Reads CurrentOffenseTarget, sends drones to it
-       ↓
-AutoModule → Reads CurrentOffenseTarget, activates weapons on it
-       ↓
-LocalCheck → Detects hostiles, sets TargetManagerInhibited
-       ↓
-TargetManager → Reads TargetManagerInhibited, stops targeting
-```
-
-### MiniMode Example: TargetManager
-
-File: `minimode/TargetManager.iss` (simplified)
-
-```lavish
-objectdef obj_TargetManager inherits obj_StateQueue
-{
-    method Initialize()
-    {
-        This[parent]:Initialize
-        This.NonGameTiedPulse:Set[FALSE]
-        This.PulseFrequency:Set[1000]    ; 1 second pulse
-    }
-
-    method Start()
-    {
-        This:QueueState["TargetManager"]
-    }
-
-    method Stop()
-    {
-        This:Clear
-        CurrentOffenseTarget:Set[0]
-        finalizedTM:Set[FALSE]
-    }
-
-    member:bool TargetManager(string args)
-    {
-        ; Check if inhibited
-        if ${TargetManagerInhibited}
-        {
-            return FALSE    ; Stay in state, check next pulse
-        }
-
-        ; Get best target
-        variable int64 bestTarget = ${This.GetBestTarget}
-
-        if ${bestTarget} == 0
-        {
-            ; No targets
-            CurrentOffenseTarget:Set[0]
-            finalizedTM:Set[FALSE]
-            return FALSE
-        }
-
-        ; Lock target if not locked
-        if !${Entity[${bestTarget}].IsLockedTarget}
-        {
-            Entity[${bestTarget}]:LockTarget
-            return FALSE    ; Wait for lock
-        }
-
-        ; Target is locked - finalize
-        CurrentOffenseTarget:Set[${bestTarget}]
-        finalizedTM:Set[TRUE]
-
-        return FALSE    ; Stay in state, keep managing
-    }
-
-    member:int64 GetBestTarget()
-    {
-        ; Use PrioritizedTargets to get best target
-        return ${PrioritizedTargets.GetBestTarget}
-    }
-}
-```
+Target selection is not itself a minimode in Tehbot. The core objects `obj_TargetList` (enumeration / filtering) and `obj_PrioritizedTargets` (priority rules) do the work, and whichever behavior or minimode needs a target calls into those objects and writes the chosen ID into a shared global (`CurrentOffenseTarget`). The closest thing to a "targeting minimode" in spirit is the targeting-related block inside behaviors like `behavior/Mission.iss`, not a standalone file.
 
 ### MiniMode Example: DroneControl
 
-File: `minimode/DroneControl.iss` (simplified)
+Sketch of the real `minimode/DroneControl.iss` shape (simplified — consult the real file for full detail):
 
 ```lavish
 objectdef obj_DroneControl inherits obj_StateQueue
 {
+    variable obj_Configuration_DroneControl Config
+    variable obj_TargetList ActiveNPC
+    variable int64 currentTarget = 0
+
+    method Initialize()
+    {
+        This[parent]:Initialize
+        PulseFrequency:Set[1000]
+        This.NonGameTiedPulse:Set[TRUE]
+        DynamicAddMiniMode("DroneControl", "DroneControl")
+    }
+
     method Start()
     {
         This:QueueState["DroneControl"]
@@ -1876,282 +1818,46 @@ objectdef obj_DroneControl inherits obj_StateQueue
 
     member:bool DroneControl(string args)
     {
-        ; Wait for TargetManager to finalize
-        if !${finalizedTM}
-        {
-            return FALSE
-        }
-
-        ; Get target from global variable
-        variable int64 target = ${CurrentOffenseTarget}
+        ; Pick best NPC target from own obj_TargetList
+        ; (real code picks by class, range, and configured drone loadout)
+        variable int64 target = ${This.ActiveNPC.GetBestTarget}
 
         if ${target} == 0
         {
-            ; No target - recall drones
             call This.RecallDrones
             return FALSE
         }
 
-        ; Launch drones if not launched
-        if ${Me.GetDrones.Count} == 0
-        {
+        ; Launch / redirect drones as needed
+        if !${Me.GetActiveDrones.Count}
             call This.LaunchDrones
-            return FALSE
-        }
-
-        ; Send drones to target
         call This.SendDronesToTarget ${target}
 
         return FALSE    ; Stay in state, keep controlling
     }
-
-    function LaunchDrones()
-    {
-        EVE:Execute[CmdLaunchDrones]
-        wait 30
-    }
-
-    function SendDronesToTarget(int64 targetID)
-    {
-        if ${Entity[${targetID}](exists)} && ${Entity[${targetID}].IsLockedTarget}
-        {
-            Entity[${targetID}]:MakeActiveTarget
-            wait 10
-            EVE:Execute[CmdDronesEngage]
-        }
-    }
-
-    function RecallDrones()
-    {
-        EVE:Execute[CmdDronesReturnToBay]
-    }
 }
 ```
 
-### MiniMode Coordination Flow
+Key points:
 
-```
-Pulse 1:
-  LocalCheck: Checks local → FriendlyLocal = TRUE
-  TargetManager: Checks TargetManagerInhibited (FALSE) → Selects target → CurrentOffenseTarget = 12345, finalizedTM = TRUE
-  DroneControl: Checks finalizedTM (TRUE) → Launches drones → Sends to 12345
-  AutoModule: Checks CurrentOffenseTarget (12345) → Activates weapons on 12345
+- Inherits `obj_StateQueue` and registers through `DynamicAddMiniMode` on initialization.
+- Holds its own `obj_TargetList` (`ActiveNPC`) rather than reading a global "current target" variable.
+- Owns an `obj_Configuration_DroneControl` for runtime-tunable settings (sentry usage, drone-count cap, engage range).
+- Pulses independently at its own `PulseFrequency`.
 
-Pulse 2:
-  LocalCheck: Hostile enters local → FriendlyLocal = FALSE, TargetManagerInhibited = TRUE
-  TargetManager: Checks TargetManagerInhibited (TRUE) → Does nothing
-  DroneControl: Checks finalizedTM (FALSE, because TM stopped) → Recalls drones
-  AutoModule: Checks CurrentOffenseTarget (0) → Deactivates weapons
-```
+### Trade-offs of the MiniMode Pattern
 
-### Advantages of MiniModes
+Advantages:
+- **Modularity.** Each minimode is a single file with a single responsibility and can be enabled / disabled independently.
+- **Reusability.** The same minimode (e.g. `AutoModule`, `DroneControl`) plugs into multiple behaviors without modification.
+- **Simple lifecycle.** StateQueue inheritance + `DynamicAddMiniMode` registration means no bespoke wiring per module.
 
-✅ **Modularity**
-- Each minimode is independent file
-- Easy to enable/disable features
-- Clean separation of concerns
+Costs:
+- **Implicit coupling.** A behavior "just knows" that `DroneControl` will pick its own targets from `obj_TargetList` and activate the right drones — changing that contract quietly breaks callers.
+- **Pulse-timing assumptions.** Minimodes pulse at their own `PulseFrequency`; code that assumes a specific ordering between two modules can desync when those frequencies differ.
+- **Discoverability.** Shared state lives on object references (`Drones`, `NPCData`, per-minimode `obj_TargetList` instances) rather than in one obvious place, so new contributors need to trace several files to understand a coordination path.
 
-✅ **Reusability**
-- Use same minimode across behaviors
-- TargetManager works for missions, anomalies, etc.
-
-✅ **Flexibility**
-- Add new minimodes without modifying existing code
-- MiniModes can be combined in different ways
-
-### Disadvantages of MiniModes
-
-❌ **Global Variable Hell**
-- 15+ global variables for coordination
-- Hard to track dependencies
-- No type safety
-
-❌ **Implicit Coupling**
-- MiniModes depend on each other via globals
-- Changing one can break another
-- Hard to test in isolation
-
-❌ **Race Conditions**
-- MiniModes pulse at different rates
-- Order of execution matters
-- Timing bugs are common
-
-**Better Approach** (modern):
-```lavish
-; Instead of globals, use message passing
-objectdef obj_Message
-{
-    variable string Type
-    variable string Data
-}
-
-objectdef obj_MessageBus
-{
-    variable queue:obj_Message Messages
-
-    method Post(string type, string data)
-    {
-        Messages:Queue[${type}, ${data}]
-    }
-
-    method Get(string type)
-    {
-        ; Return first message of type, remove from queue
-    }
-}
-
-; Usage:
-MessageBus:Post["TargetSelected", "${targetID}"]
-; ...
-variable string targetMsg = "${MessageBus.Get["TargetSelected"]}"
-```
-
----
-
-## Combat Computer Deep Dive
-
-### What is CombatComputer?
-
-**CombatComputer** = Advanced damage calculation system using SQLite database.
-
-**Purpose**: Calculate optimal ammo, time-to-kill, shots-to-kill for each target.
-
-### Database Structure
-
-File: `core/obj_CombatComputer.iss` uses SQLite:
-
-```sql
--- Ammo effectiveness table
-CREATE TABLE IF NOT EXISTS AmmoEffectiveness (
-    AmmoTypeID INTEGER,
-    AmmoName TEXT,
-    TargetShipGroupID INTEGER,
-    TargetShipTypeName TEXT,
-    EMDamage REAL,
-    ThermalDamage REAL,
-    KineticDamage REAL,
-    ExplosiveDamage REAL,
-    EMResist REAL,
-    ThermalResist REAL,
-    KineticResist REAL,
-    ExplosiveResist REAL,
-    EffectiveDamagePerShot REAL,
-    TimeToKill REAL,
-    ShotsToKill INTEGER
-);
-```
-
-### Damage Calculation
-
-File: `core/obj_CombatComputer.iss` (we analyzed this in File 21)
-
-```lavish
-function CalculateBestAmmo(int64 targetID)
-{
-    variable string targetShipType = "${Entity[${targetID}].Type}"
-    variable int targetGroupID = ${Entity[${targetID}].GroupID}
-
-    ; Query database for best ammo against this target
-    variable string query = "SELECT AmmoName, EffectiveDamagePerShot, ShotsToKill, TimeToKill FROM AmmoEffectiveness WHERE TargetShipTypeName = '${targetShipType}' ORDER BY EffectiveDamagePerShot DESC LIMIT 1"
-
-    variable sqlite3 db
-    db:Open["CombatData.db"]
-
-    variable sqlite3query q
-    q:Set[${db.Open["${query}"]}]
-
-    if ${q:FetchRow}
-    {
-        variable string bestAmmo = "${q.GetString[0]}"
-        variable float damagePerShot = ${q.GetFloat[1]}
-        variable int shotsToKill = ${q.GetInt[2]}
-        variable float timeToKill = ${q.GetFloat[3]}
-
-        echo "Best ammo for ${targetShipType}: ${bestAmmo}"
-        echo "  Damage/shot: ${damagePerShot}"
-        echo "  Shots to kill: ${shotsToKill}"
-        echo "  Time to kill: ${timeToKill}s"
-
-        ; Switch to best ammo
-        call This.SwitchAmmo "${bestAmmo}"
-    }
-
-    q:Close
-    db:Close
-}
-```
-
-### Ammo Switching
-
-**Note:** Tehbot's original code used deprecated cargo API. Modern implementation below.
-
-```lavish
-function SwitchAmmo(string ammoName)
-{
-    ; MODERN API: Open inventory and get cargo items
-    if !${EVEWindow[Inventory](exists)}
-    {
-        EVE:Execute[OpenInventory]
-        wait 20
-    }
-
-    if !${EVEWindow[Inventory](exists)}
-    {
-        echo "Cannot open inventory window"
-        return FALSE
-    }
-
-    ; Find ammo in cargo using modern inventory API
-    variable index:item cargoItems
-    EVEWindow[Inventory].Child[ShipCargo]:GetItems[cargoItems]
-
-    variable iterator itemIt
-    cargoItems:GetIterator[itemIt]
-
-    if ${itemIt:First(exists)}
-    {
-        do
-        {
-            if ${itemIt.Value.Name.Equal["${ammoName}"]}
-            {
-                ; Found ammo - load it
-                variable index:module weapons
-                Ship.ModuleList_Weapon:GetIterator[weaponIt]
-
-                if ${weaponIt:First(exists)}
-                {
-                    do
-                    {
-                        weaponIt.Value:ChangeAmmo[${itemIt.Value.ID}]
-                    }
-                    while ${weaponIt:Next(exists)}
-                }
-
-                echo "Switched to ${ammoName}"
-                return TRUE
-            }
-        }
-        while ${itemIt:Next(exists)}
-    }
-
-    echo "Ammo ${ammoName} not found in cargo"
-    return FALSE
-}
-```
-
-### When to Use CombatComputer
-
-**Use when**:
-- Fighting varied enemy types (different resists)
-- Using multiple ammo types
-- Optimizing DPS is critical
-- Have time to build database
-
-**Don't use when**:
-- Fighting same enemy type always
-- Using one ammo type
-- Need simple solution
-- Don't want database dependency
+A common "modernization" suggestion is to replace the implicit shared-reference style with explicit message passing (a small `obj_MessageBus` with typed post/consume). That buys discoverability at the cost of boilerplate; whether it's worth it depends on project size.
 
 ---
 
@@ -2387,18 +2093,13 @@ objectdef obj_Miner
 
 2. **MiniModes = Simple Modularity**
    - Small, focused modules
-   - Global variables for coordination (simple but works)
+   - Coordination via shared object references (not a flat global-variable namespace)
    - Easy to add features
 
-3. **CombatComputer = Optimize Damage**
-   - SQLite database for ammo effectiveness
-   - Calculate best ammo per target
-   - Professional-level optimization
-
-4. **Global Variables Work (for small-medium bots)**
-   - Simple coordination
-   - No complex messaging needed
-   - BUT: Doesn't scale to large projects
+3. **Static Data Tables for Damage / Target Decisions**
+   - `data/NPCData.xml` and `data/FactionData.xml` loaded at startup by `obj_NPCData` / `obj_FactionData`
+   - Avoids per-encounter database queries
+   - Good fit when the bot's enemy set is known up front
 
 ### Patterns to Adopt
 
@@ -2411,39 +2112,33 @@ This:QueueState["Step2"]
 
 ✅ **MiniMode Pattern**
 ```lavish
-; Small independent modules
-obj_TargetManager
+; Small independent modules, each inheriting obj_StateQueue
 obj_DroneControl
 obj_AutoModule
-; Coordinate via shared state
+obj_FightOrFlight
+; Coordinate via shared object references and per-module obj_TargetList
 ```
 
-✅ **CombatComputer Pattern**
+✅ **Data-Table-Driven Decisions**
 ```lavish
-; Database-driven decisions
-query = "SELECT BestAmmo WHERE TargetType = '${type}'"
-; Switch to optimal ammo
+; Load static lookup tables at startup instead of querying per-decision
+NPCData:LoadData    ; from data/NPCData.xml
+; Then consult in-memory
+NPCData.NPCType[${TargetGroupID}]
 ```
 
 ### Patterns to Avoid
 
-❌ **Too Many Global Variables**
+❌ **Ad-Hoc Global Variables for Coordination**
 ```lavish
-; Tehbot has 15+ globals
-; Hard to track, error-prone
-; Use message bus or interfaces instead
+; Flat global namespace couples modules implicitly
+; Prefer a shared object reference or a typed message bus
 ```
 
 ❌ **StateQueue for Simple Bots**
 ```lavish
 ; Overkill for simple targeting bot
 ; Use simple loop instead
-```
-
-❌ **CombatComputer Without Database**
-```lavish
-; Building database takes time
-; Only use if fighting varied enemies
 ```
 
 ---
@@ -2461,15 +2156,13 @@ query = "SELECT BestAmmo WHERE TargetType = '${type}'"
 - Dynamic state insertion
 
 **MiniModes**:
-- Small independent modules
-- Global variable coordination
-- Easy to add features
-- Simple but effective
+- Small independent modules, each an `obj_StateQueue` subclass
+- Register via `DynamicAddMiniMode` into `obj_Dynamic`
+- Coordinate through shared object references, not a flat global namespace
 
-**CombatComputer**:
-- SQLite database for damage calc
-- Optimal ammo selection
-- Professional optimization
+**Static Data Layer**:
+- `data/NPCData.xml`, `data/FactionData.xml`, `data/DroneData.xml` loaded once
+- Minimodes and behaviors consult the in-memory tables for NPC classification, faction preferences, and drone loadouts
 
 ### Comparison to Others
 
@@ -2479,9 +2172,8 @@ query = "SELECT BestAmmo WHERE TargetType = '${type}'"
 ### Best Use Cases
 
 **Tehbot-style perfect for**:
-- Mission running (sequences)
-- Abyssal deadspace (multi-step)
-- Combat with varied enemies (CombatComputer)
+- Mission running (sequences via StateQueue)
+- Multi-step combat encounters
 - Medium complexity bots (1000-5000 lines)
 
 ### For the Community
@@ -2489,13 +2181,11 @@ query = "SELECT BestAmmo WHERE TargetType = '${type}'"
 **Learn from Tehbot**:
 1. StateQueue for sequences
 2. MiniMode pattern for modularity
-3. CombatComputer for optimization
-4. Global variables OK for medium bots
+3. Static data tables over per-decision database queries
 
 **Avoid**:
-1. Too many global variables
-2. StateQueue for simple bots
-3. Database overhead when not needed
+1. Flat global-variable coordination
+2. StateQueue for genuinely simple bots
 
 
 Three bot architectures analyzed:

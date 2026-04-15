@@ -20,7 +20,7 @@
 11. [Combat Patterns by Ship Type](#combat-patterns-by-ship-type)
 12. [Common Combat Problems](#common-combat-problems)
 
-**See also:** For architectural analysis of Tehbot's StateQueue, MiniMode system, and CombatComputer database, see [18_Bot_Architecture_Analysis.md](18_Bot_Architecture_Analysis.md#tehbot-combat-analysis).
+**See also:** For architectural analysis of Tehbot's StateQueue and MiniMode system, see [18_Bot_Architecture_Analysis.md](18_Bot_Architecture_Analysis.md#tehbot-combat-analysis).
 
 ---
 
