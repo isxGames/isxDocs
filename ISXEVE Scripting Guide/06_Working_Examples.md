@@ -1115,8 +1115,8 @@ function GetFleetMembers()
         {
             echo "Fleet member: ${Member.Value.ToPilot.Name}"
             echo "  CharID: ${Member.Value.CharID}"
-            echo "  ShipType: ${Member.Value.ToFleetMember.ShipType}"
-            echo "  System: ${Member.Value.ToFleetMember.SolarSystemID}"
+            echo "  ShipType: ${Member.Value.ShipType}"
+            echo "  System: ${Member.Value.SolarSystemID}"
             Count:Inc
         }
         while ${Member:Next(exists)}
