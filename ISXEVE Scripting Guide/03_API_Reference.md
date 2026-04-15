@@ -472,9 +472,6 @@ if ${Me.InPod}
 
 ; Autopilot
 echo "Autopilot On: ${Me.AutoPilotOn}"
-
-; Corporation roles
-echo "Has Role Accountant: ${Me.HasRole["Accountant"]}"
 ```
 
 ---
