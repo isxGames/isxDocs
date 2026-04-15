@@ -559,11 +559,16 @@ objectdef obj_MemoryTracker
     }
 }
 
-; Check periodically
+; Check periodically. Use elapsed-since-last, not `RunningTime % N == 0`
+; (which would only match the exact-millisecond tick and is almost never
+; hit given jittery pulse scheduling).
+variable int LastMemoryCheck = 0
+
 method Pulse()
 {
-    if ${Math.Calc[${Script.RunningTime} % 60000]} == 0    ; Every minute
+    if ${Math.Calc[${Script.RunningTime} - ${LastMemoryCheck}]} >= 60000
     {
+        LastMemoryCheck:Set[${Script.RunningTime}]
         MemoryTracker:Check
     }
 }
@@ -1016,11 +1021,17 @@ objectdef obj_StatusMonitor
         echo "└─────────────────────────────────────┘"
     }
 
+    variable int LastStatusPrint = 0
+
     method Pulse()
     {
-        ; Update every 5 seconds
-        if ${Math.Calc[${Script.RunningTime} % 5000]} < 100
+        ; Update every 5 seconds. Gate on elapsed-since-last rather than
+        ; `RunningTime % 5000 < 100` -- the modulo form is fragile: if the
+        ; pulse rate is faster than 100 ms it fires multiple times per
+        ; window; if slower, it skips the window entirely.
+        if ${Math.Calc[${Script.RunningTime} - ${This.LastStatusPrint}]} >= 5000
         {
+            This.LastStatusPrint:Set[${Script.RunningTime}]
             This:PrintStatus
         }
     }
@@ -2473,14 +2484,19 @@ objectdef obj_FleetSync
         Event[Master_Heartbeat]:AttachAtom[This:OnHeartbeat]
     }
 
+    variable int LastHeartbeat = 0
+
     ; Master: Broadcast heartbeat
     method MasterPulse()
     {
         if ${Config.Fleet.IsMaster}
         {
-            ; Send state every 2 seconds
-            if ${Math.Calc[${Time.Timestamp} % 2]} < 0.1
+            ; Send state every 2 seconds. Gate on elapsed-since-last, not
+            ; on `Timestamp % 2` -- the modulo form fires on every pulse
+            ; during the matching second (Timestamp has 1s resolution).
+            if ${Math.Calc[${Time.Timestamp} - ${This.LastHeartbeat}]} >= 2
             {
+                This.LastHeartbeat:Set[${Time.Timestamp}]
                 relay all -event Master_Heartbeat "${This.CurrentState}" ${Time.Timestamp}
             }
         }
