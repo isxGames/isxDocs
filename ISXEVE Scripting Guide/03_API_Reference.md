@@ -384,7 +384,7 @@ function GetAllTargetIDs()
 
 ```lavish
 ; Check if skill is trained
-if ${Me.HasSkill["Mining"]}
+if ${Me.Skill["Mining"](exists)}
 {
     echo "Mining skill trained"
 }
@@ -404,7 +404,7 @@ echo "Training Ends: ${Me.SkillTrainingEnd}"
 ```lavish
 function HasSkillLevel(string skillName, int requiredLevel)
 {
-    if !${Me.HasSkill["${skillName}"]}
+    if !${Me.Skill["${skillName}"](exists)}
         return FALSE
 
     if ${Me.Skill["${skillName}"].Level} < ${requiredLevel}
