@@ -3781,8 +3781,14 @@ objectdef obj_FleetCombat
 
     member:int64 GetBestTarget()
     {
-        ; Priority 1: Targets shooting FC
-        variable int64 fcID = ${Entity["Name = \"${This.MasterName}\""].ID}
+        ; Priority 1: Threats targeting me
+        ; NOTE: ISXEVE only exposes `entity.IsTargetingMe` (is this entity
+        ; targeting ME). There is no primitive for "is entity X targeting
+        ; entity Y", so we cannot directly detect threats targeting the FC
+        ; from a slave's perspective. The slave-side best we can do is
+        ; prioritize entities targeting the slave itself, and rely on the
+        ; FC relaying its own threat list separately if fleet-wide threat
+        ; awareness is needed.
         variable index:entity Threats
         variable iterator Threat
 
@@ -3793,7 +3799,7 @@ objectdef obj_FleetCombat
         {
             do
             {
-                if ${Threat.Value.IsTargetingMe} || ${Threat.Value.IsActivelyTargeting[${fcID}]}
+                if ${Threat.Value.IsTargetingMe}
                 {
                     return ${Threat.Value.ID}
                 }
