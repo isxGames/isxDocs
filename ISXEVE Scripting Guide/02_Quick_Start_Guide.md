@@ -703,11 +703,11 @@ Leave the rest of the implementation (existence checks, NPC/PC branch, lock stat
 
 ### Exercise 3: Cargo Space Checker
 
-The quick one-line cargo summary (`${MyShip.UsedCargoCapacity}/${MyShip.CargoCapacity}`) already appeared in your first script. For this exercise, go a level deeper: **enumerate the actual items in your cargo hold** using `MyShip.Cargo[]`.
+The quick one-line cargo summary (`${MyShip.UsedCargoCapacity}/${MyShip.CargoCapacity}`) already appeared in your first script. For this exercise, go a level deeper: **enumerate the actual items in your cargo hold** by filling an `index:item` collection via `MyShip:GetCargo[index:item]` and iterating it.
 
 Write a script that:
 
-1. Calls `MyShip:GetCargo[<index>]` / iterates `MyShip.Cargo[i]` from `1` through `${MyShip.GetCargo}` (the item count).
+1. Declares a `variable index:item CargoItems`, fills it via `MyShip:GetCargo[CargoItems]`, then walks the collection either with `CargoItems:GetIterator[...]` or by direct `CargoItems.Get[n]` access up to `${CargoItems.Used}`.
 2. For each item, echoes `Name`, `Quantity`, and `Volume` (unit volume) — plus the **line total** (`Quantity * Volume`).
 3. Sums the line totals and echoes the grand total at the end.
 4. Bonus: tracks the single largest line-total item and echoes it as "Biggest stack: <name> (<m3>)".
@@ -715,17 +715,31 @@ Write a script that:
 **Hint — the iteration shape:**
 
 ```lavishscript
-variable int Count = ${MyShip.GetCargo}
-variable int i = 0
+variable index:item CargoItems
+variable iterator CargoItem
 variable float Total = 0
 variable float LineVol
-while ${i:Inc} <= ${Count}
+
+MyShip:GetCargo[CargoItems]
+
+if ${CargoItems.Used} == 0
 {
-    LineVol:Set[${Math.Calc[${MyShip.Cargo[${i}].Quantity} * ${MyShip.Cargo[${i}].Volume}]}]
-    echo "${i}: ${MyShip.Cargo[${i}].Name} x${MyShip.Cargo[${i}].Quantity} (${LineVol} m3)"
-    Total:Inc[${LineVol}]
+    echo "Cargo empty (or cargo hold hasn't been opened/scanned yet)."
+    return
+}
+
+CargoItems:GetIterator[CargoItem]
+if ${CargoItem:First(exists)}
+{
+    do
+    {
+        LineVol:Set[${Math.Calc[${CargoItem.Value.Quantity} * ${CargoItem.Value.Volume}]}]
+        echo "${CargoItem.Value.Name} x${CargoItem.Value.Quantity} (${LineVol} m3)"
+        Total:Inc[${LineVol}]
+    }
+    while ${CargoItem:Next(exists)}
 }
 echo "Total item volume: ${Total} m3"
 ```
 
-Note: `MyShip.Cargo[]` is only populated after the cargo hold has been opened/scanned at least once in-session. If the loop reports zero items, open your cargo window in EVE and re-run.
+Note: the cargo collection is only populated after the cargo hold has been opened/scanned at least once in-session. If `${CargoItems.Used}` is zero, open your cargo window in EVE and re-run.
