@@ -723,9 +723,11 @@ function main()
 
 function ProcessCargoQueued()
 {
+	variable index:item CargoItems
 	variable iterator CargoItem
 
-	MyShip:GetCargo[CargoItem]
+	MyShip:GetCargo[CargoItems]
+	CargoItems:GetIterator[CargoItem]
 
 	if ${CargoItem:First(exists)}
 	{
