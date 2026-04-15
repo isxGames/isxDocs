@@ -2104,7 +2104,7 @@ function UnloadOre()
     ; Open inventory window
     if !${EVEWindow[Inventory](exists)}
     {
-        EVE:Execute[CmdOpenInventory]
+        EVE:Execute[OpenInventory]
         wait 20
     }
 
@@ -4455,7 +4455,7 @@ function ResetBotState()
     call Log "WARNING" "Resetting bot state"
 
     ; Clear all targets
-    EVE:Execute[CmdClearTargets]
+    ; NOTE: no "clear all targets" Execute command exists; unlock individually via Entity[id]:UnlockTarget (iterate Me:GetTargets)
     wait 10
 
     ; Stop all modules
@@ -4982,7 +4982,7 @@ function EmergencyDock()
     EVE:Execute[CmdStopAllModules]
     wait 5
 
-    EVE:Execute[CmdClearTargets]
+    ; NOTE: no "clear all targets" Execute command exists; unlock individually via Entity[id]:UnlockTarget (iterate Me:GetTargets)
     wait 5
 
     ; Recall drones if any
@@ -5062,7 +5062,7 @@ function EmergencyWarp()
     wait 5
 
     ; Clear targets
-    EVE:Execute[CmdClearTargets]
+    ; NOTE: no "clear all targets" Execute command exists; unlock individually via Entity[id]:UnlockTarget (iterate Me:GetTargets)
     wait 5
 
     ; Check if scrambled
@@ -5153,7 +5153,7 @@ function EmergencyShutdown(string reason)
     EVE:Execute[CmdStopShip]
     wait 10
 
-    EVE:Execute[CmdClearTargets]
+    ; NOTE: no "clear all targets" Execute command exists; unlock individually via Entity[id]:UnlockTarget (iterate Me:GetTargets)
     wait 10
 
     ; Dock if possible
@@ -5537,7 +5537,7 @@ function ProcessRelayedTargets(string targetIDs, int64 activeTarget, int current
     if ${targetIDs.Length} == 0
     {
         SlaveTargetSet:Clear
-        EVE:Execute[CmdClearTargets]
+        ; NOTE: no "clear all targets" Execute command exists; unlock individually via Entity[id]:UnlockTarget (iterate Me:GetTargets)
         SlaveActiveTarget:Set[0]
         return
     }

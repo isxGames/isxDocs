@@ -669,7 +669,7 @@ function IsCargoFull()
 {
     ; Open inventory window if not open
     if !${EVEWindow[Inventory](exists)}
-        EVE:Execute[CmdOpenInventory]
+        EVE:Execute[OpenInventory]
 
     wait 5
 
@@ -700,7 +700,7 @@ function IsOreHoldFull()
 {
     ; Open inventory window if not open
     if !${EVEWindow[Inventory](exists)}
-        EVE:Execute[CmdOpenInventory]
+        EVE:Execute[OpenInventory]
 
     wait 5
 
@@ -731,7 +731,7 @@ function HasCargoSpace(float RequiredSpace)
 {
     ; Check if ship has required cargo space
     if !${EVEWindow[Inventory](exists)}
-        EVE:Execute[CmdOpenInventory]
+        EVE:Execute[OpenInventory]
 
     wait 5
 
@@ -987,7 +987,7 @@ function GetCargoItems()
 {
     ; Open inventory window if not open
     if !${EVEWindow[Inventory](exists)}
-        EVE:Execute[CmdOpenInventory]
+        EVE:Execute[OpenInventory]
 
     wait 10
 
@@ -1024,7 +1024,7 @@ function StackAllCargo()
 {
     ; Open inventory window
     if !${EVEWindow[Inventory](exists)}
-        EVE:Execute[CmdOpenInventory]
+        EVE:Execute[OpenInventory]
 
     wait 10
 
@@ -1050,7 +1050,7 @@ function GetCargoPercentUsed()
 {
     ; Modern API - use inventory window
     if !${EVEWindow[Inventory](exists)}
-        EVE:Execute[CmdOpenInventory]
+        EVE:Execute[OpenInventory]
 
     wait 5
 

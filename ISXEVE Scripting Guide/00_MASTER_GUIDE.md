@@ -299,7 +299,7 @@ if ${Item:First(exists)}
 
 **Common UI Operations:**
 - `EVE:Execute[CmdOpenCargoHold]` - Open cargo
-- `EVE:Execute[CmdOpenInventory]` - Open inventory
+- `EVE:Execute[OpenInventory]` - Open inventory
 - `EVE:Execute[CmdOpenMarket]` - Open market
 - `EVE:CloseAllInventoryWindows[]` - Close all inventory windows
 
@@ -344,7 +344,7 @@ Common `EVE:Execute[]` commands:
 | `CmdStopShip` | Stop ship |
 | `CmdToggleAutopilot` | Toggle autopilot |
 | `CmdOpenCargoHold` | Open cargo |
-| `CmdOpenInventory` | Open inventory |
+| `OpenInventory` | Open inventory |
 | `CmdOpenMarket` | Open market |
 | `CmdDockOrJumpOrActivateGate` | Dock/jump/activate |
 

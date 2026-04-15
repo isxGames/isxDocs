@@ -1339,7 +1339,7 @@ objectdef obj_AdvancedCombat
         ; Open inventory window if not already open
         if !${EVEWindow[Inventory](exists)}
         {
-            EVE:Execute[CmdOpenInventory]
+            EVE:Execute[OpenInventory]
             wait 20
         }
 

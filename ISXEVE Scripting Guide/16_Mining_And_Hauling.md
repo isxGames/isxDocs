@@ -752,7 +752,7 @@ function ShouldReturnToStation()
     ; Open inventory if needed
     if !${EVEWindow[Inventory](exists)}
     {
-        EVE:Execute[CmdOpenInventory]
+        EVE:Execute[OpenInventory]
         wait 20
     }
 
@@ -775,7 +775,7 @@ function GetCargoPercentFull()
     ; Open inventory if needed
     if !${EVEWindow[Inventory](exists)}
     {
-        EVE:Execute[CmdOpenInventory]
+        EVE:Execute[OpenInventory]
         wait 20
     }
 
@@ -861,7 +861,7 @@ function ReturnToStation()
     wait 10
 
     ; Clear targets
-    EVE:Execute[CmdClearTargets]
+    ; NOTE: no "clear all targets" Execute command exists; unlock individually via Entity[id]:UnlockTarget (iterate Me:GetTargets)
     wait 10
 
     ; Find home station
@@ -1161,7 +1161,7 @@ function StationPulse()
     ; Open inventory to check cargo
     if !${EVEWindow[Inventory](exists)}
     {
-        EVE:Execute[CmdOpenInventory]
+        EVE:Execute[OpenInventory]
         wait 20
     }
 
@@ -1330,7 +1330,7 @@ function DiagnoseCargoIssue()
     if !${EVEWindow[Inventory](exists)}
     {
         echo "Opening inventory window"
-        EVE:Execute[CmdOpenInventory]
+        EVE:Execute[OpenInventory]
         wait 20
     }
 
@@ -1364,7 +1364,7 @@ function DiagnoseCargoIssue()
         echo "WARNING: Cargo capacity data missing, refreshing inventory"
         EVEWindow[Inventory]:Close
         wait 10
-        EVE:Execute[CmdOpenInventory]
+        EVE:Execute[OpenInventory]
         wait 20
         return "REFRESHED"
     }
@@ -3054,7 +3054,7 @@ member:float CargoValue()
     ; Open inventory if needed
     if !${EVEWindow[Inventory](exists)}
     {
-        EVE:Execute[CmdOpenInventory]
+        EVE:Execute[OpenInventory]
         wait 20
     }
 

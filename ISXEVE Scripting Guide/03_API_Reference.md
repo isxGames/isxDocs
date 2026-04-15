@@ -821,7 +821,7 @@ echo "Signature Radius: ${MyShip.ToEntity.Radius}"
 
 ```lavish
 ; Open inventory
-EVE:Execute[CmdOpenInventory]
+EVE:Execute[OpenInventory]
 
 ; Activate module
 EVE:Execute[CmdActivateModule, ${slotID}]
@@ -1633,7 +1633,7 @@ Me:GetTargets[MyTargets]
 variable entity target = ${MyTargets.Get[1]}
 
 ; UI interaction
-EVE:Execute[CmdOpenInventory]
+EVE:Execute[OpenInventory]
 ```
 
 ### Critical Rules
@@ -5794,7 +5794,7 @@ For specialized holds (ore hold, fleet hangar, corp hangars, etc.) and for cross
 ```lavish
 ; Open inventory window once before use
 if !${EVEWindow[Inventory](exists)}
-    EVE:Execute[CmdOpenInventory]
+    EVE:Execute[OpenInventory]
 wait 10
 
 ; Access a specific hold via ChildWindow["<ShipCargoHoldName>"]
@@ -6995,7 +6995,7 @@ EVE:Execute[CommandName, param1, param2, ...]
 ```
 
 **Key Rules**:
-1. Commands are **case-insensitive** (CmdOpenInventory = cmdopeninventory)
+1. Commands are **case-insensitive** (OpenInventory = cmdopeninventory)
 2. Parameters vary by command (some have none, some require IDs/names)
 3. **Execution is asynchronous** - command returns immediately, UI updates later
 4. **No return value** - Cannot tell if command succeeded from Execute call
@@ -7004,7 +7004,7 @@ EVE:Execute[CommandName, param1, param2, ...]
 ### Common Execute Commands Categories
 
 **Opening Windows**:
-- `CmdOpenInventory`
+- `OpenInventory`
 - `CmdOpenMarket`
 - `CmdOpenFitting`
 - `CmdOpenStationPanel`
@@ -7050,7 +7050,7 @@ EVE:Execute[CommandName, param1, param2, ...]
 
 **Open Inventory**:
 ```lavish
-EVE:Execute[CmdOpenInventory]
+EVE:Execute[OpenInventory]
 wait 20    ; Wait for window to open
 ```
 
@@ -7313,7 +7313,7 @@ function WaitForWindow(string windowName, int timeoutSeconds)
 }
 
 ; Usage
-EVE:Execute[CmdOpenInventory]
+EVE:Execute[OpenInventory]
 if !${WaitForWindow["inventory", 10]}
 {
     echo "Failed to open inventory"
@@ -7346,7 +7346,7 @@ function OpenInventory()
 
     ; Open it
     echo "Opening inventory..."
-    EVE:Execute[CmdOpenInventory]
+    EVE:Execute[OpenInventory]
 
     ; Wait for it
     variable int attempts = 0
@@ -7565,7 +7565,7 @@ Entity[${entityID}]:LockTarget
 ; Most Neocom items have dedicated Execute commands
 
 ; Inventory
-EVE:Execute[CmdOpenInventory]
+EVE:Execute[OpenInventory]
 
 ; Market
 EVE:Execute[CmdOpenMarket]
@@ -7596,7 +7596,7 @@ See the Inventory chapter's [inventory hierarchy diagram](#inventory-system-over
 
 **Open Inventory**:
 ```lavish
-EVE:Execute[CmdOpenInventory]
+EVE:Execute[OpenInventory]
 wait 20
 ```
 
@@ -7810,7 +7810,7 @@ wait 50
 
 **After Opening Window**:
 ```lavish
-EVE:Execute[CmdOpenInventory]
+EVE:Execute[OpenInventory]
 wait 20    ; Minimum for simple windows
 
 EVE:Execute[CmdOpenMarket]
@@ -7862,13 +7862,13 @@ For a concrete example of this pattern applied to a UI window, see [function Wai
 
 ```lavish
 ; BAD - Commands too fast
-EVE:Execute[CmdOpenInventory]
+EVE:Execute[OpenInventory]
 EVE:Execute[CmdOpenMarket]
 EVE:Execute[CmdOpenFitting]
 ; All three might fail!
 
 ; GOOD - Wait between commands
-EVE:Execute[CmdOpenInventory]
+EVE:Execute[OpenInventory]
 wait 50
 
 EVE:Execute[CmdOpenMarket]
@@ -7997,7 +7997,7 @@ function Evebot_OpenInventory()
     }
 
     echo "Opening inventory"
-    EVE:Execute[CmdOpenInventory]
+    EVE:Execute[OpenInventory]
 
     variable int counter = 0
     while !${EVEWindow[inventory](exists)} && ${counter} < 50
@@ -8026,7 +8026,7 @@ function ProcessCargoItems()
     ; Open inventory window
     if !${EVEWindow[Inventory](exists)}
     {
-        EVE:Execute[CmdOpenInventory]
+        EVE:Execute[OpenInventory]
         wait 20
     }
 
@@ -8196,7 +8196,7 @@ win:ClickButton["Confirm"]
 variable int UI_WAIT = 50    ; Normal
 variable int UI_WAIT = 100   ; High latency
 
-EVE:Execute[CmdOpenInventory]
+EVE:Execute[OpenInventory]
 wait ${UI_WAIT}
 ```
 
@@ -8208,7 +8208,7 @@ wait ${UI_WAIT}
 
 **Bad**:
 ```lavish
-EVE:Execute[CmdOpenInventory]
+EVE:Execute[OpenInventory]
 if ${EVEWindow[inventory](exists)}    ; Will be FALSE!
 {
     echo "Inventory open"
@@ -8217,7 +8217,7 @@ if ${EVEWindow[inventory](exists)}    ; Will be FALSE!
 
 **Good**:
 ```lavish
-EVE:Execute[CmdOpenInventory]
+EVE:Execute[OpenInventory]
 wait 20
 
 if ${EVEWindow[inventory](exists)}
@@ -8299,7 +8299,7 @@ EVE:Execute[CmdOpenMarket]
 
 ```lavish
 ; 1. Open window
-EVE:Execute[CmdOpenInventory]
+EVE:Execute[OpenInventory]
 wait 20
 
 ; 2. Validate it opened
@@ -8322,7 +8322,7 @@ if ${EVEWindow[inventory](exists)}
 
 ### Most Critical Commands
 
-- `CmdOpenInventory` - Inventory access
+- `OpenInventory` - Inventory access
 - `CmdOpenCargoHold` - Cargo access
 - `CmdOpenHangarFloor` - Ship hangar
 - `CmdActivateModule` / `CmdDeactivateModule` - Module control

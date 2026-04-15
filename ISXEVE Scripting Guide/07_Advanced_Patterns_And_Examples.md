@@ -1664,7 +1664,7 @@ objectdef obj_FleetMiner
         // Open inventory
         if !${EVEWindow[Inventory](exists)}
         {
-            EVE:Execute[CmdOpenInventory]
+            EVE:Execute[OpenInventory]
             wait 20
         }
 
