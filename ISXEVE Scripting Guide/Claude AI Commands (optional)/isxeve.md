@@ -105,7 +105,11 @@ When reviewing scripts over ~200 lines:
 - Patterns And Best Practices (~7,500 lines)
 - Advanced Patterns And Examples (~7,000 lines)
 - Fleet Operations (~5,900 lines)
+- LavishGUI1 to LavishGUI2 Migration (~5,000 lines)
 - Mining And Hauling (~4,000 lines)
+- Bot Architecture Analysis (~3,800 lines)
+- Debugging And Troubleshooting (~3,500 lines)
+- LavishScript Fundamentals (~3,000 lines)
 
 **CRITICAL RULES** (remind subagent when delegating):
 - Check `${ISXEVE.IsReady}` before first API access
