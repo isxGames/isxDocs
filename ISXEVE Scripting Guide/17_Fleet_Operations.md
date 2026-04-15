@@ -910,6 +910,8 @@ Fleet Commander broadcasts a primary (and optional secondary) target via a relay
 
 ### Logistics Coordination (Shield/Armor Reps)
 
+> **Framework context:** `Ship` in the example below is EVEBot's `obj_Ship` wrapper object (defined in `core/obj_Ship.iss`), not the ISXEVE `MyShip` TLO. It pre-classifies the ship's modules into indexes like `ModuleList_ShieldTransporters` and `ModuleList_GangLinks` at startup. Outside EVEBot you will need to enumerate `MyShip.GetModules[...]` yourself and filter by group name (e.g. `Shield Transporter`, `Gang Coordinator`) to get the equivalent lists.
+
 ```lavish
 objectdef obj_LogisticsShip
 {
@@ -959,7 +961,7 @@ objectdef obj_LogisticsShip
                         // Check shield percentage
                         variable float shieldPct = ${Math.Calc[${memberShip.ShieldPct}]}
 
-                        if ${shieldPct} < 70 && ${Ship.ModuleList_ShieldTransporter.Used} > 0
+                        if ${shieldPct} < 70 && ${Ship.ModuleList_ShieldTransporters.Used} > 0
                         {
                             echo "${member.Name} shields at ${shieldPct.Int}% - adding to rep queue"
                             This.RepTargets:Insert[${memberShip.ID}]
@@ -1020,7 +1022,7 @@ objectdef obj_LogisticsShip
 
         // Activate shield transporters
         variable iterator modIt
-        Ship.ModuleList_ShieldTransporter:GetIterator[modIt]
+        Ship.ModuleList_ShieldTransporters:GetIterator[modIt]
 
         if ${modIt:First(exists)}
         {
@@ -1086,6 +1088,8 @@ The full Orca-centric mining fleet coordinator — where the Orca is designated 
 
 ### Boosting Coordination
 
+> **Framework context:** As with the logistics example above, `Ship.ModuleList_GangLinks` is an EVEBot `obj_Ship` convenience index; outside EVEBot, enumerate `MyShip.GetModules[...]` and filter by the `Gang Coordinator` group yourself.
+
 ```lavish
 objectdef obj_FleetBooster
 {
@@ -1101,7 +1105,7 @@ objectdef obj_FleetBooster
         echo "Activating gang links..."
 
         variable iterator modIt
-        Ship.ModuleList_GangCoordinator:GetIterator[modIt]
+        Ship.ModuleList_GangLinks:GetIterator[modIt]
 
         if ${modIt:First(exists)}
         {
@@ -1129,7 +1133,7 @@ objectdef obj_FleetBooster
         echo "==== GANG LINK STATUS ===="
 
         variable iterator modIt
-        Ship.ModuleList_GangCoordinator:GetIterator[modIt]
+        Ship.ModuleList_GangLinks:GetIterator[modIt]
 
         if ${modIt:First(exists)}
         {
