@@ -377,38 +377,47 @@ variable collection:TargetPriority PriorityTargets
 
 function InitializePriorityTargets()
 {
-	; Priority 1 (highest)
-	PriorityTargets:Set["Serpentis Commander", TargetPriority["Serpentis Commander", 1, 100]]
+	; LavishScript does not support inline `Type[args]` constructor
+	; expressions -- each entry must be declared, initialized, then inserted.
+	variable TargetPriority P_Commander
+	P_Commander:Initialize["Serpentis Commander", 1, 100]
+	PriorityTargets:Set["Serpentis Commander", P_Commander]
 
-	; Priority 2
-	PriorityTargets:Set["Serpentis Battleship", TargetPriority["Serpentis Battleship", 2, 100]]
+	variable TargetPriority P_Battleship
+	P_Battleship:Initialize["Serpentis Battleship", 2, 100]
+	PriorityTargets:Set["Serpentis Battleship", P_Battleship]
 
-	; Priority 3
-	PriorityTargets:Set["Serpentis Cruiser", TargetPriority["Serpentis Cruiser", 3, 100]]
+	variable TargetPriority P_Cruiser
+	P_Cruiser:Initialize["Serpentis Cruiser", 3, 100]
+	PriorityTargets:Set["Serpentis Cruiser", P_Cruiser]
 }
 
 function FindHighestPriorityTarget()
 {
 	variable int HighestPriority = 999
 	variable int64 BestTargetID = 0
-	variable iterator Target
 
-	EVE:QueryEntities[Target, "GroupID = 100"]
+	; QueryEntities populates an `index:entity`, not an iterator. Derive
+	; the iterator from the populated index afterwards.
+	variable index:entity Targets
+	variable iterator T
+	EVE:QueryEntities[Targets, "GroupID = 100"]
+	Targets:GetIterator[T]
 
-	if ${Target:First(exists)}
+	if ${T:First(exists)}
 	{
 		do
 		{
-			if ${PriorityTargets.Element[${Target.Value.Name}](exists)}
+			if ${PriorityTargets.Element[${T.Value.Name}](exists)}
 			{
-				if ${PriorityTargets.Element[${Target.Value.Name}].Priority} < ${HighestPriority}
+				if ${PriorityTargets.Element[${T.Value.Name}].Priority} < ${HighestPriority}
 				{
-					HighestPriority:Set[${PriorityTargets.Element[${Target.Value.Name}].Priority}]
-					BestTargetID:Set[${Target.Value.ID}]
+					HighestPriority:Set[${PriorityTargets.Element[${T.Value.Name}].Priority}]
+					BestTargetID:Set[${T.Value.ID}]
 				}
 			}
 		}
-		while ${Target:Next(exists)}
+		while ${T:Next(exists)}
 	}
 
 	if ${BestTargetID} > 0
