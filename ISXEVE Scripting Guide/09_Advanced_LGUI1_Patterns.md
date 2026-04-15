@@ -958,7 +958,7 @@ This:Sort
 |-----|---------|----------|--------------|
 | `EVE:GetLocalPilots[index:pilot]` | Pilots in Local | `pilot` | `Local[name]` |
 | `EVE:QueryEntities[index:entity,query]` | Filtered entities | `entity` | `Entity[name]` |
-| `Me:GetFleetMembers[index:fleetmember]` | Fleet members | `fleetmember` | — |
+| `Me.Fleet:GetMembers[index:fleetmember]` | Fleet members | `fleetmember` | — |
 
 ---
 
