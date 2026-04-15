@@ -2922,8 +2922,19 @@ objectdef obj_StuckDetector
                 break
 
             case MINING
-                ; Stuck mining - might be targeting issue
-                Me:UnlockAll
+                ; Stuck mining - might be targeting issue; unlock everything
+                variable index:entity LockedTargets
+                variable iterator T
+                Me:GetTargets[LockedTargets]
+                LockedTargets:GetIterator[T]
+                if ${T:First(exists)}
+                {
+                    do
+                    {
+                        T.Value:UnlockTarget
+                    }
+                    while ${T:Next(exists)}
+                }
                 This.CurrentState:Set["IDLE"]
                 break
 
