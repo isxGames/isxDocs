@@ -2440,7 +2440,7 @@ relay all -event MyEvent ${someString}
 ; Receiver gets: empty or just first word
 
 ; RIGHT - quote string parameters
-relay all -event MyEvent "$ {someString}"
+relay all -event MyEvent "${someString}"
 
 ; Example: Target name with spaces
 relay all -event TargetInfo "${Entity[${targetID}].Name}" ${Entity[${targetID}].Distance}
