@@ -397,7 +397,7 @@ echo "Mining ID: ${Me.Skill["Mining"].ID}"
 
 ; Skill training status
 echo "Currently Training: ${Me.SkillCurrentlyTraining}"
-echo "Training Ends: ${Me.SkillTrainingEnd}"
+echo "Skill Queue Length: ${Me.SkillQueueLength}"
 ```
 
 **Common Pattern - Skill Check**:
