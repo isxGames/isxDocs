@@ -381,7 +381,7 @@ function main()
 
     ; Wait for lock (max 15 seconds)
     variable int counter = 0
-    while !${Target.IsLockedTarget} && ${counter} < 150
+    while !${Target.IsLockedTarget} && ${counter} < 15
     {
         wait 10
         counter:Inc
