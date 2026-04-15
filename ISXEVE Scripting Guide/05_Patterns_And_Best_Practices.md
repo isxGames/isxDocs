@@ -1261,7 +1261,7 @@ function CheckForHostilesInLocal()
     variable int i
     for (i:Set[1]; ${i} <= ${HostilePilots.Used}; i:Inc)
     {
-        if ${Local.Pilot["${HostilePilots[${i}]}"](exists)}
+        if ${Local["${HostilePilots[${i}]}"](exists)}
         {
             echo "HOSTILE DETECTED: ${HostilePilots[${i}]}"
             return TRUE
@@ -1277,13 +1277,13 @@ function CheckForHostilesOnGrid()
     variable index:entity Entities
     variable iterator Entity
 
-    EVE:QueryEntities[Entities, "IsPilot"]
+    EVE:QueryEntities[Entities, "IsPC"]
     Entities:GetIterator[Entity]
 
     if ${Entity:First(exists)}
         do
         {
-            if ${Entity.Value.IsPC} && !${Entity.Value.IsFriendly}
+            if ${Entity.Value.IsPC}
             {
                 variable float standing = ${Me.GetStanding[${Entity.Value.CharID}]}
                 if ${standing} < 0
