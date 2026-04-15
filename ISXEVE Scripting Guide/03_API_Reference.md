@@ -1023,15 +1023,9 @@ EVE:Execute[CmdWarpToBookmark, ${bookmarkID}]
 
 ### Overview
 
-**${Config}** represents ISXEVE extension configuration:
+**${Config}** represents ISXEVE extension configuration.
 
-```lavish
-; Check if specific settings enabled
-echo "Chat logs enabled: ${Config.ChatLogs}"
-
-; Mostly used for ISXEVE internal settings
-; Not commonly used in scripts
-```
+Mostly used for ISXEVE internal settings and not commonly used in scripts. Refer to ChangesFile / ISXEVE documentation for the current set of supported members before using.
 
 ---
 
