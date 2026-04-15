@@ -975,16 +975,15 @@ echo "Station ID: ${Station.ID}"
 echo "Station Type: ${Station.TypeID}"
 echo "Owner Corp: ${Station.OwnerID}"
 
-; Services
-echo "Has Refining: ${Station.HasRefining}"
-echo "Has Repair: ${Station.HasRepairShop}"
-echo "Has Market: ${Station.HasMarket}"
-echo "Has Cloning: ${Station.HasCloning}"
+; NOTE: There are no Station.Has* service members in ISXEVE.
+; To test service availability, open the relevant service window
+; (via the appropriate EVE:Execute[...] command) and then check
+; ${EVEWindow[<WindowName>](exists)}.
 ```
 
 **Common Pattern - Station Services Check**:
 ```lavish
-function CanRefineAtStation()
+function CanUseStationService()
 {
     if !${Station(exists)}
     {
@@ -992,11 +991,9 @@ function CanRefineAtStation()
         return FALSE
     }
 
-    if !${Station.HasRefining}
-    {
-        echo "Station has no refining"
-        return FALSE
-    }
+    ; Open the service window via EVE:Execute[...] for the
+    ; service you want, then verify:
+    ; if ${EVEWindow[<WindowName>](exists)} ...
 
     return TRUE
 }
