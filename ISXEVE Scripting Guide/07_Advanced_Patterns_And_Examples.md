@@ -2037,6 +2037,19 @@ method BroadcastPrimary(int64 targetID)
 
 ## Basic Relay Patterns
 
+> **Prerequisites:** The patterns below reference two shared config globals set
+> once per session based on fleet role configuration. Declare them at script
+> top-level (outside any objectdef) before loading these patterns:
+>
+> ```lavish
+> variable bool IsMaster = FALSE      ; TRUE on the Fleet Commander session only
+> variable string MasterName = ""     ; Character name of the Fleet Commander
+> ```
+>
+> Set these in your script's init (e.g. from a config file keyed on
+> `${Me.Name}`) so each session knows its role. Patterns later in this file
+> (State Synchronization, etc.) reuse the same two globals.
+
 ### Pattern 1: Simple Broadcast
 
 **Use Case:** Notify all fleet members of an event
