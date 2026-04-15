@@ -11,12 +11,13 @@
 2. [Main Loop Patterns](#main-loop-patterns)
 3. [Entity Processing Patterns](#entity-processing-patterns)
 4. [State Machine Patterns](#state-machine-patterns)
-5. [Error Handling Patterns](#error-handling-patterns)
-6. [Timing and Wait Patterns](#timing-and-wait-patterns)
-7. [Relay Communication Patterns](#relay-communication-patterns)
-8. [Configuration Patterns](#configuration-patterns)
-9. [Logging and Debug Patterns](#logging-and-debug-patterns)
-10. [Common Anti-Patterns](#common-anti-patterns)
+5. [Unified Movement Facade](#unified-movement-facade)
+6. [Error Handling Patterns](#error-handling-patterns)
+7. [Timing and Wait Patterns](#timing-and-wait-patterns)
+8. [Relay Communication Patterns](#relay-communication-patterns)
+9. [Configuration Patterns](#configuration-patterns)
+10. [Logging and Debug Patterns](#logging-and-debug-patterns)
+11. [Common Anti-Patterns](#common-anti-patterns)
 
 ---
 
@@ -641,6 +642,66 @@ function StateCombat()
     }
 }
 ```
+
+---
+
+## Unified Movement Facade
+
+**Reference implementation:** see Tehbot's `core/obj_Move.iss`.
+
+**Motivation.** A non-trivial bot needs to move to *many* kinds of destinations: a named bookmark, an in-space entity, a different solar system, a fleet member who may be several jumps away, an accel gate, an agent's station, a mission bookmark. Writing a separate state machine for each destination type produces scattered, inconsistent logic — each call site duplicates "am I docked?", "am I already warping?", "is there a gate in the way?", "did I arrive yet?". The unified movement facade collapses all of that behind one object so callers issue *one* command and poll *one* flag.
+
+**Public surface.** `obj_Move` (which itself inherits `obj_StateQueue`) exposes a small, uniform set of dispatch methods — one per destination type:
+
+| Method | Destination |
+|---|---|
+| `Bookmark[label, IgnoreGate, Distance, FleetWarp]` | Named bookmark (or station by name) |
+| `Entity[ID, Distance, FleetWarp]` | Any entity in space |
+| `System[SystemID]` | Another solar system (uses autopilot + waypoint) |
+| `Fleetmember[charID, IgnoreGate, Distance]` | Follow a fleet member, bounce-warping as needed |
+| `Gate[entityID]` | Approach and activate a stargate / accel gate |
+| `Agent[name]` / `Agent[index]` | Travel to an agent's station |
+| `AgentBookmark[id]` | Travel to a mission bookmark |
+| `Approach[ID, distance]` | Sub-warp approach using afterburner/MWD |
+| `Orbit[ID, distance]` | Enter a stable orbit |
+| `SaveSpot` / `GotoSavedSpot` / `RemoveSavedSpot` | Ad-hoc safespot bookmarking |
+| `Stop` | Cancel the current movement and clear the queue |
+
+Every dispatch method does the same three things: validate that the destination exists, set `Traveling` to `TRUE`, and `QueueState` a private per-destination-type `*Move` member (e.g. `BookmarkMove`, `EntityMove`, `SystemMove`, `FleetmemberMove`) that carries out the actual multi-step work.
+
+**The `Traveling` flag.** A single `bool Traveling` on `obj_Move` doubles as a mutex and a completion signal:
+
+- Every public dispatch method early-returns if `${Move.Traveling}` is already `TRUE`. This prevents a caller from accidentally stacking conflicting movement commands.
+- The private `*Move` state members set `Traveling:Set[FALSE]` only when they detect arrival (docked at the right station, within range of the fleet member, in the right system, within 150 km of the bookmark/entity, etc.).
+- Callers therefore don't need to know anything about warp phases, gate jumps, undocks, or docking animations — they just poll one boolean.
+
+**Internally-handled transitions.** Each `*Move` member knows how to walk through the full journey:
+
+- **Docked but need to move?** Issue `Undock`, return `FALSE` (stay queued).
+- **Already warping?** Return `FALSE` — wait it out.
+- **Wrong solar system?** Delegate to `TravelToSystem`, which sets a waypoint and toggles autopilot.
+- **Gate in the way (and `IgnoreGate` is false)?** Recursively call `This:Gate[...]` with `CalledFromMove=TRUE` so the gate sub-state doesn't clear `Traveling` on its own completion.
+- **In warp range of the destination?** Warp (honoring `FleetWarp` if the caller has fleet/wing/squad command).
+- **Final destination is a station/structure?** Hand off to `DockAtStation`.
+- **Arrived?** Log "Reached", clear `Traveling`, return `TRUE`.
+
+**Caller pattern.** Because the facade absorbs every intermediate state, call sites become uniformly trivial — fire-and-poll:
+
+```lavishscript
+; Issue one command — could be any of bookmark / entity / system / fleetmember
+Move:Bookmark["MyDestination"]
+
+; Poll until the facade reports completion
+while ${Move.Traveling}
+{
+    wait 20
+}
+
+; At this point we are docked / at the bookmark / in the target system / next to the fleetmate.
+; The caller never had to know whether the journey involved undocking, a gate jump, or a fleet warp.
+```
+
+The same three-line shape works for `Move:Entity[${targetID}]`, `Move:System[${destID}]`, or `Move:Fleetmember[${charID}]` — that uniformity is the whole point of the facade.
 
 ---
 
