@@ -2751,7 +2751,8 @@ objectdef obj_StealthHauler
         // STEALTH PROTOCOL:
 
         // 1. Set speed to near-max (adds randomization to avoid detection)
-        variable float randomSpeed = ${Math.Calc[90 + ${Math.Rand[9]} + ${Math.Calc[0.10 * ${Math.Rand[9]}]}]}
+        ; Random speed in 90..100 range (SetVelocity expects 0-100 percentage of max velocity)
+        variable float randomSpeed = ${Math.Calc[${Math.Rand[11]} + 90]}
         echo "Setting speed to ${randomSpeed.Int}%"
         Me:SetVelocity[${randomSpeed}]
 
@@ -2812,7 +2813,8 @@ objectdef obj_StealthHauler
     function CloakAndMove()
     {
         // Set random speed
-        variable float randomSpeed = ${Math.Calc[90 + ${Math.Rand[9]} + ${Math.Calc[0.10 * ${Math.Rand[9]}]}]}
+        ; Random speed in 90..100 range (SetVelocity expects 0-100 percentage of max velocity)
+        variable float randomSpeed = ${Math.Calc[${Math.Rand[11]} + 90]}
         Me:SetVelocity[${randomSpeed}]
         wait 5
 
