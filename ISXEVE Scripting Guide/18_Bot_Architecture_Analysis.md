@@ -29,10 +29,12 @@
 15. [Tehbot Overview](#tehbot-overview)
 16. [StateQueue Architecture](#statequeue-architecture)
 17. [MiniMode System](#minimode-system)
-18. [Comparison: Tehbot vs EVEBot vs Yamfa](#comparison-tehbot-vs-evebot-vs-yamfa)
-19. [Key Patterns](#key-patterns)
-20. [When to Use Which Architecture](#when-to-use-which-architecture)
-21. [Community Takeaways](#community-takeaways)
+18. [Dynamic Behavior and MiniMode Registry](#dynamic-behavior-and-minimode-registry)
+19. [Mission Data Files as Per-Mission Scripts](#mission-data-files-as-per-mission-scripts)
+20. [Comparison: Tehbot vs EVEBot vs Yamfa](#comparison-tehbot-vs-evebot-vs-yamfa)
+21. [Key Patterns](#key-patterns)
+22. [When to Use Which Architecture](#when-to-use-which-architecture)
+23. [Community Takeaways](#community-takeaways)
 
 ---
 
@@ -1858,6 +1860,175 @@ Costs:
 - **Discoverability.** Shared state lives on object references (`Drones`, `NPCData`, per-minimode `obj_TargetList` instances) rather than in one obvious place, so new contributors need to trace several files to understand a coordination path.
 
 A common "modernization" suggestion is to replace the implicit shared-reference style with explicit message passing (a small `obj_MessageBus` with typed post/consume). That buys discoverability at the cost of boilerplate; whether it's worth it depends on project size.
+
+---
+
+## Dynamic Behavior and MiniMode Registry
+
+**Reference implementation:** see `Scripts\Tehbot\core\obj_Dynamic.iss` and `Scripts\Tehbot\core\Macros.iss`.
+
+Tehbot has no hardcoded list of behaviors or minimodes. Every behavior file (e.g. `Mission.iss`, `Salvager.iss`, `MiniMode.iss`) and every minimode file (`AutoModule.iss`, `DroneControl.iss`, `FightOrFlight.iss`, `InstaWarp.iss`, `UndockWarp.iss`, ...) self-registers into a single runtime registry when it's loaded. The registry then drives the UI dropdowns and the dispatch layer.
+
+### The registration macro
+
+Both registration entry points are macros defined in `core/Macros.iss`:
+
+```lavishscript
+#macro DynamicAddBehavior(name, displayname)
+    Dynamic:AddBehavior[name, displayname, ${String[_FILE_].Escape}]
+#endmac
+
+#macro DynamicAddMiniMode(name, displayname)
+    Dynamic:AddMiniMode[name, displayname, ${String[_FILE_].Escape}]
+#endmac
+```
+
+The `${String[_FILE_]}` capture means the registry automatically remembers the source file path of each registered item, so nothing needs to be hand-wired in a central table.
+
+Each behavior / minimode invokes the appropriate macro from its `Initialize` method, typically one line:
+
+```lavishscript
+; Inside a behavior's Initialize()
+DynamicAddBehavior("Mission", "Combat Missions")
+
+; Inside a minimode's Initialize()
+DynamicAddMiniMode("DroneControl", "DroneControl")
+```
+
+The first argument is the internal name (which must match the declared object name so the registry can resolve method calls against it); the second is the human-readable label that populates the UI dropdown.
+
+### The registry object
+
+`obj_Dynamic` holds two keyed collections, one for behaviors and one for minimodes, each keyed by internal name and carrying the display name and source path for every registered item. It also owns an `obj_Configuration_Dynamic` that persists which minimodes are currently enabled.
+
+Two methods bridge the registry to the UI: `Dynamic:PopulateBehaviors` and `Dynamic:PopulateMiniModes`. They clear the relevant UI list elements and rewalk the collections, adding each entry's display name / internal name pair. For minimodes, the population step also consults the persisted "enabled minimodes" config set and immediately calls `<MiniModeName>:Start` on the ones that were enabled in the previous run — so enable-state survives restarts with no extra code.
+
+### Runtime activation and deactivation
+
+```lavishscript
+method ActivateMiniMode(string name)
+{
+    This.Config:AddMiniMode[${name.Escape}]
+    ${name}:Start
+}
+
+method DeactivateMiniMode(string name)
+{
+    This.Config:RemMiniMode[${name.Escape}]
+    ${name}:Stop
+}
+```
+
+The UI calls these by the user's selection. `${name}:Start` expands into a method call on the live object; because the internal name in `DynamicAddMiniMode(...)` matches the `declarevariable` of the minimode object, the dispatch resolves without any hand-written switch statement.
+
+### Why this beats a hardcoded selector
+
+A naive alternative is a central `if` ladder:
+
+```lavishscript
+; ANTI-PATTERN
+if ${Config.Mode.Equal["Mission"]}
+    call RunMission
+elseif ${Config.Mode.Equal["Salvager"]}
+    call RunSalvager
+elseif ${Config.Mode.Equal["MyCustomBehavior"]}
+    call RunMyCustomBehavior
+```
+
+Every new behavior requires editing that ladder, the UI dropdown, and the configuration schema. The registry pattern collapses all three into a single `DynamicAddBehavior(...)` line inside the new behavior's own file:
+
+```lavishscript
+; Dropping a new file minimode/MyCustomBehavior.iss and adding one #include
+; line in Tehbot.iss is all that's needed. The UI dropdown, enable/disable
+; persistence, and dispatch all pick it up automatically.
+objectdef obj_MyCustomBehavior inherits obj_StateQueue
+{
+    method Initialize()
+    {
+        This[parent]:Initialize
+        PulseFrequency:Set[1000]
+        DynamicAddMiniMode("MyCustomBehavior", "My Custom Behavior")
+    }
+    ; ... state definitions ...
+}
+```
+
+The trade-off is a small amount of discoverability: the "list of all behaviors" is no longer in one place — it's whatever the loader happens to `#include`. In practice that's fine because the `#include` list in the main script still gives a single place to read.
+
+---
+
+## Mission Data Files as Per-Mission Scripts
+
+**Reference implementation:** see `Scripts\Tehbot\behavior\Mission.iss` and `Scripts\Tehbot\data\MissionDataExample.iss`.
+
+Tehbot's mission behavior is deliberately generic — it knows how to fly to an agent, accept a mission, warp to the mission site, kill NPCs, loot, deliver, and turn in — but it knows nothing specific about individual missions ("The Blockade", "Dread Pirate Scarlet", ...). Per-mission knowledge lives in a separate `.iss` file under `data/`, loaded at runtime.
+
+### How the file is loaded
+
+The Mission behavior's `Start` method clears its per-mission collections, reads a config attribute naming the data file, and `runscript`s it:
+
+```lavishscript
+variable filepath MissionData = "${Script[Tehbot].CurrentDirectory}/data/${Config.MissionFile}"
+runscript "${MissionData}"
+```
+
+`runscript` executes the file's `function main()` in the context of the running Tehbot script. The main function's only job is to populate collections that the Mission behavior will consult later.
+
+### What a data file contains
+
+Each mission data file is a regular LavishScript `function main()` that performs a series of `:Insert` / `:Set` / `:Add` calls into script-scoped collections on the live Mission object. A trimmed example:
+
+```lavishscript
+function main()
+{
+    ; Agents to cycle through
+    Script[Tehbot].VariableScope.Mission.AgentList:Insert["Guy"]
+    Script[Tehbot].VariableScope.Mission.AgentList:Insert["Dude"]
+
+    ; Factions whose missions to decline
+    Script[Tehbot].VariableScope.Mission.DontFightFaction:Insert["Amarr"]
+
+    ; Per-mission damage type (or "Auto" to detect from faction logo)
+    Script[Tehbot].VariableScope.Mission.DamageType:Set["The Blockade", "Auto"]
+    Script[Tehbot].VariableScope.Mission.DamageType:Set["Dread Pirate Scarlet", "Kinetic"]
+
+    ; A mission-specific kill-this-exact-entity requirement
+    Script[Tehbot].VariableScope.Mission.TargetToDestroy:Set["The Right Hand Of Zazzmatazz", \
+        "Name = \"Outpost Headquarters\""]
+
+    ; Mission-specific loot / delivery / gate-key requirements
+    Script[Tehbot].VariableScope.Mission.ContainerToLoot:Set["Worlds Collide", \
+        "Name = \"Damaged Heron\" && !IsWreckEmpty"]
+    Script[Tehbot].VariableScope.Mission.GateKey:Set["Dread Pirate Scarlet", "Gate Key"]
+
+    ; Missions to skip entirely
+    Script[Tehbot].VariableScope.Mission.BlackListedMission:Add["Surprise Surprise"]
+}
+```
+
+Collections populated this way include agent list, damage-type override table, target-to-destroy search strings, container-to-loot search strings, gate-key item names and their source containers, deliver-item container specs, faction blacklist, and mission blacklist.
+
+### How the bot consumes the data
+
+During its pulse, the Mission behavior reads the name of the current mission, then looks it up in the collections by key:
+
+```lavishscript
+if ${DamageType.Element[${missionName}](exists)}
+    damageType:Set[${DamageType.Element[${missionName}].Lower}]
+
+if ${TargetToDestroy.Element[${missionName}](exists)}
+    targetToDestroy:Set[${TargetToDestroy.Element[${missionName}]}]
+```
+
+Missions that aren't in the collections simply fall through to generic behavior (or are skipped, depending on policy).
+
+### Why this beats hardcoding
+
+Hardcoding mission knowledge inside the behavior file has three problems: (1) the behavior file grows linearly with the number of missions the bot supports, (2) updating a single mission's damage type requires a code edit and redeploy, and (3) different users end up maintaining divergent forks because their agent lists and faction preferences differ.
+
+The data-file pattern sidesteps all three. The behavior is stable, shipped code; each user supplies their own `MyMissions.iss` under `data/` with their agents, their factional preferences, and any per-mission overrides they've tuned. The config setting `MissionFile` names which data file to load, so a user can keep several profiles (e.g. `lowsec.iss`, `highsec.iss`) and switch between them with a dropdown.
+
+The cost is that the data file is executable LavishScript rather than a passive data format — a malformed data file can crash the bot just like a malformed behavior file. In practice this is acceptable because the data file is authored by the same person running the bot.
 
 ---
 
