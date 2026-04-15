@@ -607,8 +607,8 @@ method DebugDump()
     echo "CurrentState: ${This.CurrentState}"
     echo "InSpace: ${Me.InSpace}"
     echo "InStation: ${Me.InStation}"
-    echo "CargoUsed: ${MyShip.Cargo.UsedCapacity}"
-    echo "CargoFree: ${MyShip.Cargo.FreeSpace}"
+    echo "CargoUsed: ${MyShip.UsedCargoCapacity}"
+    echo "CargoFree: ${Math.Calc[${MyShip.CargoCapacity} - ${MyShip.UsedCargoCapacity}]}"
     echo "Shield: ${MyShip.ShieldPct.Precision[1]}%"
     echo "Targets: ${Me.GetTargets}"
     echo "=================="
@@ -2152,14 +2152,32 @@ function ApproachWithTimeout(int64 targetID, int range, int timeoutSeconds)
 ```lavish
 method SafeMoveTo(int64 itemID, string destination, int quantity)
 {
-    ; Validate item exists
-    if !${MyShip.Cargo.Item[${itemID}](exists)}
+    ; Locate the item by scanning the ship's cargo index.
+    variable index:item cargo
+    variable iterator ci
+    variable int foundIdx = 0
+    MyShip:GetCargo[cargo]
+    cargo:GetIterator[ci]
+    if ${ci:First(exists)}
+    {
+        do
+        {
+            if ${ci.Value.ID.Equal[${itemID}]}
+            {
+                foundIdx:Set[${ci.Key}]
+                break
+            }
+        }
+        while ${ci:Next(exists)}
+    }
+
+    if ${foundIdx} == 0
     {
         Logger:Log["Item ${itemID} not found in cargo"]
         return FALSE
     }
 
-    variable item TheItem = ${MyShip.Cargo.Item[${itemID}]}
+    variable item TheItem = ${cargo.Get[${foundIdx}]}
 
     ; Check destination capacity
     switch ${destination}
@@ -2191,8 +2209,24 @@ method SafeMoveTo(int64 itemID, string destination, int quantity)
     ; Wait for move
     wait 20
 
-    ; Verify moved (check if still in source)
-    if ${MyShip.Cargo.Item[${itemID}].Quantity} < ${quantity}
+    ; Verify moved -- re-scan cargo for the ID; if the remaining quantity is
+    ; below the requested move, consider it successful (partial stacks move OK).
+    variable int remaining = 0
+    MyShip:GetCargo[cargo]
+    cargo:GetIterator[ci]
+    if ${ci:First(exists)}
+    {
+        do
+        {
+            if ${ci.Value.ID.Equal[${itemID}]}
+            {
+                remaining:Set[${ci.Value.Quantity}]
+                break
+            }
+        }
+        while ${ci:Next(exists)}
+    }
+    if ${remaining} < ${quantity}
     {
         Logger:Log["Move successful"]
         return TRUE
