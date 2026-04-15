@@ -5431,7 +5431,7 @@ function InitializeStateTimeouts()
     StateTimeouts:Set["FLEEING", 60000]    ; 1 minute
 }
 
-method ChangeState(string newState)
+function ChangeState(string newState)
 {
     if !${newState.Equal["${CurrentState}"]}
     {
