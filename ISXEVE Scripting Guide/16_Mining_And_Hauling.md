@@ -1397,11 +1397,11 @@ Hauling is the process of transporting cargo from one location to another. This 
 
 ```lavish
 // Common hauler ship groups
-define GROUP_INDUSTRIAL 19
-define GROUP_TRANSPORT_SHIP 380        // Deep Space Transport (DST)
-define GROUP_BLOCKADE_RUNNER 1202      // Covert Ops hauler
-define GROUP_FREIGHTER 513
-define GROUP_JUMP_FREIGHTER 902
+#define GROUP_INDUSTRIAL 19
+#define GROUP_TRANSPORT_SHIP 380        // Deep Space Transport (DST)
+#define GROUP_BLOCKADE_RUNNER 1202      // Covert Ops hauler
+#define GROUP_FREIGHTER 513
+#define GROUP_JUMP_FREIGHTER 902
 
 // Check ship type
 if ${MyShip.GroupID} == GROUP_BLOCKADE_RUNNER
