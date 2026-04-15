@@ -461,6 +461,6 @@ if ${Item:First(exists)}
 | **LavishMachine (Async)** | [14_LavishMachine_Guide.md](14_LavishMachine_Guide.md) |
 | **Debugging** | [20_Debugging_And_Troubleshooting.md](20_Debugging_And_Troubleshooting.md) |
 | **.NET Development** | [19_DotNet_Development.md](19_DotNet_Development.md) |
-| **Advanced Patterns** | [22_Advanced_Scripting_Patterns.md](22_Advanced_Scripting_Patterns.md) |
-| **Utility Patterns** | [23_Utility_Script_Patterns.md](23_Utility_Script_Patterns.md) |
+| **Advanced Patterns** | [21_Advanced_Scripting_Patterns.md](21_Advanced_Scripting_Patterns.md) |
+| **Utility Patterns** | [22_Utility_Script_Patterns.md](22_Utility_Script_Patterns.md) |
 ---
