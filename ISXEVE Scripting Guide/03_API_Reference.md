@@ -236,7 +236,7 @@ character (adds skills/wallet/fleet/targeting) ← ${Me} is this type
 **Inherited from `being`**:
 - ID, CharID, Name
 - IsOnline, IsNPC, IsPC
-- Methods: InviteToFleet, GiveMoney
+- Methods: GiveMoney
 
 **Inherited from `pilot`**:
 - Type, TypeID (ship type)
