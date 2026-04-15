@@ -1005,9 +1005,9 @@ function BroadcastTargets()
 
     ; Get active target
     variable int64 ActiveID = 0
-    if ${MyShip.ActiveTarget(exists)}
+    if ${Me.ActiveTarget(exists)}
     {
-        ActiveID:Set[${MyShip.ActiveTarget.ID}]
+        ActiveID:Set[${Me.ActiveTarget.ID}]
     }
 
     ; Relay to all slaves
