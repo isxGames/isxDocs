@@ -2397,12 +2397,23 @@ atom OnPrimaryTarget(int64 targetID)
     Entity[${targetID}]:LockTarget
 }
 
-; DEBUG: Verify event registration
+; DEBUG: Verify event registration.
+; LavishScript does not expose an event-enumeration API; track your
+; registrations script-side by appending to a collection at RegisterEvent
+; time, then iterate that collection here.
+variable index:string RegisteredEvents
+
+method RegisterBotEvent(string eventName)
+{
+    LavishScript:RegisterEvent[${eventName}]
+    RegisteredEvents:Insert[${eventName}]
+}
+
 function CheckEvents()
 {
     echo "Registered events:"
     variable iterator Ev
-    LavishScript:GetRegisteredEvents[Ev]
+    RegisteredEvents:GetIterator[Ev]
 
     if ${Ev:First(exists)}
     {
