@@ -327,20 +327,17 @@ function WarpFleetTo(string locationName, int distance)
         return FALSE
     }
 
-    if ${Local[${locationName}](exists)}
+    if ${Entity[${locationName}](exists)}
     {
-        if ${Entity[${locationName}](exists)}
-        {
-            // Warp to entity
-            Entity[${locationName}]:FleetWarpTo[${distance}]
-            echo "Fleet warp to ${locationName} at ${distance}m"
-        }
-        elseif ${Local[${locationName}].ToFleetMember(exists)}
-        {
-            // Warp to fleet member
-            Local[${locationName}].ToFleetMember:FleetWarpTo[${distance}]
-            echo "Fleet warp to ${locationName} at ${distance}m"
-        }
+        ; Warp to entity
+        Entity[${locationName}]:WarpFleetTo[${distance}]
+        echo "Fleet warp to ${locationName} at ${distance}m"
+    }
+    elseif ${Local[${locationName}].ToFleetMember(exists)}
+    {
+        ; Warp to fleet member
+        Local[${locationName}].ToFleetMember:WarpFleetTo[${distance}]
+        echo "Fleet warp to ${locationName} at ${distance}m"
     }
     else
     {
