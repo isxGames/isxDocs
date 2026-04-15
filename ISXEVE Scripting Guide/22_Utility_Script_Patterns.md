@@ -220,30 +220,47 @@ function CheckISKThreshold()
 
 ### Saving Current Position
 
+ISXEVE does not expose raw-coordinate warping -- the EVE client can only warp to bookmarks, entities, or fleet members. To "save and return to" a location, create a bookmark at the current position and recall by name later.
+
 ```lavishscript
-variable float SavedX
-variable float SavedY
-variable float SavedZ
+; Use a fixed, script-owned bookmark name so repeated saves overwrite cleanly.
+variable string SavedPositionBookmark = "ScriptSavedPosition"
 
 function SaveCurrentPosition()
 {
-	SavedX:Set[${Me.ToEntity.X}]
-	SavedY:Set[${Me.ToEntity.Y}]
-	SavedZ:Set[${Me.ToEntity.Z}]
+	; If a prior save exists, remove it so CreateBookmark does not create a
+	; duplicate entry. EVE allows multiple bookmarks with the same name;
+	; cleaning up first keeps the locker tidy.
+	if ${EVE.Bookmark[${SavedPositionBookmark}](exists)}
+	{
+		EVE.Bookmark[${SavedPositionBookmark}]:Remove
+		wait 5
+	}
 
-	echo Position saved: ${SavedX}, ${SavedY}, ${SavedZ}
+	EVE:CreateBookmark[${SavedPositionBookmark}, "Saved by script at ${Time.Time24}"]
+	echo Position saved as bookmark "${SavedPositionBookmark}"
 }
 
 function ReturnToSavedPosition()
 {
-	if !${SavedX(exists)}
+	if !${EVE.Bookmark[${SavedPositionBookmark}](exists)}
 	{
-		echo ERROR: No saved position
+		echo ERROR: No saved position bookmark found
 		return
 	}
 
 	echo Returning to saved position...
-	EVE:Execute[CmdWarpToLocation, ${SavedX}, ${SavedY}, ${SavedZ}]
+	EVE.Bookmark[${SavedPositionBookmark}]:WarpTo[0]
+
+	; Wait for warp to begin then complete (Mode 3 = Warping)
+	while ${Me.ToEntity.Mode} != 3
+	{
+		wait 5
+	}
+	while ${Me.ToEntity.Mode} == 3
+	{
+		wait 10
+	}
 }
 ```
 
