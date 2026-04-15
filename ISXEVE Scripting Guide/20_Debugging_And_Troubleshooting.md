@@ -881,18 +881,18 @@ function DiagnoseError(string errorMessage)
 
 ## ISXEVE Debugging Tools
 
-### ISXEVE.Debug_LogMsg
+### ISXEVE:Debug_LogMsg
 
 **Built-in ISXEVE debug logging:**
 
 ```lavish
 ; Enable debug logging
-ISXEVE.Debug_LogMsg["MyModule", "Starting processing"]
+ISXEVE:Debug_LogMsg["MyModule", "Starting processing"]
 
 ; With categorization
-ISXEVE.Debug_LogMsg["TargetManager", "Locking target ${targetID}"]
-ISXEVE.Debug_LogMsg["Movement", "Warping to ${bookmark}"]
-ISXEVE.Debug_LogMsg["Combat", "Activating weapons on ${Entity[${targetID}].Name}"]
+ISXEVE:Debug_LogMsg["TargetManager", "Locking target ${targetID}"]
+ISXEVE:Debug_LogMsg["Movement", "Warping to ${bookmark}"]
+ISXEVE:Debug_LogMsg["Combat", "Activating weapons on ${Entity[${targetID}].Name}"]
 ```
 
 ### Disabling ISXEVE's Entity Cache
@@ -919,9 +919,8 @@ function PrintISXEVEDiagnostics()
 {
     echo "=== ISXEVE Diagnostics ==="
     echo "Version: ${ISXEVE.Version}"
+    echo "IsReady: ${ISXEVE.IsReady}"
     echo "IsSafe: ${ISXEVE.IsSafe}"
-    echo "LastError: ${ISXEVE.LastError}"
-    echo "MemManager Loaded: ${ISXEVE.MemManager.IsValid}"
     echo "=========================="
 }
 ```
@@ -3110,7 +3109,6 @@ function DetectEnvironment()
     echo "Ship: ${MyShip.ToEntity.Name}"
     echo "Entities on Grid: ${call CountEntities}"
     echo "FPS: ${Display.FPS}"
-    echo "Network Lag: ${ISXEVE.Lag}"
     echo "============================="
 
     ; Adjust settings based on environment
