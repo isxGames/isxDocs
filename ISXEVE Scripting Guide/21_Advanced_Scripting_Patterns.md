@@ -982,7 +982,7 @@ function BroadcastTargets()
 {
     ; Get my locked targets
     variable index:int64 TargetIDs
-    variable index:activetarget Targets
+    variable index:entity Targets
     Me:GetTargets[Targets]
 
     ; Build comma-separated ID list
