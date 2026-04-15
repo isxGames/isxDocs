@@ -35,14 +35,6 @@
 ;==============================================================================
 
 ;==============================================================================
-; DEPENDENCY CHECKS
-;==============================================================================
-#if !${ISXEVE(exists)}
-    echo "ERROR: ISXEVE extension required"
-    Script:End
-#endif
-
-;==============================================================================
 ; INCLUDES
 ;==============================================================================
 #include MyBot/Libs/Targeting.iss
@@ -146,6 +138,14 @@ function CreateDefaultConfig()
 ;==============================================================================
 function main()
 {
+    ; Dependency check — runtime only; the preprocessor cannot see runtime objects
+    if !${ISXEVE(exists)}
+    {
+        echo "ERROR: ISXEVE extension not loaded. Run 'ext isxeve' first."
+        Script:End
+        return
+    }
+
     call Initialize
 
     ; Main state machine loop
@@ -246,9 +246,9 @@ Scripts/MyBot/
 ; Purpose: Target locking and management
 ;==============================================================================
 
-; Only load once
-#if !${TargetingLibLoaded(exists)}
-variable(global) bool TargetingLibLoaded = TRUE
+; Include-once guard — preprocessor symbols, evaluated at script-load time
+#ifndef TARGETINGLIB_LOADED
+#define TARGETINGLIB_LOADED 1
 
 function LockClosestNPC()
 {
