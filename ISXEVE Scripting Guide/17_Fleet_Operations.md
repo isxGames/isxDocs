@@ -1935,7 +1935,7 @@ if !${Uplink.IsConnected}
 **Diagnosis**:
 ```lavish
 echo "In fleet: ${Me.Fleet.IsMember[${Me.CharID}]}"
-echo "Fleet members: ${Me.Fleet.MemberCount}"
+echo "Fleet members: ${Me.Fleet.Size}"
 ```
 
 **Solution**:
@@ -1971,7 +1971,7 @@ function FleetStatusReport()
 
     if ${Me.Fleet.IsMember[${Me.CharID}]}
     {
-        echo "Fleet members: ${Me.Fleet.MemberCount}"
+        echo "Fleet members: ${Me.Fleet.Size}"
 
         variable queue:fleetmember members
         Me.Fleet:GetMembers[members]
