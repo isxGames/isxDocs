@@ -34,8 +34,11 @@
 22. [Best Practices](#best-practices)
 23. [Complete Working Examples (Relay)](#examples)
 
+### Multiboxing Patterns
+24. [Multiboxing Patterns](#multiboxing-patterns)
+
 ### Reference Implementations
-24. [Reference Implementations](#reference-implementations)
+25. [Reference Implementations](#reference-implementations)
 
 ---
 
@@ -4180,6 +4183,140 @@ objectdef obj_MultiComputerFleet
     }
 }
 ```
+
+---
+
+## Multiboxing Patterns
+
+**Reference implementation:** `Scripts\++isxScripts++\EVE-Online\Scripts\Yamfa\Yamfa.iss` — see this script as a canonical single-file multiboxing coordinator.
+
+### Multiboxing vs. Fleet Coordination
+
+These two problem spaces look similar but aren't the same thing, and the best tool for each differs:
+
+- **Multiboxing** — one player, multiple EVE clients, typically on the same physical machine, all running under one InnerSpace instance. Coordination is inter-session over the local InnerSpace uplink: near-zero latency, ordered delivery, trusted endpoints. The problem is chiefly "make N clients behave as one player's hands."
+- **Fleet coordination** — multiple human players, possibly on different machines, cooperating via EVE's own fleet chat / broadcasts / watchlist plus optional cross-machine uplinks. Latency is higher, trust is weaker, and the EVE fleet API (fleet commander, wingman lookup, `FleetMember:WarpTo`) does most of the heavy lifting.
+
+The patterns below are for the first case. They assume you control every session, every session runs your script, and `relay` to any named session Just Works with no network hop.
+
+### Session Identification and Discovery
+
+Multiboxing coordination is meaningless until each session knows the names of the others. InnerSpace session names are the addressable unit for `relay <SessionName> "..."`, so the two practical questions are:
+
+1. How does each session learn what its own session name is?
+2. How do slave sessions learn the master's session name (and vice versa)?
+
+The conventional answer is a **config-driven bootstrap**: each session reads a saved config attribute at startup identifying the master, and derives its own role by comparing its character name (or session name) against the configured master. Abstract example:
+
+```lavishscript
+; At startup, decide role from config
+if ${Config.Attribute[MasterName].Equal[${Me.Name}]}
+    Role:Set[Master]
+else
+    Role:Set[Slave]
+
+; Slaves remember the master's session name so they can send targeted relays
+variable string MasterSession = ${Config.Attribute[MasterSession]}
+```
+
+A master session is effectively discovered-by-convention: the config stores `MasterName` (the character who is master) and `MasterSession` (the InnerSpace session that character is logged into), and every other session reads those attributes on boot. When the master changes, the config is updated on all sessions — typically by the master itself relaying new values, or by a manual edit before launch.
+
+Auto-detection from EVE fleet state (fleet-commander lookup) is possible but fragile in a pure multiboxing context, because the player may not be fleeted at all while, e.g., soloing a mission across two clients.
+
+### Relay Over the Same-Machine Uplink
+
+Inside one InnerSpace instance, `relay` to a named session is cheap: it's an in-process message, ordered, and reliable. This is very different from cross-machine uplink, which pays real network cost and can reorder or drop.
+
+Two useful targeting patterns:
+
+```lavishscript
+; Fan out to every session on this uplink (including sender unless -noredirect)
+relay all "Script[myBot].VariableScope.Commands:Set[\"Lock,${entityID}\"]"
+
+; Targeted to one specific session
+relay "${MasterSession}" -echo "${Me.Name} is ready"
+
+; Fan out but skip own session
+relay all -noredirect "Event[MyBotAlert]:Execute[\"incoming\"]"
+```
+
+Two distinct payload styles are in common use:
+
+- **Event-style** — sender calls `Event[...]:Execute[...]`, receivers must have pre-registered and attached an atom. Clean separation of concerns, but requires lifecycle discipline (register on startup, detach on shutdown).
+- **Direct state injection** — sender writes into a known script-scoped variable or collection on the receiver, e.g. `relay all "Script[myBot].VariableScope.Commands:Set[...]"`. No event registration is needed because the receiving script is already polling that collection in its pulse. Simpler, and the pattern real Yamfa uses.
+
+The injection style trades a little explicitness for a lot less boilerplate and is a reasonable choice when both ends of the relay are the same script.
+
+### Master-Drives Patterns
+
+The core shape of every multibox bot is the same: the master makes all interesting decisions, and each slave does the minimum work needed to mirror those decisions in its own client. Three patterns cover the majority of what players actually want.
+
+**1. Target mirroring.** The master observes its own targeting list (what's currently being locked, what's locked, and what's currently active) and broadcasts one command per entity to the slaves. Slaves receive the command, verify the entity still exists in their local grid, range-check it, and lock/activate it.
+
+```lavishscript
+; Master side (runs in master's pulse, when Role == Master)
+variable index:entity MyTargets
+Me:GetTargets[MyTargets]
+variable iterator it
+MyTargets:GetIterator[it]
+if ${it:First(exists)}
+    do
+    {
+        call RelayCommand "Lock" ${it.Value.ID}
+    }
+    while ${it:Next(exists)}
+
+if ${Me.ActiveTarget(exists)}
+{
+    call RelayCommand "Lock"   ${Me.ActiveTarget.ID}
+    call RelayCommand "Target" ${Me.ActiveTarget.ID}
+}
+
+; Slave side (processes queued commands each pulse)
+; For each queued command, act only if locally valid
+if !${Entity[${targetID}](exists)}
+    return
+if ${Entity[${targetID}].IsLockedTarget} || ${Entity[${targetID}].BeingTargeted}
+    return
+if ${Entity[${targetID}].Distance} > ${MyShip.MaxTargetRange}
+    return
+Entity[${targetID}]:LockTarget
+```
+
+The slave-side guards are the load-bearing part: the master has already decided the target is worth locking, but only the slave knows its own lock slots, targeting range, and whether the entity is even on its overview grid. Never blindly execute master commands.
+
+**2. Follow-the-leader warp.** When the master enters warp, slaves must either already be in warp or arrive shortly after or they get left behind. The cleanest implementation piggybacks on EVE's own fleet-member warp: if you're in a fleet with the master, slaves can warp directly to the master by name via Local chat lookup.
+
+```lavishscript
+; Slave side: if master is in my Local and is a fleet member, warp to them
+if ${Local[${Config.Attribute[MasterName]}](exists)}
+    Local[${Config.Attribute[MasterName]}].ToFleetMember:WarpTo
+```
+
+This avoids the scatter problem of every slave trying to resolve the master's destination independently. Trigger it on a relayed "I am warping" announcement from the master, or on detecting that the master's entity has left your grid.
+
+**3. Positioning on the master.** While on grid with the master, slaves typically hold station via `Orbit`, `KeepAtRange`, or `Approach` on the master's entity, with the distance read from config.
+
+```lavishscript
+; Slave side, while on grid with master and not currently approaching something else
+if !${Me.ToEntity.Approaching(exists)}
+{
+    if ${Entity[Name =- "${Config.Attribute[MasterName]}"](exists)}
+    {
+        Entity[Name =- "${Config.Attribute[MasterName]}"]:Orbit[${Config.Attribute[Orbit]}]
+    }
+}
+```
+
+The `=-` partial-name match is convenient because EVE entity names sometimes have trailing suffixes (ship type, corp ticker), but be aware it can match multiple entities in crowded local — prefer exact match or an ID lookup if you have the master's ship ID. The guard against `Me.ToEntity.Approaching(exists)` prevents clobbering an already-issued movement command every pulse.
+
+### Pitfalls
+
+- **Race conditions on warp.** Master decides to warp and immediately broadcasts "warping" while some slaves are mid-activation on a module, mid-lock, or still processing a queued command. If the slave enters warp with an activating module it can get stuck in a half-processed state. Mitigate by having slaves clear local command queues on a "master warping" signal, and tolerate a brief desync while each slave's own pulse catches up.
+- **Stale-state propagation.** The master broadcasts a target ID; by the time the slave processes it, the entity may no longer exist on the slave's grid (warped off, popped, de-cloaked elsewhere). Every slave-side consumer must treat every relayed ID as a hint, not a command — re-verify existence, distance, and lock-eligibility before acting.
+- **Master disconnects or crashes.** Slaves that continue orbiting / locking based on last-known master state will keep doing so indefinitely. Give slaves a watchdog: if no command or heartbeat from the master's session has arrived in N seconds, stop active behaviors and fall back to a safe default (dock, warp to safe, or just idle).
+- **Name collisions.** The master-identification-by-character-name pattern breaks if two characters share a name prefix and you use partial match, or if the master character changes ship (name reuse across pilots is rare but ship-name collisions happen). Prefer `MasterSession` (an InnerSpace identifier you control) for relay targeting, and use character name only for in-game entity lookups where you have no alternative.
+- **Slave-to-slave drift.** If each slave independently decides how to handle a relayed "Lock" command, two slaves on the same grid can end up with different target priorities and different active targets. This is usually fine (and often desired for DPS spread), but if you need synchronized firing — e.g., everyone on the same primary — broadcast a dedicated `Target` command after the `Lock` and make slaves explicitly `MakeActiveTarget` on it.
 
 ---
 
