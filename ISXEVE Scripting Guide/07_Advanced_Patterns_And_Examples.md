@@ -100,16 +100,18 @@ The full `obj_FleetSafety` HARDSTOP pattern (relay event registration, `OnHardSt
 
 ### Uplink for Multi-Computer Coordination
 
-**Setup Uplink Server** (on one computer):
+**Setup Uplink Host** (on one computer — run in the uplink console):
 ```lavish
-uplink create MyFleetUplink password123
-uplink start MyFleetUplink
+Name MyFleetUplink
 ```
 
 **Connect from Other Computers**:
 ```lavish
-uplink connect 192.168.1.100:2048 password123
+RemoteUplink -connect 192.168.1.100 2048
 ```
+
+> Port and password authentication are configured per-uplink in the InnerSpace
+> Configuration UI, not via command arguments.
 
 **Send Commands Across Network**:
 ```lavish
@@ -1816,7 +1818,7 @@ echo "Uplink sessions: ${Uplink.Sessions}"
 if !${Uplink.IsConnected}
 {
     echo "Uplink disconnected - reconnecting"
-    uplink connect 192.168.1.100:2048 password123
+    RemoteUplink -connect 192.168.1.100 2048
 
     wait 50
 
@@ -2959,14 +2961,14 @@ Computer 1 (Mining Rig)          Computer 2 (Combat Rig)
 ### Uplink Setup
 
 ```lavish
-; In InnerSpace console on Computer 1:
-uplink create MyFleet
-uplink MyFleet connect 192.168.1.100:54321
+; On Computer 1 (the uplink host) — run in its uplink console:
+Name MyFleet
 
-; In InnerSpace console on Computer 2:
-uplink create MyFleet
-uplink MyFleet listen 54321
+; On Computer 2 (connecting session) — run in a session console:
+RemoteUplink -connect 192.168.1.100 54321
 ```
+
+> Port and password authentication are configured per-uplink in the InnerSpace Configuration UI.
 
 ### Uplink Relay Syntax
 
@@ -3050,13 +3052,11 @@ method Pulse()
 ```
 
 ```lavish
-; Computer 1 (Hub) setup
-uplink create FleetHub
-uplink FleetHub listen 54321
+; Computer 1 (Hub) — run in its uplink console:
+Name FleetHub
 
-; Computers 2-4 (Spokes) setup
-uplink create FleetHub
-uplink FleetHub connect 192.168.1.100:54321
+; Computers 2-4 (Spokes) — run in a session console on each:
+RemoteUplink -connect 192.168.1.100 54321
 ```
 
 **Pattern 2: Mesh (Full Connectivity)**
@@ -3071,11 +3071,12 @@ uplink FleetHub connect 192.168.1.100:54321
 ```
 
 ```lavish
-; Each computer connects to all others
-uplink create FleetMesh
-uplink FleetMesh listen 54321
-uplink FleetMesh connect 192.168.1.101:54322
-uplink FleetMesh connect 192.168.1.102:54323
+; On each computer — run in its uplink console once:
+Name FleetMesh
+
+; Then from each computer, connect to every peer:
+RemoteUplink -connect 192.168.1.101 54322
+RemoteUplink -connect 192.168.1.102 54323
 ; ... etc
 ```
 
