@@ -2707,7 +2707,7 @@ EVE:Execute[CmdStopShip]                ; Stop ship
 ```
 
 **Full List**:
-- See IsxeveWiki for complete EVE:Execute command list
+- See the [EVE:Execute Command](03_API_Reference.md#eveexecute-command) section in the API Reference for the complete command list
 - Hundreds of commands available
 
 ### Windows
@@ -2770,7 +2770,7 @@ Event[OnActiveTargetChanged]:DetachAtom[OnTargetChanged]
 - OnFrame - Every frame update
 - OnActiveTargetChanged - Active target changed
 - OnMyShipShieldsUpdate - Shield HP changed
-- Many more (see IsxeveWiki)
+- Many more (see ISXEVEChanges.txt for the complete event list)
 
 ---
 
