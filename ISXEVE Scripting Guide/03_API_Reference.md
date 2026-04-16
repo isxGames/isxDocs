@@ -5037,31 +5037,55 @@ else
 
 ### Reloading Charges
 
-**ISXEVE does NOT have direct reload method**.
+ISXEVE provides module reload via the `module:ChangeAmmo` and `module:ReloadAll` methods, plus auto-reload controls. There is no dedicated `module:Reload` method — the idiomatic reload is `ChangeAmmo` invoked with no arguments (reloads the currently-loaded ammo type) or with the same item ID.
 
-**Workaround 1: EVE:Execute (if available)**:
+**Reload current ammo (no arguments)** — per ChangesFile: `MyShip.Module[HiSlot0]:ChangeAmmo`:
 ```lavish
-; Some EVE versions have CmdReloadModule
-EVE:Execute[CmdReloadModule, ${slotID}]
+; Reload the module with its currently-loaded ammo
+MyShip.Module[HiSlot0]:ChangeAmmo
 ```
 
-**Workaround 2: Hotkey Simulation** (unreliable):
+**Reload-all for modules supporting the "Reload all" menu option**:
 ```lavish
-; Not recommended - depends on hotkey setup
+MyShip.Module[HiSlot0]:ReloadAll
 ```
 
-**Workaround 3: Manual Instruction**:
+**Detect in-progress reload** via the real `IsReloading` member:
 ```lavish
-; Most bots just warn user to reload manually
-if ${module.ChargeQuantity} == 0
+if ${MyShip.Module[HiSlot0].IsReloading}
 {
-    echo "WARNING: ${module.Name} out of ammo! Reload manually."
+    echo "Reload in progress..."
+}
+```
+
+**Auto-reload controls**:
+```lavish
+echo "Auto-reload on: ${MyShip.Module[HiSlot0].IsAutoReloadOn}"
+MyShip.Module[HiSlot0]:SetAutoReloadOn
+MyShip.Module[HiSlot0]:SetAutoReloadOff
+```
+
+**Depletion-driven reload pattern**:
+```lavish
+if ${module.ChargeQuantity} == 0 && !${module.IsReloading}
+{
+    module:ChangeAmmo
 }
 ```
 
 ### Changing Ammo Type
 
-**No direct ISXEVE support**. Must be done manually by player.
+Use `module:ChangeAmmo[ItemID]` or `module:ChangeAmmo[ItemID, Quantity]` where `ItemID` is the `item.ID` of an ammo item in your ship's cargo:
+
+```lavish
+; Load a specific ammo type from cargo
+MyShip.Module[HiSlot0]:ChangeAmmo[${ammoItem.ID}]
+
+; Load a specific quantity
+MyShip.Module[HiSlot0]:ChangeAmmo[${ammoItem.ID}, 100]
+```
+
+Per ChangesFile, the single-argument `ItemID` is no longer optional for a type change; use the no-argument form only to reload the currently-loaded ammo.
 
 ### Charge Depletion Detection
 
