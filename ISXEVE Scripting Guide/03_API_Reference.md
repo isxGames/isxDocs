@@ -6227,16 +6227,31 @@ wait 50    ; Wait for window to open
 ; Hangar window access is complex - see Evebot for examples
 ```
 
-**Get hangar items** (limited support):
+**Get hangar items** via the `GetHangarItems` METHOD (populates an `index:item`). The canonical host is the `character` datatype — in practice called on `Me.Station` while docked (the dominant pattern in EVEBot/Tehbot/combot/WreckingBall2), or directly on `Me`. It is NOT a member of `MyShip`.
+
 ```lavish
-; MyShip.GetHangarItems returns count
-variable int hangarItemCount = ${MyShip.GetHangarItems}
+variable index:item hangarItems
+variable int i
 
-echo "Items in hangar: ${hangarItemCount}"
+; Populate the index (method call, not a scalar member)
+Me.Station:GetHangarItems[hangarItems]
 
-; Accessing individual items is complex and unreliable
-; Most bots avoid hangar item manipulation
+echo "Items in hangar: ${hangarItems.Used}"
+
+for (i:Set[1]; ${i} <= ${hangarItems.Used}; i:Inc)
+{
+    if ${hangarItems.Get[${i}](exists)}
+    {
+        echo "  ${hangarItems.Get[${i}].Name} x${hangarItems.Get[${i}].Quantity}"
+    }
+}
 ```
+
+Related hangar-enumeration methods (same populate-an-index shape):
+- `Me.Station:GetHangarShips[index:item]` — ships in station hangar
+- `Me.Station:GetCorpHangarItems[index:item]` — corp hangar items
+- `Me.Station:GetCorpHangarShips[index:item]` — corp hangar ships
+- `MyShip:GetCorpHangarsCargo[index:item]` / `[index:item, "FolderName"]` / `[index:item, index:string]` — corp hangar array aboard ship
 
 ### Ship Hangar
 
@@ -6666,14 +6681,14 @@ while TRUE
 
 **Solution**: Design bots to avoid item movement, or use manual player intervention.
 
-### Limitation 2: No Hangar Item Access
+### Limitation 2: Hangar Item Access Caveats
 
-**Cannot reliably query hangar contents**:
-- GetHangarItems returns count only
-- Individual item access unreliable
-- Corp hangar access very complex
+Hangar contents CAN be queried via `Me.Station:GetHangarItems[index:item]` (and the related `GetHangarShips` / `GetCorpHangarItems` / `GetCorpHangarShips` methods). See the [Hangar Access](#hangar-access) section for the canonical pattern. Caveats:
 
-**Solution**: Avoid hangar automation. Focus on ship cargo only.
+- Method populates an `index:item` — it is NOT a scalar count member.
+- Must be docked (`${Me.InStation}`) before calling.
+- Corp-hangar access may require corp roles in-game.
+- Item movement between hangar and cargo has separate limitations (see Limitation 1).
 
 ### Limitation 3: No Loot Automation
 
