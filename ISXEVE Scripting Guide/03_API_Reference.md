@@ -5875,8 +5875,9 @@ echo "Ore Hold: ${EVEWindow[Inventory].ChildWindow[ShipOreHold].UsedCapacity} / 
 Some members documented in older materials do **not** exist on ShipType (verified absent from DataTypes.h ShipType registrations):
 
 - `${MyShip.OreHoldCapacity}` / `${MyShip.UsedOreHoldCapacity}` → fabricated. Use `${EVEWindow[Inventory].ChildWindow[ShipOreHold].Capacity}` / `.UsedCapacity`. Only `MyShip.HasOreHold` (bool) exists as a direct ship-level ore-hold member.
+- `${MyShip.FleetHangarCapacity}` / `${MyShip.UsedFleetHangarCapacity}` → fabricated. Use `${EVEWindow[Inventory].ChildWindow[FleetHangar].Capacity}` / `.UsedCapacity`. Populate items via `MyShip:GetFleetHangarCargo[index:item]`.
 - `${MyShip.FreeCargoCapacity}` → fabricated. Compute as `${Math.Calc[${MyShip.CargoCapacity} - ${MyShip.UsedCargoCapacity}]}`.
-- Specialized-hold scalar shortcuts for Fleet Hangar, Ship Maintenance Bay, etc. → use the `EVEWindow[Inventory].ChildWindow[<HoldName>]` path for all of them.
+- Specialized-hold scalar shortcuts for Ship Maintenance Bay and other holds → use the `EVEWindow[Inventory].ChildWindow[<HoldName>]` path for all of them.
 
 ### Recommendation
 
@@ -6326,9 +6327,17 @@ function IsOreHoldFull(int threshold)
 ### Other Specialized Bays
 
 **Fleet Hangar** (Orca, Rorqual):
+
+`${MyShip.FleetHangarCapacity}` and `${MyShip.UsedFleetHangarCapacity}` are **fabricated** — not members of the ship datatype. Access the fleet hangar capacity via the child-window of the inventory window, matching the `ShipOreHold` pattern. `FleetHangar` is a valid ChildWindow name (and a valid `ToDestination` for `item:MoveTo` / `EVE:MoveItemsTo` / `EVE:StackItems`, per ChangesFile).
+
 ```lavish
-echo "Fleet Hangar Capacity: ${MyShip.FleetHangarCapacity}"
-; Access methods limited
+; Prefer EVEWindow child-window access for capacity / used capacity:
+echo "Fleet Hangar Capacity: ${EVEWindow[Inventory].ChildWindow[FleetHangar].Capacity}"
+echo "Fleet Hangar Used:     ${EVEWindow[Inventory].ChildWindow[FleetHangar].UsedCapacity}"
+
+; Populate items from the ship's fleet hangar:
+variable index:item fleetHangarItems
+MyShip:GetFleetHangarCargo[fleetHangarItems]
 ```
 
 **Specialized bay detection**:
@@ -6336,7 +6345,7 @@ echo "Fleet Hangar Capacity: ${MyShip.FleetHangarCapacity}"
 ; Check various bay capacities to determine ship type
 if ${EVEWindow[Inventory].ChildWindow[ShipOreHold].Capacity} > 0
     echo "Mining ship"
-if ${MyShip.FleetHangarCapacity} > 0
+if ${EVEWindow[Inventory].ChildWindow[FleetHangar].Capacity} > 0
     echo "Command ship (Orca/Rorqual)"
 ```
 
