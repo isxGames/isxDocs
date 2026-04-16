@@ -7101,8 +7101,7 @@ EVE:Execute[CommandName, param1, param2, ...]
 - `TrashItems`
 
 **Menu Actions**:
-- `CmdShowInfo`
-- `CmdLookAtItem`
+- Show Info for an entity is NOT an `EVE:Execute` command — use the `entity:OpenShowInfo` method instead (e.g. `Entity[${entityID}]:OpenShowInfo`).
 
 ### Finding Command Names
 
@@ -7257,16 +7256,11 @@ EVE:Execute[CmdUnlockTargets]
 
 ### Menu/Info Commands
 
-**Show Info Window**:
+**Show Info Window** — use the `entity:OpenShowInfo` method, NOT an `EVE:Execute` command:
 ```lavish
-variable int64 itemID = ${Entity[...].ID}
-EVE:Execute[CmdShowInfo, ${itemID}]
+variable int64 entityID = ${Entity[...].ID}
+Entity[${entityID}]:OpenShowInfo
 wait 20    ; Wait for info window
-```
-
-**Look At** (camera focus):
-```lavish
-EVE:Execute[CmdLookAtItem, ${entityID}]
 ```
 
 ---
@@ -7618,13 +7612,10 @@ if ${win(exists)}
 ; Prefer using direct commands instead
 ```
 
-**Alternative: Use Direct Commands**:
+**Alternative: Use Direct Commands / Methods**:
 ```lavish
-; Instead of right-click -> "Look At"
-EVE:Execute[CmdLookAtItem, ${entityID}]
-
-; Instead of right-click -> "Show Info"
-EVE:Execute[CmdShowInfo, ${entityID}]
+; Instead of right-click -> "Show Info" (use the entity method, not Execute)
+Entity[${entityID}]:OpenShowInfo
 
 ; Instead of right-click -> "Lock Target"
 Entity[${entityID}]:LockTarget
@@ -7645,8 +7636,8 @@ EVE:Execute[CmdOpenMarket]
 ; Fitting
 EVE:Execute[CmdOpenFitting]
 
-; Character sheet
-EVE:Execute[CmdOpenCharactersheet]
+; Character sheet (no Cmd prefix)
+EVE:Execute[OpenCharactersheet]
 ```
 
 ---
