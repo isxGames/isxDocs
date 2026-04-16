@@ -2114,7 +2114,7 @@ function UnloadOre()
 
     ; Move all ore (CategoryID 25)
     variable index:item CargoItems
-    EVEWindow[Inventory].Child[ShipCargo]:GetItems[CargoItems]
+    EVEWindow[Inventory].ChildWindow[ShipCargo]:GetItems[CargoItems]
 
     variable iterator Item
     CargoItems:GetIterator[Item]
@@ -2265,7 +2265,7 @@ function atexit()
 - Boolean logic: `LavishScriptWiki/LavishScript/Data_Sequences.html`
 - Math operations: `LavishScriptWiki/TopLevelObjects/Math.html`
 
-**⚠️ API Note:** Some examples use simplified cargo checks (`MyShip.CargoFreeSpace`) to illustrate decision logic. For production code, use modern inventory API: `EVEWindow[Inventory].Child[ShipCargo].FreeSpace`. See Files 13 and 15 for modern cargo handling.
+**⚠️ API Note:** Some examples use simplified cargo checks (`MyShip.CargoFreeSpace`) to illustrate decision logic — note that `MyShip.CargoFreeSpace` is not present in the official changelog and should be treated as unsupported. For production code, use the modern inventory API: compute free space as `${Math.Calc[${EVEWindow[Inventory].ChildWindow[ShipCargo].Capacity} - ${EVEWindow[Inventory].ChildWindow[ShipCargo].UsedCapacity}]}`. See Files 13 and 15 for modern cargo handling.
 
 ---
 
@@ -4068,7 +4068,7 @@ function MoveCargoToHangar(int quantity)
 
     ; All checks passed, proceed
     variable index:item Items
-    EVEWindow[Inventory].Child[ShipCargo]:GetItems[Items]
+    EVEWindow[Inventory].ChildWindow[ShipCargo]:GetItems[Items]
     ; ... move items ...
 
     return TRUE
@@ -5492,8 +5492,8 @@ function ValidateShipState()
     ; Cargo free space should be <= capacity (modern inventory API)
     if ${EVEWindow[Inventory](exists)}
     {
-        variable float cargoFree = ${EVEWindow[Inventory].Child[ShipCargo].FreeSpace}
-        variable float cargoCapacity = ${EVEWindow[Inventory].Child[ShipCargo].Capacity}
+        variable float cargoCapacity = ${EVEWindow[Inventory].ChildWindow[ShipCargo].Capacity}
+        variable float cargoFree = ${Math.Calc[${cargoCapacity} - ${EVEWindow[Inventory].ChildWindow[ShipCargo].UsedCapacity}]}
 
         if ${cargoFree} > ${cargoCapacity}
         {
@@ -6668,7 +6668,7 @@ function BotPulse()
 **Problem**:
 
 ```lavish
-; BAD: Access cargo every pulse (DEPRECATED API - for illustration)
+; BAD: Access cargo every pulse (expensive — do not do this)
 function BotPulse()
 {
     ; SLOW! Opens inventory window every pulse
@@ -6678,7 +6678,7 @@ function BotPulse()
     }
 
     variable index:item Items
-    EVEWindow[Inventory].Child[ShipCargo]:GetItems[Items]
+    EVEWindow[Inventory].ChildWindow[ShipCargo]:GetItems[Items]
 
     echo "Items: ${Items.Used}"
 }
@@ -6697,7 +6697,7 @@ function UpdateCargoCache()
     {
         if ${EVEWindow[Inventory](exists)}
         {
-            CachedCargoUsed:Set[${EVEWindow[Inventory].Child[ShipCargo].UsedSpace}]
+            CachedCargoUsed:Set[${EVEWindow[Inventory].ChildWindow[ShipCargo].UsedCapacity}]
             LastCargoCheck:Set[${LavishScript.RunningTime}]
         }
     }
