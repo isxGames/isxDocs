@@ -7222,11 +7222,30 @@ if ${Gate(exists)}
 
 ### Warping
 
-**Warp to Bookmark**:
+**Warp to Bookmark** — look up the bookmark via the `EVE.Bookmark[<label>]` TLO (or enumerate with `EVE:GetBookmarks[index:bookmark]`) and call `:WarpTo[<distance>]` on the resulting `bookmark` object:
+
 ```lavish
-; Need bookmark ID (finding bookmarks is complex, covered in inventory section)
-variable int64 bookmarkID = ${EVEWindow[ByCaption,inventory].GetBookmarkID["Mining Site"]}
-EVE:Execute[CmdWarpToBookmark, ${bookmarkID}]
+; Simple label lookup + warp
+if ${EVE.Bookmark["Mining Site"](exists)}
+{
+    EVE.Bookmark["Mining Site"]:WarpTo[0]
+}
+```
+
+```lavish
+; Enumeration alternative when you need to filter or iterate
+variable index:bookmark bookmarks
+variable int i
+EVE:GetBookmarks[bookmarks]
+
+for (i:Set[1]; ${i} <= ${bookmarks.Used}; i:Inc)
+{
+    if ${bookmarks.Get[${i}].Label.Equal["Mining Site"]}
+    {
+        bookmarks.Get[${i}]:WarpTo[0]
+        break
+    }
+}
 ```
 
 **Warp to Zero** (on selected entity):
