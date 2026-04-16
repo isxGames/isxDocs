@@ -4732,7 +4732,6 @@ echo "Max Charge Size: ${module.MaxChargeSize}"
 **Targeting** (for targeted modules):
 ```lavish
 echo "Target ID: ${module.TargetID}"      ; What it's currently targeting
-echo "Last Target ID: ${module.LastTargetID}"
 ```
 
 **Timing**:
@@ -4743,12 +4742,9 @@ echo "Time Started: ${module.TimeStarted}"
 
 **Specialized**:
 ```lavish
-; For mining lasers
+; Ranges (for weapons / turrets / mining lasers as applicable)
 echo "Optimal Range: ${module.OptimalRange}"
 echo "Accuracy Falloff: ${module.AccuracyFalloff}"
-
-; For weapons
-echo "Damage Multiplier: ${module.DamageMultiplier}"
 ```
 
 ---
