@@ -1041,7 +1041,7 @@ while TRUE
 {
     call BehaviorPulse
 
-    wait ${Math.Calc[5 + (${Math.Rand[400]}/100)]}  ; 5.00-9.00ms
+    wait ${Math.Calc[5 + (${Math.Rand[400]}/100)]}  ; 500-899ms (5.00-8.99 deciseconds)
 }
 
 ; PATTERN 3: Event-driven with throttle (Tehbot style)
