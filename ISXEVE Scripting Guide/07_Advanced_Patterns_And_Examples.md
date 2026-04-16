@@ -3803,7 +3803,8 @@ objectdef obj_MiningFleet
 
     method Initialize()
     {
-        This.IsOrca:Set[${MyShip.Group.Equal["Industrial Command Ship"]}]
+        ; GroupID 941 = Industrial Command Ship (Orca) per EVE SDE
+        This.IsOrca:Set[${MyShip.GroupID} == 941]
         This.OrcaName:Set["${Config.Mining.OrcaName}"]
 
         ; Register events
