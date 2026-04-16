@@ -4148,18 +4148,29 @@ call Log "CRITICAL" "Emergency dock initiated"
 
 ### Pattern 2: File Logging
 
-```lavish
-; ===== FILE LOGGING PATTERN =====
+The canonical EVEBot / Tehbot logging pattern uses the `redirect -append` command rather than holding a persistent `file` handle open. `redirect -append` opens the file, writes the line, and closes it in one atomic call — no open/close lifecycle to manage, no handle leaks, and multiple scripts can append to the same log safely.
 
-variable(global) file LogFile
+Two details matter for the log PATH:
+
+1. `${Time.Date}` typically contains forward slashes (e.g. `04/15/2026`) and `${Time.Time}` typically contains colons (e.g. `14:32:07`) — **both are invalid in Windows filenames**. Use `.Replace` to strip or substitute them. The Tehbot pattern `${Time.Date.Replace["\/","."]}` (replace `/` with `.`) is readable and is used in production. An alternative is `${Time.Timestamp}` (Unix epoch integer) which is trivially filename-safe but less human-readable.
+2. The `Logs/` subdirectory must exist before you write to it — `filepath:MakeSubdirectory[...]` is the idiomatic way to ensure that.
+
+```lavish
+; ===== FILE LOGGING PATTERN (redirect -append style) =====
+
+variable(global) string LogFile
 
 function InitializeLogging()
 {
-    variable string logPath = "${Script.CurrentDirectory}/Logs/BotLog_${Time.Date}_${Time.Time}.txt"
+    ; Ensure Logs subdirectory exists.
+    declare FP filepath "${Script.CurrentDirectory}"
+    if !${FP.FileExists["Logs"]}
+    {
+        FP:MakeSubdirectory["Logs"]
+    }
 
-    ; Create log file
-    LogFile:SetFilename["${logPath}"]
-    LogFile:Open[append]
+    ; Filename-safe date/time: strip invalid characters from Time.Date (slashes) and Time.Time24 (colons).
+    LogFile:Set["${Script.CurrentDirectory}/Logs/BotLog_${Time.Date.Replace["\/","."]}_${Time.Time24.Replace[":",REMOVE]}.txt"]
 
     call Log "INFO" "=== Bot Started ==="
     call Log "INFO" "Character: ${Me.Name}"
@@ -4168,26 +4179,19 @@ function InitializeLogging()
 
 function Log(string level, string message)
 {
-    variable string logLine = "${Time.Date} ${Time.Time} [${level}] ${message}"
+    variable string logLine = "${Time.Date} ${Time.Time24} [${level}] ${message}"
 
-    ; Echo to console
+    ; Echo to console.
     echo "${logLine}"
 
-    ; Write to file
-    if ${LogFile.IsOpen}
-    {
-        LogFile:Write["${logLine}\n"]
-    }
+    ; Append to log file. redirect -append handles open/write/close atomically per call.
+    redirect -append "${LogFile}" echo "${logLine}"
 }
 
 function CloseLogging()
 {
     call Log "INFO" "=== Bot Stopped ==="
-
-    if ${LogFile.IsOpen}
-    {
-        LogFile:Close[]
-    }
+    ; Nothing to close — redirect -append does not hold a handle.
 }
 
 function atexit()
@@ -4195,6 +4199,8 @@ function atexit()
     call CloseLogging
 }
 ```
+
+> **Note on the `file` datatype:** LavishScript does provide a `file` datatype with `:Open[]`, `:Write[...]`, `:Seek[...]`, `:Truncate[]`, and `:Close[]` methods (see EVEBot's top-level `EVEBot.iss` for a working example of writing generated include files). That datatype is suited to structured file *generation* where you want a persistent handle across many writes. For *append-only logging*, `redirect -append` is simpler and is what the EVEBot/Tehbot `obj_Logger` modules use in production. The `:Open[append]` argument form is not part of the canonical pattern — if you choose the `file` datatype, use `:Open[]` with no arguments and manage your own position via `:Seek[...]`.
 
 ### Pattern 3: Structured Logging with Levels
 
@@ -4239,7 +4245,7 @@ function Log(string level, string message)
         return  ; Don't log, below threshold
     }
 
-    variable string logLine = "${Time.Date} ${Time.Time} [${level}] ${message}"
+    variable string logLine = "${Time.Date} ${Time.Time24} [${level}] ${message}"
 
     ; Color code based on level
     switch ${level}
@@ -4261,10 +4267,10 @@ function Log(string level, string message)
             break
     }
 
-    ; Write to file
-    if ${LogFile.IsOpen}
+    ; Append to log file (LogFile is the string path set by InitializeLogging in Pattern 2).
+    if ${LogFile.NotNULLOrEmpty}
     {
-        LogFile:Write["${logLine}\n"]
+        redirect -append "${LogFile}" echo "${logLine}"
     }
 }
 
