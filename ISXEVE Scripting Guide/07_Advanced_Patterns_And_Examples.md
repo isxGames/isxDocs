@@ -125,6 +125,8 @@ relay uplink echo "Message from ${Me.Name} to entire network"
 
 ### Fleet Object (EVEBot Pattern)
 
+> **Framework Context:** Examples in this section use EVEBot's `Config` object wrapper (an `objectdef` instance from EVEBot's configuration subsystem), not the InnerSpace `Config` TLO. References like `Config.Fleet.FleetMembers` resolve only inside the EVEBot framework. For vanilla ISXEVE equivalents, see `Me`, `MyShip`, `EVE`, `Entity`, and `EVEWindow` in `03_API_Reference.md`.
+
 Based on `obj_Fleet.iss`:
 
 ```lavish
@@ -925,6 +927,8 @@ objectdef obj_SharedTargets
 
 ### Cargo Capacity Coordination
 
+> **Framework Context:** Examples in this section use EVEBot's `Ship` object wrapper (an `objectdef` instance) — `Ship.Cargo.FreeCapacity` / `Ship.Cargo.PercentFull` resolve only inside the EVEBot framework. For vanilla ISXEVE equivalents, use `MyShip.UsedCargoCapacity`, `MyShip.CargoCapacity`, and `MyShip.Cargo` — see `03_API_Reference.md`.
+
 ```lavish
 // Hauler broadcasts free cargo space
 method BroadcastCargoSpace()
@@ -955,6 +959,8 @@ atom OnHaulerCargoUpdate(int64 haulerID, float freeSpace)
 Fleet Commander broadcasts a primary (and optional secondary) target via a relay event; DPS slaves receive the event, lock the target, make it active, and activate weapons. The full, production-grade implementation of this pattern — with master/slave role detection, both primary and secondary target broadcasting, slave-side `OnPrimaryTarget` / `OnSecondaryTarget` atoms, lock-and-fire logic, and complete Initialize/Shutdown lifecycle — is provided as the canonical `obj_FleetCombat` object in [Example 1: Complete Fleet Combat Coordination](#example-1-complete-fleet-combat-coordination) later in this guide. Use that single authoritative version rather than re-implementing the pattern.
 
 ### Logistics Coordination (Shield/Armor Reps)
+
+> **Framework Context:** Examples in this section use EVEBot's `Ship` object wrapper (an `objectdef` instance) — `Ship.ModuleList_ShieldTransporter` is an EVEBot-maintained pre-filtered module collection, not a vanilla ISXEVE member. For vanilla ISXEVE, iterate `MyShip.Module[...]` or query modules via `MyShip:GetModules[...]` — see `03_API_Reference.md`.
 
 ```lavish
 objectdef obj_LogisticsShip
@@ -1134,6 +1140,8 @@ atom OnTargetScrambled(int64 targetID, int64 tacklerID)
 The full Orca-centric mining fleet coordinator — where the Orca is designated master, broadcasts belt selection to slaved miners, and miners react to warp-to-belt events — is integrated into the complete `obj_MiningFleet` implementation shown later in this guide under [Example 2: Mining Fleet with Orca Support](#example-2-mining-fleet-with-orca-support). See that section for the complete canonical implementation (Orca presence broadcasts, miner warp-in, survey-scan requests, full-cargo reports, and ore delivery to the Orca's fleet hangar).
 
 ### Boosting Coordination
+
+> **Framework Context:** Examples in this section use EVEBot's `Ship` object wrapper (an `objectdef` instance) — `Ship.ModuleList_GangCoordinator` is an EVEBot-maintained pre-filtered module collection, not a vanilla ISXEVE member. For vanilla ISXEVE, iterate `MyShip.Module[...]` or query modules via `MyShip:GetModules[...]` — see `03_API_Reference.md`.
 
 ```lavish
 objectdef obj_FleetBooster
@@ -1362,6 +1370,8 @@ objectdef obj_EventDrivenBot
 ## Complete Working Examples (Fleet Coordination)
 
 ### Example 1: Simple Mining Fleet (1 Hauler + 2 Miners)
+
+> **Framework Context:** This example uses EVEBot's object wrappers (`Ship`, `Cargo`, `Station`, `Safespots`, `Navigator`, `Config`) — these are EVEBot `objectdef` instances, not vanilla ISXEVE TLOs. References like `Ship.Cargo`, `Ship.Approach`, `Ship:Activate_MiningLasers`, `Station.Undock`, `Cargo.TransferCargoToStationHangar`, `Safespots.WarpTo`, `Navigator:FlyToBookmark`, and `Config.Hauler.DeliveryStation` resolve only inside the EVEBot framework. For vanilla ISXEVE equivalents, see `Me`, `MyShip`, `EVE`, `Entity`, and `EVEWindow` in `03_API_Reference.md`.
 
 **Hauler**:
 ```lavish
@@ -2187,6 +2197,8 @@ objectdef obj_FleetSync
 
 ## UplinkManager System
 
+> **Framework Context:** Examples in this section use EVEBot's `Logger` object wrapper (an `objectdef` providing logging through EVEBot's central log system) — calls like `Logger:Log[...]` resolve only inside the EVEBot framework. For vanilla ISXEVE scripts, use `echo`, `redirect -append "file.log" echo "..."`, or a `FilePath` object to write logs. See `03_API_Reference.md` and `20_Debugging_And_Troubleshooting.md`.
+
 ### Overview
 
 EVEBot's **UplinkManager** is a sophisticated automatic peer discovery and coordination system:
@@ -2449,6 +2461,8 @@ method CheckForOrca()
 
 ### HARDSTOP Pattern (Emergency Dock)
 
+> **Framework Context:** Examples in this section use EVEBot's object wrappers (`Logger`, `EVEBot`, `Social`, `Ship`, `Config`) — these are EVEBot `objectdef` instances, not vanilla ISXEVE TLOs. References like `EVEBot.ReturnToStation`, `Social.PossibleHostiles`, `Ship.IsPod`, `Logger:Log[...]`, and `Config.Common.CurrentBehavior` resolve only inside the EVEBot framework. For vanilla ISXEVE equivalents (hostile detection, pod detection, etc.), see `Me.Ship`, `Me.Fleet`, `EVE.GetLocalPilots`, `MyShip`, and `Local` in `03_API_Reference.md`.
+
 **Used by:** EVEBot Orca, Guardian, Miner
 
 **Purpose:** Broadcast critical danger, all fleet members dock immediately
@@ -2539,6 +2553,8 @@ if ${Ship.IsPod}
 ```
 
 ### Master/Slave Coordination
+
+> **Framework Context:** Examples in this section use EVEBot's `Config` object wrapper (an `objectdef` instance), not the InnerSpace `Config` TLO. References like `Config.Miner.GroupMode` and `Config.Miner.MasterMode` resolve only inside the EVEBot framework. For vanilla ISXEVE scripts, implement an equivalent config via `LavishSettings:AddSet[...]` and `LavishSettings[...]:Export[...]` — see `04_Core_Concepts.md` and the LavishSettings section in `03_API_Reference.md`.
 
 **Master Election Pattern (EVEBot)**
 
@@ -2709,6 +2725,8 @@ The full Orca service pattern — including miner-side survey-scan and shield-bo
 ## IRC Bridge Integration
 
 > **📚 Complete ISXIM Documentation:** See `__CRITICAL_NEWEST_ISXIM_Reference.md` for full IRC extension reference including all TLOs, datatypes, events, and usage patterns.
+
+> **Framework Context:** Examples in this section use Tehbot/EVEBot object wrappers (`Logger`, `Config`, `EVEBot`) — these are `objectdef` instances from those frameworks, not vanilla ISXEVE TLOs. References like `Logger:Log[...]`, `Config.UseIRC`, `Config.IRCUsername`, `Config.IRCServer`, `Config.IRCPort`, `Config.IRCPassword`, `Config.IRCChannel`, `EVEBot:Pause`, and `EVEBot:Resume` resolve only inside those frameworks. For vanilla ISXEVE scripts, replace `Logger:Log` with `echo`/`redirect`, and store IRC settings directly via LavishSettings (see `04_Core_Concepts.md`). The ISXIM extension itself (`IRCUser`, `IRC:Connect`, `Event[IRC_ReceivedChannelMsg]`, etc.) is the same for all scripts.
 
 ### Overview (Tehbot ChatRelay)
 
@@ -3013,6 +3031,8 @@ objectdef obj_UplinkCoordination
 ```
 
 ### Uplink UpdateClient (EVEBot)
+
+> **Framework Context:** This example uses EVEBot's object wrappers (`Config`, `EVEBot`, `Defense`) — these are `objectdef` instances from the EVEBot framework, not vanilla ISXEVE TLOs. References like `Config.Common.Callback`, `EVEBot.SessionValid`, `Defense.Hide`, `Defense.HideReason`, `EVEBot.Paused`, and `Config.Common.Behavior` resolve only inside the EVEBot framework. The `uplink` command itself and `${MyShip}`/`${Me}`/`${Session}` work identically in vanilla ISXEVE — only the wrapper-based status values need to be replaced with your own equivalents.
 
 **Advanced:** Uplink can call methods on remote computer's running script
 
@@ -3392,6 +3412,8 @@ atom OnFleetCommand(string command, string params)
 
 ### 7. Security - Don't Trust Remote Input
 
+> **Framework Context:** The "SAFER" example uses EVEBot's `Ship` object wrapper — `Ship.WarpToBookMarkName` is an EVEBot `objectdef` method, not a vanilla ISXEVE API. For vanilla ISXEVE, use `EVE.Bookmark[${name}]:WarpTo[${distance}]` or `Universe[${solarSystemID}]:SetDestination` — see `03_API_Reference.md`. The validation pattern itself (check `EVE.Bookmark[...](exists)`, compare `SolarSystemID`) is framework-independent and correct.
+
 ```lavish
 atom OnRemoteBookmark(string bookmarkName)
 {
@@ -3473,6 +3495,8 @@ objectdef obj_MasterFailover
 ---
 
 ## Complete Working Examples (Relay System)
+
+> **Framework Context:** The examples in this section use EVEBot's object wrappers (`Ship`, `Drones`, `Config`) — these are EVEBot `objectdef` instances, not vanilla ISXEVE TLOs. References like `Ship:Activate_Weapons`, `Ship:Activate_Webs`, `Ship:Activate_Scrams`, `Ship:Activate_Jammers`, `Ship:Activate_Damps`, `Ship:Activate_Painters`, `Ship:Activate_SurveyScanners`, `Ship.CargoFull`, `Drones:EngageTarget`, `Config.Fleet.IsFC`, `Config.Fleet.FCName`, `Config.Fleet.Role`, `Config.Mining.OrcaName`, `Config.Fleet.ComputerRole` all resolve only inside the EVEBot framework. For vanilla ISXEVE equivalents, activate modules via `MyShip.Module[HiSlot0]:Activate` (or iterate with `MyShip:GetModules[...]`), engage drones via `EVE:DronesEngageMyTarget` / drone entity methods, and use LavishSettings-based config instead of EVEBot's `Config` wrapper. See `Me`, `MyShip`, `EVE`, `Entity`, and `EVEWindow` in `03_API_Reference.md`.
 
 ### Example 1: Complete Fleet Combat Coordination
 
@@ -4151,6 +4175,8 @@ objectdef obj_MultiComputerFleet
 ---
 
 ## Configuration and Settings Management
+
+> **Framework Context:** Starting with the [EVEBot Configuration Architecture](#evebot-configuration-architecture) section below, examples in this chapter use EVEBot's `Config` object wrapper (an `objectdef` instance defined in EVEBot's `obj_Configuration` class) — it is **not** the InnerSpace `Config` TLO. Similarly, `Logger:Log[...]` calls reference EVEBot's logger object, not a built-in API. References like `Config.Common.CurrentBehavior`, `Config.Combat.MinimumShieldPct`, `Config.Miner.GroupMode`, `Config:Save`, and `Logger:Log[...]` all resolve only inside the EVEBot framework (or the similarly-structured Tehbot framework). For vanilla ISXEVE scripts, the underlying [LavishSettings Foundation](#lavishsettings-foundation) section below is framework-independent — use `LavishSettings:AddSet[...]`, `LavishSettings[...]:AddSetting[...]`, and `LavishSettings[...]:Export[...]` directly, without the wrapper objects. See `04_Core_Concepts.md` and the LavishSettings section in `03_API_Reference.md`.
 
 ---
 
