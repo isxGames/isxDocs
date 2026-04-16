@@ -4162,11 +4162,25 @@ function EmergencyWarpOut()
 
 ### Simple Navigation State Machine
 
+**IMPORTANT — `OnFrame` is a LavishScript event, not an automatic method.** Naming a `method OnFrame()` on an objectdef does NOT cause it to fire once per frame. You must explicitly attach the method as an atom to the `OnFrame` event via `Event[OnFrame]:AttachAtom[This:OnFrame]` (typically in `Initialize`) and detach it via `Event[OnFrame]:DetachAtom[This:OnFrame]` (typically in `Shutdown`). Attached atoms persist across script reloads if not detached, which leaks handlers and silently duplicates per-frame work — always pair Attach with Detach.
+
 ```lavish
 objectdef obj_NavigationStateMachine
 {
     variable string state = "IDLE"
     variable int64 destinationID = 0
+
+    method Initialize()
+    {
+        ; Register OnFrame as a per-frame event handler
+        Event[OnFrame]:AttachAtom[This:OnFrame]
+    }
+
+    method Shutdown()
+    {
+        ; CRITICAL: Detach or the atom leaks across script reloads
+        Event[OnFrame]:DetachAtom[This:OnFrame]
+    }
 
     method SetDestination(int64 entityID)
     {
@@ -4174,6 +4188,7 @@ objectdef obj_NavigationStateMachine
         state:Set["WARPING"]
     }
 
+    ; Fires once per frame because it was attached to Event[OnFrame] above.
     method OnFrame()
     {
         if ${state.Equal["IDLE"]}
