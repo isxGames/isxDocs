@@ -1555,10 +1555,10 @@ while TRUE
 ### Mistake 2: Not Checking ISXEVE.IsReady
 
 ```lavish
-; BAD: Crash if ISXEVE not ready
+; BAD: Returns empty/NULL data if ISXEVE not ready
 function main()
 {
-    echo "${Me.Name}"  ; CRASH if ISXEVE not ready!
+    echo "${Me.Name}"  ; Returns NULL / empty string if ISXEVE not ready -- fails silently
 }
 
 ; GOOD:
