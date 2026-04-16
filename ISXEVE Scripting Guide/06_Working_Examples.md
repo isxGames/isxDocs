@@ -1128,21 +1128,54 @@ function GetFleetMembers()
 
 ### Broadcast to Fleet (LavishScript)
 
+LavishScript user-defined events are same-client only by default — `Event[Name]:Execute[...]`
+only fires handlers inside the session that calls it. For fleet-wide (multi-client / multi-boxing)
+communication, combine `relay` with a user-defined event so each InnerSpace session fires its
+own registered handler. **Both the sender and every receiver must call
+`LavishScript:RegisterEvent[<EventName>]` before any `AttachAtom` / `Execute` on that event.**
+This matches the canonical pattern used by EVEBot (see `core/obj_Social.iss` and
+`Behaviors/obj_Hauler.iss` / `obj_Miner.iss`).
+
+#### SENDER script (runs on the broadcasting client)
+
 ```lavish
+; --- Run once at script startup (e.g. in your main function or an Initialize method) ---
+LavishScript:RegisterEvent[FleetMessage]
+
 function BroadcastToFleet(string Message)
 {
-    ; Send relay to all fleet members
-    relay "all other" Event[FleetMessage]:Execute["${Me.Name}", "${Message}"]
+    ; 'all other' = every InnerSpace session EXCEPT this one.
+    ; Use 'all' to also fire the handler in the sender's own session.
+    relay "all other" "Event[FleetMessage]:Execute[\"${Me.Name}\", \"${Message}\"]"
 }
+```
 
-; Event handler (in other fleet members' scripts)
+#### RECEIVER script (runs on every other fleet client)
+
+```lavish
+; --- Run once at script startup, BEFORE AttachAtom ---
+LavishScript:RegisterEvent[FleetMessage]
 Event[FleetMessage]:AttachAtom[FleetMessage_Handler]
 
 atom FleetMessage_Handler(string SenderName, string Message)
 {
     echo "Fleet message from ${SenderName}: ${Message}"
 }
+
+; --- On script shutdown, detach cleanly ---
+; Event[FleetMessage]:DetachAtom[FleetMessage_Handler]
 ```
+
+**Alternative firing syntax** — EVEBot also uses the shorter `-event` form, which passes raw
+arguments without the nested `Execute[...]` call:
+
+```lavish
+; Sender: fires FleetMessage with two args on every other client
+relay "all other" -event FleetMessage "${Me.Name}" "${Message}"
+```
+
+Both forms are valid; `Event[Name]:Execute[...]` is more explicit about the argument list,
+while `-event` is concise. Receiver registration/handler code is identical for both.
 
 ### Warp to Fleet Member (.NET)
 
