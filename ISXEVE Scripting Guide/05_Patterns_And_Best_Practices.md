@@ -3,7 +3,7 @@
 **Purpose:** Main loop patterns, decision making, error handling, and performance optimization for EVE bots
 **Audience:** Developers building production-quality automation
 
-> **Note on Code Examples**: This file contains illustrative examples that may include deprecated API patterns (e.g., `MyShip.CargoFreeSpace`, `MyShip.UsedCargoCapacity`). For production code, always use the modern `EVEWindow[Inventory].Child[ShipCargo]`. The complete working example at the end has been updated to use modern APIs where critical.
+> **Note on Code Examples**: This file contains illustrative examples that may use `MyShip.CargoCapacity` / `MyShip.UsedCargoCapacity` directly. These members are current and documented, but carry an important caveat: the cargo hold must have been opened at least once in the session before these values reflect server-side state accurately (the same "IsCargoAccessible" prerequisite that applies to entity cargo members). Examples also reference `MyShip.CargoFreeSpace`, which is not present in the official changelog and should be treated as unsupported. For production code that needs reliable cargo totals regardless of window state, prefer the `EVEWindow[Inventory].ChildWindow[ShipCargo]` pattern — it triggers the cargo-open side effect implicitly and exposes `UsedSpace` / `Capacity` without the prerequisite. The complete working example at the end uses the modern window pattern where it matters.
 
 ---
 
