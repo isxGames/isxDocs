@@ -2229,8 +2229,8 @@ variable string MyName = ${Me.ToEntity.Name}
 ${Me.ActiveTarget.ToEntity.Owner.Alliance.Name}
 
 ; Breakdown:
-; MyShip                   -> ship object
-; .ActiveTarget            -> module object
+; Me                       -> character object
+; .ActiveTarget            -> activetarget object (locked target reference)
 ; .ToEntity                -> entity object
 ; .Owner                   -> owner object
 ; .Alliance                -> alliance object
