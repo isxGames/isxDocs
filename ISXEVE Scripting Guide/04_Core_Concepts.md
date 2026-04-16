@@ -182,15 +182,20 @@ Drops Out of Warp
 
 **Bot Considerations**:
 ```lavishscript
+; Declare loop counter (LavishScript requires variable declarations before use)
+variable int counter = 0
+
 ; Warp to entity
 Entity:WarpTo[0]
 wait 30  ; Wait 3 seconds for align/warp entry
 
 ; Must wait until we drop out
+; Me.ToEntity.Mode values: 0=Unknown, 1=Stopped, 2=Approaching, 3=Warp, 4=Orbiting
 while ${Me.ToEntity.Mode} == 3  ; Mode 3 = Warping
 {
     wait 10
-    ; Timeout check after 2 minutes
+    counter:Inc[10]
+    ; Timeout check after 2 minutes (1200 deciseconds)
     if ${counter} > 1200
     {
         echo "Warp took too long - stuck?"
@@ -690,17 +695,24 @@ Station/Structure
 
 **Bot Must Check** (modern inventory API):
 ```lavishscript
+; Declare variables (LavishScript requires variable declarations before use)
+; Use int64 to hold the entity ID, then fetch the Entity on demand.
+; (Storing 'variable entity X = ${Entity[...]}' captures a string snapshot,
+;  not a live reference - always re-resolve via Entity[${id}] when needed.)
+variable int64 WreckID = ${Entity[CategoryID = 2 && GroupID = 186].ID}
+variable float cargoFree
+
 ; Check cargo space before looting
-if ${EVEWindow[Inventory](exists)}
+if ${EVEWindow[Inventory](exists)} && ${Entity[${WreckID}](exists)}
 {
-    variable float cargoFree = ${EVEWindow[Inventory].Child[ShipCargo].FreeSpace}
+    cargoFree:Set[${EVEWindow[Inventory].Child[ShipCargo].FreeSpace}]
 
     if ${cargoFree} > 100
     {
-        ; Safe to loot wreck
-        Wreck:Open[]
+        ; Safe to loot wreck - re-resolve the entity each time
+        Entity[${WreckID}]:Open
         wait 20
-        Wreck:LootAll[]
+        Entity[${WreckID}]:LootAll
     }
     else
     {
