@@ -4994,7 +4994,7 @@ function EmergencyDock()
     ; Recall drones if any
     if ${MyShip.UsedDroneBayCapacity} > 0
     {
-        EVE:Execute[DroneReturnAndOrbit]
+        EVE:Execute[CmdDronesReturnAndOrbit]
         wait 30  ; Wait for drones
     }
 
