@@ -2286,8 +2286,8 @@ ${Me.Wallet}            ; ISK balance (int64)
 
 **Methods**:
 ```lavishscript
-Me.GetTargets           ; Get index of locked targets
-Me.GetFleetMembers      ; Get index of fleet members
+Me:GetTargets[index:entity]          ; Get index of locked targets
+Me.Fleet:GetMembers[index:fleetmember] ; Get index of fleet members
 ```
 
 **Example Usage**:
@@ -2344,8 +2344,8 @@ ${MyShip.Module[TypeID,Group]}  ; Module by type and group
 **Methods**:
 ```lavishscript
 MyShip:Open[]                   ; Open cargo
-MyShip:GetModules[]             ; Get index of modules
-MyShip:GetCargo[]               ; Get index of cargo items
+MyShip:GetModules[index:module]  ; Get index of modules
+MyShip:GetCargo[index:item]     ; Get index of cargo items
 MyShip:SetActiveTarget[]        ; Set active target
 MyShip:LaunchAllDrones[]        ; Launch all drones
 ```
@@ -2363,9 +2363,9 @@ ${EVE.Station[ID]}              ; Station by ID
 
 **Critical Methods**:
 ```lavishscript
-EVE:QueryEntities[]             ; Query entities (MOST USED)
-EVE:Execute[]                   ; Execute EVE command
-EVE:GetBookmarks[]              ; Get index of bookmarks
+EVE:QueryEntities[index:entity, "query"]  ; Query entities (MOST USED)
+EVE:Execute[CommandName]                  ; Execute EVE command
+EVE:GetBookmarks[index:bookmark]          ; Get index of bookmarks
 ```
 
 **EVE:Execute Examples**:
