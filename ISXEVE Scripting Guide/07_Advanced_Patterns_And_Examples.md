@@ -1001,21 +1001,23 @@ objectdef obj_LogisticsShip
             {
                 variable fleetmember member = ${memberIt.Value}
 
-                // Check if in local and on grid
-                if ${Local[${member.Name}](exists)}
+                // Map fleet member -> pilot -> ship entity
+                // NOTE: Entity[Name = "..."] matches SHIP names, not pilot names,
+                // so we can't look up a fleet member's ship by character name.
+                // The canonical vanilla-ISXEVE path is member.ToPilot.ToEntity,
+                // which returns the pilot's ship entity when they're on-grid.
+                // (exists) naturally filters out offline / out-of-system / off-grid members.
+                if ${member.ToPilot.ToEntity(exists)}
                 {
-                    if ${Entity[Name = "${member.Name}"](exists)}
+                    variable entity memberShip = ${member.ToPilot.ToEntity}
+
+                    // ShieldPct is already a percentage (0-100), no Math.Calc needed
+                    variable float shieldPct = ${memberShip.ShieldPct}
+
+                    if ${shieldPct} < 70 && ${Ship.ModuleList_ShieldTransporter.Used} > 0
                     {
-                        variable entity memberShip = ${Entity[Name = "${member.Name}"]}
-
-                        // Check shield percentage
-                        variable float shieldPct = ${Math.Calc[${memberShip.ShieldPct}]}
-
-                        if ${shieldPct} < 70 && ${Ship.ModuleList_ShieldTransporter.Used} > 0
-                        {
-                            echo "${member.Name} shields at ${shieldPct.Int}% - adding to rep queue"
-                            This.RepTargets:Insert[${memberShip.ID}]
-                        }
+                        echo "${member.ToPilot.Name} shields at ${shieldPct.Int}% - adding to rep queue"
+                        This.RepTargets:Insert[${memberShip.ID}]
                     }
                 }
             }
