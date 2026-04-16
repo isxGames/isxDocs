@@ -4719,7 +4719,7 @@ echo "Is Activatable: ${module.IsActivatable}"
 echo "Is Deactivating: ${module.IsDeactivating}"
 echo "Is Changing Ammo: ${module.IsChangingAmmo}"
 echo "Is Reloading: ${module.IsReloading}"
-echo "Is Goingonline: ${module.IsGoingonline}"
+echo "Is GoingOnline: ${module.IsGoingOnline}"
 ```
 
 **Charges (Ammo/Crystals)**:
@@ -4859,7 +4859,7 @@ if ${module.IsDeactivating}
 ; Some modules take time to online (siege modules, triage, etc.)
 
 ; Check if onlining
-if ${module.IsGoingonline}
+if ${module.IsGoingOnline}
 {
     echo "Module is onlining..."
 }
