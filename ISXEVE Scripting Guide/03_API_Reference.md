@@ -1803,7 +1803,11 @@ echo "Hull Pct: ${ent.StructPct}"
 ```lavish
 ; For asteroids
 echo "Radius: ${ent.Radius}"    ; Signature radius
-echo "Quantity: ${ent.Quantity}"    ; Ore remaining (asteroids only)
+; NOTE: There is no `entity.Quantity` member. `Quantity` lives on the
+; `item` datatype (e.g. cargo items), NOT on `entity`. To read the ore
+; remaining in an asteroid, use the survey-scanner API (fire the
+; survey scanner module and read results from the survey-scan window
+; / results datatype) — not a direct entity member access.
 ```
 
 ### Entity Member Examples
@@ -3072,15 +3076,16 @@ for (i:Set[1]; ${i} <= ${asteroids.Used}; i:Inc)    ; 1-indexed!
 ; Always verify in your specific use case
 ```
 
-### Gotcha 6: Entity Members Can Return NULL
+### Gotcha 6: Entity Members Can Return NULL / Wrong Datatype
 
 ```lavish
 ; Some entity members return NULL/empty for certain entity types
-echo "${entity.Quantity}"    ; Only meaningful for asteroids
 echo "${entity.Bounty}"      ; Only meaningful for NPCs
 
 ; Check if member exists/valid before using
 ```
+
+**`Quantity` is NOT an entity member.** `Quantity` is defined on the `item` datatype (e.g. cargo items — `${MyShip.Cargo[i].Quantity}`). Do NOT write `${entity.Quantity}`. For asteroid ore-remaining, use the survey-scanner API — not a direct entity member.
 
 ---
 
