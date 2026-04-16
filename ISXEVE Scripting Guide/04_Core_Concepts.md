@@ -2744,33 +2744,37 @@ if ${Window["Local"](exists)}
 
 **Common Events**:
 ```lavishscript
-; On entity appeared
+; Fires every frame (core LavishScript event)
 Event[OnFrame]:AttachAtom[OnFrameHandler]
 
-; On target changed
-Event[OnActiveTargetChanged]:AttachAtom[OnTargetChanged]
+; ISXEVE-specific frame event (preferred for ISXEVE pulse routines)
+Event[ISXEVE_onFrame]:AttachAtom[OnFrameHandler]
+
+; Chat channel message received (must activate first)
+Event[EVE_OnChannelMessage]:AttachAtom[OnChatMessage]
 ```
 
 **Example**:
 ```lavishscript
 ; Define atom to handle event
-atom OnTargetChanged()
+atom OnChatMessage(int64 ChannelID, string PilotName, int64 PilotID, int64 AllianceID, string Message)
 {
-    echo "Active target changed to: ${Me.ActiveTarget.ToEntity.Name}"
+    echo "Chat from ${PilotName}: ${Message}"
 }
 
 ; Attach atom to event
-Event[OnActiveTargetChanged]:AttachAtom[OnTargetChanged]
+Event[EVE_OnChannelMessage]:AttachAtom[OnChatMessage]
 
 ; Later: Detach
-Event[OnActiveTargetChanged]:DetachAtom[OnTargetChanged]
+Event[EVE_OnChannelMessage]:DetachAtom[OnChatMessage]
 ```
 
 **Available Events**:
-- OnFrame - Every frame update
-- OnActiveTargetChanged - Active target changed
-- OnMyShipShieldsUpdate - Shield HP changed
-- Many more (see ISXEVEChanges.txt for the complete event list)
+- OnFrame - Every frame update (core LavishScript)
+- ISXEVE_onFrame - Every frame update (ISXEVE-specific; preferred for pulse routines)
+- EVE_OnChannelMessage - Chat message received (requires ActivateChannelMessageEvents)
+- EVE_OnSurveyScanData - Survey scan results available
+- See ISXEVEChanges.txt for the complete event list
 
 ---
 
