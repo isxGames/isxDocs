@@ -363,11 +363,12 @@ function ActivateWeapons()
     {
         do
         {
-            ; Check if weapon module
-            if ${m.Value.ToItem.Group.Find["Projectile Weapon"]} || \
-               ${m.Value.ToItem.Group.Find["Energy Weapon"]} || \
-               ${m.Value.ToItem.Group.Find["Hybrid Weapon"]} || \
-               ${m.Value.ToItem.Group.Find["Missile Launcher"]}
+            ; Check if weapon module (GroupID compare — numeric, robust, no substring false positives)
+            ; 55 = Projectile Weapon, 53 = Energy Weapon, 74 = Hybrid Weapon, 56 = Missile Launcher
+            if ${m.Value.ToItem.GroupID} == 55 || \
+               ${m.Value.ToItem.GroupID} == 53 || \
+               ${m.Value.ToItem.GroupID} == 74 || \
+               ${m.Value.ToItem.GroupID} == 56
             {
                 if !${m.Value.IsActive} && ${m.Value.IsOnline}
                 {
@@ -615,10 +616,11 @@ function ActivateTurrets(int64 targetID)
     {
         do
         {
-            ; Check if turret
-            if ${m.Value.ToItem.Group.Find["Projectile Weapon"]} || \
-               ${m.Value.ToItem.Group.Find["Energy Weapon"]} || \
-               ${m.Value.ToItem.Group.Find["Hybrid Weapon"]}
+            ; Check if turret (GroupID compare — numeric, robust, no substring false positives)
+            ; 55 = Projectile Weapon, 53 = Energy Weapon, 74 = Hybrid Weapon
+            if ${m.Value.ToItem.GroupID} == 55 || \
+               ${m.Value.ToItem.GroupID} == 53 || \
+               ${m.Value.ToItem.GroupID} == 74
             {
                 if !${m.Value.IsActive} && ${m.Value.IsOnline}
                 {
@@ -662,8 +664,13 @@ function CheckAmmo()
     {
         do
         {
-            ; Check if weapon with charges
-            if ${m.Value.ToItem.Group.Find["Weapon"]} && ${m.Value.MaxCharges} > 0
+            ; Check if weapon with charges (GroupID compare — numeric, robust)
+            ; 55 = Projectile Weapon, 53 = Energy Weapon, 74 = Hybrid Weapon, 56 = Missile Launcher
+            ; (Note: prior code used Group.Find["Weapon"] which also matches "Shield Boost Amplifier" via substring.)
+            if (${m.Value.ToItem.GroupID} == 55 || \
+                ${m.Value.ToItem.GroupID} == 53 || \
+                ${m.Value.ToItem.GroupID} == 74 || \
+                ${m.Value.ToItem.GroupID} == 56) && ${m.Value.MaxCharges} > 0
             {
                 ; Below 30% ammo and not currently active
                 if ${m.Value.Charge} < ${Math.Calc[${m.Value.MaxCharges} * 0.3]} && !${m.Value.IsActive}
@@ -697,8 +704,8 @@ function ActivateMissiles(int64 targetID)
     {
         do
         {
-            ; Check if missile launcher
-            if ${m.Value.ToItem.Group.Find["Missile Launcher"]}
+            ; Check if missile launcher (GroupID compare — numeric, robust)
+            if ${m.Value.ToItem.GroupID} == 56  ; 56 = Missile Launcher
             {
                 if !${m.Value.IsActive} && ${m.Value.IsOnline}
                 {
@@ -933,7 +940,7 @@ function ActivatePassiveHardeners()
     {
         do
         {
-            if ${m.Value.ToItem.Group.Find["Shield Hardener"]}
+            if ${m.Value.ToItem.GroupID} == 77  ; 77 = Shield Hardener
             {
                 if !${m.Value.IsActive} && ${m.Value.IsOnline}
                 {
@@ -955,7 +962,7 @@ function ActivateShieldBoosters()
     {
         do
         {
-            if ${m.Value.ToItem.Group.Find["Shield Booster"]}
+            if ${m.Value.ToItem.GroupID} == 40  ; 40 = Shield Booster
             {
                 ; Check capacitor before activating
                 if ${MyShip.CapacitorPct} > 30
@@ -1018,7 +1025,7 @@ function ActivateArmorHardeners()
     {
         do
         {
-            if ${m.Value.ToItem.Group.Find["Armor Hardener"]}
+            if ${m.Value.ToItem.GroupID} == 328  ; 328 = Armor Hardener
             {
                 if !${m.Value.IsActive} && ${m.Value.IsOnline}
                 {
@@ -1040,7 +1047,7 @@ function ActivateArmorRepairers()
     {
         do
         {
-            if ${m.Value.ToItem.Group.Find["Armor Repairer"]}
+            if ${m.Value.ToItem.GroupID} == 62  ; 62 = Armor Repairer
             {
                 ; Check capacitor
                 if ${MyShip.CapacitorPct} > 25
