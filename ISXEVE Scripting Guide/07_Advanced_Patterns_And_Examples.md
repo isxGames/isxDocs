@@ -379,13 +379,13 @@ function WarpFleetTo(string locationName, int distance)
         if ${Entity[${locationName}](exists)}
         {
             // Warp to entity
-            Entity[${locationName}]:FleetWarpTo[${distance}]
+            Entity[${locationName}]:WarpFleetTo[${distance}]
             echo "Fleet warp to ${locationName} at ${distance}m"
         }
         elseif ${Local[${locationName}].ToFleetMember(exists)}
         {
             // Warp to fleet member
-            Local[${locationName}].ToFleetMember:FleetWarpTo[${distance}]
+            Local[${locationName}].ToFleetMember:WarpFleetTo[${distance}]
             echo "Fleet warp to ${locationName} at ${distance}m"
         }
     }
@@ -435,7 +435,7 @@ atom OnFleetBroadcast(string broadcastType, int64 broadcasterID)
 
         case "WarpTo"
             echo "Fleet broadcast: Warp to target"
-            // Handled by FleetWarpTo
+            // Handled by WarpFleetTo
             break
     }
 }
