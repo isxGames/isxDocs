@@ -8,6 +8,8 @@
 
 **Target Audience:** Advanced script developers
 
+**XML Case Convention:** LavishGUI 1 XML is case-insensitive, but examples in this guide follow the idiomatic form used in LavishSoft's own shipped UI files (`Interface/DefaultUI.xml`, `Interface/DefaultUplinkUI.xml`): **widget element tags are lowercase** (`<window>`, `<frame>`, `<button>`, `<checkbox>`, `<combobox>`, `<textentry>`, `<tabcontrol>`, `<tab>`, `<listbox>`, `<slider>`, `<text>`, `<console>`), while **property elements and attributes use Title-case** (`<X>`, `<Y>`, `<Width>`, `<Height>`, `<Text>...</Text>`, `<OnLoad>`, `Name='...'`, `Template='...'`). This matches the convention used throughout [08_LavishGUI1_UI_Guide.md](08_LavishGUI1_UI_Guide.md).
+
 ---
 
 ## Table of Contents
@@ -134,7 +136,7 @@ Use `@` for simple, frequently accessed elements. Use `FindUsableChild` for:
 **The TextEntry (triggers sync on every keystroke):**
 
 ```xml
-<TextEntry name='tbAddFleetMember'>
+<textentry name='tbAddFleetMember'>
   <X>300</X>
   <Y>40</Y>
   <Width>200</Width>
@@ -146,7 +148,7 @@ Use `@` for simple, frequently accessed elements. Use `FindUsableChild` for:
     else
       UIElement[cbWing@Fleet@EVEBotOptionsTab@EVEBot]:UnsetChecked
   </OnChange>
-</TextEntry>
+</textentry>
 ```
 
 **The Checkbox (target of the sync):**
@@ -577,14 +579,14 @@ relay "Character Name" call SomeFunction       ; Specific character
 
 **Example from EVEBot:**
 ```xml
-<Tab Name='Combat'>
-  <TabControl Name='FleeingTabcontrol' template='EVESkin.TabControl'>
+<tab Name='Combat'>
+  <tabcontrol Name='FleeingTabcontrol' template='EVESkin.TabControl'>
     <x>0</x>
     <y>0</y>
     <width>100%</width>
     <height>100%</height>
     <Tabs>
-      <Tab name='Options'>
+      <tab name='Options'>
         <frame name='FleeingFrame'>
           <x>0</x>
           <y>0</y>
@@ -594,13 +596,13 @@ relay "Character Name" call SomeFunction       ; Specific character
             <!-- Fleeing options here -->
           </children>
         </frame>
-      </Tab>
-      <Tab name='Thresholds'>
+      </tab>
+      <tab name='Thresholds'>
         <!-- Threshold settings here -->
-      </Tab>
+      </tab>
     </Tabs>
-  </TabControl>
-</Tab>
+  </tabcontrol>
+</tab>
 ```
 
 **GitHub Reference:** [EVEBot.xml](https://github.com/CyberTech/EVEBot/tree/master/Branches/Stable/interface/EVEBot.xml)
@@ -648,7 +650,7 @@ UIElement[EVEBot].FindUsableChild[FleeingTabcontrol,tabcontrol].Tab[Options].Fin
     UIElement[EVEBot].FindUsableChild[MinArmorPctLabel,Text]:SetText["Minimum Armor: ${This.Value}"]
   </OnChange>
 </slider>
-<Text name='MinArmorPctLabel'>
+<text name='MinArmorPctLabel'>
   <X>255</X>
   <Y>10</Y>
   <Width>150</Width>
@@ -658,7 +660,7 @@ UIElement[EVEBot].FindUsableChild[FleeingTabcontrol,tabcontrol].Tab[Options].Fin
   <OnLoad>
     This:SetText["Minimum Armor: ${UIElement[EVEBot].FindUsableChild[MinArmorPct,slider].Value}"]
   </OnLoad>
-</Text>
+</text>
 ```
 
 **GitHub Reference:** [EVEBot.xml](https://github.com/CyberTech/EVEBot/tree/master/Branches/Stable/interface/EVEBot.xml)
@@ -912,30 +914,30 @@ This:Sort
 **The Info Display Fields:**
 
 ```xml
-<Text Name='txtPilotInfo'>
+<text Name='txtPilotInfo'>
   <X>150</X>
   <Y>25</Y>
   <Width>r355</Width>
   <Height>60</Height>
   <wrap />
-  <text>Select a pilot from the list at left.</text>
-</Text>
+  <Text>Select a pilot from the list at left.</Text>
+</text>
 
-<Text Name='txtCorpInfo'>
+<text Name='txtCorpInfo'>
   <X>150</X>
   <Y>105</Y>
   <Width>r355</Width>
   <Height>60</Height>
   <wrap />
-</Text>
+</text>
 
-<Text Name='txtAllianceInfo'>
+<text Name='txtAllianceInfo'>
   <X>150</X>
   <Y>185</Y>
   <Width>r355</Width>
   <Height>60</Height>
   <wrap />
-</Text>
+</text>
 ```
 
 **Key techniques:**
@@ -1371,9 +1373,9 @@ objectdef obj_EVEBotUI
     <!-- ... -->
   </TitleBar>
   <Children>
-    <TabControl Name='MainTab' template='EVESkin.TabControl'>
+    <tabcontrol Name='MainTab' template='EVESkin.TabControl'>
       <!-- ... -->
-    </TabControl>
+    </tabcontrol>
     <console Name='StatusConsole' template='EVESkin.Console'>
       <!-- ... -->
     </console>
