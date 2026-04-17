@@ -2068,6 +2068,22 @@ method BroadcastPrimary(int64 targetID)
 
 **Use Case:** Notify all fleet members of an event
 
+> **Terminology note — "fleet follow via broadcast" vs. the FC fleet-warp primitive:**
+> The pattern below is a **fleet-follow** pattern: the FC broadcasts a target ID
+> via Inner Space relay and each receiver independently calls
+> `Entity[${destID}]:WarpTo[0]` on its own client. Each pilot's client issues its
+> own individual warp command to the server. This works without the sessions
+> actually being in an EVE fleet together, which makes it ideal for multi-boxing.
+>
+> It is **NOT** the same as the server-side FC fleet-warp primitive
+> `entity:WarpFleetTo[distance]` (see the [Fleet Warp Capability](#fleet-warp-capability)
+> section earlier in this guide). `:WarpFleetTo` is an FC-only method that tells
+> the EVE server to warp the whole fleet simultaneously under FC authority; it
+> requires the caller to actually hold fleet-warp authority and requires all
+> participants to be in the same EVE fleet. Use `:WarpFleetTo` when you have a
+> real EVE fleet with FC authority; use the broadcast pattern below when you
+> want coordinated warps across independent sessions (typical multi-box case).
+
 ```lavish
 objectdef obj_FleetBroadcaster
 {
@@ -2090,6 +2106,8 @@ objectdef obj_FleetBroadcaster
         if !${IsMaster}
         {
             echo "Following fleet warp"
+            ; Individual warp — each client issues its own warp command.
+            ; This is NOT :WarpFleetTo (which is the server-side FC primitive).
             Entity[${destinationID}]:WarpTo[0]
         }
     }
@@ -3567,6 +3585,14 @@ objectdef obj_FleetCombat
         relay all -event FC_Secondary_Target ${targetID} "${Entity[${targetID}].Name}"
     }
 
+    ; NOTE: This is a "fleet follow via broadcast" pattern — the FC issues its
+    ; own individual warp and then relay-broadcasts the target ID so each
+    ; receiver client independently warps. It is NOT the server-side FC
+    ; primitive entity:WarpFleetTo[distance] (which requires a real EVE fleet
+    ; with FC warp authority). Use this broadcast pattern for multi-box
+    ; coordination across independent sessions; use :WarpFleetTo when you
+    ; actually hold fleet-warp authority in an EVE fleet (see the Fleet Warp
+    ; Capability section earlier in this guide).
     method CommandFleetWarp(int64 destinationID)
     {
         if !${This.IsMaster}
@@ -3574,10 +3600,10 @@ objectdef obj_FleetCombat
 
         echo "FC: FLEET WARP -> ${Entity[${destinationID}].Name}"
 
-        ; FC warps immediately
+        ; FC warps its own ship (individual warp, per-client)
         Entity[${destinationID}]:WarpTo[0]
 
-        ; Fleet follows
+        ; Broadcast so each follower independently warps on their own client
         relay "all other" -event FC_Fleet_Warp ${destinationID}
     }
 
@@ -3646,7 +3672,10 @@ objectdef obj_FleetCombat
         ; Stop current action
         EVE:Execute[CmdStopShip]
 
-        ; Warp to destination
+        ; Individual warp — this receiver runs on its own client, independent
+        ; of any EVE-fleet server-side state. This is NOT the :WarpFleetTo
+        ; FC primitive; see CommandFleetWarp's comment above for the
+        ; distinction.
         Entity[${destinationID}]:WarpTo[0]
     }
 
