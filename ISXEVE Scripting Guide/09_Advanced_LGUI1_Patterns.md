@@ -1145,6 +1145,17 @@ ${This.SelectedItem.ID}
 
 5. **`NotNULLOrEmpty` guard** — Prevents writing empty/null values to config when selection is cleared.
 
+**Method reference — `SelectItem`, `AddItem`, `ItemByText`, `ClearItems`, `Sort`:**
+
+These are LavishGUI 1 listbox methods. A `combobox` embeds a listbox internally (see the ISXDK header `ISXDK/include/ISUI/LGUIComboBox.h`, field `LGUIListBox *pListBox`), so these listbox methods are available on combobox elements via the same `This:Method[...]` dispatch. Canonical signatures are declared in the shipped ISXDK at `ISXDK/include/ISUI/LGUIListBox.h`:
+
+- `SelectItem(unsigned int ID)` — selects the item with the given 1-based internal ID.
+- `AddItem(const char *Text, const char *Value, unsigned int Color=0)` — returns the new item's ID.
+- `FindItemByText(const char *Text, unsigned int BeginInclusive=1)` — returns the matching item's ID, or 0 if not found. (Exposed to LavishScript as `ItemByText[text].ID`.)
+- `ClearItems()` / `Sort()` — list maintenance.
+
+The exact XML block above is quoted verbatim from EVEBot's production UI file `Scripts/EVEBot/Branches/Stable/interface/EVEBot.xml` (around the `DestinationBookmark` combobox OnLoad handler), which ships the same `This:SelectItem[${This.ItemByText[...].ID}]` pattern.
+
 **Applicable ISXEVE APIs for dynamic population:**
 
 | API | Returns | Use Case |
