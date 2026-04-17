@@ -1031,13 +1031,14 @@ objectdef obj_LogisticsShip
             return
 
         variable iterator targetIt
+        variable int64 targetID
         This.RepTargets:GetIterator[targetIt]
 
         if ${targetIt:First(exists)}
         {
             do
             {
-                variable int64 targetID = ${targetIt.Value}
+                targetID:Set[${targetIt.Value}]
 
                 if !${Entity[${targetID}](exists)}
                 {
@@ -2714,11 +2715,12 @@ objectdef obj_YamfaTargetRelay
         ; Parse comma-separated target IDs
         variable string TargetList = "${This.RelayedTargets}"
         variable int NumTargets = 0
+        variable int64 targetID
 
         ; Count targets
         while ${TargetList.Find[","](exists)}
         {
-            variable int64 targetID = ${TargetList.Token[1, ","]}
+            targetID:Set[${TargetList.Token[1, ","]}]
 
             if ${Entity[${targetID}](exists)} && !${Entity[${targetID}].BeingTargeted}
             {
@@ -3272,10 +3274,11 @@ atom OnTargets(string targetIDs)
 {
     variable int i = 1
     variable string idList = "${targetIDs}"
+    variable int64 targetID
 
     while ${idList.Token[${i}, ","](exists)}
     {
-        variable int64 targetID = ${idList.Token[${i}, ","]}
+        targetID:Set[${idList.Token[${i}, ","]}]
         This:ProcessTarget[${targetID}]
         i:Inc
     }
