@@ -3985,7 +3985,7 @@ objectdef obj_MiningFleet
                     ; CategoryID 25 = Asteroid/Ore
                     if ${Item.Value.Group.Equal["Ice"]} || ${Item.Value.CategoryID} == 25
                     {
-                        Item.Value:MoveTo[OtherCargo, ${Item.Value.Quantity}]
+                        Item.Value:MoveTo[FleetHangar, ${Item.Value.Quantity}]
                     }
                 }
                 while ${Item:Next(exists)}
