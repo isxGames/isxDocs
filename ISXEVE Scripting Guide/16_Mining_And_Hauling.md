@@ -2448,6 +2448,9 @@ atom OnMinerFull(int64 fleetMemberID, int64 solarSystemID, int64 canID)
 }
 
 ; Miner sends event when full
+; FRAGMENT — the snippet below is NOT runnable as top-level code.
+; Place it inside a method/atom body on the miner side (e.g., inside the
+; miner's Pulse method or a dedicated CheckCargoFull method within its objectdef).
 if ${Ship.Cargo.PercentFull} > 95
 {
     relay all -event EVEBot_Miner_Full ${Me.CharID} ${Me.SolarSystemID} ${MyCan.ID}
