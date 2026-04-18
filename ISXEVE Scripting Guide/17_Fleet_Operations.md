@@ -3008,15 +3008,20 @@ objectdef obj_UplinkCoordination
 
 ### Uplink UpdateClient (EVEBot)
 
-**Advanced:** Uplink can call methods on remote computer's running script
+**Advanced:** `uplink <command>` forwards a command string to the InnerSpace Uplink console on every connected uplink. This lets a running script on one computer invoke a command registered in the Uplink scope of another computer — useful for pushing status to a monitoring dashboard.
+
+> **Framework-specific — NOT a built-in command.** `UpdateClient` is **not** a built-in LavishScript or Uplink command. In the EVEBot codebase it is registered by the external **EVEBots_dotNET** C# monitoring application (`External/EVEBots_dotNET/.../BotControl.cs`), which uses the LavishScriptAPI to inject a custom command into the Uplink scope via `LavishScript.Commands.AddCommand("UpdateClient", ClientCallback)`. The `uplink UpdateClient ...` call below will do **nothing** unless that C# dashboard (or an equivalent alias/atom you define yourself) is loaded on the receiving uplink peer.
+>
+> This example is shown for educational value — it demonstrates how LavishScript can interoperate with external .NET applications over uplink — but note that in the current EVEBot source the call is commented out in `obj_Callback.iss`. For cross-client RPC between EVE sessions, prefer the canonical `relay all -event EventName args` pattern (see the Relay + Events section earlier in this guide), which does not depend on an external application.
 
 ```lavishscript
-; From obj_Callback.iss - broadcasts ship status across uplink
+; From obj_Callback.iss - broadcasts ship status across uplink to the
+; EVEBots_dotNET monitoring dashboard (when that app is running).
 method Pulse()
 {
     if ${Config.Common.Callback} && ${EVEBot.SessionValid}
     {
-        ; This updates a monitoring application on another computer!
+        ; Requires EVEBots_dotNET (or an equivalent UpdateClient alias) on the receiving uplink peer.
         uplink UpdateClient \
             "${Me.Name}" \
             "${MyShip.ShieldPct}" \
