@@ -1396,14 +1396,14 @@ Hauling is the process of transporting cargo from one location to another. This 
 ### Hauler Ship Types
 
 ```lavishscript
-// Common hauler ship groups
+; Common hauler ship groups
 #define GROUP_INDUSTRIAL 19
-#define GROUP_TRANSPORT_SHIP 380        // Deep Space Transport (DST)
-#define GROUP_BLOCKADE_RUNNER 1202      // Covert Ops hauler
+#define GROUP_TRANSPORT_SHIP 380        ; Deep Space Transport (DST)
+#define GROUP_BLOCKADE_RUNNER 1202      ; Covert Ops hauler
 #define GROUP_FREIGHTER 513
 #define GROUP_JUMP_FREIGHTER 902
 
-// Check ship type
+; Check ship type
 if ${MyShip.GroupID} == GROUP_BLOCKADE_RUNNER
 {
     echo "Using stealth hauling mode"
@@ -1440,7 +1440,7 @@ objectdef obj_Autopilot
         Logger:Log["obj_Autopilot: Initialized", LOG_MINOR]
     }
 
-    // Set autopilot destination by system ID
+    ; Set autopilot destination by system ID
     method SetDestination(int64 id)
     {
         if ${id.Equal[${This.Destination}]}
@@ -1454,7 +1454,7 @@ objectdef obj_Autopilot
         This.IsLowSecRoute:Set[-999]
     }
 
-    // Check if route goes through low-sec
+    ; Check if route goes through low-sec
     member:bool LowSecRoute()
     {
         if ${This.IsLowSecRoute} == -999
@@ -1494,16 +1494,16 @@ function TravelToSystem(int64 solarSystemID)
         return TRUE
     }
 
-    // Set autopilot destination
+    ; Set autopilot destination
     Universe[${solarSystemID}]:SetDestination
 
-    // Get the path
+    ; Get the path
     variable index:int pathToDestination
     EVE:GetToDestinationPath[pathToDestination]
 
     echo "Route has ${pathToDestination.Used} jumps"
 
-    // Travel each jump
+    ; Travel each jump
     variable int jumpCount = 1
     while ${pathToDestination.Used} > 0
     {
@@ -1515,12 +1515,12 @@ function TravelToSystem(int64 solarSystemID)
 
         echo "Jump ${jumpCount}/${Math.Calc[${jumpCount} + ${pathToDestination.Used} - 1]}"
 
-        // Take the next jump
+        ; Take the next jump
         call This.TravelOneJump
 
         jumpCount:Inc
 
-        // Recalculate path
+        ; Recalculate path
         EVE:GetToDestinationPath[pathToDestination]
     }
 
@@ -1534,7 +1534,7 @@ function TravelToSystem(int64 solarSystemID)
 ```lavishscript
 function TravelOneJump()
 {
-    // Get current system and next system in route
+    ; Get current system and next system in route
     variable index:int route
     EVE:GetToDestinationPath[route]
 
@@ -1549,7 +1549,7 @@ function TravelOneJump()
 
     echo "Next system: ${nextSystemName}"
 
-    // Find the stargate to that system
+    ; Find the stargate to that system
     variable index:entity stargates
     EVE:QueryEntities[stargates, "GroupID = GROUP_STARGATE && Name = \"${nextSystemName}\""]
 
@@ -1561,18 +1561,18 @@ function TravelOneJump()
 
     variable int64 gateID = ${stargates[1].ID}
 
-    // Warp to gate
+    ; Warp to gate
     echo "Warping to ${stargates[1].Name}"
     stargates[1]:WarpTo[0]
 
-    // Wait for warp
+    ; Wait for warp
     wait 20
     while ${Me.ToEntity.Mode} == 3
     {
         wait 10
     }
 
-    // Wait until in jump range
+    ; Wait until in jump range
     wait 50
     variable int timeout = 0
     while ${Entity[${gateID}].Distance} > 2500 && ${timeout} < 600
@@ -1587,11 +1587,11 @@ function TravelOneJump()
         return FALSE
     }
 
-    // Jump
+    ; Jump
     echo "Jumping to ${nextSystemName}"
     Entity[${gateID}]:Jump
 
-    // Wait for session change
+    ; Wait for session change
     wait 50
 
     return TRUE
@@ -1613,10 +1613,10 @@ function WarpToBookmark(string bookmarkName)
 
     EVE.Bookmark[${bookmarkName}]:WarpTo
 
-    // Wait for warp to start
+    ; Wait for warp to start
     wait 30
 
-    // Wait for warp to complete
+    ; Wait for warp to complete
     while ${Me.ToEntity.Mode} == 3
     {
         wait 10
@@ -1636,7 +1636,7 @@ function WarpToBookmark(string bookmarkName)
 ```lavishscript
 objectdef obj_Station
 {
-    // Dock at specific station by entity ID
+    ; Dock at specific station by entity ID
     function DockAtStation(int64 stationID)
     {
         if ${Me.InStation}
@@ -1661,7 +1661,7 @@ objectdef obj_Station
 
         variable float distance = ${Entity[${stationID}].Distance}
 
-        // If too far, warp to station
+        ; If too far, warp to station
         if ${distance} > 200000
         {
             echo "Warping to station (${Math.Calc[${distance}/1000].Int}km away)"
@@ -1673,7 +1673,7 @@ objectdef obj_Station
             }
         }
 
-        // Approach if needed
+        ; Approach if needed
         if ${Entity[${stationID}].Distance} > 2500
         {
             echo "Approaching station"
@@ -1687,11 +1687,11 @@ objectdef obj_Station
             }
         }
 
-        // Dock
+        ; Dock
         echo "Docking at ${Entity[${stationID}].Name}"
         Entity[${stationID}]:Dock
 
-        // Wait for docking
+        ; Wait for docking
         wait 100
         variable int dockTimeout = 0
         while !${Me.InStation} && ${dockTimeout} < 600
@@ -1712,7 +1712,7 @@ objectdef obj_Station
         }
     }
 
-    // Undock from current station
+    ; Undock from current station
     function Undock()
     {
         if !${Me.InStation}
@@ -1762,11 +1762,11 @@ function TransferCargoToStationHangar()
 
     echo "Transferring cargo to station hangar"
 
-    // Open ship cargo
+    ; Open ship cargo
     call Inventory.ShipCargo.Activate
     wait 20
 
-    // Get all items in cargo
+    ; Get all items in cargo
     variable index:item cargoItems
     Inventory.ShipCargo:GetItems[cargoItems]
 
@@ -1778,7 +1778,7 @@ function TransferCargoToStationHangar()
 
     echo "Moving ${cargoItems.Used} item stacks to hangar"
 
-    // Build list of item IDs
+    ; Build list of item IDs
     variable index:int64 itemIDs
     variable iterator cargoIterator
     cargoItems:GetIterator[cargoIterator]
@@ -1792,7 +1792,7 @@ function TransferCargoToStationHangar()
         while ${cargoIterator:Next(exists)}
     }
 
-    // Move all items to station hangar
+    ; Move all items to station hangar
     EVE:MoveItemsTo[itemIDs, ${Me.Station.ID}, Hangar]
 
     wait 30
@@ -1813,11 +1813,11 @@ function TransferHangarItemsToShip(string itemName, int quantity)
         return FALSE
     }
 
-    // Open station hangar
+    ; Open station hangar
     call Inventory.StationHangar.Activate ${Me.Station.ID}
     wait 20
 
-    // Find the item
+    ; Find the item
     variable index:item hangarItems
     Inventory.StationHangar:GetItems[hangarItems, "Name = \"${itemName}\""]
 
@@ -1829,7 +1829,7 @@ function TransferHangarItemsToShip(string itemName, int quantity)
 
     echo "Moving ${quantity} x ${itemName} to ship cargo"
 
-    // Move to ship
+    ; Move to ship
     hangarItems[1]:MoveTo[MyShip, CargoHold, ${quantity}]
 
     wait 20
@@ -1847,13 +1847,13 @@ function TransferHangarItemsToShip(string itemName, int quantity)
 Based on EVEBot `obj_Hauler.iss`:
 
 ```lavishscript
-// Hauler states:
-// IDLE        - Waiting in station (nothing to do)
-// HARDSTOP    - Emergency dock and stay docked
-// FLEE        - Danger detected, get to safety
-// BASE        - In station, unload cargo
-// HAUL        - In space, collecting cargo
-// DROPOFF     - Cargo full, returning to station
+; Hauler states:
+; IDLE        - Waiting in station (nothing to do)
+; HARDSTOP    - Emergency dock and stay docked
+; FLEE        - Danger detected, get to safety
+; BASE        - In station, unload cargo
+; HAUL        - In space, collecting cargo
+; DROPOFF     - Cargo full, returning to station
 ```
 
 > **Framework dependency — `Navigator`, `Config`, `Cargo`, `Station`, `Safespots`, `Social`:** The hauler object below (and the station-hauler examples later in this chapter) uses helper objects from the EVEBot/Tehbot frameworks — notably `Navigator:FlyToBookmark`, `Navigator:FlyToEntityID`, `Navigator:Clear`, and `${Navigator.Busy}`. **These are NOT ISXEVE built-ins.** If you copy this code into a standalone script without those frameworks loaded, you will get undefined-object errors.
@@ -1879,7 +1879,7 @@ objectdef obj_SimpleHauler
     variable time NextPulse
 
     variable string DeliveryStation = "Jita IV - Moon 4 - Caldari Navy Assembly Plant"
-    variable float CargoThreshold = 0.9    // Return when 90% full
+    variable float CargoThreshold = 0.9    ; Return when 90% full
 
     method Initialize()
     {
@@ -1901,9 +1901,9 @@ objectdef obj_SimpleHauler
 
     method SetState()
     {
-        // SAFETY CHECKS FIRST
+        ; SAFETY CHECKS FIRST
 
-        // If in station and hard stop requested, stay idle
+        ; If in station and hard stop requested, stay idle
         if ${Me.InStation}
         {
             if ${EVEBot.ReturnToStation}
@@ -1914,16 +1914,16 @@ objectdef obj_SimpleHauler
         }
         else
         {
-            // In space
+            ; In space
 
-            // Hard stop requested - get to station
+            ; Hard stop requested - get to station
             if ${EVEBot.ReturnToStation}
             {
                 This.CurrentState:Set["HARDSTOP"]
                 return
             }
 
-            // Check for hostiles
+            ; Check for hostiles
             if ${Social.PossibleHostiles}
             {
                 This.CurrentState:Set["HARDSTOP"]
@@ -1933,7 +1933,7 @@ objectdef obj_SimpleHauler
                 return
             }
 
-            // Check if podded
+            ; Check if podded
             if ${Ship.IsPod}
             {
                 This.CurrentState:Set["HARDSTOP"]
@@ -1943,7 +1943,7 @@ objectdef obj_SimpleHauler
             }
         }
 
-        // Check for soft flee conditions
+        ; Check for soft flee conditions
         if !${Social.IsSafe} && !${EVEBot.ReturnToStation}
         {
             if !${Me.InStation}
@@ -1958,27 +1958,27 @@ objectdef obj_SimpleHauler
             return
         }
 
-        // NORMAL OPERATION
+        ; NORMAL OPERATION
 
-        // If in station, unload
+        ; If in station, unload
         if ${Me.InStation}
         {
             This.CurrentState:Set["BASE"]
             return
         }
 
-        // If cargo full, return to station
+        ; If cargo full, return to station
         if ${This.HaulerFull}
         {
             This.CurrentState:Set["DROPOFF"]
             return
         }
 
-        // Otherwise, haul cargo
+        ; Otherwise, haul cargo
         This.CurrentState:Set["HAUL"]
     }
 
-    // Check if cargo is full enough to return
+    ; Check if cargo is full enough to return
     member:bool HaulerFull()
     {
         variable float cargoUsed = ${Ship.Cargo.UsedCapacity}
@@ -1997,30 +1997,30 @@ objectdef obj_SimpleHauler
         switch ${This.CurrentState}
         {
             case IDLE
-                // Just wait
+                ; Just wait
                 break
 
             case HARDSTOP
-                // Emergency dock
+                ; Emergency dock
                 call This.EmergencyDock
                 break
 
             case FLEE
-                // Flee to safety
+                ; Flee to safety
                 call This.FleeToSafety
                 break
 
             case BASE
-                // Unload cargo at station
+                ; Unload cargo at station
                 call This.UnloadCargo
                 break
 
             case HAUL
-                // Pick up cargo (overridden by subclasses)
+                ; Pick up cargo (overridden by subclasses)
                 break
 
             case DROPOFF
-                // Return to delivery station
+                ; Return to delivery station
                 call This.ReturnToStation
                 break
         }
@@ -2033,7 +2033,7 @@ objectdef obj_SimpleHauler
             return
         }
 
-        // Try panic bookmark first
+        ; Try panic bookmark first
         if ${EVE.Bookmark["${Config.Miner.PanicLocation}"](exists)}
         {
             Navigator:FlyToBookmark["${Config.Miner.PanicLocation}", 0, TRUE]
@@ -2044,7 +2044,7 @@ objectdef obj_SimpleHauler
             return
         }
 
-        // Try delivery station
+        ; Try delivery station
         if ${EVE.Bookmark["${This.DeliveryStation}"](exists)}
         {
             Navigator:FlyToBookmark["${This.DeliveryStation}", 0, TRUE]
@@ -2055,7 +2055,7 @@ objectdef obj_SimpleHauler
             return
         }
 
-        // Any station in system
+        ; Any station in system
         variable index:entity stations
         EVE:QueryEntities[stations, "GroupID = 15 || GroupID = 1657"]
 
@@ -2066,14 +2066,14 @@ objectdef obj_SimpleHauler
             return
         }
 
-        // No stations - warp to safe spot
+        ; No stations - warp to safe spot
         call Safespots.WarpTo
         wait 30
     }
 
     function FleeToSafety()
     {
-        // Same as EmergencyDock but will resume after threat passes
+        ; Same as EmergencyDock but will resume after threat passes
         call This.EmergencyDock
     }
 
@@ -2084,17 +2084,17 @@ objectdef obj_SimpleHauler
             return
         }
 
-        // Transfer cargo to hangar
+        ; Transfer cargo to hangar
         call Cargo.TransferCargoToStationHangar
 
-        // Undock
+        ; Undock
         call Station.Undock
         wait 20 ${Me.InSpace}
     }
 
     function ReturnToStation()
     {
-        // Navigate to delivery station
+        ; Navigate to delivery station
         if !${EVE.Bookmark["${This.DeliveryStation}"](exists)}
         {
             echo "ERROR: Delivery station bookmark not found"
@@ -2125,7 +2125,7 @@ objectdef obj_FleetHauler inherits obj_SimpleHauler
     variable int64 ApproachingID = 0
     variable int TimeStartedApproaching = 0
 
-    // Override the HAUL state
+    ; Override the HAUL state
     function ProcessState()
     {
         if ${This.CurrentState.Equal["HAUL"]}
@@ -2134,14 +2134,14 @@ objectdef obj_FleetHauler inherits obj_SimpleHauler
         }
         else
         {
-            // Use parent implementation for other states
+            ; Use parent implementation for other states
             call obj_SimpleHauler.ProcessState
         }
     }
 
     function HaulForFleet()
     {
-        // Build list of fleet members
+        ; Build list of fleet members
         variable queue:fleetmember fleetMembers
         variable iterator memberIterator
 
@@ -2152,11 +2152,11 @@ objectdef obj_FleetHauler inherits obj_SimpleHauler
         {
             do
             {
-                // Skip self
+                ; Skip self
                 if ${memberIterator.Value.CharID} == ${Me.CharID}
                     continue
 
-                // Check if in local
+                ; Check if in local
                 if ${Local[${memberIterator.Value.Name}](exists)}
                 {
                     call This.WarpToFleetMemberAndLoot ${memberIterator.Value.CharID}
@@ -2165,7 +2165,7 @@ objectdef obj_FleetHauler inherits obj_SimpleHauler
             while ${memberIterator:Next(exists)}
         }
 
-        // If nothing to do, wait at safe spot
+        ; If nothing to do, wait at safe spot
         if ${This.JetCans.Used} == 0
         {
             call Safespots.WarpTo
@@ -2174,7 +2174,7 @@ objectdef obj_FleetHauler inherits obj_SimpleHauler
 
     function WarpToFleetMemberAndLoot(int64 memberCharID)
     {
-        // Get character from CharID
+        ; Get character from CharID
         variable string memberName
 
         variable queue:fleetmember allMembers
@@ -2201,7 +2201,7 @@ objectdef obj_FleetHauler inherits obj_SimpleHauler
             return
         }
 
-        // Check if on grid
+        ; Check if on grid
         if !${Local[${memberName}].ToEntity.ID(exists)}
         {
             echo "Warping to ${memberName}"
@@ -2214,7 +2214,7 @@ objectdef obj_FleetHauler inherits obj_SimpleHauler
             return
         }
 
-        // On grid - build jetcan list and loot
+        ; On grid - build jetcan list and loot
         call This.BuildJetCanList ${Local[${memberName}].ToEntity.ID}
         call This.LootJetCans
     }
@@ -2223,7 +2223,7 @@ objectdef obj_FleetHauler inherits obj_SimpleHauler
     {
         This.JetCans:Clear
 
-        // Find all jetcans near the entity
+        ; Find all jetcans near the entity
         variable index:entity cans
         EVE:QueryEntities[cans, "GroupID = GROUP_CARGO_CONTAINER && Distance < 150000"]
 
@@ -2237,7 +2237,7 @@ objectdef obj_FleetHauler inherits obj_SimpleHauler
         {
             do
             {
-                // Check distance from target entity
+                ; Check distance from target entity
                 if ${canIterator.Value.DistanceTo[${nearEntityID}]} < 100000
                 {
                     This.JetCans:Queue[${canIterator.Value}]
@@ -2255,7 +2255,7 @@ objectdef obj_FleetHauler inherits obj_SimpleHauler
         {
             variable entity can = ${This.JetCans.Peek}
 
-            // Check if still exists
+            ; Check if still exists
             if !${can(exists)}
             {
                 This.JetCans:Dequeue
@@ -2264,19 +2264,19 @@ objectdef obj_FleetHauler inherits obj_SimpleHauler
 
             echo "Looting ${can.Name} at ${Math.Calc[${can.Distance}/1000].Int}km"
 
-            // If far away, use tractor beam
+            ; If far away, use tractor beam
             if ${can.Distance} >= 5000
             {
                 call This.TractorAndLoot ${can.ID}
             }
-            // If moderate distance, approach
+            ; If moderate distance, approach
             elseif ${can.Distance} >= LOOT_RANGE
             {
                 call Ship.Approach ${can.ID} LOOT_RANGE
                 wait 50
             }
 
-            // Wait until in loot range
+            ; Wait until in loot range
             variable int timeout = 0
             while ${Entity[${can.ID}].Distance} > LOOT_RANGE && ${timeout} < 400
             {
@@ -2284,20 +2284,20 @@ objectdef obj_FleetHauler inherits obj_SimpleHauler
                 timeout:Inc[10]
             }
 
-            // Stop ship
+            ; Stop ship
             if ${Me.ToEntity.Velocity} > 10
             {
                 EVE:Execute[CmdStopShip]
                 wait 20
             }
 
-            // Loot the can
+            ; Loot the can
             call This.LootEntity ${can.ID}
 
-            // Remove from queue
+            ; Remove from queue
             This.JetCans:Dequeue
 
-            // Check if cargo full
+            ; Check if cargo full
             if ${This.HaulerFull}
             {
                 echo "Cargo full, stopping loot cycle"
@@ -2316,7 +2316,7 @@ objectdef obj_FleetHauler inherits obj_SimpleHauler
 
         if ${tractorRange} == 0
         {
-            // No tractor, just approach
+            ; No tractor, just approach
             call Ship.Approach ${canID} LOOT_RANGE
             return
         }
@@ -2327,14 +2327,14 @@ objectdef obj_FleetHauler inherits obj_SimpleHauler
             approachRange:Set[${targetRange}]
         }
 
-        // Approach into tractor range
+        ; Approach into tractor range
         if ${Entity[${canID}].Distance} > ${approachRange}
         {
             call Ship.Approach ${canID} ${approachRange}
             wait 30
         }
 
-        // Lock target
+        ; Lock target
         Entity[${canID}]:LockTarget
         wait 10 ${Entity[${canID}].BeingTargeted} || ${Entity[${canID}].IsLockedTarget}
 
@@ -2351,14 +2351,14 @@ objectdef obj_FleetHauler inherits obj_SimpleHauler
             return
         }
 
-        // Make active target
+        ; Make active target
         Entity[${canID}]:MakeActiveTarget
         wait 10
 
-        // Activate tractor beams
+        ; Activate tractor beams
         Ship:Activate_Tractor
 
-        // Wait for can to get close
+        ; Wait for can to get close
         timeout:Set[0]
         while ${Entity[${canID}].Distance} > LOOT_RANGE && ${timeout} < 600
         {
@@ -2366,7 +2366,7 @@ objectdef obj_FleetHauler inherits obj_SimpleHauler
             timeout:Inc[10]
         }
 
-        // Deactivate tractor
+        ; Deactivate tractor
         Ship:Deactivate_Tractor
         wait 10
     }
@@ -2381,7 +2381,7 @@ objectdef obj_FleetHauler inherits obj_SimpleHauler
         Entity[${entityID}]:Open
         wait 30
 
-        // MODERN API (July 2020+): Access container cargo via inventory window
+        ; MODERN API (July 2020+): Access container cargo via inventory window
         variable index:item containerItems
         if !${EVEWindow[ByItemID,${entityID}](exists)}
         {
@@ -2400,7 +2400,7 @@ objectdef obj_FleetHauler inherits obj_SimpleHauler
 
         echo "Transferring ${containerItems.Used} item stacks"
 
-        // Build item ID list
+        ; Build item ID list
         variable index:int64 itemIDs
         variable iterator itemIterator
         containerItems:GetIterator[itemIterator]
@@ -2414,7 +2414,7 @@ objectdef obj_FleetHauler inherits obj_SimpleHauler
             while ${itemIterator:Next(exists)}
         }
 
-        // Move to ship cargo
+        ; Move to ship cargo
         EVE:MoveItemsTo[itemIDs, MyShip, CargoHold]
         wait 30
 
@@ -2434,7 +2434,7 @@ method Initialize()
 {
     Event[EVENT_ONFRAME]:AttachAtom[This:Pulse]
 
-    // Register for miner events
+    ; Register for miner events
     LavishScript:RegisterEvent[EVEBot_Miner_Full]
     Event[EVEBot_Miner_Full]:AttachAtom[This:OnMinerFull]
 }
@@ -2443,11 +2443,11 @@ atom OnMinerFull(int64 fleetMemberID, int64 solarSystemID, int64 canID)
 {
     echo "Miner reports full: FleetMember=${fleetMemberID}, System=${solarSystemID}, Can=${canID}"
 
-    // Add to pickup queue
+    ; Add to pickup queue
     This.FullMiners:Set[${canID}, ${fleetMemberID}, ${solarSystemID}, ${canID}]
 }
 
-// Miner sends event when full
+; Miner sends event when full
 if ${Ship.Cargo.PercentFull} > 95
 {
     relay all -event EVEBot_Miner_Full ${Me.CharID} ${Me.SolarSystemID} ${MyCan.ID}
@@ -2470,7 +2470,7 @@ objectdef obj_OrcaDelivery
 
     function FindOrca()
     {
-        // Try to find Orca by pilot name
+        ; Try to find Orca by pilot name
         variable index:entity orcas
         EVE:QueryEntities[orcas, "Name = \"${This.OrcaPilotName}\" && CategoryID = 6"]
 
@@ -2495,7 +2495,7 @@ objectdef obj_OrcaDelivery
 
         variable entity orca = ${Entity[${This.OrcaEntityID}]}
 
-        // Approach Orca if needed
+        ; Approach Orca if needed
         if ${orca.Distance} > 2500
         {
             echo "Approaching Orca"
@@ -2512,12 +2512,12 @@ objectdef obj_OrcaDelivery
             wait 20
         }
 
-        // Open Orca cargo (fleet hangar)
+        ; Open Orca cargo (fleet hangar)
         echo "Opening Orca fleet hangar"
         orca:OpenCargo
         wait 30
 
-        // Get ore from ship
+        ; Get ore from ship
         call Inventory.ShipGeneralMiningHold.Activate
         wait 20
 
@@ -2532,7 +2532,7 @@ objectdef obj_OrcaDelivery
 
         echo "Transferring ${oreItems.Used} ore stacks to Orca"
 
-        // Transfer each item
+        ; Transfer each item
         variable iterator oreIterator
         oreItems:GetIterator[oreIterator]
 
@@ -2540,7 +2540,7 @@ objectdef obj_OrcaDelivery
         {
             do
             {
-                // Move to Orca's fleet hangar (OtherCargo)
+                ; Move to Orca's fleet hangar (OtherCargo)
                 oreIterator.Value:MoveTo[OtherCargo, ${oreIterator.Value.Quantity}]
                 wait 10
             }
@@ -2554,7 +2554,7 @@ objectdef obj_OrcaDelivery
     }
 }
 
-// Usage in miner:
+; Usage in miner:
 if ${Config.Miner.DeliverToOrca}
 {
     call OrcaDelivery.DeliverToOrca
@@ -2572,11 +2572,11 @@ Orca hauls ore from fleet hangar to station:
 ```lavishscript
 objectdef obj_OrcaHauler
 {
-    variable float CargoThreshold = 35000    // Return when fleet hangar has 35k m3
+    variable float CargoThreshold = 35000    ; Return when fleet hangar has 35k m3
 
     function ServiceOrca()
     {
-        // Wait until Orca has enough cargo to justify hauling
+        ; Wait until Orca has enough cargo to justify hauling
         if ${This.OrcaCargo} < ${This.CargoThreshold}
         {
             echo "Orca cargo: ${This.OrcaCargo.Int}m3 (threshold: ${This.CargoThreshold.Int}m3)"
@@ -2585,14 +2585,14 @@ objectdef obj_OrcaHauler
 
         echo "Orca is ready for pickup (${This.OrcaCargo.Int}m3)"
 
-        // Find Orca
+        ; Find Orca
         if !${This.FindOrca}
         {
             echo "Cannot find Orca"
             return
         }
 
-        // Warp to Orca if needed
+        ; Warp to Orca if needed
         if !${Entity["${Config.Hauler.OrcaPilotName}"](exists)}
         {
             echo "Warping to Orca"
@@ -2604,33 +2604,33 @@ objectdef obj_OrcaHauler
             }
         }
 
-        // Approach Orca
+        ; Approach Orca
         call This.ApproachOrca
 
-        // Open Orca's fleet hangar
+        ; Open Orca's fleet hangar
         Entity["${Config.Hauler.OrcaPilotName}"]:OpenCargo
         wait 30
 
-        // Transfer from Orca to hauler
+        ; Transfer from Orca to hauler
         call This.TakeOreFromOrca
 
-        // Close Orca cargo
+        ; Close Orca cargo
         EVE:Execute[CloseInventory]
     }
 
     function TakeOreFromOrca()
     {
-        // OtherCargo = Fleet Hangar of target ship
+        ; OtherCargo = Fleet Hangar of target ship
         variable index:item orcaCargo
 
-        // This gets items from the open fleet hangar window
+        ; This gets items from the open fleet hangar window
         variable index:eveinvchildwindow childWindows
         EVEWindow[Inventory]:GetChildWindows[childWindows]
 
         variable iterator windowIterator
         childWindows:GetIterator[windowIterator]
 
-        // Find the fleet hangar window
+        ; Find the fleet hangar window
         if ${windowIterator:First(exists)}
         {
             do
@@ -2652,7 +2652,7 @@ objectdef obj_OrcaHauler
 
         echo "Taking ${orcaCargo.Used} ore stacks from Orca"
 
-        // Build item ID list
+        ; Build item ID list
         variable index:int64 itemIDs
         variable iterator oreIterator
         orcaCargo:GetIterator[oreIterator]
@@ -2666,14 +2666,14 @@ objectdef obj_OrcaHauler
             while ${oreIterator:Next(exists)}
         }
 
-        // Move to hauler cargo
+        ; Move to hauler cargo
         EVE:MoveItemsTo[itemIDs, MyShip, CargoHold]
         wait 30
 
         echo "Ore pickup complete"
     }
 
-    // Listen for Orca cargo updates
+    ; Listen for Orca cargo updates
     atom OnOrcaCargoUpdate(float cargoAmount)
     {
         This.OrcaCargo:Set[${cargoAmount}]
@@ -2681,7 +2681,7 @@ objectdef obj_OrcaHauler
     }
 }
 
-// Orca reports its cargo level
+; Orca reports its cargo level
 method ReportCargoLevel()
 {
     variable float fleetHangarUsed = ${Ship.FleetHangar.UsedCapacity}
@@ -2719,7 +2719,7 @@ objectdef obj_StealthHauler
             return FALSE
         }
 
-        // Get route
+        ; Get route
         if ${This.RouteToDestination.Used} == 0
         {
             EVE:GetToDestinationPath[This.RouteToDestination]
@@ -2728,19 +2728,19 @@ objectdef obj_StealthHauler
 
             if ${This.RouteToDestination.Used} == 0
             {
-                // At destination - cloak and move
+                ; At destination - cloak and move
                 call This.CloakAndMove
                 return
             }
         }
 
-        // Take next jump
+        ; Take next jump
         if ${This.RouteIterator.Value(exists)}
         {
             call This.StealthJump ${This.RouteIterator.Value}
             This.RouteIterator:Next
 
-            // Recalculate route
+            ; Recalculate route
             This.RouteToDestination:Clear
         }
     }
@@ -2751,7 +2751,7 @@ objectdef obj_StealthHauler
 
         echo "Stealth jumping to: ${nextSystemName}"
 
-        // Find stargate
+        ; Find stargate
         variable index:entity stargates
         EVE:QueryEntities[stargates, "GroupID = GROUP_STARGATE && Name = \"${nextSystemName}\""]
 
@@ -2763,19 +2763,19 @@ objectdef obj_StealthHauler
 
         variable int64 gateID = ${stargates[1].ID}
 
-        // STEALTH PROTOCOL:
+        ; STEALTH PROTOCOL:
 
-        // 1. Set speed to near-max (adds randomization to avoid detection)
+        ; 1. Set speed to near-max (adds randomization to avoid detection)
         ; Random speed in 90..100 range (SetVelocity expects 0-100 percentage of max velocity)
         variable float randomSpeed = ${Math.Calc[${Math.Rand[11]} + 90]}
         echo "Setting speed to ${randomSpeed.Int}%"
         Me:SetVelocity[${randomSpeed}]
 
-        // 2. Activate afterburner
+        ; 2. Activate afterburner
         Ship:Activate_AfterBurner
         wait 5
 
-        // 3. Activate cloak
+        ; 3. Activate cloak
         echo "Activating cloak"
         do
         {
@@ -2784,7 +2784,7 @@ objectdef obj_StealthHauler
         }
         while !${Me.ToEntity.IsCloaked}
 
-        // 4. Wait if warp scrambled
+        ; 4. Wait if warp scrambled
         if ${Me.ToEntity.IsWarpScrambled}
         {
             echo "WARNING: Warp scrambled! Waiting..."
@@ -2795,7 +2795,7 @@ objectdef obj_StealthHauler
             while ${Me.ToEntity.IsWarpScrambled}
         }
 
-        // 5. Warp to gate (while cloaked)
+        ; 5. Warp to gate (while cloaked)
         echo "Warping to gate (cloaked)"
         Navigator:FlyToEntityID[${gateID}, 0]
         while ${Navigator.Busy}
@@ -2803,7 +2803,7 @@ objectdef obj_StealthHauler
             wait 10
         }
 
-        // 6. Decloak before jumping
+        ; 6. Decloak before jumping
         echo "Decloaking for jump"
         Ship:Deactivate_Cloak
         do
@@ -2814,12 +2814,12 @@ objectdef obj_StealthHauler
 
         wait 5
 
-        // 7. Jump
+        ; 7. Jump
         echo "Jumping to ${nextSystemName}"
         Entity[${gateID}]:Jump
         wait 50
 
-        // 8. After jump, immediately cloak again
+        ; 8. After jump, immediately cloak again
         call This.CloakAndMove
 
         return TRUE
@@ -2827,17 +2827,17 @@ objectdef obj_StealthHauler
 
     function CloakAndMove()
     {
-        // Set random speed
+        ; Set random speed
         ; Random speed in 90..100 range (SetVelocity expects 0-100 percentage of max velocity)
         variable float randomSpeed = ${Math.Calc[${Math.Rand[11]} + 90]}
         Me:SetVelocity[${randomSpeed}]
         wait 5
 
-        // Activate afterburner
+        ; Activate afterburner
         Ship:Activate_AfterBurner
         wait 5
 
-        // Cloak
+        ; Cloak
         Ship:Activate_Cloak
 
         echo "Cloaked and moving"
@@ -2852,29 +2852,29 @@ For travel in hostile space:
 ```lavishscript
 function CloakWarpTrick()
 {
-    // After jumping through gate:
-    // 1. Don't move - gate cloak protects you
-    // 2. Create a bookmark 150km+ in random direction
-    // 3. Align to bookmark
-    // 4. Let gate cloak drop
-    // 5. IMMEDIATELY activate covert ops cloak (before getting locked)
-    // 6. Warp to bookmark (can warp while cloaked with covops)
-    // 7. From bookmark, warp to next gate
+    ; After jumping through gate:
+    ; 1. Don't move - gate cloak protects you
+    ; 2. Create a bookmark 150km+ in random direction
+    ; 3. Align to bookmark
+    ; 4. Let gate cloak drop
+    ; 5. IMMEDIATELY activate covert ops cloak (before getting locked)
+    ; 6. Warp to bookmark (can warp while cloaked with covops)
+    ; 7. From bookmark, warp to next gate
 
     echo "Using cloak-warp trick"
 
-    // Wait for jump session change
+    ; Wait for jump session change
     wait 50
 
-    // Create safe spot bookmark
+    ; Create safe spot bookmark
     variable int randomDirection = ${Math.Rand[360]}
     variable int randomDistance = ${Math.Calc[150000 + ${Math.Rand[50000]}]}
 
-    // Align to random direction
+    ; Align to random direction
     echo "Aligning to safe direction"
-    // (In practice, create bookmark manually or use existing safe spot)
+    ; (In practice, create bookmark manually or use existing safe spot)
 
-    // Wait for gate cloak to drop (60 seconds)
+    ; Wait for gate cloak to drop (60 seconds)
     variable int countdown = 55
     while ${countdown} > 0
     {
@@ -2885,14 +2885,14 @@ function CloakWarpTrick()
 
     echo "Gate cloak dropping - activating covops cloak NOW"
 
-    // Spam cloak activation
+    ; Spam cloak activation
     Ship:Activate_Cloak
     wait 5
     Ship:Activate_Cloak
     wait 5
     Ship:Activate_Cloak
 
-    // Verify cloaked
+    ; Verify cloaked
     if !${Me.ToEntity.IsCloaked}
     {
         echo "ERROR: Failed to cloak! EMERGENCY WARP"
@@ -2902,7 +2902,7 @@ function CloakWarpTrick()
 
     echo "Successfully cloaked"
 
-    // Now warp to safe spot (cloaked warp is safe)
+    ; Now warp to safe spot (cloaked warp is safe)
     call Safespots.WarpTo
 
     return TRUE
@@ -2998,7 +2998,7 @@ If you need "safer" behavior, evaluate each waypoint's security (via `Universe[<
 ```lavishscript
 function CheckGankRisk()
 {
-    // Common gank systems (Uedama, Niarja, etc.)
+    ; Common gank systems (Uedama, Niarja, etc.)
     variable collection:string gankSystems
     gankSystems:Set["Uedama", TRUE]
     gankSystems:Set["Niarja", TRUE]
@@ -3008,7 +3008,7 @@ function CheckGankRisk()
     {
         echo "WARNING: You are in a known gank system!"
 
-        // Check local count
+        ; Check local count
         if ${Local.Count} > 20
         {
             echo "DANGER: High local count (${Local.Count}) - possible gank fleet"
@@ -3016,11 +3016,11 @@ function CheckGankRisk()
         }
     }
 
-    // Check ship value vs tank
+    ; Check ship value vs tank
     variable float cargoValue = ${Ship.Cargo.Value}
     variable float ehp = ${Ship.GetEHP}
 
-    // Rule of thumb: If cargo value / EHP > 10000, you're at risk
+    ; Rule of thumb: If cargo value / EHP > 10000, you're at risk
     variable float riskFactor = ${Math.Calc[${cargoValue} / ${ehp}]}
 
     if ${riskFactor} > 10000
@@ -3034,7 +3034,7 @@ function CheckGankRisk()
     return FALSE
 }
 
-// Usage
+; Usage
 if ${CheckGankRisk}
 {
     echo "Gank risk detected - recommend aborting or using alternate route"
@@ -3078,7 +3078,7 @@ member:float CargoValue()
     return ${totalValue}
 }
 
-// Usage
+; Usage
 echo "Cargo value: ${Math.Calc[${This.CargoValue} / 1000000].Int}M ISK"
 ```
 
@@ -3089,14 +3089,14 @@ When cargo is limited, prioritize high-value items:
 ```lavishscript
 function LoadCargoByValue()
 {
-    // Get all items from station hangar
+    ; Get all items from station hangar
     call Inventory.StationHangar.Activate ${Me.Station.ID}
     wait 20
 
     variable index:item hangarItems
     Inventory.StationHangar:GetItems[hangarItems]
 
-    // Calculate value per m3 for each item
+    ; Calculate value per m3 for each item
     variable collection:float itemValuePerM3
 
     variable iterator itemIterator
@@ -3118,13 +3118,13 @@ function LoadCargoByValue()
         while ${itemIterator:Next(exists)}
     }
 
-    // Sort by value per m3 (descending)
-    // (LavishScript doesn't have built-in sort, so implement priority loading manually)
+    ; Sort by value per m3 (descending)
+    ; (LavishScript doesn't have built-in sort, so implement priority loading manually)
 
-    // Load highest value items first
+    ; Load highest value items first
     variable float cargoFree = ${Ship.Cargo.FreeCapacity}
 
-    // Simple greedy algorithm: take items in order until cargo full
+    ; Simple greedy algorithm: take items in order until cargo full
     hangarItems:GetIterator[itemIterator]
     if ${itemIterator:First(exists)}
     {
@@ -3165,7 +3165,7 @@ function CalculateOptimalLoad(string oreName)
     return ${maxLoad}
 }
 
-// Usage
+; Usage
 call This.CalculateOptimalLoad "Veldspar"
 ```
 
@@ -3207,14 +3207,14 @@ objectdef obj_SimpleStationHauler
 
     method DetermineState()
     {
-        // Safety checks
+        ; Safety checks
         if !${Me.InStation} && ${Social.PossibleHostiles}
         {
             This.CurrentState:Set["FLEE"]
             return
         }
 
-        // If in pickup station with empty cargo, load
+        ; If in pickup station with empty cargo, load
         if ${Me.InStation} && ${Me.Station.Name.Equal["${This.PickupStation}"]}
         {
             if ${Ship.Cargo.UsedCapacity} < 100
@@ -3224,7 +3224,7 @@ objectdef obj_SimpleStationHauler
             }
         }
 
-        // If in delivery station with cargo, unload
+        ; If in delivery station with cargo, unload
         if ${Me.InStation} && ${Me.Station.Name.Equal["${This.DeliveryStation}"]}
         {
             if ${Ship.Cargo.UsedCapacity} > 0
@@ -3234,10 +3234,10 @@ objectdef obj_SimpleStationHauler
             }
         }
 
-        // If in wrong station, travel
+        ; If in wrong station, travel
         if ${Me.InStation}
         {
-            // Have cargo? Go to delivery
+            ; Have cargo? Go to delivery
             if ${Ship.Cargo.UsedCapacity} > 0
             {
                 This.CurrentState:Set["TRAVEL_TO_DELIVERY"]
@@ -3249,7 +3249,7 @@ objectdef obj_SimpleStationHauler
             return
         }
 
-        // If in space, wait for navigation to complete
+        ; If in space, wait for navigation to complete
         This.CurrentState:Set["TRAVELING"]
     }
 
@@ -3282,7 +3282,7 @@ objectdef obj_SimpleStationHauler
                 break
 
             case TRAVELING
-                // Just wait for navigation
+                ; Just wait for navigation
                 wait 100
                 break
 
@@ -3295,7 +3295,7 @@ objectdef obj_SimpleStationHauler
 
     function LoadCargo()
     {
-        // Load everything from hangar
+        ; Load everything from hangar
         call Inventory.StationHangar.Activate ${Me.Station.ID}
         wait 20
 
@@ -3353,7 +3353,7 @@ objectdef obj_SimpleStationHauler
         if ${Me.InStation}
             return
 
-        // Find nearest station
+        ; Find nearest station
         variable index:entity stations
         EVE:QueryEntities[stations, "GroupID = 15 || GroupID = 1657", "Distance"]
 
@@ -3368,7 +3368,7 @@ objectdef obj_SimpleStationHauler
     }
 }
 
-// Usage
+; Usage
 variable obj_SimpleStationHauler Hauler
 
 function main()
@@ -3454,14 +3454,14 @@ echo "Cargo used: ${Ship.Cargo.UsedCapacity}"
 
 **Solution**:
 ```lavishscript
-// Ensure windows are activated
+; Ensure windows are activated
 call Inventory.ShipCargo.Activate
 wait 30
 
 call Inventory.StationHangar.Activate ${Me.Station.ID}
 wait 30
 
-// Check that activation worked
+; Check that activation worked
 if !${Inventory.ShipCargo.IsCurrent}
 {
     echo "ERROR: Failed to activate ship cargo"
@@ -3482,7 +3482,7 @@ echo "Fleet member ID: ${Local[${FleetMemberName}].ToEntity.ID}"
 
 **Solution**:
 ```lavishscript
-// Use ToFleetMember for reliable warping
+; Use ToFleetMember for reliable warping
 if ${Local[${FleetMemberName}](exists)}
 {
     if ${Local[${FleetMemberName}].ToFleetMember(exists)}
@@ -3530,7 +3530,7 @@ echo "Target locked: ${Entity[${TargetID}].IsLockedTarget}"
 
 **Solution**:
 ```lavishscript
-// Ensure target is locked and active
+; Ensure target is locked and active
 Entity[${targetID}]:LockTarget
 wait 10 ${Entity[${targetID}].BeingTargeted}
 
@@ -3547,11 +3547,11 @@ if !${Entity[${targetID}].IsLockedTarget}
     return FALSE
 }
 
-// Make active target
+; Make active target
 Entity[${targetID}]:MakeActiveTarget
 wait 10
 
-// Now activate tractor
+; Now activate tractor
 Ship:Activate_Tractor
 ```
 
@@ -3561,11 +3561,11 @@ Ship:Activate_Tractor
 
 **Solution**:
 ```lavishscript
-// Always wait after session changes
+; Always wait after session changes
 Entity[${gateID}]:Jump
-wait 50    // Wait for session change to START
+wait 50    ; Wait for session change to START
 
-// Then wait for completion
+; Then wait for completion
 variable int timeout = 0
 while ${Me.InStation} && ${timeout} < 300
 {
