@@ -681,8 +681,12 @@ function CheckAmmo()
                 ${m.Value.ToItem.GroupID} == 74 || \
                 ${m.Value.ToItem.GroupID} == 56) && ${m.Value.MaxCharges} > 0
             {
-                ; Below 30% ammo and not currently active
-                if ${m.Value.Charge} < ${Math.Calc[${m.Value.MaxCharges} * 0.3]} && !${m.Value.IsActive}
+                ; Below 30% ammo and not currently active.
+                ; Use module.CurrentCharges (int, the loaded-charge count) — NOT
+                ; module.Charge, which returns an item object (the charge type
+                ; reference, e.g. for Charge.Name / Charge.TypeID lookups) and
+                ; would not be meaningful in a numeric comparison.
+                if ${m.Value.CurrentCharges} < ${Math.Calc[${m.Value.MaxCharges} * 0.3]} && !${m.Value.IsActive}
                 {
                     echo "Reloading ${m.Value.ToItem.Name}"
                     m.Value:ReloadCycle
