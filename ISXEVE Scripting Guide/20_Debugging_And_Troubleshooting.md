@@ -984,7 +984,7 @@ objectdef obj_StatusMonitor
         echo "│ State: ${This.CurrentState.Left[20]}"
         echo "├─────────────────────────────────────┤"
         echo "│ Shield: ${MyShip.ShieldPct.Precision[0]}%   Armor: ${MyShip.ArmorPct.Precision[0]}%"
-        echo "│ Cap: ${MyShip.CapacitorPct.Precision[0]}%      Cargo: ${Ship.CargoFull.Precision[0]}%"
+        echo "│ Cap: ${MyShip.CapacitorPct.Precision[0]}%      Cargo: ${Math.Calc[${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity} * 100].Precision[0]}%"
         echo "├─────────────────────────────────────┤"
         echo "│ Targets: ${Me.TargetCount}/${Me.MaxLockedTargets}"
         echo "│ Uptime: ${Math.Calc[${Script.RunningTime}/1000/60].Int} minutes"
@@ -1163,7 +1163,7 @@ Logger:Log["HARD STOP: Hostiles!", LOG_MINOR]             ; Too important to hid
 ; GOOD - context included
 Logger:Log["Warping to ${bookmark} in ${solarSystem}"]
 Logger:Log["Locking target ${Entity[${targetID}].Name} at ${Entity[${targetID}].Distance}m"]
-Logger:Log["Cargo at ${Ship.CargoFull.Precision[0]}%, threshold is ${CargoThreshold}%"]
+Logger:Log["Cargo at ${Math.Calc[${MyShip.UsedCargoCapacity} / ${MyShip.CargoCapacity} * 100].Precision[0]}%, threshold is ${CargoThreshold}%"]
 
 ; BAD - no context
 Logger:Log["Warping"]
