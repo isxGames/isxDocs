@@ -1565,9 +1565,9 @@ function TravelOneJump()
     echo "Warping to ${stargates[1].Name}"
     stargates[1]:WarpTo[0]
 
-    ; Wait for warp
+    ; Wait for warp (Mode 3 = Warping; see Movement Modes table in 03_API_Reference.md)
     wait 20
-    while ${Me.ToEntity.Mode} == 3
+    while ${Me.ToEntity.Mode} == 3    ; Mode 3 = Warping
     {
         wait 10
     }
@@ -1617,7 +1617,7 @@ function WarpToBookmark(string bookmarkName)
     wait 30
 
     ; Wait for warp to complete
-    while ${Me.ToEntity.Mode} == 3
+    while ${Me.ToEntity.Mode} == 3    ; Mode 3 = Warping
     {
         wait 10
     }
@@ -1667,7 +1667,7 @@ objectdef obj_Station
             echo "Warping to station (${Math.Calc[${distance}/1000].Int}km away)"
             Entity[${stationID}]:WarpTo[0]
             wait 20
-            while ${Me.ToEntity.Mode} == 3
+            while ${Me.ToEntity.Mode} == 3    ; Mode 3 = Warping
             {
                 wait 10
             }
@@ -2207,7 +2207,7 @@ objectdef obj_FleetHauler inherits obj_SimpleHauler
             echo "Warping to ${memberName}"
             Local[${memberName}].ToFleetMember:WarpTo
             wait 30
-            while ${Me.ToEntity.Mode} == 3
+            while ${Me.ToEntity.Mode} == 3    ; Mode 3 = Warping
             {
                 wait 10
             }
@@ -2598,7 +2598,7 @@ objectdef obj_OrcaHauler
             echo "Warping to Orca"
             Local["${Config.Hauler.OrcaPilotName}"].ToFleetMember:WarpTo
             wait 30
-            while ${Me.ToEntity.Mode} == 3
+            while ${Me.ToEntity.Mode} == 3    ; Mode 3 = Warping
             {
                 wait 10
             }
