@@ -410,7 +410,7 @@ method ReportPosition()
         {
             do
             {
-                if ${bmIterator.Value.SolarSystemID} == ${Me.SolarSystemID}
+                if ${bmIterator.Value.SolarSystemID} == ${Me.SolarSystemID} && ${bmIterator.Value.ToEntity(exists)}
                 {
                     if ${bmIterator.Value.ToEntity.Distance} < 50000
                     {
