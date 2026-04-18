@@ -55,7 +55,7 @@
 
 EVEBot uses a sophisticated logging system:
 
-```lavish
+```lavishscript
 objectdef obj_Logger
 {
     variable string LogFile
@@ -101,7 +101,7 @@ objectdef obj_Logger
 
 ### Global Logger Instance
 
-```lavish
+```lavishscript
 ; Global logger - accessible everywhere
 variable(global) obj_Logger Logger
 
@@ -121,7 +121,7 @@ function main()
 
 ### EVEBot Log Levels
 
-```lavish
+```lavishscript
 ; Define log level constants
 #define LOG_MINOR       0    ; Minor info - log only, don't print
 #define LOG_STANDARD    1    ; Standard - log and print to screen
@@ -132,7 +132,7 @@ function main()
 
 ### Log Method with Levels
 
-```lavish
+```lavishscript
 method Log(string StatusMessage, int Level=LOG_STANDARD, int Indent=0)
 {
     variable string msg
@@ -202,7 +202,7 @@ method Log(string StatusMessage, int Level=LOG_STANDARD, int Indent=0)
 
 ### Usage Examples
 
-```lavish
+```lavishscript
 ; Minor - logged but not displayed (spam reduction)
 Logger:Log["Pulse iteration 1423", LOG_MINOR]
 
@@ -228,7 +228,7 @@ Logger:Log["Distance: ${Entity[${asteroidID}].Distance}m", LOG_STANDARD, 4]
 
 Tehbot uses a different, more modern approach:
 
-```lavish
+```lavishscript
 ; Log level constants
 #define LOG_DEBUG     0
 #define LOG_INFO      1
@@ -331,7 +331,7 @@ objectdef obj_Logger
 
 **InnerSpace console output:**
 
-```lavish
+```lavishscript
 ; Simple console output
 echo "Hello World"
 
@@ -344,7 +344,7 @@ echo "Shield: ${MyShip.ShieldPct.Precision[1]}%"
 
 ### Echo with Formatting
 
-```lavish
+```lavishscript
 ; Color codes (InnerSpace console)
 echo "\agGreen text\ax - success"
 echo "\arRed text\ax - error"
@@ -359,7 +359,7 @@ echo "\ayWARNING: Hostile in local\ax"
 
 ### Conditional Debugging
 
-```lavish
+```lavishscript
 ; Debug flag pattern
 variable bool DEBUG_MODE = FALSE
 
@@ -379,7 +379,7 @@ call DebugLog "Asteroid selection: ${asteroidID}"
 
 ### Verbose Levels
 
-```lavish
+```lavishscript
 variable int VERBOSE_LEVEL = 1    ; 0=quiet, 1=normal, 2=verbose, 3=debug
 
 function Log(string message, int minLevel)
@@ -403,7 +403,7 @@ call Log "Lock attempt #3" 3           ; Debug only
 
 ### Redirect to File
 
-```lavish
+```lavishscript
 ; Append to log file
 redirect -append "mybot.log" echo "Bot starting at ${Time.Time24}"
 
@@ -423,7 +423,7 @@ See [Example 1: Complete Logging System](#example-1-complete-logging-system) for
 
 ### Separate Log Files by Purpose
 
-```lavish
+```lavishscript
 objectdef obj_AdvancedLogger
 {
     variable string MainLog = "./logs/${Me.Name}_main.log"
@@ -465,7 +465,7 @@ MyLogger:LogCombat["Engaged", ${targetID}]
 
 ### Rotating Log Files
 
-```lavish
+```lavishscript
 objectdef obj_RotatingLogger
 {
     variable string CurrentLog
@@ -507,7 +507,7 @@ The basic timestamp profiler (`Start`/`End` methods with `collection:float` timi
 
 ### Frame Time Profiling
 
-```lavish
+```lavishscript
 objectdef obj_FrameProfiler
 {
     variable float LastFrameTime
@@ -552,7 +552,7 @@ For script-level leak detection without true memory numbers, track collection si
 
 **Log every state transition:**
 
-```lavish
+```lavishscript
 method SetState()
 {
     variable string oldState = "${This.CurrentState}"
@@ -575,7 +575,7 @@ method SetState()
 
 **Log all relevant variables:**
 
-```lavish
+```lavishscript
 method DebugDump()
 {
     echo "=== Debug Dump ==="
@@ -600,7 +600,7 @@ if ${somethingWeird}
 
 **Log entity details:**
 
-```lavish
+```lavishscript
 function DebugEntity(int64 entityID)
 {
     if !${Entity[${entityID}](exists)}
@@ -631,7 +631,7 @@ call DebugEntity ${Me.ActiveTarget.ID}
 
 **Pause execution when condition met:**
 
-```lavish
+```lavishscript
 method CheckCondition()
 {
     if ${MyShip.ShieldPct} < 20
@@ -650,7 +650,7 @@ method CheckCondition()
 
 **Show call path:**
 
-```lavish
+```lavishscript
 objectdef obj_CallStack
 {
     variable queue:string Stack
@@ -735,7 +735,7 @@ The standard ISXEVE preflight checks (extension loaded, `IsSafe`, character exis
 
 ### Entity Validation
 
-```lavish
+```lavishscript
 function ValidateEntity(int64 entityID)
 {
     ; Check exists
@@ -771,7 +771,7 @@ if !${This:ValidateEntity[${targetID}]}
 
 ### Module Activation Errors
 
-```lavish
+```lavishscript
 method ActivateModule(int64 moduleID)
 {
     if !${Me.GetModule[${moduleID}](exists)}
@@ -825,7 +825,7 @@ method ActivateModule(int64 moduleID)
 
 ### Common Error Messages
 
-```lavish
+```lavishscript
 function DiagnoseError(string errorMessage)
 {
     ; Parse common errors
@@ -860,7 +860,7 @@ function DiagnoseError(string errorMessage)
 
 **Built-in ISXEVE debug logging:**
 
-```lavish
+```lavishscript
 ; Enable debug logging
 ISXEVE:Debug_LogMsg["MyModule", "Starting processing"]
 
@@ -876,7 +876,7 @@ ISXEVE:Debug_LogMsg["Combat", "Activating weapons on ${Entity[${targetID}].Name}
 
 ISXEVE caches entity query results between calls to reduce API cost. This is almost always what you want, but it can mask a class of bugs where your script thinks an entity is still on grid when the game client has already removed it. When you suspect a stale-cache issue -- e.g. `Entity[${id}](exists)` returns TRUE for something the overview clearly no longer shows -- disable the cache at startup to force every query to go fresh to the game:
 
-```lavish
+```lavishscript
 function main()
 {
     Turbo 4000
@@ -889,7 +889,7 @@ Trade-off: every entity query now performs full API work, which slows down tight
 
 ### ISXEVE Diagnostics
 
-```lavish
+```lavishscript
 function PrintISXEVEDiagnostics()
 {
     echo "=== ISXEVE Diagnostics ==="
@@ -902,7 +902,7 @@ function PrintISXEVEDiagnostics()
 
 ### Session Validation
 
-```lavish
+```lavishscript
 function ValidateSession()
 {
     echo "=== Session Validation ==="
@@ -968,7 +968,7 @@ function ValidateSession()
 
 ### Status Display
 
-```lavish
+```lavishscript
 objectdef obj_StatusMonitor
 {
     method PrintStatus()
@@ -1010,7 +1010,7 @@ objectdef obj_StatusMonitor
 
 ### Metrics Collection
 
-```lavish
+```lavishscript
 objectdef obj_Metrics
 {
     variable int TargetsDestroyed = 0
@@ -1093,7 +1093,7 @@ The target-lock diagnostic checklist (TargetCount vs MaxLockedTargets, entity ex
 
 #### Issue: Slow Performance
 
-```lavish
+```lavishscript
 function DiagnosePerformance()
 {
     echo "=== Performance Diagnostics ==="
@@ -1145,7 +1145,7 @@ function DiagnosePerformance()
 
 ### 1. Log Levels Appropriately
 
-```lavish
+```lavishscript
 ; GOOD - appropriate levels
 Logger:Log["Bot started", LOG_STANDARD]                  ; User wants to see this
 Logger:Log["Pulse iteration 1423", LOG_MINOR]             ; Too spammy for display
@@ -1159,7 +1159,7 @@ Logger:Log["HARD STOP: Hostiles!", LOG_MINOR]             ; Too important to hid
 
 ### 2. Include Context in Logs
 
-```lavish
+```lavishscript
 ; GOOD - context included
 Logger:Log["Warping to ${bookmark} in ${solarSystem}"]
 Logger:Log["Locking target ${Entity[${targetID}].Name} at ${Entity[${targetID}].Distance}m"]
@@ -1173,7 +1173,7 @@ Logger:Log["Cargo check"]
 
 ### 3. De-duplicate Repetitive Logs
 
-```lavish
+```lavishscript
 ; GOOD - de-duplicated
 method CheckShield()
 {
@@ -1195,7 +1195,7 @@ method CheckShield()
 
 ### 4. Use Structured Logging
 
-```lavish
+```lavishscript
 ; GOOD - structured
 Logger:Log["[Combat] Engaged primary: ${Entity[${primaryID}].Name}"]
 Logger:Log["[Combat] Weapons activated: 8/8"]
@@ -1212,7 +1212,7 @@ Logger:Log["Kill"]
 
 ### 5. Log State Transitions
 
-```lavish
+```lavishscript
 ; ALWAYS log state changes
 method SetState()
 {
@@ -1235,7 +1235,7 @@ method SetState()
 
 ### 6. Profile Slow Operations
 
-```lavish
+```lavishscript
 ; Profile anything that might be slow
 method QueryEnemies()
 {
@@ -1254,7 +1254,7 @@ method QueryEnemies()
 
 ### 7. Validate Before Acting
 
-```lavish
+```lavishscript
 ; Always validate critical operations
 method LockTarget(int64 targetID)
 {
@@ -1285,7 +1285,7 @@ method LockTarget(int64 targetID)
 
 ### Example 1: Complete Logging System
 
-```lavish
+```lavishscript
 /* ==================== COMPLETE LOGGING SYSTEM ==================== */
 
 ; Log level constants
@@ -1471,7 +1471,7 @@ OUTPUT (debug log):
 
 ### Example 2: Performance Profiler
 
-```lavish
+```lavishscript
 /* ==================== PERFORMANCE PROFILER ==================== */
 
 objectdef obj_PerformanceProfiler
@@ -1604,7 +1604,7 @@ function main()
 ### Problem 1: Entity Doesn't Exist After Query
 
 **Symptom:**
-```lavish
+```lavishscript
 EVE:QueryEntities[Targets, "CategoryID = CATEGORYID_ENTITY"]
 Entity[${Targets.Get[1]}]:LockTarget    ; ERROR: Entity doesn't exist!
 ```
@@ -1613,7 +1613,7 @@ Entity[${Targets.Get[1]}]:LockTarget    ; ERROR: Entity doesn't exist!
 
 **Solution:**
 
-```lavish
+```lavishscript
 ; ALWAYS validate before acting
 method LockEntity(int64 entityID)
 {
@@ -1649,7 +1649,7 @@ method LockEntity(int64 entityID)
 
 **Solution:**
 
-```lavish
+```lavishscript
 method SafeLockTarget(int64 targetID)
 {
     ; Check target count
@@ -1709,7 +1709,7 @@ method SafeLockTarget(int64 targetID)
 
 **Solution:**
 
-```lavish
+```lavishscript
 ; BAD - returns ALL entities
 EVE:QueryEntities[AllStuff]    ; Thousands of results!
 
@@ -1744,7 +1744,7 @@ function GetRats()
 
 **Solution:**
 
-```lavish
+```lavishscript
 method ValidateEntityDistance(int64 entityID, float maxDistance)
 {
     if !${Entity[${entityID}](exists)}
@@ -1796,7 +1796,7 @@ method ValidateEntityDistance(int64 entityID, float maxDistance)
 
 **Complete Diagnostic:**
 
-```lavish
+```lavishscript
 function DiagnoseModuleActivation(int64 moduleID)
 {
     if !${Me.GetModule[${moduleID}](exists)}
@@ -1874,7 +1874,7 @@ function DiagnoseModuleActivation(int64 moduleID)
 
 **Solution:**
 
-```lavish
+```lavishscript
 method EngageTarget(int64 targetID)
 {
     ; Lock target first
@@ -1917,7 +1917,7 @@ method EngageTarget(int64 targetID)
 
 **Solution:**
 
-```lavish
+```lavishscript
 ; Manual activation - more reliable
 method ActivateAllWeapons()
 {
@@ -1964,7 +1964,7 @@ method ActivateAllWeapons()
 
 **Solution:**
 
-```lavish
+```lavishscript
 method SafeWarpTo(int64 destID, int distance)
 {
     ; Check if can warp
@@ -2020,7 +2020,7 @@ method SafeWarpTo(int64 destID, int distance)
 
 **Solution:**
 
-```lavish
+```lavishscript
 ; Option 1: Activate EVE's built-in autopilot (not recommended - slow)
 EVE:Execute[CmdSetDestination, ${destinationID}]
 EVE:Execute[CmdToggleAutopilot]    ; Toggle on
@@ -2064,7 +2064,7 @@ function AutopilotTo(int destinationSystemID)
 
 **Solution:**
 
-```lavish
+```lavishscript
 ; BAD - approaches to 0m (impossible)
 Entity[${targetID}]:Approach
 
@@ -2123,7 +2123,7 @@ function ApproachWithTimeout(int64 targetID, int range, int timeoutSeconds)
 
 **Solution:**
 
-```lavish
+```lavishscript
 method SafeMoveTo(int64 itemID, string destination, int quantity)
 {
     ; Locate the item by scanning the ship's cargo index.
@@ -2219,7 +2219,7 @@ method SafeMoveTo(int64 itemID, string destination, int quantity)
 
 **Solution:**
 
-```lavish
+```lavishscript
 function WaitForHangar(int timeoutSeconds)
 {
     if !${Me.InStation}
@@ -2292,7 +2292,7 @@ function UnloadCargo()
 
 **Solution:**
 
-```lavish
+```lavishscript
 ; Modern API: Always ensure inventory window is open and valid
 function GetCargoSpace()
 {
@@ -2344,7 +2344,7 @@ Logger:Log["Cargo free: ${cargoFree}m3"]
 
 **Solution:**
 
-```lavish
+```lavishscript
 ; Sender (Master)
 method BroadcastPrimary(int64 targetID)
 {
@@ -2408,7 +2408,7 @@ function CheckEvents()
 
 **Solution:**
 
-```lavish
+```lavishscript
 ; WRONG - string parameter not quoted
 relay all -event MyEvent ${someString}
 ; Receiver gets: empty or just first word
@@ -2435,7 +2435,7 @@ atom OnTargetInfo(string targetName, float distance)
 
 **Solution:**
 
-```lavish
+```lavishscript
 objectdef obj_FleetSync
 {
     variable time LastMasterHeartbeat
@@ -2509,7 +2509,7 @@ objectdef obj_FleetSync
 
 **Solution:**
 
-```lavish
+```lavishscript
 ; BAD - collection never cleared
 objectdef obj_LeakyBot
 {
@@ -2564,7 +2564,7 @@ objectdef obj_CleanBot
 
 **Solution:**
 
-```lavish
+```lavishscript
 ; BAD - queries all entities every frame
 method Pulse()
 {
@@ -2608,7 +2608,7 @@ objectdef obj_CachedQueries
 
 **Solution:**
 
-```lavish
+```lavishscript
 ; BAD - stores full entity objects
 variable collection:entity AllRats    ; Each entity is large object
 
@@ -2643,7 +2643,7 @@ method ProcessRat(int64 ratID)
 
 **Solution:**
 
-```lavish
+```lavishscript
 method SetConfigValue(string value)
 {
     ; Update in memory
@@ -2665,7 +2665,7 @@ method SetConfigValue(string value)
 
 **Solution:**
 
-```lavish
+```lavishscript
 ; Backup before saving
 method SafeSave()
 {
@@ -2714,7 +2714,7 @@ method LoadConfig()
 
 **Workaround:**
 
-```lavish
+```lavishscript
 ; Validate each target from GetTargets
 variable index:entity Targets
 Me:GetTargets[Targets]
@@ -2757,7 +2757,7 @@ Use the canonical `ActivateModule` from [Module Activation Errors](#module-activ
 
 **Workaround:**
 
-```lavish
+```lavishscript
 function WaitForGridLoad()
 {
     ; After warp, wait for grid to stabilize
@@ -2806,7 +2806,7 @@ function WarpAndSettle(int64 destID)
 
 ### Mistake 1: Not Checking Existence
 
-```lavish
+```lavishscript
 ; WRONG - assumes entity exists
 Entity[${targetID}]:LockTarget    ; CRASH if doesn't exist!
 
@@ -2819,7 +2819,7 @@ if ${Entity[${targetID}](exists)}
 
 ### Mistake 2: Infinite Loops Without Wait
 
-```lavish
+```lavishscript
 ; WRONG - freezes InnerSpace
 while TRUE
 {
@@ -2836,7 +2836,7 @@ while TRUE
 
 ### Mistake 3: Variable Scope Confusion
 
-```lavish
+```lavishscript
 ; WRONG - local variable, lost after function
 function GetTarget()
 {
@@ -2857,7 +2857,7 @@ echo ${myTarget}    ; Works
 
 ### Mistake 4: Forgetting to Detach Events
 
-```lavish
+```lavishscript
 ; WRONG - memory leak
 objectdef obj_LeakyObject
 {
@@ -2885,7 +2885,7 @@ objectdef obj_CleanObject
 
 ### Mistake 5: Race Conditions with Async Operations
 
-```lavish
+```lavishscript
 ; WRONG - doesn't wait for lock
 Entity[${targetID}]:LockTarget
 Ship:Activate_Weapons    ; Target not locked yet!
@@ -2906,7 +2906,7 @@ if ${Entity[${targetID}].IsLockedTarget}
 
 ### Strategy 1: Automatic Recovery from Stuck States
 
-```lavish
+```lavishscript
 objectdef obj_StuckDetector
 {
     variable string LastState = ""
@@ -2985,7 +2985,7 @@ objectdef obj_StuckDetector
 
 ### Strategy 2: Dead Man's Switch
 
-```lavish
+```lavishscript
 objectdef obj_DeadMansSwitch
 {
     variable time LastUserInput
@@ -3029,7 +3029,7 @@ objectdef obj_DeadMansSwitch
 
 ### Strategy 3: Periodic Restarts
 
-```lavish
+```lavishscript
 function main()
 {
     ; Check runtime
@@ -3138,7 +3138,7 @@ function main()
 
 **Solution:**
 
-```lavish
+```lavishscript
 ; Add environment detection
 function DetectEnvironment()
 {
@@ -3177,7 +3177,7 @@ function CountEntities()
 
 **Solution:**
 
-```lavish
+```lavishscript
 ; Throttle broadcasts
 objectdef obj_ThrottledBroadcaster
 {

@@ -82,7 +82,7 @@ For the canonical relay primer (syntax, destinations, `-noredirect`, `-event` fl
 
 Based on `obj_Fleet.iss`:
 
-```lavish
+```lavishscript
 objectdef obj_FleetManager
 {
     variable string FleetLeader = "MyMainCharacter"
@@ -301,7 +301,7 @@ objectdef obj_FleetManager
 
 ### Fleet Warp Capability
 
-```lavish
+```lavishscript
 // Check if can warp fleet
 member:bool CanWarpFleet()
 {
@@ -355,7 +355,7 @@ function WarpFleetTo(string locationName, int distance)
 
 ### Synchronized Actions
 
-```lavish
+```lavishscript
 // All bots wait for master signal before starting
 variable bool MasterReady = FALSE
 
@@ -385,7 +385,7 @@ echo "Master ready - beginning operation"
 
 ### Position Reporting
 
-```lavish
+```lavishscript
 // Report position to fleet every 30 seconds
 method ReportPosition()
 {
@@ -436,7 +436,7 @@ atom OnPositionReport(int64 charID, string location)
 
 ### Status Synchronization
 
-```lavish
+```lavishscript
 // Share status across fleet
 objectdef obj_FleetStatus
 {
@@ -497,7 +497,7 @@ echo "All fleet members ready - starting operation"
 
 Master bot directs all actions:
 
-```lavish
+```lavishscript
 objectdef obj_MasterController
 {
     variable queue:string CommandQueue
@@ -571,7 +571,7 @@ objectdef obj_SlaveBot
 
 Each bot operates independently but coordinates resources:
 
-```lavish
+```lavishscript
 objectdef obj_AutonomousMiner
 {
     variable collection:int64 ClaimedAsteroids
@@ -637,7 +637,7 @@ objectdef obj_AutonomousMiner
 
 One bot leads, others follow. (For master role discovery/election, see [Master/Slave Coordination](#masterslave-coordination) in the Relay IPC chapter below.)
 
-```lavish
+```lavishscript
 objectdef obj_FleetFollower
 {
     variable string LeaderName = "FleetLeader"
@@ -710,7 +710,7 @@ objectdef obj_FleetFollower
 
 ### Shared Bookmark Database
 
-```lavish
+```lavishscript
 objectdef obj_SharedBookmarks
 {
     variable collection:string SharedBookmarks
@@ -761,7 +761,7 @@ objectdef obj_SharedBookmarks
 
 ### Shared Target Database
 
-```lavish
+```lavishscript
 objectdef obj_SharedTargets
 {
     variable collection:int64 PriorityTargets
@@ -831,7 +831,7 @@ objectdef obj_SharedTargets
 
 ### Cargo Capacity Coordination
 
-```lavish
+```lavishscript
 // Hauler broadcasts free cargo space
 method BroadcastCargoSpace()
 {
@@ -864,7 +864,7 @@ Fleet Commander broadcasts a primary (and optional secondary) target via a relay
 
 > **Framework context:** `Ship` in the example below is EVEBot's `obj_Ship` wrapper object (defined in `core/obj_Ship.iss`), not the ISXEVE `MyShip` TLO. It pre-classifies the ship's modules into indexes like `ModuleList_ShieldTransporters` and `ModuleList_GangLinks` at startup. Outside EVEBot you will need to enumerate `MyShip.GetModules[...]` yourself and filter by group name (e.g. `Shield Transporter`, `Gang Coordinator`) to get the equivalent lists.
 
-```lavish
+```lavishscript
 objectdef obj_LogisticsShip
 {
     variable index:int64 RepTargets
@@ -1013,7 +1013,7 @@ if ${Me.Ship.ShieldPct} < 50
 
 ### Tackle Coordination
 
-```lavish
+```lavishscript
 // Tackle reports warp scrambled targets
 if ${MyModule.IsActive} && ${MyModule.ToItem.Group.Equal["Warp Scramblers"]}
 {
@@ -1042,7 +1042,7 @@ The full Orca-centric mining fleet coordinator — where the Orca is designated 
 
 > **Framework context:** As with the logistics example above, `Ship.ModuleList_GangLinks` is an EVEBot `obj_Ship` convenience index; outside EVEBot, enumerate `MyShip.GetModules[...]` and filter by the `Gang Coordinator` group yourself.
 
-```lavish
+```lavishscript
 objectdef obj_FleetBooster
 {
     variable bool GangLinksActive = FALSE
@@ -1115,7 +1115,7 @@ atom OnBoostsActive(int64 boosterID)
 
 ### Belt Depletion Coordination
 
-```lavish
+```lavishscript
 // Master monitors belt depletion
 method CheckBeltDepletion()
 {
@@ -1148,7 +1148,7 @@ atom OnBeltDepleted(int64 beltID)
 
 ### Custom Event Registry
 
-```lavish
+```lavishscript
 objectdef obj_EventRegistry
 {
     method RegisterAllEvents()
@@ -1198,7 +1198,7 @@ objectdef obj_EventRegistry
 
 ### Event-Driven State Changes
 
-```lavish
+```lavishscript
 // State changes driven by events rather than polling
 objectdef obj_EventDrivenBot
 {
@@ -1270,7 +1270,7 @@ objectdef obj_EventDrivenBot
 ### Example 1: Simple Mining Fleet (1 Hauler + 2 Miners)
 
 **Hauler**:
-```lavish
+```lavishscript
 objectdef obj_MiningFleetHauler
 {
     variable queue:obj_MinerRequest MinerRequests
@@ -1475,7 +1475,7 @@ objectdef obj_MinerRequest
 ```
 
 **Miner**:
-```lavish
+```lavishscript
 objectdef obj_FleetMiner
 {
     variable string CurrentState = "IDLE"
@@ -1618,7 +1618,7 @@ objectdef obj_FleetMiner
 ### Example 2: Combat Fleet with FC
 
 **Fleet Commander**:
-```lavish
+```lavishscript
 objectdef obj_FleetCommander
 {
     variable int64 PrimaryTarget = 0
@@ -1715,7 +1715,7 @@ objectdef obj_FleetCommander
 ```
 
 **DPS Ship**:
-```lavish
+```lavishscript
 objectdef obj_DPSShip
 {
     variable int64 PrimaryTarget = 0
@@ -1775,13 +1775,13 @@ objectdef obj_DPSShip
 **Symptom**: Events sent but not received by other sessions
 
 **Diagnosis**:
-```lavish
+```lavishscript
 echo "Event registered: ${LavishScript.RegisteredEvent[MyEvent](exists)}"
 echo "Handler attached: ${Event[MyEvent].HasAtom}"
 ```
 
 **Solution**:
-```lavish
+```lavishscript
 // Ensure event is registered BEFORE sending
 LavishScript:RegisterEvent[MyEvent]
 Event[MyEvent]:AttachAtom[This:OnMyEvent]
@@ -1795,13 +1795,13 @@ relay all -event MyEvent "test"
 **Symptom**: Can't relay to specific session
 
 **Diagnosis**:
-```lavish
+```lavishscript
 echo "Session name: ${Session}"
 echo "Session uplink ID: ${Session.UplinkID}"
 ```
 
 **Solution**:
-```lavish
+```lavishscript
 // Use "all" or "other" instead of specific names
 relay all -event MyEvent
 
@@ -1823,7 +1823,7 @@ if ${SessionIterator:First(exists)}
 **Symptom**: Bots act before coordinator is ready
 
 **Solution**:
-```lavish
+```lavishscript
 // Use synchronized startup
 variable bool AllBotsReady = FALSE
 
@@ -1858,13 +1858,13 @@ while !${This.AllBotsReady}
 **Symptom**: Multi-computer fleet loses coordination
 
 **Diagnosis**:
-```lavish
+```lavishscript
 echo "Uplink connected: ${Uplink.IsConnected}"
 echo "Uplink sessions: ${Uplink.Sessions}"
 ```
 
 **Solution**:
-```lavish
+```lavishscript
 // Auto-reconnect
 if !${Uplink.IsConnected}
 {
@@ -1885,13 +1885,13 @@ if !${Uplink.IsConnected}
 **Symptom**: Can't resolve fleet member CharID
 
 **Diagnosis**:
-```lavish
+```lavishscript
 echo "In fleet: ${Me.Fleet.IsMember[${Me.CharID}]}"
 echo "Fleet members: ${Me.Fleet.Size}"
 ```
 
 **Solution**:
-```lavish
+```lavishscript
 // Wait for fleet to populate
 wait 50
 
@@ -1911,7 +1911,7 @@ if ${charID} == 0
 
 ### Diagnostic: Fleet Status Report
 
-```lavish
+```lavishscript
 function FleetStatusReport()
 {
     echo "==== FLEET STATUS REPORT ===="
@@ -1972,7 +1972,7 @@ The **relay** command is LavishScript's inter-process communication (IPC) mechan
 
 ### Relay Syntax
 
-```lavish
+```lavishscript
 ; Basic syntax
 relay <destination> <command>
 
@@ -2001,7 +2001,7 @@ relay all -noredirect "MyObject:MyMethod[param]"   ; No return relay
 
 **Critical:** Always use `-noredirect` for method calls to prevent infinite relay loops!
 
-```lavish
+```lavishscript
 ; WRONG - Creates relay loop!
 relay all "MyObject:DoSomething"
 
@@ -2019,7 +2019,7 @@ relay all -noredirect "MyObject:DoSomething"
 
 Events are the foundation of relay communication. You must register and attach handlers:
 
-```lavish
+```lavishscript
 objectdef obj_MyFleetBot
 {
     method Initialize()
@@ -2062,7 +2062,7 @@ objectdef obj_MyFleetBot
 - **Event:** Named trigger point that can have multiple handlers
 - **Atom:** A method that handles an event (event handler)
 
-```lavish
+```lavishscript
 ; Event can have multiple atoms attached
 Event[MyEvent]:AttachAtom[Object1:Handler1]
 Event[MyEvent]:AttachAtom[Object2:Handler2]
@@ -2074,7 +2074,7 @@ Event[MyEvent]:Execute["param"]
 
 ### Event Broadcasting
 
-```lavish
+```lavishscript
 ; Broadcast event to all other sessions
 method BroadcastPrimary(int64 targetID)
 {
@@ -2094,7 +2094,7 @@ method BroadcastPrimary(int64 targetID)
 
 **Use Case:** Notify all fleet members of an event
 
-```lavish
+```lavishscript
 objectdef obj_FleetBroadcaster
 {
     method Initialize()
@@ -2126,7 +2126,7 @@ objectdef obj_FleetBroadcaster
 
 **Use Case:** Query information from fleet members
 
-```lavish
+```lavishscript
 objectdef obj_FleetQuery
 {
     variable int ResponseCount = 0
@@ -2191,7 +2191,7 @@ EVEBot's **UplinkManager** is a sophisticated automatic peer discovery and coord
 
 ### Architecture
 
-```lavish
+```lavishscript
 ; Registered session object
 objectdef obj_RegisteredSession
 {
@@ -2238,7 +2238,7 @@ objectdef obj_UplinkManager
 
 ### Registration and Heartbeat
 
-```lavish
+```lavishscript
 ; Step 1: Broadcast registration to all peers
 method RelayRegistration(string Destination, bool Update=FALSE)
 {
@@ -2301,7 +2301,7 @@ method PrunePeerSessions()
 
 ### Skill Sharing
 
-```lavish
+```lavishscript
 ; Request skills from peer
 method RequestSkills(string Requester)
 {
@@ -2352,7 +2352,7 @@ method UpdatePeerSkills(string RemoteSessionName, int Leadership, int Wing_Comma
 
 **Powerful Feature:** Insert custom variables into peer objects at runtime!
 
-```lavish
+```lavishscript
 ; Sender: Broadcast custom info
 method RelayInfo(string VarName, string VarType, string Value)
 {
@@ -2396,7 +2396,7 @@ method UpdateInfo(string RemoteSessionName, string VarName, string VarType, stri
 
 ### Using UplinkManager
 
-```lavish
+```lavishscript
 ; Example: Orca broadcasts need for hauler
 method RequestHauler()
 {
@@ -2445,7 +2445,7 @@ method CheckForOrca()
 
 **Purpose:** Broadcast critical danger, all fleet members dock immediately
 
-```lavish
+```lavishscript
 objectdef obj_FleetSafety
 {
     method Initialize()
@@ -2508,7 +2508,7 @@ objectdef obj_FleetSafety
 
 **Real Example from obj_Orca.iss:**
 
-```lavish
+```lavishscript
 ; Orca detects hostiles
 if ${Social.PossibleHostiles}
 {
@@ -2536,7 +2536,7 @@ if ${Ship.IsPod}
 
 (For movement-based following once the master is known, see [Pattern 3: Leader-Follower](#pattern-3-leader-follower) in Master-Slave Architectures above.)
 
-```lavish
+```lavishscript
 objectdef obj_MasterElection
 {
     variable string MasterName
@@ -2613,7 +2613,7 @@ Yamfa's master-slave target-sharing pattern broadcasts the master's locked-targe
 
 **Scenario:** Miners request Orca services (survey scan, shield boosts)
 
-```lavish
+```lavishscript
 objectdef obj_OrcaService
 {
     method Initialize()
@@ -2716,7 +2716,7 @@ objectdef obj_OrcaService
 
 ### Architecture
 
-```lavish
+```lavishscript
 objectdef obj_ChatRelay
 {
     variable bool IsConnected = FALSE
@@ -2749,7 +2749,7 @@ objectdef obj_ChatRelay
 
 ### IRC Connection
 
-```lavish
+```lavishscript
 function Connect()
 {
     Logger:Log["Connecting to IRC"]
@@ -2805,7 +2805,7 @@ member:bool ChatRelay()
 
 ### Message Handling
 
-```lavish
+```lavishscript
 ; Receive channel message from IRC
 method IRC_ReceivedChannelMsg(string User, string Channel, string From, string Message)
 {
@@ -2875,7 +2875,7 @@ function Say(string msg)
 
 ### Nickserv Authentication
 
-```lavish
+```lavishscript
 method IRC_ReceivedNotice(string User, string From, string To, string Message)
 {
     ; Handle Nickserv authentication
@@ -2906,7 +2906,7 @@ method IRC_ReceivedNotice(string User, string From, string To, string Message)
 
 ### Integration Example
 
-```lavish
+```lavishscript
 ; Report fleet status to IRC
 method ReportFleetStatus()
 {
@@ -2954,7 +2954,7 @@ Computer 1 (Mining Rig)          Computer 2 (Combat Rig)
 
 ### Uplink Setup
 
-```lavish
+```lavishscript
 ; In InnerSpace console on Computer 1:
 uplink create MyFleet
 uplink MyFleet connect 192.168.1.100:54321
@@ -2966,7 +2966,7 @@ uplink MyFleet listen 54321
 
 ### Uplink Relay Syntax
 
-```lavish
+```lavishscript
 ; Relay across uplink
 uplink relay all echo "Message to all computers"
 uplink relay "CharName@Computer2" echo "Specific char on remote computer"
@@ -2977,7 +2977,7 @@ uplink relay all -event Fleet_Warp ${destinationID}
 
 ### Uplink in Code
 
-```lavish
+```lavishscript
 objectdef obj_UplinkCoordination
 {
     method Initialize()
@@ -3010,7 +3010,7 @@ objectdef obj_UplinkCoordination
 
 **Advanced:** Uplink can call methods on remote computer's running script
 
-```lavish
+```lavishscript
 ; From obj_Callback.iss - broadcasts ship status across uplink
 method Pulse()
 {
@@ -3045,7 +3045,7 @@ method Pulse()
     (DPS)    (DPS)    (Logi)
 ```
 
-```lavish
+```lavishscript
 ; Computer 1 (Hub) setup
 uplink create FleetHub
 uplink FleetHub listen 54321
@@ -3066,7 +3066,7 @@ uplink FleetHub connect 192.168.1.100:54321
     Comp 4 ──────── Comp 5
 ```
 
-```lavish
+```lavishscript
 ; Each computer connects to all others
 uplink create FleetMesh
 uplink FleetMesh listen 54321
@@ -3085,7 +3085,7 @@ uplink FleetMesh connect 192.168.1.102:54323
 
 **Solution 1: Pulse Timer**
 
-```lavish
+```lavishscript
 objectdef obj_ThrottledRelay
 {
     variable obj_PulseTimer RelayTimer
@@ -3114,7 +3114,7 @@ objectdef obj_ThrottledRelay
 
 **Solution 2: Change Detection**
 
-```lavish
+```lavishscript
 objectdef obj_SmartRelay
 {
     variable int64 LastPrimaryTarget = 0
@@ -3135,7 +3135,7 @@ objectdef obj_SmartRelay
 
 **Solution 3: Message Queuing**
 
-```lavish
+```lavishscript
 objectdef obj_QueuedRelay
 {
     variable queue:string MessageQueue
@@ -3175,7 +3175,7 @@ objectdef obj_QueuedRelay
 
 **Best Practice:** Attach to EVENT_ONFRAME for automatic pulsing
 
-```lavish
+```lavishscript
 objectdef obj_RelayManager
 {
     method Initialize()
@@ -3215,7 +3215,7 @@ objectdef obj_RelayManager
 
 **Solution: Compress data**
 
-```lavish
+```lavishscript
 ; BAD - sends full entity objects
 relay all -event Targets "${Entity[${ID1}]}" "${Entity[${ID2}]}" "${Entity[${ID3}]}"
 
@@ -3243,7 +3243,7 @@ atom OnTargets(string targetIDs)
 
 ### 1. Always Use -noredirect for Method Calls
 
-```lavish
+```lavishscript
 ; WRONG - can create relay loops
 relay all "MyObject:MyMethod"
 
@@ -3253,7 +3253,7 @@ relay all -noredirect "MyObject:MyMethod"
 
 ### 2. Always Detach Events in Shutdown
 
-```lavish
+```lavishscript
 method Initialize()
 {
     Event[MyEvent]:AttachAtom[This:OnMyEvent]
@@ -3268,7 +3268,7 @@ method Shutdown()
 
 ### 3. Validate Relay Data
 
-```lavish
+```lavishscript
 atom OnTargetRelay(int64 targetID)
 {
     ; Validate before using
@@ -3285,7 +3285,7 @@ atom OnTargetRelay(int64 targetID)
 
 ### 4. Use Heartbeat for Session Tracking
 
-```lavish
+```lavishscript
 objectdef obj_SessionTracker
 {
     variable collection:time LastSeen
@@ -3330,7 +3330,7 @@ objectdef obj_SessionTracker
 
 ### 5. Version Compatibility
 
-```lavish
+```lavishscript
 objectdef obj_VersionedRelay
 {
     variable string ProtocolVersion = "2.1"
@@ -3363,7 +3363,7 @@ objectdef obj_VersionedRelay
 
 ### 6. Error Handling
 
-```lavish
+```lavishscript
 atom OnFleetCommand(string command, string params)
 {
     ; Validate command exists
@@ -3387,7 +3387,7 @@ atom OnFleetCommand(string command, string params)
 
 ### 7. Security - Don't Trust Remote Input
 
-```lavish
+```lavishscript
 atom OnRemoteBookmark(string bookmarkName)
 {
     ; DANGER - arbitrary bookmark warp!
@@ -3413,7 +3413,7 @@ atom OnRemoteBookmark(string bookmarkName)
 
 ### 8. Master Failover
 
-```lavish
+```lavishscript
 objectdef obj_MasterFailover
 {
     variable string MasterName
@@ -3471,7 +3471,7 @@ objectdef obj_MasterFailover
 
 ### Example 1: Complete Fleet Combat Coordination
 
-```lavish
+```lavishscript
 objectdef obj_FleetCombat
 {
     ; Master variables
@@ -3768,7 +3768,7 @@ objectdef obj_FleetCombat
 
 ### Example 2: Mining Fleet with Orca Support
 
-```lavish
+```lavishscript
 objectdef obj_MiningFleet
 {
     variable bool IsOrca = FALSE
@@ -3975,7 +3975,7 @@ objectdef obj_MiningFleet
 
 ### Example 3: Uplink Multi-Computer Coordination
 
-```lavish
+```lavishscript
 objectdef obj_MultiComputerFleet
 {
     variable string ComputerRole     ; "DPS", "Logi", "Mining", "Hauling"

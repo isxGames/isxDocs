@@ -101,12 +101,12 @@ The full `obj_FleetSafety` HARDSTOP pattern (relay event registration, `OnHardSt
 ### Uplink for Multi-Computer Coordination
 
 **Setup Uplink Host** (on one computer — run in the uplink console):
-```lavish
+```lavishscript
 Name MyFleetUplink
 ```
 
 **Connect from Other Computers**:
-```lavish
+```lavishscript
 RemoteUplink -connect 192.168.1.100 2048
 ```
 
@@ -114,7 +114,7 @@ RemoteUplink -connect 192.168.1.100 2048
 > Configuration UI, not via command arguments.
 
 **Send Commands Across Network**:
-```lavish
+```lavishscript
 // From computer A, command all computers
 relay uplink echo "Message from ${Me.Name} to entire network"
 ```
@@ -129,7 +129,7 @@ relay uplink echo "Message from ${Me.Name} to entire network"
 
 Based on `obj_Fleet.iss`:
 
-```lavish
+```lavishscript
 objectdef obj_FleetManager
 {
     variable string FleetLeader = "MyMainCharacter"
@@ -348,7 +348,7 @@ objectdef obj_FleetManager
 
 ### Fleet Warp Capability
 
-```lavish
+```lavishscript
 // Check if can warp fleet
 member:bool CanWarpFleet()
 {
@@ -401,7 +401,7 @@ function WarpFleetTo(string locationName, int distance)
 
 ### Fleet Broadcast Monitoring
 
-```lavish
+```lavishscript
 // Watch for fleet broadcasts
 atom OnFleetBroadcast(string broadcastType, int64 broadcasterID)
 {
@@ -450,7 +450,7 @@ Event[EVE_OnFleetBroadcast]:AttachAtom[This:OnFleetBroadcast]
 
 ### Synchronized Actions
 
-```lavish
+```lavishscript
 // All bots wait for master signal before starting
 variable bool MasterReady = FALSE
 
@@ -480,7 +480,7 @@ echo "Master ready - beginning operation"
 
 ### Position Reporting
 
-```lavish
+```lavishscript
 // Report position to fleet every 30 seconds
 method ReportPosition()
 {
@@ -531,7 +531,7 @@ atom OnPositionReport(int64 charID, string location)
 
 ### Status Synchronization
 
-```lavish
+```lavishscript
 // Share status across fleet
 objectdef obj_FleetStatus
 {
@@ -592,7 +592,7 @@ echo "All fleet members ready - starting operation"
 
 Master bot directs all actions:
 
-```lavish
+```lavishscript
 objectdef obj_MasterController
 {
     variable queue:string CommandQueue
@@ -666,7 +666,7 @@ objectdef obj_SlaveBot
 
 Each bot operates independently but coordinates resources:
 
-```lavish
+```lavishscript
 objectdef obj_AutonomousMiner
 {
     variable collection:int64 ClaimedAsteroids
@@ -732,7 +732,7 @@ objectdef obj_AutonomousMiner
 
 One bot leads, others follow:
 
-```lavish
+```lavishscript
 objectdef obj_FleetFollower
 {
     variable string LeaderName = "FleetLeader"
@@ -806,7 +806,7 @@ objectdef obj_FleetFollower
 
 ### Shared Bookmark Database
 
-```lavish
+```lavishscript
 objectdef obj_SharedBookmarks
 {
     variable collection:string SharedBookmarks
@@ -857,7 +857,7 @@ objectdef obj_SharedBookmarks
 
 ### Shared Target Database
 
-```lavish
+```lavishscript
 objectdef obj_SharedTargets
 {
     variable collection:int64 PriorityTargets
@@ -929,7 +929,7 @@ objectdef obj_SharedTargets
 
 > **Framework Context:** Examples in this section use EVEBot's `Ship` object wrapper (an `objectdef` instance) — `Ship.Cargo.FreeCapacity` / `Ship.Cargo.PercentFull` resolve only inside the EVEBot framework. For vanilla ISXEVE equivalents, use `MyShip.UsedCargoCapacity`, `MyShip.CargoCapacity`, and `MyShip.Cargo` — see `03_API_Reference.md`.
 
-```lavish
+```lavishscript
 // Hauler broadcasts free cargo space
 method BroadcastCargoSpace()
 {
@@ -962,7 +962,7 @@ Fleet Commander broadcasts a primary (and optional secondary) target via a relay
 
 > **Framework Context:** Examples in this section use EVEBot's `Ship` object wrapper (an `objectdef` instance) — `Ship.ModuleList_ShieldTransporter` is an EVEBot-maintained pre-filtered module collection, not a vanilla ISXEVE member. For vanilla ISXEVE, iterate `MyShip.Module[...]` or query modules via `MyShip:GetModules[...]` — see `03_API_Reference.md`.
 
-```lavish
+```lavishscript
 objectdef obj_LogisticsShip
 {
     variable index:int64 RepTargets
@@ -1114,7 +1114,7 @@ if ${Me.Ship.ShieldPct} < 50
 
 ### Tackle Coordination
 
-```lavish
+```lavishscript
 // Tackle reports warp scrambled targets
 // For multi-module iteration, see MyShip:GetModules[idx] pattern elsewhere in this guide.
 variable module MyModule = ${MyShip.Module[HiSlot0]}
@@ -1146,7 +1146,7 @@ The full Orca-centric mining fleet coordinator — where the Orca is designated 
 
 > **Framework Context:** Examples in this section use EVEBot's `Ship` object wrapper (an `objectdef` instance) — `Ship.ModuleList_GangCoordinator` is an EVEBot-maintained pre-filtered module collection, not a vanilla ISXEVE member. For vanilla ISXEVE, iterate `MyShip.Module[...]` or query modules via `MyShip:GetModules[...]` — see `03_API_Reference.md`.
 
-```lavish
+```lavishscript
 objectdef obj_FleetBooster
 {
     variable bool GangLinksActive = FALSE
@@ -1219,7 +1219,7 @@ atom OnBoostsActive(int64 boosterID)
 
 ### Belt Depletion Coordination
 
-```lavish
+```lavishscript
 // Master monitors belt depletion
 method CheckBeltDepletion()
 {
@@ -1253,7 +1253,7 @@ atom OnBeltDepleted(int64 beltID)
 
 ### Custom Event Registry
 
-```lavish
+```lavishscript
 objectdef obj_EventRegistry
 {
     method RegisterAllEvents()
@@ -1303,7 +1303,7 @@ objectdef obj_EventRegistry
 
 ### Event-Driven State Changes
 
-```lavish
+```lavishscript
 // State changes driven by events rather than polling
 objectdef obj_EventDrivenBot
 {
@@ -1377,7 +1377,7 @@ objectdef obj_EventDrivenBot
 > **Framework Context:** This example uses EVEBot's object wrappers (`Ship`, `Cargo`, `Station`, `Safespots`, `Navigator`, `Config`) — these are EVEBot `objectdef` instances, not vanilla ISXEVE TLOs. References like `Ship.Cargo`, `Ship.Approach`, `Ship:Activate_MiningLasers`, `Station.Undock`, `Cargo.TransferCargoToStationHangar`, `Safespots.WarpTo`, `Navigator:FlyToBookmark`, and `Config.Hauler.DeliveryStation` resolve only inside the EVEBot framework. For vanilla ISXEVE equivalents, see `Me`, `MyShip`, `EVE`, `Entity`, and `EVEWindow` in `03_API_Reference.md`.
 
 **Hauler**:
-```lavish
+```lavishscript
 objectdef obj_MiningFleetHauler
 {
     variable queue:obj_MinerRequest MinerRequests
@@ -1582,7 +1582,7 @@ objectdef obj_MinerRequest
 ```
 
 **Miner**:
-```lavish
+```lavishscript
 objectdef obj_FleetMiner
 {
     variable string CurrentState = "IDLE"
@@ -1737,13 +1737,13 @@ A minimal Fleet-Commander / DPS-Ship split for primary-target calling was shown 
 **Symptom**: Events sent but not received by other sessions
 
 **Diagnosis**:
-```lavish
+```lavishscript
 echo "Event registered: ${LavishScript.RegisteredEvent[MyEvent](exists)}"
 echo "Handler attached: ${Event[MyEvent].HasAtom}"
 ```
 
 **Solution**:
-```lavish
+```lavishscript
 // Ensure event is registered BEFORE sending
 LavishScript:RegisterEvent[MyEvent]
 Event[MyEvent]:AttachAtom[This:OnMyEvent]
@@ -1757,13 +1757,13 @@ relay all -event MyEvent "test"
 **Symptom**: Can't relay to specific session
 
 **Diagnosis**:
-```lavish
+```lavishscript
 echo "Session name: ${Session}"
 echo "Session uplink ID: ${Session.UplinkID}"
 ```
 
 **Solution**:
-```lavish
+```lavishscript
 // Use "all" or "other" instead of specific names
 relay all -event MyEvent
 
@@ -1785,7 +1785,7 @@ if ${SessionIterator:First(exists)}
 **Symptom**: Bots act before coordinator is ready
 
 **Solution**:
-```lavish
+```lavishscript
 // Use synchronized startup
 variable bool AllBotsReady = FALSE
 
@@ -1820,13 +1820,13 @@ while !${This.AllBotsReady}
 **Symptom**: Multi-computer fleet loses coordination
 
 **Diagnosis**:
-```lavish
+```lavishscript
 echo "Uplink connected: ${Uplink.IsConnected}"
 echo "Uplink sessions: ${Uplink.Sessions}"
 ```
 
 **Solution**:
-```lavish
+```lavishscript
 // Auto-reconnect
 if !${Uplink.IsConnected}
 {
@@ -1847,13 +1847,13 @@ if !${Uplink.IsConnected}
 **Symptom**: Can't resolve fleet member CharID
 
 **Diagnosis**:
-```lavish
+```lavishscript
 echo "In fleet: ${Me.Fleet.IsMember[${Me.CharID}]}"
 echo "Fleet members: ${Me.Fleet.MemberCount}"
 ```
 
 **Solution**:
-```lavish
+```lavishscript
 // Wait for fleet to populate
 wait 50
 
@@ -1873,7 +1873,7 @@ if ${charID} == 0
 
 ### Diagnostic: Fleet Status Report
 
-```lavish
+```lavishscript
 function FleetStatusReport()
 {
     echo "==== FLEET STATUS REPORT ===="
@@ -1934,7 +1934,7 @@ The **relay** command is LavishScript's inter-process communication (IPC) mechan
 
 ### Relay Syntax
 
-```lavish
+```lavishscript
 ; Basic syntax
 relay <destination> <command>
 
@@ -1963,7 +1963,7 @@ relay all -noredirect "MyObject:MyMethod[param]"   ; No return relay
 
 **Critical:** Always use `-noredirect` for method calls to prevent infinite relay loops!
 
-```lavish
+```lavishscript
 ; WRONG - Creates relay loop!
 relay all "MyObject:DoSomething"
 
@@ -1981,7 +1981,7 @@ relay all -noredirect "MyObject:DoSomething"
 
 Events are the foundation of relay communication. You must register and attach handlers:
 
-```lavish
+```lavishscript
 objectdef obj_MyFleetBot
 {
     method Initialize()
@@ -2024,7 +2024,7 @@ objectdef obj_MyFleetBot
 - **Event:** Named trigger point that can have multiple handlers
 - **Atom:** A method that handles an event (event handler)
 
-```lavish
+```lavishscript
 ; Event can have multiple atoms attached
 Event[MyEvent]:AttachAtom[Object1:Handler1]
 Event[MyEvent]:AttachAtom[Object2:Handler2]
@@ -2036,7 +2036,7 @@ Event[MyEvent]:Execute["param"]
 
 ### Event Broadcasting
 
-```lavish
+```lavishscript
 ; Broadcast event to all other sessions
 method BroadcastPrimary(int64 targetID)
 {
@@ -2056,7 +2056,7 @@ method BroadcastPrimary(int64 targetID)
 > once per session based on fleet role configuration. Declare them at script
 > top-level (outside any objectdef) before loading these patterns:
 >
-> ```lavish
+> ```lavishscript
 > variable bool IsMaster = FALSE      ; TRUE on the Fleet Commander session only
 > variable string MasterName = ""     ; Character name of the Fleet Commander
 > ```
@@ -2085,7 +2085,7 @@ method BroadcastPrimary(int64 targetID)
 > real EVE fleet with FC authority; use the broadcast pattern below when you
 > want coordinated warps across independent sessions (typical multi-box case).
 
-```lavish
+```lavishscript
 objectdef obj_FleetBroadcaster
 {
     method Initialize()
@@ -2119,7 +2119,7 @@ objectdef obj_FleetBroadcaster
 
 **Use Case:** Query information from fleet members
 
-```lavish
+```lavishscript
 objectdef obj_FleetQuery
 {
     variable int ResponseCount = 0
@@ -2166,7 +2166,7 @@ objectdef obj_FleetQuery
 
 **Use Case:** Keep fleet members in sync
 
-```lavish
+```lavishscript
 objectdef obj_FleetSync
 {
     variable string FleetState = "IDLE"
@@ -2232,7 +2232,7 @@ EVEBot's **UplinkManager** is a sophisticated automatic peer discovery and coord
 
 ### Architecture
 
-```lavish
+```lavishscript
 ; Registered session object
 objectdef obj_RegisteredSession
 {
@@ -2279,7 +2279,7 @@ objectdef obj_UplinkManager
 
 ### Registration and Heartbeat
 
-```lavish
+```lavishscript
 ; Step 1: Broadcast registration to all peers
 method RelayRegistration(string Destination, bool Update=FALSE)
 {
@@ -2342,7 +2342,7 @@ method PrunePeerSessions()
 
 ### Skill Sharing
 
-```lavish
+```lavishscript
 ; Request skills from peer
 method RequestSkills(string Requester)
 {
@@ -2393,7 +2393,7 @@ method UpdatePeerSkills(string RemoteSessionName, int Leadership, int Wing_Comma
 
 **Powerful Feature:** Insert custom variables into peer objects at runtime!
 
-```lavish
+```lavishscript
 ; Sender: Broadcast custom info
 method RelayInfo(string VarName, string VarType, string Value)
 {
@@ -2437,7 +2437,7 @@ method UpdateInfo(string RemoteSessionName, string VarName, string VarType, stri
 
 ### Using UplinkManager
 
-```lavish
+```lavishscript
 ; Example: Orca broadcasts need for hauler
 method RequestHauler()
 {
@@ -2488,7 +2488,7 @@ method CheckForOrca()
 
 **Purpose:** Broadcast critical danger, all fleet members dock immediately
 
-```lavish
+```lavishscript
 objectdef obj_FleetSafety
 {
     method Initialize()
@@ -2551,7 +2551,7 @@ objectdef obj_FleetSafety
 
 **Real Example from obj_Orca.iss:**
 
-```lavish
+```lavishscript
 ; Orca detects hostiles
 if ${Social.PossibleHostiles}
 {
@@ -2579,7 +2579,7 @@ if ${Ship.IsPod}
 
 **Master Election Pattern (EVEBot)**
 
-```lavish
+```lavishscript
 objectdef obj_MasterElection
 {
     variable string MasterName
@@ -2650,7 +2650,7 @@ objectdef obj_MasterElection
 
 **Target Sharing Pattern (Yamfa)**
 
-```lavish
+```lavishscript
 objectdef obj_YamfaTargetRelay
 {
     ; Master variables
@@ -2762,7 +2762,7 @@ The full Orca service pattern — including miner-side survey-scan and shield-bo
 
 ### Architecture
 
-```lavish
+```lavishscript
 objectdef obj_ChatRelay
 {
     variable bool IsConnected = FALSE
@@ -2795,7 +2795,7 @@ objectdef obj_ChatRelay
 
 ### IRC Connection
 
-```lavish
+```lavishscript
 function Connect()
 {
     Logger:Log["Connecting to IRC"]
@@ -2851,7 +2851,7 @@ member:bool ChatRelay()
 
 ### Message Handling
 
-```lavish
+```lavishscript
 ; Receive channel message from IRC
 method IRC_ReceivedChannelMsg(string User, string Channel, string From, string Message)
 {
@@ -2921,7 +2921,7 @@ function Say(string msg)
 
 ### Nickserv Authentication
 
-```lavish
+```lavishscript
 method IRC_ReceivedNotice(string User, string From, string To, string Message)
 {
     ; Handle Nickserv authentication
@@ -2952,7 +2952,7 @@ method IRC_ReceivedNotice(string User, string From, string To, string Message)
 
 ### Integration Example
 
-```lavish
+```lavishscript
 ; Report fleet status to IRC
 method ReportFleetStatus()
 {
@@ -3000,7 +3000,7 @@ Computer 1 (Mining Rig)          Computer 2 (Combat Rig)
 
 ### Uplink Setup
 
-```lavish
+```lavishscript
 ; On Computer 1 (the uplink host) — run in its uplink console:
 Name MyFleet
 
@@ -3012,7 +3012,7 @@ RemoteUplink -connect 192.168.1.100 54321
 
 ### Uplink Relay Syntax
 
-```lavish
+```lavishscript
 ; Relay across uplink
 uplink relay all echo "Message to all computers"
 uplink relay "CharName@Computer2" echo "Specific char on remote computer"
@@ -3023,7 +3023,7 @@ uplink relay all -event Fleet_Warp ${destinationID}
 
 ### Uplink in Code
 
-```lavish
+```lavishscript
 objectdef obj_UplinkCoordination
 {
     method Initialize()
@@ -3058,7 +3058,7 @@ objectdef obj_UplinkCoordination
 
 **Advanced:** Uplink can call methods on remote computer's running script
 
-```lavish
+```lavishscript
 ; From obj_Callback.iss - broadcasts ship status across uplink
 method Pulse()
 {
@@ -3093,7 +3093,7 @@ method Pulse()
     (DPS)    (DPS)    (Logi)
 ```
 
-```lavish
+```lavishscript
 ; Computer 1 (Hub) — run in its uplink console:
 Name FleetHub
 
@@ -3112,7 +3112,7 @@ RemoteUplink -connect 192.168.1.100 54321
     Comp 4 ──────── Comp 5
 ```
 
-```lavish
+```lavishscript
 ; On each computer — run in its uplink console once:
 Name FleetMesh
 
@@ -3132,7 +3132,7 @@ RemoteUplink -connect 192.168.1.102 54323
 
 **Solution 1: Pulse Timer**
 
-```lavish
+```lavishscript
 objectdef obj_ThrottledRelay
 {
     variable obj_PulseTimer RelayTimer
@@ -3161,7 +3161,7 @@ objectdef obj_ThrottledRelay
 
 **Solution 2: Change Detection**
 
-```lavish
+```lavishscript
 objectdef obj_SmartRelay
 {
     variable int64 LastPrimaryTarget = 0
@@ -3182,7 +3182,7 @@ objectdef obj_SmartRelay
 
 **Solution 3: Message Queuing**
 
-```lavish
+```lavishscript
 objectdef obj_QueuedRelay
 {
     variable queue:string MessageQueue
@@ -3222,7 +3222,7 @@ objectdef obj_QueuedRelay
 
 **Best Practice:** Attach to EVENT_ONFRAME for automatic pulsing
 
-```lavish
+```lavishscript
 objectdef obj_RelayManager
 {
     method Initialize()
@@ -3262,7 +3262,7 @@ objectdef obj_RelayManager
 
 **Solution: Compress data**
 
-```lavish
+```lavishscript
 ; BAD - sends full entity objects
 relay all -event Targets "${Entity[${ID1}]}" "${Entity[${ID2}]}" "${Entity[${ID3}]}"
 
@@ -3291,7 +3291,7 @@ atom OnTargets(string targetIDs)
 
 ### 1. Always Use -noredirect for Method Calls
 
-```lavish
+```lavishscript
 ; WRONG - can create relay loops
 relay all "MyObject:MyMethod"
 
@@ -3301,7 +3301,7 @@ relay all -noredirect "MyObject:MyMethod"
 
 ### 2. Always Detach Events in Shutdown
 
-```lavish
+```lavishscript
 method Initialize()
 {
     Event[MyEvent]:AttachAtom[This:OnMyEvent]
@@ -3316,7 +3316,7 @@ method Shutdown()
 
 ### 3. Validate Relay Data
 
-```lavish
+```lavishscript
 atom OnTargetRelay(int64 targetID)
 {
     ; Validate before using
@@ -3333,7 +3333,7 @@ atom OnTargetRelay(int64 targetID)
 
 ### 4. Use Heartbeat for Session Tracking
 
-```lavish
+```lavishscript
 objectdef obj_SessionTracker
 {
     variable collection:time LastSeen
@@ -3378,7 +3378,7 @@ objectdef obj_SessionTracker
 
 ### 5. Version Compatibility
 
-```lavish
+```lavishscript
 objectdef obj_VersionedRelay
 {
     variable string ProtocolVersion = "2.1"
@@ -3411,7 +3411,7 @@ objectdef obj_VersionedRelay
 
 ### 6. Error Handling
 
-```lavish
+```lavishscript
 atom OnFleetCommand(string command, string params)
 {
     ; Validate command exists
@@ -3437,7 +3437,7 @@ atom OnFleetCommand(string command, string params)
 
 > **Framework Context:** The "SAFER" example uses EVEBot's `Ship` object wrapper — `Ship.WarpToBookMarkName` is an EVEBot `objectdef` method, not a vanilla ISXEVE API. For vanilla ISXEVE, use `EVE.Bookmark[${name}]:WarpTo[${distance}]` or `Universe[${solarSystemID}]:SetDestination` — see `03_API_Reference.md`. The validation pattern itself (check `EVE.Bookmark[...](exists)`, compare `SolarSystemID`) is framework-independent and correct.
 
-```lavish
+```lavishscript
 atom OnRemoteBookmark(string bookmarkName)
 {
     ; DANGER - remote peer controls the command string (command injection)
@@ -3463,7 +3463,7 @@ atom OnRemoteBookmark(string bookmarkName)
 
 ### 8. Master Failover
 
-```lavish
+```lavishscript
 objectdef obj_MasterFailover
 {
     variable string MasterName
@@ -3523,7 +3523,7 @@ objectdef obj_MasterFailover
 
 ### Example 1: Complete Fleet Combat Coordination
 
-```lavish
+```lavishscript
 objectdef obj_FleetCombat
 {
     ; Master variables
@@ -3826,7 +3826,7 @@ objectdef obj_FleetCombat
 
 ### Example 2: Mining Fleet with Orca Support
 
-```lavish
+```lavishscript
 objectdef obj_MiningFleet
 {
     variable bool IsOrca = FALSE
@@ -4035,7 +4035,7 @@ objectdef obj_MiningFleet
 
 ### Example 3: Uplink Multi-Computer Coordination
 
-```lavish
+```lavishscript
 objectdef obj_MultiComputerFleet
 {
     variable string ComputerRole     ; "DPS", "Logi", "Mining", "Hauling"
@@ -4227,7 +4227,7 @@ objectdef obj_MultiComputerFleet
 
 ### Basic LavishSettings API
 
-```lavish
+```lavishscript
 ; Create a settings object
 LavishSettings:AddSet[MySettings]
 
@@ -4270,7 +4270,7 @@ LavishSettings[MySettings]                    ; Root settings object
 
 **settingsetref** is a reference to a settings set, used for efficient access:
 
-```lavish
+```lavishscript
 objectdef obj_MyConfig
 {
     variable settingsetref CharacterRef
@@ -4313,7 +4313,7 @@ obj_Configuration                             ; Main config container
 
 ### BaseConfig Implementation
 
-```lavish
+```lavishscript
 objectdef obj_Configuration_BaseConfig
 {
     variable float ConfigVersion = 1.0
@@ -4362,7 +4362,7 @@ objectdef obj_Configuration_BaseConfig
 
 ### Main Config Object
 
-```lavish
+```lavishscript
 objectdef obj_Configuration
 {
     ; Sub-configuration objects
@@ -4389,7 +4389,7 @@ objectdef obj_Configuration
 
 **Usage:**
 
-```lavish
+```lavishscript
 ; Access is clean and organized
 variable string behavior = ${Config.Common.CurrentBehavior}
 variable int minShield = ${Config.Combat.MinimumShieldPct}
@@ -4408,7 +4408,7 @@ Config:Save
 
 This EVEBot approach uses explicit member/method pairs for each config setting. For the alternative Tehbot approach using inheritance and the `Setting()` macro, see [Derived Configuration Classes (Approach B)](#derived-configuration-classes-approach-b-inheritance--setting-macro) below.
 
-```lavish
+```lavishscript
 objectdef obj_Configuration_Common
 {
     variable string SetName = "Common"
@@ -4507,7 +4507,7 @@ obj_Configuration_Combat : obj_Configuration_Base
 
 ### ConfigManager Singleton
 
-```lavish
+```lavishscript
 objectdef obj_Configuration_Manager
 {
     variable string CONFIG_FILE = "${Me.Name} Config.xml"
@@ -4571,7 +4571,7 @@ variable(global) obj_Configuration_Manager ConfigManager
 
 ### Base Configuration Class
 
-```lavish
+```lavishscript
 objectdef obj_Configuration_Base
 {
     variable string SetName = ""
@@ -4607,7 +4607,7 @@ objectdef obj_Configuration_Base
 
 For the alternative EVEBot approach using manual member/method pairs, see [Sub-Configuration Pattern (Approach A)](#sub-configuration-pattern-approach-a-manual-membermember-pairs) above.
 
-```lavish
+```lavishscript
 objectdef obj_Configuration_Common inherits obj_Configuration_Base
 {
     method Initialize()
@@ -4651,7 +4651,7 @@ The `Setting(type, name, setMethod)` macro is defined under [Tehbot Setting Macr
 - **Member:** Read-only accessor
 - **Method:** Write accessor that updates config
 
-```lavish
+```lavishscript
 ; MEMBER - Read value
 member:int MinimumShieldPct()
 {
@@ -4674,7 +4674,7 @@ Config.Combat:SetMinimumShieldPct[75]                      ; Write
 
 **Always provide defaults** in case setting doesn't exist:
 
-```lavish
+```lavishscript
 ; Inline default
 member:string CurrentBehavior()
 {
@@ -4698,7 +4698,7 @@ member:int OrbitDistance()
 
 For complex configuration with sub-categories:
 
-```lavish
+```lavishscript
 objectdef obj_Configuration_Miner
 {
     variable settingsetref Ref
@@ -4754,7 +4754,7 @@ objectdef obj_Configuration_Miner
 
 Store lists of items:
 
-```lavish
+```lavishscript
 objectdef obj_Configuration_Targets
 {
     method Initialize()
@@ -4894,7 +4894,7 @@ Config/
 
 ### EVEBot Define_ConfigItem Macro
 
-```lavish
+```lavishscript
 #macro Define_ConfigItem(_Type, _Key, _DefaultValue)
     ; Member to read
     member:_Type _Key()
@@ -4912,7 +4912,7 @@ Config/
 
 **Usage:**
 
-```lavish
+```lavishscript
 objectdef obj_Configuration_Combat
 {
     variable settingsetref Ref
@@ -4930,7 +4930,7 @@ objectdef obj_Configuration_Combat
 
 ### Tehbot Setting Macro
 
-```lavish
+```lavishscript
 #define Setting(type, name, setMethod) \
     member:type name() \
     { \
@@ -4944,7 +4944,7 @@ objectdef obj_Configuration_Combat
 
 **Usage:**
 
-```lavish
+```lavishscript
 objectdef obj_Configuration_Common inherits obj_Configuration_Base
 {
     Setting(string, Tehbot_Mode, SetTehbot_Mode)
@@ -4961,7 +4961,7 @@ objectdef obj_Configuration_Common inherits obj_Configuration_Base
 
 ### Config Helper Functions
 
-```lavish
+```lavishscript
 ; Check if setting exists
 member:bool SettingExists(string settingName)
 {
@@ -5041,7 +5041,7 @@ Config values can be bound to UI elements for real-time editing:
 
 ### UI Update Pattern
 
-```lavish
+```lavishscript
 objectdef obj_ConfigUI
 {
     method Initialize()
@@ -5105,7 +5105,7 @@ Organize config UI into tabs by category:
 
 **Pattern:** One config file per character
 
-```lavish
+```lavishscript
 objectdef obj_Configuration_BaseConfig
 {
     variable string CONFIG_FILE = "${Me.Name} Config.xml"
@@ -5137,7 +5137,7 @@ Config/
 
 For settings that should be shared across all characters:
 
-```lavish
+```lavishscript
 objectdef obj_Configuration_Shared
 {
     variable string SHARED_CONFIG = "SharedConfig.xml"
@@ -5178,7 +5178,7 @@ objectdef obj_Configuration_Shared
 
 Define character roles in config:
 
-```lavish
+```lavishscript
 objectdef obj_Configuration_Character
 {
     method Set_Default_Values()
@@ -5226,7 +5226,7 @@ method AssignFleetRoles()
 
 ### Version Tracking
 
-```lavish
+```lavishscript
 objectdef obj_Configuration_BaseConfig
 {
     variable float ConfigVersion = 2.1
@@ -5300,7 +5300,7 @@ objectdef obj_Configuration_BaseConfig
 
 ### Real Example from EVEBot
 
-```lavish
+```lavishscript
 ; From obj_Configuration_Common:
 method Initialize()
 {
@@ -5317,7 +5317,7 @@ method Initialize()
 
 ### Backup Before Migration
 
-```lavish
+```lavishscript
 method MigrateConfig(float fromVersion)
 {
     ; Backup config before migration
@@ -5341,7 +5341,7 @@ method MigrateConfig(float fromVersion)
 
 Use relay to synchronize config across fleet:
 
-```lavish
+```lavishscript
 objectdef obj_ConfigSync
 {
     method Initialize()
@@ -5396,7 +5396,7 @@ objectdef obj_ConfigSync
 
 Fleet master sets config for all slaves:
 
-```lavish
+```lavishscript
 objectdef obj_FleetMaster
 {
     ; Set fleet-wide behavior
@@ -5465,7 +5465,7 @@ objectdef obj_FleetMaster
 
 ### Basic Database Config Pattern
 
-```lavish
+```lavishscript
 objectdef obj_ConfigDatabase
 {
     variable sqlitedb ConfigDB
@@ -5586,7 +5586,7 @@ objectdef obj_ConfigDatabase
 
 ### Config Object with Database Backend
 
-```lavish
+```lavishscript
 objectdef obj_Config_General
 {
     ; Get values
@@ -5668,7 +5668,7 @@ DBConfig:Close
 
 Use XML for user-editable settings, database for runtime/computed data:
 
-```lavish
+```lavishscript
 objectdef obj_HybridConfig
 {
     ; User settings (XML)
@@ -5713,7 +5713,7 @@ objectdef obj_HybridConfig
 
 Track config changes over time:
 
-```lavish
+```lavishscript
 objectdef obj_ConfigWithHistory
 {
     variable sqlitedb ConfigDB
@@ -5801,14 +5801,14 @@ objectdef obj_ConfigWithHistory
 ### Performance Comparison
 
 **XML (LavishSettings):**
-```lavish
+```lavishscript
 ; Read: ~100 settings in ~5ms
 ; Write: ~100 settings in ~50ms (export entire file)
 ; Good for: < 1000 settings, human-editable
 ```
 
 **Database (isxSQLite):**
-```lavish
+```lavishscript
 ; Read: ~100 settings in ~2ms (query)
 ; Write: ~100 settings in ~1ms (transaction)
 ; Good for: > 1000 settings, complex queries, history
@@ -5836,7 +5836,7 @@ objectdef obj_ConfigWithHistory
 
 ### 1. Always Provide Defaults
 
-```lavish
+```lavishscript
 ; GOOD - has default
 member:int MinShield()
 {
@@ -5852,7 +5852,7 @@ member:int MinShield()
 
 ### 2. Validate Config Values
 
-```lavish
+```lavishscript
 method SetMinimumShieldPct(int value)
 {
     ; Validate range
@@ -5880,7 +5880,7 @@ method SetOrbitDistance(int distance)
 
 ### 3. Save After Critical Changes
 
-```lavish
+```lavishscript
 method SetCurrentBehavior(string behavior)
 {
     ; Update config
@@ -5895,7 +5895,7 @@ method SetCurrentBehavior(string behavior)
 
 ### 4. Use Inheritance for Related Configs
 
-```lavish
+```lavishscript
 ; Base behavior config
 objectdef obj_Configuration_BehaviorBase inherits obj_Configuration_Base
 {
@@ -5933,7 +5933,7 @@ objectdef obj_Configuration_Miner inherits obj_Configuration_BehaviorBase
 
 ### 5. Encrypt Sensitive Data
 
-```lavish
+```lavishscript
 ; WARNING: LavishScript has limited encryption
 
 member:string LoginPassword()
@@ -5965,7 +5965,7 @@ member:string LoginPassword()
 
 ### 6. Group Related Settings
 
-```lavish
+```lavishscript
 ; GOOD - organized into sets
 <Set Name="Combat">
     <Set Name="Tank">
@@ -6036,7 +6036,7 @@ Following that recipe, a Combat config with `MinShield`, `MinArmor`, `MinCap`, `
 
 ### Example 2: UI-Driven Config
 
-```lavish
+```lavishscript
 /* ========== CONFIG UI ========== */
 objectdef obj_ConfigUI
 {
@@ -6130,7 +6130,7 @@ objectdef obj_ConfigUI
 
 ### Example 3: Fleet Config Sync
 
-```lavish
+```lavishscript
 /* ========== FLEET CONFIG SYNC ========== */
 objectdef obj_FleetConfigSync
 {

@@ -122,7 +122,7 @@ The implementation is integrated into `obj_SimpleCombat` below -- `State_Fight` 
 
 ### Complete Simple Combat Object
 
-```lavish
+```lavishscript
 ; ===== SIMPLE COMBAT OBJECT =====
 ; Based on EVEBot obj_Combat.iss
 
@@ -264,7 +264,7 @@ objectdef obj_SimpleCombat
 
 ### Support Functions
 
-```lavish
+```lavishscript
 ; ===== COMBAT SUPPORT FUNCTIONS =====
 
 function CheckShouldFlee()
@@ -425,7 +425,7 @@ function FleeToSafe()
 
 ### Priority Targeting Pattern
 
-```lavish
+```lavishscript
 ; ===== PRIORITY TARGETING =====
 
 variable(global) index:string PriorityTargets
@@ -507,7 +507,7 @@ function IsPriorityTarget(string name)
 
 ### Smart Target Switching
 
-```lavish
+```lavishscript
 ; ===== SMART TARGET SWITCHING =====
 
 function ManageTargetLocks()
@@ -600,7 +600,7 @@ function SwitchToNextTarget()
 
 ### Turret Weapon Management
 
-```lavish
+```lavishscript
 ; ===== TURRET WEAPON MANAGEMENT =====
 
 function ActivateTurrets(int64 targetID)
@@ -701,7 +701,7 @@ function CheckAmmo()
 
 ### Missile Weapon Management
 
-```lavish
+```lavishscript
 ; ===== MISSILE WEAPON MANAGEMENT =====
 
 function ActivateMissiles(int64 targetID)
@@ -787,7 +787,7 @@ function CheckMissileRange(int64 targetID)
 
 ### Orbit Pattern
 
-```lavish
+```lavishscript
 ; ===== ORBIT PATTERN =====
 
 variable float OptimalOrbitRange = 10000
@@ -825,7 +825,7 @@ function OrbitActiveTarget()
 
 ### Keep Range Pattern
 
-```lavish
+```lavishscript
 ; ===== KEEP RANGE PATTERN =====
 
 variable float OptimalKeepRange = 20000
@@ -870,7 +870,7 @@ function KeepRangeFromActiveTarget()
 
 ### Kiting Pattern (Advanced)
 
-```lavish
+```lavishscript
 ; ===== KITING PATTERN =====
 ; Move away while shooting (for long-range ships)
 
@@ -947,7 +947,7 @@ function MoveAwayFromTarget(int64 targetID)
 
 ### Shield Tank
 
-```lavish
+```lavishscript
 ; ===== SHIELD TANK MANAGEMENT =====
 
 function ManageShieldTank()
@@ -1024,7 +1024,7 @@ function ActivateShieldBoosters()
 
 ### Armor Tank
 
-```lavish
+```lavishscript
 ; ===== ARMOR TANK MANAGEMENT =====
 
 function ManageArmorTank()
@@ -1113,7 +1113,7 @@ function ActivateArmorRepairers()
 
 ### Basic Drone Management
 
-```lavish
+```lavishscript
 ; ===== BASIC DRONE MANAGEMENT =====
 
 function ManageDrones()
@@ -1360,7 +1360,7 @@ A paired `MyBot_ABORTHARDSTOP` event lets one character (typically the fleet mas
 
 ### Damage Calculation System
 
-```lavish
+```lavishscript
 ; ===== ADVANCED DAMAGE OPTIMIZATION =====
 ; Based on Tehbot obj_CombatComputer.iss
 
@@ -1856,7 +1856,7 @@ Both approaches end with the same shape: typed `index:module` (or `obj_ModuleLis
 
 ### Example 1: Simple Anomaly Runner
 
-```lavish
+```lavishscript
 ; ===== SIMPLE ANOMALY RUNNER =====
 
 variable bool BotRunning = TRUE
@@ -1902,7 +1902,7 @@ function atexit()
 
 ### Example 2: Defensive Miner
 
-```lavish
+```lavishscript
 ; ===== DEFENSIVE MINER WITH COMBAT =====
 
 variable bool BotRunning = TRUE
@@ -2006,7 +2006,7 @@ Use `KeepRangeFromActiveTarget()` from the [Movement in Combat](#movement-in-com
 
 **Solutions**:
 
-```lavish
+```lavishscript
 ; moduleSlot is a slot-name token, e.g. "HiSlot0".."HiSlot7" (NOT numeric).
 function DiagnoseWeaponFailure(string moduleSlot, int64 targetID)
 {
@@ -2059,7 +2059,7 @@ function DiagnoseWeaponFailure(string moduleSlot, int64 targetID)
 
 ### Problem 2: Drones Won't Launch
 
-```lavish
+```lavishscript
 function DiagnoseDroneProblem()
 {
     ; No drone bay

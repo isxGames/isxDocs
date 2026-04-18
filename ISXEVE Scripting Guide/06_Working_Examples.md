@@ -30,7 +30,7 @@
 
 ### Find Closest Entity (LavishScript)
 
-```lavish
+```lavishscript
 function GetClosestNPC()
 {
     variable int64 ClosestID = 0
@@ -85,7 +85,7 @@ public long GetClosestNPC()
 
 ### Filter Entities by Type (LavishScript)
 
-```lavish
+```lavishscript
 ; Get all asteroids within 50km
 function GetAsteroids()
 {
@@ -136,7 +136,7 @@ function GetPlayers()
 
 ### Safe Entity Access (LavishScript)
 
-```lavish
+```lavishscript
 function SafeEntityOperation(int64 EntityID)
 {
     ; Always check exists before access
@@ -165,7 +165,7 @@ function SafeEntityOperation(int64 EntityID)
 
 ### Lock Target (LavishScript)
 
-```lavish
+```lavishscript
 function LockTarget(int64 EntityID)
 {
     ; Check entity exists
@@ -223,7 +223,7 @@ function LockTarget(int64 EntityID)
 
 ### Unlock All Targets (LavishScript)
 
-```lavish
+```lavishscript
 function UnlockAllTargets()
 {
     variable index:entity LockedTargets
@@ -316,7 +316,7 @@ public class PriorityTarget
 
 ### Orbit Entity (LavishScript)
 
-```lavish
+```lavishscript
 function OrbitEntity(int64 EntityID, int Distance)
 {
     if !${Entity[${EntityID}](exists)}
@@ -364,7 +364,7 @@ function ActivatePropulsionModule()
 
 ### Warp to Entity (LavishScript)
 
-```lavish
+```lavishscript
 function WarpToEntity(int64 EntityID, int Distance)
 {
     if !${Entity[${EntityID}](exists)}
@@ -487,7 +487,7 @@ public class MovementQueue
 
 ### Activate Weapons on Target (LavishScript)
 
-```lavish
+```lavishscript
 function ActivateWeaponsOnTarget(int64 TargetID)
 {
     if !${Entity[${TargetID}].IsLockedTarget}
@@ -532,7 +532,7 @@ function ActivateWeaponsOnTarget(int64 TargetID)
 
 ### Simple Combat Loop (LavishScript)
 
-```lavish
+```lavishscript
 function DoCombat()
 {
     ; Get NPCs within range
@@ -664,7 +664,7 @@ The complete mine-asteroid pattern (entity validation, target lock, mining-laser
 
 **⚠️ NOTE:** Old `MyShip.CargoCapacity` / `UsedCargoCapacity` members are DEPRECATED. Use EVEWindow[Inventory] instead.
 
-```lavish
+```lavishscript
 function IsCargoFull()
 {
     ; Open inventory window if not open
@@ -836,7 +836,7 @@ public class MiningModule
 
 ### Salvage Wreck (LavishScript)
 
-```lavish
+```lavishscript
 function SalvageWreck(int64 WreckID)
 {
     if !${Entity[${WreckID}](exists)}
@@ -885,7 +885,7 @@ function SalvageWreck(int64 WreckID)
 
 ### Loot Wreck (LavishScript)
 
-```lavish
+```lavishscript
 function LootWreck(int64 WreckID)
 {
     if !${Entity[${WreckID}](exists)}
@@ -982,7 +982,7 @@ Most inventory management methods shown here use DEPRECATED APIs (July 2020). Se
 
 ### Get Cargo Items (Modern API - LavishScript)
 
-```lavish
+```lavishscript
 function GetCargoItems()
 {
     ; Open inventory window if not open
@@ -1019,7 +1019,7 @@ function GetCargoItems()
 
 ### Stack All Items (Modern API - LavishScript)
 
-```lavish
+```lavishscript
 function StackAllCargo()
 {
     ; Open inventory window
@@ -1045,7 +1045,7 @@ function StackAllCargo()
 
 **⚠️ NOTE:** Use modern EVEWindow[Inventory] API for cargo checks (see examples above).
 
-```lavish
+```lavishscript
 function GetCargoPercentUsed()
 {
     ; Modern API - use inventory window
@@ -1070,7 +1070,7 @@ function GetCargoPercentUsed()
 
 ### ⚠️ DEPRECATED: Legacy Inventory Examples
 
-```lavish
+```lavishscript
 ; DEPRECATED - DO NOT USE IN NEW SCRIPTS
 ; These examples shown only for understanding old code
 
@@ -1092,7 +1092,7 @@ function GetCargoPercentUsed()
 
 ### Get Fleet Members (LavishScript)
 
-```lavish
+```lavishscript
 function GetFleetMembers()
 {
     if !${Me.Fleet(exists)}
@@ -1138,7 +1138,7 @@ This matches the canonical pattern used by EVEBot (see `core/obj_Social.iss` and
 
 #### SENDER script (runs on the broadcasting client)
 
-```lavish
+```lavishscript
 ; --- Run once at script startup (e.g. in your main function or an Initialize method) ---
 LavishScript:RegisterEvent[FleetMessage]
 
@@ -1152,7 +1152,7 @@ function BroadcastToFleet(string Message)
 
 #### RECEIVER script (runs on every other fleet client)
 
-```lavish
+```lavishscript
 ; --- Run once at script startup, BEFORE AttachAtom ---
 LavishScript:RegisterEvent[FleetMessage]
 Event[FleetMessage]:AttachAtom[FleetMessage_Handler]
@@ -1169,7 +1169,7 @@ atom FleetMessage_Handler(string SenderName, string Message)
 **Alternative firing syntax** — EVEBot also uses the shorter `-event` form, which passes raw
 arguments without the nested `Execute[...]` call:
 
-```lavish
+```lavishscript
 ; Sender: fires FleetMessage with two args on every other client
 relay "all other" -event FleetMessage "${Me.Name}" "${Message}"
 ```
@@ -1211,7 +1211,7 @@ public void WarpToFleetMember(int charId)
 
 ### Check for Hostile Players (LavishScript)
 
-```lavish
+```lavishscript
 function CheckForHostiles()
 {
     variable index:entity Players
@@ -1252,7 +1252,7 @@ function CheckForHostiles()
 
 ### Warp to Safe Spot (LavishScript)
 
-```lavish
+```lavishscript
 function WarpToSafeSpot()
 {
     ; Get safe spot bookmark
@@ -1347,7 +1347,7 @@ public class DefenseModule
 
 ### Simple Profiler (LavishScript)
 
-```lavish
+```lavishscript
 objectdef obj_Profiler
 {
     variable int64 StartTime
@@ -1444,7 +1444,7 @@ _profiler.End();
 
 ### Logger Object (LavishScript)
 
-```lavish
+```lavishscript
 objectdef obj_Logger
 {
     variable string LogFile = "${Script.CurrentDirectory}/bot.log"
@@ -1514,7 +1514,7 @@ Logger:Error["Failed to lock target"]
 
 ### Config Manager (LavishScript)
 
-```lavish
+```lavishscript
 objectdef obj_Config
 {
     variable settingsetref ConfigRef
@@ -1578,7 +1578,7 @@ variable bool AutoFlee = ${Config.GetBool[AutoFlee]}
 
 ### Config Manager with isxSQLite (LavishScript)
 
-```lavish
+```lavishscript
 objectdef obj_ConfigDatabase
 {
     variable sqlitedb ConfigDB
@@ -1691,7 +1691,7 @@ DBConfig:Close
 
 ### Session Stats Tracker with isxSQLite (LavishScript)
 
-```lavish
+```lavishscript
 objectdef obj_SessionStats
 {
     variable sqlitedb StatsDB
@@ -1772,7 +1772,7 @@ echo "Total lifetime earnings: ${Stats.GetTotalEarnings} ISK"
 
 **CRITICAL OPTIMIZATION:** Use `Distance2` (squared distance) for range comparisons - 3-5x faster than `Distance`.
 
-```lavish
+```lavishscript
 ; ❌ SLOW - Distance requires expensive sqrt() calculation
 function IsEntityInRange_SLOW(int64 EntityID, float MaxRange)
 {
@@ -1810,7 +1810,7 @@ function IsEntityInRange_FAST(int64 EntityID, float MaxRange)
 
 ### Calculate Distance (LavishScript)
 
-```lavish
+```lavishscript
 function CalculateDistance(float X1, float Y1, float Z1, float X2, float Y2, float Z2)
 {
     return ${Math.Distance[${X1}, ${Y1}, ${Z1}, ${X2}, ${Y2}, ${Z2}]}
@@ -1822,7 +1822,7 @@ variable float Dist = ${CalculateDistance[${Me.ToEntity.X}, ${Me.ToEntity.Y}, ${
 
 ### Format ISK (LavishScript)
 
-```lavish
+```lavishscript
 function FormatISK(float Amount)
 {
     if ${Amount} >= 1000000000

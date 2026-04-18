@@ -95,7 +95,7 @@ Mining bots automate ore/ice extraction from asteroid belts and anomalies.
 
 ### Ore Types and Values
 
-```lavish
+```lavishscript
 ; ===== ORE TYPE PRIORITIES =====
 
 variable(global) collection:int OreValues
@@ -139,7 +139,7 @@ function GetOreValue(string oreName)
 
 ### Mining Module Types
 
-```lavish
+```lavishscript
 ; ===== MINING MODULE DETECTION =====
 
 function IsMiningModule(item module)
@@ -192,7 +192,7 @@ function GetOptimalMiningRange()
 
 ### Random Belt Selection
 
-```lavish
+```lavishscript
 ; ===== RANDOM BELT SELECTION =====
 
 function WarpToRandomBelt()
@@ -227,7 +227,7 @@ function WarpToRandomBelt()
 
 **EVEBot Pattern**: Use bookmarked mining locations
 
-```lavish
+```lavishscript
 ; ===== BOOKMARK BELT SELECTION =====
 ; Based on EVEBot obj_Asteroids.iss
 
@@ -298,7 +298,7 @@ function WarpToBookmarkedBelt()
 
 ### Anomaly Selection
 
-```lavish
+```lavishscript
 ; ===== ANOMALY ORE SITE SELECTION =====
 
 function WarpToOreAnomaly()
@@ -355,7 +355,7 @@ function WarpToOreAnomaly()
 
 ### Pattern 1: Nearest Asteroid
 
-```lavish
+```lavishscript
 ; ===== NEAREST ASTEROID SELECTION =====
 
 function GetNearestAsteroid()
@@ -390,7 +390,7 @@ function GetNearestAsteroid()
 
 ### Pattern 2: By Ore Type Priority
 
-```lavish
+```lavishscript
 ; ===== ORE TYPE PRIORITY SELECTION =====
 
 function GetBestAsteroidByOreType()
@@ -436,7 +436,7 @@ function GetBestAsteroidByOreType()
 
 **EVEBot Pattern**: Select asteroids close to each other
 
-```lavish
+```lavishscript
 ; ===== GROUPED ASTEROID SELECTION =====
 ; Based on EVEBot obj_Asteroids.iss NearestAsteroid
 
@@ -521,7 +521,7 @@ function GetGroupedAsteroid()
 
 ### Activate Survey Scanner
 
-```lavish
+```lavishscript
 ; ===== SURVEY SCANNER ACTIVATION =====
 
 function ActivateSurveyScanner()
@@ -550,7 +550,7 @@ function ActivateSurveyScanner()
 
 **EVEBot Pattern**: Event-driven survey data processing
 
-```lavish
+```lavishscript
 ; ===== SURVEY DATA PROCESSING =====
 
 variable index:entity SurveyedAsteroids
@@ -645,7 +645,7 @@ function GetBestSurveyedAsteroid()
 
 ### Basic Mining
 
-```lavish
+```lavishscript
 ; ===== BASIC MINING LASER ACTIVATION =====
 
 function ActivateMinersOnTarget(int64 asteroidID)
@@ -689,7 +689,7 @@ function ActivateMinersOnTarget(int64 asteroidID)
 
 ### Automatic Asteroid Depletion Handling
 
-```lavish
+```lavishscript
 ; ===== ASTEROID DEPLETION DETECTION =====
 
 variable int64 CurrentMiningTarget = 0
@@ -743,7 +743,7 @@ function ManageMiningTarget()
 
 ### Cargo Status Check
 
-```lavish
+```lavishscript
 ; ===== CARGO STATUS CHECKING =====
 ; ⚠️ Modern Inventory API (July 2020+)
 
@@ -789,7 +789,7 @@ function GetCargoPercentFull()
 
 ### Approach Asteroid Pattern
 
-```lavish
+```lavishscript
 ; ===== APPROACH ASTEROID FOR MINING =====
 
 variable int64 ApproachingAsteroid = 0
@@ -847,7 +847,7 @@ function ApproachAsteroidIfNeeded(int64 asteroidID)
 
 ### Return to Station
 
-```lavish
+```lavishscript
 ; ===== RETURN TO STATION PATTERN =====
 
 variable string HomeStation = "Jita IV - Moon 4 - Caldari Navy Assembly Plant"
@@ -913,7 +913,7 @@ function ReturnToStation()
 The canonical implementation uses the efficient `EVE:MoveItemsTo` batch move
 instead of per-item `MoveTo` calls.
 
-```lavish
+```lavishscript
 ; ===== UNLOAD ORE TO HANGAR =====
 ; Thin wrapper - delegates to the canonical TransferCargoToStationHangar.
 ; At unload time, ship cargo is ore/ice anyway, so moving all cargo is correct.
@@ -927,7 +927,7 @@ function UnloadOre()
 
 ### Complete Hauling Cycle
 
-```lavish
+```lavishscript
 ; ===== COMPLETE HAUL CYCLE =====
 
 function PerformHaulingCycle()
@@ -975,7 +975,7 @@ function PerformHaulingCycle()
 
 ### Ice Detection
 
-```lavish
+```lavishscript
 ; ===== ICE DETECTION =====
 
 function IsIceBelt()
@@ -1014,7 +1014,7 @@ function GetNearestIce()
 
 ### Ice Mining Cycle
 
-```lavish
+```lavishscript
 ; ===== ICE MINING CYCLE =====
 
 function MineIce()
@@ -1092,7 +1092,7 @@ The full Orca-detection and ore-delivery pattern — finding the Orca by pilot n
 
 ### Example 1: Simple Solo Miner
 
-```lavish
+```lavishscript
 ; ===== SIMPLE SOLO MINER =====
 
 variable bool BotRunning = TRUE
@@ -1180,7 +1180,7 @@ function StationPulse()
 
 ### Example 2: Advanced Survey Miner
 
-```lavish
+```lavishscript
 ; ===== ADVANCED SURVEY MINER =====
 
 variable bool BotRunning = TRUE
@@ -1283,7 +1283,7 @@ function AdvancedMiningPulse()
 
 ### Problem 1: Miners Won't Activate
 
-```lavish
+```lavishscript
 function DiagnoseMinerFailure(int moduleIndex, int64 asteroidID)
 {
     variable module module = ${MyShip.Module[${moduleIndex}]}
@@ -1322,7 +1322,7 @@ function DiagnoseMinerFailure(int moduleIndex, int64 asteroidID)
 
 ### Problem 2: Cargo Management Issues
 
-```lavish
+```lavishscript
 ; ⚠️ Modern Inventory API (July 2020+)
 function DiagnoseCargoIssue()
 {
@@ -1395,7 +1395,7 @@ Hauling is the process of transporting cargo from one location to another. This 
 
 ### Hauler Ship Types
 
-```lavish
+```lavishscript
 // Common hauler ship groups
 #define GROUP_INDUSTRIAL 19
 #define GROUP_TRANSPORT_SHIP 380        // Deep Space Transport (DST)
@@ -1426,7 +1426,7 @@ if ${MyShip.GroupID} == GROUP_BLOCKADE_RUNNER
 
 Based on `obj_Autopilot.iss`:
 
-```lavish
+```lavishscript
 objectdef obj_Autopilot
 {
     variable int       Destination
@@ -1485,7 +1485,7 @@ objectdef obj_Autopilot
 
 ### Travel to System Function
 
-```lavish
+```lavishscript
 function TravelToSystem(int64 solarSystemID)
 {
     if ${Me.SolarSystemID} == ${solarSystemID}
@@ -1531,7 +1531,7 @@ function TravelToSystem(int64 solarSystemID)
 
 ### Single Jump Navigation
 
-```lavish
+```lavishscript
 function TravelOneJump()
 {
     // Get current system and next system in route
@@ -1600,7 +1600,7 @@ function TravelOneJump()
 
 ### Warp to Bookmark
 
-```lavish
+```lavishscript
 function WarpToBookmark(string bookmarkName)
 {
     if !${EVE.Bookmark[${bookmarkName}](exists)}
@@ -1633,7 +1633,7 @@ function WarpToBookmark(string bookmarkName)
 
 ### Docking at Station
 
-```lavish
+```lavishscript
 objectdef obj_Station
 {
     // Dock at specific station by entity ID
@@ -1751,7 +1751,7 @@ objectdef obj_Station
 
 Based on EVEBot `obj_Cargo.iss`:
 
-```lavish
+```lavishscript
 function TransferCargoToStationHangar()
 {
     if !${Me.InStation}
@@ -1804,7 +1804,7 @@ function TransferCargoToStationHangar()
 
 ### Cargo Transfer from Station to Ship
 
-```lavish
+```lavishscript
 function TransferHangarItemsToShip(string itemName, int quantity)
 {
     if !${Me.InStation}
@@ -1846,7 +1846,7 @@ function TransferHangarItemsToShip(string itemName, int quantity)
 
 Based on EVEBot `obj_Hauler.iss`:
 
-```lavish
+```lavishscript
 // Hauler states:
 // IDLE        - Waiting in station (nothing to do)
 // HARDSTOP    - Emergency dock and stay docked
@@ -1871,7 +1871,7 @@ Based on EVEBot `obj_Hauler.iss`:
 
 ### Simple Hauler Object
 
-```lavish
+```lavishscript
 objectdef obj_SimpleHauler
 {
     variable string CurrentState = "IDLE"
@@ -2118,7 +2118,7 @@ objectdef obj_SimpleHauler
 
 Pick up jetcans from miners in your fleet.
 
-```lavish
+```lavishscript
 objectdef obj_FleetHauler inherits obj_SimpleHauler
 {
     variable queue:entity JetCans
@@ -2429,7 +2429,7 @@ objectdef obj_FleetHauler inherits obj_SimpleHauler
 
 EVEBot uses relay events to notify haulers:
 
-```lavish
+```lavishscript
 method Initialize()
 {
     Event[EVENT_ONFRAME]:AttachAtom[This:Pulse]
@@ -2462,7 +2462,7 @@ if ${Ship.Cargo.PercentFull} > 95
 
 Miners deliver ore to an Orca's fleet hangar instead of station:
 
-```lavish
+```lavishscript
 objectdef obj_OrcaDelivery
 {
     variable string OrcaPilotName = "MyOrca"
@@ -2569,7 +2569,7 @@ else
 
 Orca hauls ore from fleet hangar to station:
 
-```lavish
+```lavishscript
 objectdef obj_OrcaHauler
 {
     variable float CargoThreshold = 35000    // Return when fleet hangar has 35k m3
@@ -2699,7 +2699,7 @@ Based on EVEBot `obj_StealthHauler.iss`:
 
 > **Framework dependency:** This example uses EVEBot helpers (`Station.Docked`, `Station.Undock`, `Ship.HasCovOpsCloak`, `Ship.Activate_Cloak`, `Ship.Activate_AfterBurner`, `Navigator:FlyToEntityID`). `Navigator` is NOT an ISXEVE built-in — see the framework-dependency callout in [Basic Hauler State Machine](#basic-hauler-state-machine) earlier in this chapter for pure-ISXEVE equivalents (e.g., `Entity[${id}]:WarpTo[0]` + `wait until ${Me.ToEntity.Mode} != 3` in place of `Navigator:FlyToEntityID` / `${Navigator.Busy}`).
 
-```lavish
+```lavishscript
 objectdef obj_StealthHauler
 {
     variable index:int RouteToDestination
@@ -2849,7 +2849,7 @@ objectdef obj_StealthHauler
 
 For travel in hostile space:
 
-```lavish
+```lavishscript
 function CloakWarpTrick()
 {
     // After jumping through gate:
@@ -2917,7 +2917,7 @@ function CloakWarpTrick()
 
 Determine if a route is safe:
 
-```lavish
+```lavishscript
 function AnalyzeRoute(int64 destinationSystemID)
 {
     variable index:int route
@@ -2995,7 +2995,7 @@ If you need "safer" behavior, evaluate each waypoint's security (via `Universe[<
 
 ### Gank Avoidance
 
-```lavish
+```lavishscript
 function CheckGankRisk()
 {
     // Common gank systems (Uedama, Niarja, etc.)
@@ -3047,7 +3047,7 @@ if ${CheckGankRisk}
 
 ### Calculate Cargo Value
 
-```lavish
+```lavishscript
 ; ⚠️ Modern Inventory API (July 2020+)
 member:float CargoValue()
 {
@@ -3086,7 +3086,7 @@ echo "Cargo value: ${Math.Calc[${This.CargoValue} / 1000000].Int}M ISK"
 
 When cargo is limited, prioritize high-value items:
 
-```lavish
+```lavishscript
 function LoadCargoByValue()
 {
     // Get all items from station hangar
@@ -3151,7 +3151,7 @@ function LoadCargoByValue()
 
 ### Calculate Optimal Load
 
-```lavish
+```lavishscript
 function CalculateOptimalLoad(string oreName)
 {
     variable float oreVolume = ${Item[${oreName}].Volume}
@@ -3177,7 +3177,7 @@ call This.CalculateOptimalLoad "Veldspar"
 
 > **Framework dependency:** This example uses EVEBot/Tehbot helpers including `Navigator:FlyToBookmark` / `${Navigator.Busy}`, `Station.DockAtStation`, `Cargo.TransferCargoToStationHangar`, `Station.Undock`, and `Safespots.WarpTo`. `Navigator` is NOT an ISXEVE built-in. To run this as a standalone script, substitute the built-in equivalents from the callout in [Basic Hauler State Machine](#basic-hauler-state-machine) earlier in this chapter (chiefly: `EVE.Bookmark["Label"]:WarpTo[0]` + `wait until ${Me.ToEntity.Mode} != 3` in place of `Navigator:FlyToBookmark` / `${Navigator.Busy}`).
 
-```lavish
+```lavishscript
 objectdef obj_SimpleStationHauler
 {
     variable string PickupStation = "Jita IV - Moon 4 - Caldari Navy Assembly Plant"
@@ -3404,7 +3404,7 @@ These adaptations layer cleanly onto the `obj_SimpleStationHauler` skeleton — 
 **Symptom**: Bot initiates warp but the wait loop never exits — ship never reaches destination, or `${Me.ToEntity.Mode}` never leaves Warping (3).
 
 **Diagnosis** (pure ISXEVE — no framework required):
-```lavish
+```lavishscript
 echo "Ship Mode: ${Me.ToEntity.Mode}  (0=Idle, 1=Approaching, 3=Warping, 4=Orbiting)"
 echo "Velocity: ${Me.ToEntity.Velocity}"
 echo "In warp: ${Me.ToEntity.Mode} == 3"
@@ -3412,7 +3412,7 @@ echo "Warp scrambled: ${Me.ToEntity.IsWarpScrambled}"
 ```
 
 **Solution** — always add a timeout to warp-wait loops:
-```lavish
+```lavishscript
 ; Initiate warp using built-in bookmark API
 EVE.Bookmark["MyBookmark"]:WarpTo[0]
 
@@ -3446,14 +3446,14 @@ if ${timeout} >= 600
 **Symptom**: Items don't move from cargo to hangar
 
 **Diagnosis**:
-```lavish
+```lavishscript
 echo "In station: ${Me.InStation}"
 echo "Station ID: ${Me.StationID}"
 echo "Cargo used: ${Ship.Cargo.UsedCapacity}"
 ```
 
 **Solution**:
-```lavish
+```lavishscript
 // Ensure windows are activated
 call Inventory.ShipCargo.Activate
 wait 30
@@ -3474,14 +3474,14 @@ if !${Inventory.ShipCargo.IsCurrent}
 **Symptom**: "Fleet member not on grid" but they're in system
 
 **Diagnosis**:
-```lavish
+```lavishscript
 echo "Fleet member in local: ${Local[${FleetMemberName}](exists)}"
 echo "Fleet member entity: ${Entity[Name = \"${FleetMemberName}\"](exists)}"
 echo "Fleet member ID: ${Local[${FleetMemberName}].ToEntity.ID}"
 ```
 
 **Solution**:
-```lavish
+```lavishscript
 // Use ToFleetMember for reliable warping
 if ${Local[${FleetMemberName}](exists)}
 {
@@ -3498,7 +3498,7 @@ if ${Local[${FleetMemberName}](exists)}
 
 **Solution**: Route preference (Shortest vs. Safer) is a client-side EVE UI setting and is not exposed through ISXEVE. Set the preference in-game before running the script. To programmatically avoid low-sec, inspect each waypoint's security status and rebuild the route yourself:
 
-```lavish
+```lavishscript
 ; Inspect current route and refuse to travel if any waypoint is low/null-sec
 variable index:int Waypoints
 EVE:GetWaypoints[Waypoints]
@@ -3522,14 +3522,14 @@ if ${WP:First(exists)}
 **Symptom**: Items too far to loot but tractor doesn't work
 
 **Diagnosis**:
-```lavish
+```lavishscript
 echo "Has tractor: ${Ship.ModuleList_Tractor.Used}"
 echo "Tractor range: ${Ship.OptimalTractorRange}"
 echo "Target locked: ${Entity[${TargetID}].IsLockedTarget}"
 ```
 
 **Solution**:
-```lavish
+```lavishscript
 // Ensure target is locked and active
 Entity[${targetID}]:LockTarget
 wait 10 ${Entity[${targetID}].BeingTargeted}
@@ -3560,7 +3560,7 @@ Ship:Activate_Tractor
 **Symptom**: "Session change timeout" when docking/jumping
 
 **Solution**:
-```lavish
+```lavishscript
 // Always wait after session changes
 Entity[${gateID}]:Jump
 wait 50    // Wait for session change to START
@@ -3576,7 +3576,7 @@ while ${Me.InStation} && ${timeout} < 300
 
 ### Diagnostic: Hauler Status Report
 
-```lavish
+```lavishscript
 function DiagnosticReport()
 {
     echo "==== HAULER DIAGNOSTIC REPORT ===="

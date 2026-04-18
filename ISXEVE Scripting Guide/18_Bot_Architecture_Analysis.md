@@ -156,7 +156,7 @@ EVEBot/
 
 File: `EVEBot.iss` (lines 1-200+)
 
-```lavish
+```lavishscript
 function main()
 {
     // 1. CHECK PREREQUISITES
@@ -228,7 +228,7 @@ function main()
 
 File: `EVEBot.iss` (lines 59-84)
 
-```lavish
+```lavishscript
 function LoadBehaviors(string Label, string Path)
 {
     variable int Position = 0
@@ -274,7 +274,7 @@ function LoadBehaviors(string Label, string Path)
 
 File: `EVEBot.iss` (lines 86-111)
 
-```lavish
+```lavishscript
 function LoadThreads(string Label, string Path)
 {
     variable int Position = 0
@@ -306,7 +306,7 @@ function LoadThreads(string Label, string Path)
 
 File: `core/obj_BaseClass.iss` (standard pattern)
 
-```lavish
+```lavishscript
 objectdef obj_BaseClass
 {
     variable string LogPrefix = "BaseClass"
@@ -334,7 +334,7 @@ objectdef obj_BaseClass
 
 File: `core/obj_EVEBot.iss` (lines 10-300+)
 
-```lavish
+```lavishscript
 objectdef obj_EVEBot inherits obj_BaseClass
 {
     // STATE VARIABLES
@@ -550,7 +550,7 @@ The canonical behavior template, with full `obj_BaseClass` inheritance, `Initial
 
 File: `Behaviors/obj_Miner.iss` (simplified)
 
-```lavish
+```lavishscript
 objectdef obj_Miner inherits obj_BaseClass
 {
     variable string CurrentState = "IDLE"
@@ -696,7 +696,7 @@ File: `Behaviors/obj_Hauler.iss` (we analyzed this earlier)
 
 File: `core/obj_PulseTimer.iss`
 
-```lavish
+```lavishscript
 objectdef obj_PulseTimer
 {
     variable float NextPulse
@@ -730,7 +730,7 @@ objectdef obj_PulseTimer
 ```
 
 **Usage Pattern**:
-```lavish
+```lavishscript
 variable obj_PulseTimer MyTimer
 
 MyTimer:SetIntervals[2.0, 3.0]    // 2-3 second random interval
@@ -776,7 +776,7 @@ Individual actions (immediate)
 
 File: `core/obj_Configuration.iss` (simplified)
 
-```lavish
+```lavishscript
 objectdef obj_Configuration
 {
     variable obj_Configuration_Common Common
@@ -882,7 +882,7 @@ File: `Config/EVEBot.xml`
 
 File: `core/obj_EVEBot.iss` (lines 91-99)
 
-```lavish
+```lavishscript
 // In EVEBot.Pulse():
 if ${Config.Miner.GroupMode}
 {
@@ -899,7 +899,7 @@ if ${Config.Miner.GroupMode}
 
 ### Master Response
 
-```lavish
+```lavishscript
 atom Event_Master_Query()
 {
     // If I'm configured as master, announce it
@@ -921,7 +921,7 @@ atom Event_Master_Notify(string MasterName)
 
 File: `core/obj_Asteroids.iss` (lines 520-570)
 
-```lavish
+```lavishscript
 // Before selecting asteroid, claim it
 if ${Config.Miner.GroupMode}
 {
@@ -949,7 +949,7 @@ See [Multi-Level Timing](#multi-level-timing) for the full diagram and rationale
 
 ### Pattern 2: SetState/ProcessState Separation
 
-```lavish
+```lavishscript
 method SetState()
 {
     // PURE DECISION LOGIC
@@ -977,7 +977,7 @@ function ProcessState()
 
 ### Pattern 3: Emergency Flag Cascade
 
-```lavish
+```lavishscript
 // Any module can set emergency flag
 EVEBot.ReturnToStation:Set[TRUE]
 
@@ -1000,7 +1000,7 @@ method SetState()
 
 ### Pattern 4: Relay Event Coordination
 
-```lavish
+```lavishscript
 // Broadcaster
 relay all -event CustomEvent ${parameter1} ${parameter2}
 
@@ -1021,7 +1021,7 @@ atom OnCustomEvent(type1 param1, type2 param2)
 
 ### Pattern 5: Dynamic Loading
 
-```lavish
+```lavishscript
 // Scan folder for .iss files
 Files:GetFiles["${Path}"]
 
@@ -1144,7 +1144,7 @@ while (${Position:Inc}<=${Files.Files})
 **If Adapting EVEBot Code**:
 
 1. **Add Return Values**:
-   ```lavish
+   ```lavishscript
    // Old (EVEBot style)
    function DoSomething()
    {
@@ -1162,7 +1162,7 @@ while (${Position:Inc}<=${Files.Files})
    ```
 
 2. **Use Event-Driven Over Polling**:
-   ```lavish
+   ```lavishscript
    // Old (EVEBot style)
    while TRUE
    {
@@ -1176,7 +1176,7 @@ while (${Position:Inc}<=${Files.Files})
    ```
 
 3. **Cache Entity Queries**:
-   ```lavish
+   ```lavishscript
    // Old (EVEBot style - queries every time)
    if ${Entity[GroupID = 123](exists)}
        // ...
@@ -1189,7 +1189,7 @@ while (${Position:Inc}<=${Files.Files})
    ```
 
 4. **Dependency Injection**:
-   ```lavish
+   ```lavishscript
    // Old (EVEBot style - global access)
    objectdef obj_Behavior
    {
@@ -1220,7 +1220,7 @@ while (${Position:Inc}<=${Files.Files})
 
 Based on EVEBot patterns, here's a template:
 
-```lavish
+```lavishscript
 // MyNewBehavior.iss
 objectdef obj_MyNewBehavior inherits obj_BaseClass
 {
@@ -1476,7 +1476,7 @@ Yamfa (Simple)  ←→  Tehbot (Medium)  ←→  EVEBot (Complex)
 
 File: `core/obj_StateQueue.iss` (lines 1-150)
 
-```lavish
+```lavishscript
 objectdef obj_State
 {
     variable string Name          // State name
@@ -1599,7 +1599,7 @@ objectdef obj_StateQueue inherits obj_Logger
 
 **Behaviors inherit from obj_StateQueue**:
 
-```lavish
+```lavishscript
 objectdef obj_Mission inherits obj_StateQueue
 {
     method Initialize()
@@ -1798,7 +1798,7 @@ Target selection is not itself a minimode in Tehbot. The core objects `obj_Targe
 
 Sketch of the real `minimode/DroneControl.iss` shape (simplified — consult the real file for full detail):
 
-```lavish
+```lavishscript
 objectdef obj_DroneControl inherits obj_StateQueue
 {
     variable obj_Configuration_DroneControl Config
@@ -2050,7 +2050,7 @@ The cost is that the data file is executable LavishScript rather than a passive 
 ### Code Comparison
 
 **Yamfa (Simple Loop)**:
-```lavish
+```lavishscript
 function main()
 {
     while TRUE
@@ -2070,7 +2070,7 @@ function main()
 ```
 
 **Tehbot (StateQueue)**:
-```lavish
+```lavishscript
 objectdef obj_Mission inherits obj_StateQueue
 {
     member:bool StartMission()
@@ -2086,7 +2086,7 @@ objectdef obj_Mission inherits obj_StateQueue
 ```
 
 **EVEBot (State Machine)**:
-```lavish
+```lavishscript
 objectdef obj_Miner
 {
     method SetState()
@@ -2143,7 +2143,7 @@ objectdef obj_Miner
 - Reentrant states
 
 **Example**:
-```lavish
+```lavishscript
 This:QueueState["Step1"]    ; Add states
 This:QueueState["Step2"]
 This:QueueState["Step3"]
@@ -2160,7 +2160,7 @@ This:InsertState["Urgent"]  ; Insert at front
 - Don't want complex architecture
 
 **Example**:
-```lavish
+```lavishscript
 ; Module A sets global
 CurrentTarget:Set[${targetID}]
 TargetReady:Set[TRUE]
@@ -2190,7 +2190,7 @@ For the full code and rationale, see [Code Strengths](#code-strengths) in the Ya
 - Long-term maintenance
 
 **Example**:
-```lavish
+```lavishscript
 ; Core objects = services
 obj_Ship, obj_Cargo, obj_Combat
 
@@ -2275,14 +2275,14 @@ objectdef obj_Miner
 ### Patterns to Adopt
 
 ✅ **StateQueue for Sequences**
-```lavish
+```lavishscript
 This:QueueState["Step1"]
 This:QueueState["Step2"]
 ; Auto-executes in order
 ```
 
 ✅ **MiniMode Pattern**
-```lavish
+```lavishscript
 ; Small independent modules, each inheriting obj_StateQueue
 obj_DroneControl
 obj_AutoModule
@@ -2291,7 +2291,7 @@ obj_FightOrFlight
 ```
 
 ✅ **Data-Table-Driven Decisions**
-```lavish
+```lavishscript
 ; Load static lookup tables at startup instead of querying per-decision
 NPCData:LoadData    ; from data/NPCData.xml
 ; Then consult in-memory
@@ -2301,13 +2301,13 @@ NPCData.NPCType[${TargetGroupID}]
 ### Patterns to Avoid
 
 ❌ **Ad-Hoc Global Variables for Coordination**
-```lavish
+```lavishscript
 ; Flat global namespace couples modules implicitly
 ; Prefer a shared object reference or a typed message bus
 ```
 
 ❌ **StateQueue for Simple Bots**
-```lavish
+```lavishscript
 ; Overkill for simple targeting bot
 ; Use simple loop instead
 ```
