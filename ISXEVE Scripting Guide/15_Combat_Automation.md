@@ -634,19 +634,28 @@ function ActivateTurrets(int64 targetID)
 
 function CheckTurretTracking(int64 targetID)
 {
-    ; Check if target is too close to track
+    ; Returns TRUE if our turret tracking speed can keep up with the target's
+    ; angular velocity, FALSE if the target is angularly too fast to hit reliably.
     variable entity target = ${Entity[${targetID}]}
 
     if !${target(exists)}
         return FALSE
 
-    ; Get ship tracking (simplified - real implementation would check module stats)
-    variable float trackingSpeed = 0.05  ; rad/s (example)
-    variable float targetAngularVelocity = ${Math.Calc[${target.Velocity} / ${target.Distance}]}
+    ; Example turret tracking speed (rad/s). A real implementation would read
+    ; the turret module's TrackingSpeed attribute and scale by signature radius
+    ; / scan resolution for the actual hit-probability computation.
+    variable float trackingSpeed = 0.05  ; rad/s
 
-    if ${targetAngularVelocity} > ${trackingSpeed}
+    ; Use ISXEVE's entity.AngularVelocity member directly (rad/s, computed by
+    ; the game client). Do NOT approximate as (Velocity / Distance): Velocity
+    ; is the target's total speed magnitude, not its tangential component, so a
+    ; target flying straight toward you (pure radial motion -- true angular
+    ; velocity = 0) would spuriously appear to have nonzero angular velocity.
+    ; If you need the tangential component explicitly, use entity.TransversalVelocity
+    ; (m/s) -- angular velocity is then TransversalVelocity / Distance.
+    if ${target.AngularVelocity} > ${trackingSpeed}
     {
-        echo "WARNING: Target moving too fast to track (${targetAngularVelocity} > ${trackingSpeed})"
+        echo "WARNING: Target angular velocity ${target.AngularVelocity} rad/s exceeds tracking ${trackingSpeed} rad/s"
         return FALSE
     }
 
