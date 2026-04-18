@@ -1455,7 +1455,7 @@ Tehbot/
 **Complexity Scale**:
 ```
 Yamfa (Simple)  ←→  Tehbot (Medium)  ←→  EVEBot (Complex)
-   1 file            30+ files            50+ files
+   1 file            ~36 files            50+ files
    No states         StateQueue           State machines
    Monolithic        MiniModes            Full modularity
 ```
@@ -2048,7 +2048,7 @@ The cost is that the data file is executable LavishScript rather than a passive 
 
 | Aspect | Yamfa | Tehbot | EVEBot |
 |--------|-------|--------|--------|
-| **Files** | 1 | 50+ | 50+ |
+| **Files** | 1 | ~36 | 50+ |
 | **Main Pattern** | Simple loop | StateQueue | State machine |
 | **Modularity** | None | MiniModes | Core objects + Behaviors |
 | **Coordination** | Relay events | Global variables | Function calls |
@@ -2118,11 +2118,11 @@ objectdef obj_Miner
 
 ### Performance Comparison
 
-| Bot | Startup Time | Memory Usage | CPU Usage | Maintainability |
-|-----|--------------|--------------|-----------|-----------------|
-| **Yamfa** | Fast (2s) | Low (20MB) | Low | Easy (1 file) |
-| **Tehbot** | Medium (10s) | Medium (80MB) | Medium | Medium (50 files) |
-| **EVEBot** | Slow (30s) | High (150MB) | High | Hard (50+ files) |
+No benchmark numbers are published in this guide. Startup time, memory usage, and CPU usage vary substantially by ship fit, configuration, module count, number of tracked entities, and which behaviors / minimodes are active — so any single number would be misleading.
+
+Qualitatively, a monolithic single-file script (Yamfa-style) starts and runs with the least overhead; a hybrid framework (Tehbot) sits in the middle because it loads a moderate number of core objects and minimodes at startup; and a fully modular framework (EVEBot) has the highest startup cost and resident footprint because it loads core objects, behavior objects, threads, and library modules. Maintainability trades off inversely: more files generally means more isolation and easier targeted changes, at the cost of a steeper initial read.
+
+If you need concrete numbers for your use case, measure on your own machine with your own configuration — `Script.RunningTime`, `${Script[name].MemoryUsage}`-style probes, and Windows Task Manager will all give you representative readings.
 
 ### Scalability
 
