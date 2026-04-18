@@ -2314,15 +2314,15 @@ method RelayMySkills(string Destination="all")
     relay "${Destination}" -noredirect \
         "UplinkManager:UpdatePeerSkills[${Session}, \
             ${If[${Me.Skill[Leadership](exists)}, ${Me.Skill[Leadership].Level}, 0]}, \
-            ${If[${Me.Skill[Wing Command](exists)}, ${Me.Skill[Wing Command].Level}, 0]}, \
-            ${If[${Me.Skill[Fleet Command](exists)}, ${Me.Skill[Fleet Command].Level}, 0]}, \
-            ${If[${Me.Skill[Mining Foreman](exists)}, ${Me.Skill[Mining Foreman].Level}, 0]}, \
-            ${If[${Me.Skill[Armored Warfare](exists)}, ${Me.Skill[Armored Warfare].Level}, 0]}]"
+            ${If[${Me.Skill["Wing Command"](exists)}, ${Me.Skill["Wing Command"].Level}, 0]}, \
+            ${If[${Me.Skill["Fleet Command"](exists)}, ${Me.Skill["Fleet Command"].Level}, 0]}, \
+            ${If[${Me.Skill["Mining Foreman"](exists)}, ${Me.Skill["Mining Foreman"].Level}, 0]}, \
+            ${If[${Me.Skill["Armored Warfare"](exists)}, ${Me.Skill["Armored Warfare"].Level}, 0]}]"
 }
 
 ; Receive and store peer skills
 method UpdatePeerSkills(string RemoteSessionName, int Leadership, int Wing_Command, int Fleet_Command,
-                        int Armored_Warfare, int Information_Warfare, int Mining_Foreman)
+                        int Mining_Foreman, int Armored_Warfare)
 {
     variable iterator RegisteredSession
     This.RegisteredSessions:GetIterator[RegisteredSession]
