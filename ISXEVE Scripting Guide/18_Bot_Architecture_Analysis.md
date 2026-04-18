@@ -1497,12 +1497,11 @@ objectdef obj_StateQueue inherits obj_Logger
     variable obj_State CurState         // Current executing state
 
     variable int NextPulse
-    variable int PulseFrequency = 3000  // Default 3 seconds
+    variable int PulseFrequency = 2000  // Default 2 seconds
     variable bool IsIdle = TRUE
 
     method Initialize()
     {
-        Turbo 1000000
         CurState:Set["Idle", 100, ""]
         IsIdle:Set[TRUE]
         Event[ISXEVE_onFrame]:AttachAtom[This:Pulse]
@@ -1570,6 +1569,17 @@ objectdef obj_StateQueue inherits obj_Logger
         }
 
         States:Clear
+
+        // Resolve frequency (default to PulseFrequency if not supplied)
+        variable int var_Frequency
+        if ${arg_Frequency} == -1
+        {
+            var_Frequency:Set[${This.PulseFrequency}]
+        }
+        else
+        {
+            var_Frequency:Set[${arg_Frequency}]
+        }
 
         // Insert new state at front
         States:Queue[${arg_Name},${var_Frequency},"${arg_Args.Escape}"]
