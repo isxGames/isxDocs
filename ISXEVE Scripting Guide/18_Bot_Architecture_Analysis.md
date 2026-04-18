@@ -1078,7 +1078,7 @@ while (${Position:Inc}<=${Files.Files})
 1. **Code Age (2008-2017)**
    - Some ISXEVE APIs deprecated
    - Patterns may be outdated
-   - No modern C# interop
+   - Does not leverage the ISXEVEWrapper .NET API (available for C#-based bots such as Metatron); EVEBot is LavishScript-only
 
 2. **Inconsistent Error Handling**
    - Some functions return bool, some don't
