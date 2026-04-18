@@ -1377,7 +1377,7 @@ function DiagnoseCargoIssue()
 
 ## Hauling and Logistics Bot Patterns
 
-> **Note on Code Examples**: This file contains EVEBot patterns that use custom wrapper objects like `Ship` and `Cargo`. These are **NOT** the deprecated `MyShip.Cargo` API. The `Ship` object is EVEBot's abstraction layer that internally uses modern APIs. Direct references to `MyShip:GetCargo` or `MyShip.Cargo` have been updated to use the modern `EVEWindow[Inventory]` API.
+> **Framework Context — `Ship` is the EVEBot wrapper, NOT vanilla ISXEVE:** The hauling examples below use EVEBot's custom `Ship` objectdef (see EVEBot `core/obj_Ship.iss`), which is a wrapper around the vanilla `MyShip` TLO. Wrapper members used in this chapter include `${Ship.Cargo.*}` (UsedCapacity / Capacity / FreeCapacity / PercentFull / Value), `${Ship.FleetHangar.*}`, `${Ship.IsPod}`, `${Ship.HasCovOpsCloak}`, `${Ship.OptimalTractorRange}`, `${Ship.OptimalTargetingRange}`, `${Ship.ModuleList_Tractor.*}`, `${Ship.GetEHP}`, and methods `Ship:Activate_Cloak`, `Ship:Deactivate_Cloak`, `Ship:Activate_AfterBurner`, `Ship:Activate_Tractor`, `Ship:Deactivate_Tractor`, `Ship.Approach`. **None of these exist on the vanilla `MyShip` TLO.** To port an example to pure ISXEVE, replace `Ship.Cargo.*` with `${EVEWindow[Inventory].ChildWindow[ShipCargo].<member>}` or `${MyShip.CargoCapacity}` / `${MyShip.UsedCargoCapacity}`, and replace wrapper methods with direct module/entity calls. See `18_Bot_Architecture_Analysis.md` for EVEBot/Tehbot framework internals.
 
 ---
 
@@ -3475,7 +3475,7 @@ if ${timeout} >= 600
 ```lavishscript
 echo "In station: ${Me.InStation}"
 echo "Station ID: ${Me.StationID}"
-echo "Cargo used: ${Ship.Cargo.UsedCapacity}"
+echo "Cargo used: ${Ship.Cargo.UsedCapacity}"    ; Ship = EVEBot wrapper; vanilla form: ${MyShip.UsedCargoCapacity}
 ```
 
 **Solution**:
@@ -3549,6 +3549,9 @@ if ${WP:First(exists)}
 
 **Diagnosis**:
 ```lavishscript
+; NOTE: Ship.ModuleList_Tractor and Ship.OptimalTractorRange are EVEBot wrapper
+; members (obj_Ship.iss), NOT vanilla ISXEVE. For pure ISXEVE, iterate
+; ${MyShip.Module[${i}]} and check GroupID for tractor modules directly.
 echo "Has tractor: ${Ship.ModuleList_Tractor.Used}"
 echo "Tractor range: ${Ship.OptimalTractorRange}"
 echo "Target locked: ${Entity[${TargetID}].IsLockedTarget}"
@@ -3601,6 +3604,8 @@ while ${Me.InStation} && ${timeout} < 300
 ```
 
 ### Diagnostic: Hauler Status Report
+
+> **Framework Context:** This diagnostic script uses EVEBot wrapper members (`${Ship.Cargo.*}`, `${Navigator.Busy}`) and is meant to run inside an EVEBot-style objectdef (references `${This.CargoValue}`, `${This.CurrentState}`). For a pure-ISXEVE equivalent, replace `${Ship.Cargo.UsedCapacity}` with `${MyShip.UsedCargoCapacity}`, `${Ship.Cargo.Capacity}` with `${MyShip.CargoCapacity}`, and compute `PercentFull` as `${Math.Calc[${MyShip.UsedCargoCapacity} * 100 / ${MyShip.CargoCapacity}]}`. Remove the `${Navigator.Busy}` line or substitute `${Me.ToEntity.Mode} == 3` for warp detection.
 
 ```lavishscript
 function DiagnosticReport()
