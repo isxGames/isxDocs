@@ -3155,20 +3155,43 @@ function LoadCargoByValue()
 ### Calculate Optimal Load
 
 ```lavishscript
+; Ore-name -> TypeID lookup table (stable EVE SDE values).
+; ISXEVE has no name-based item-info lookup; EVE.ItemInfo takes a numeric TypeID.
+; Extend this collection with additional ores/variants as needed.
+variable(global) collection:int OreTypeIDs
+
+function LoadOreTypeIDs()
+{
+    OreTypeIDs:Set["Veldspar", 1230]
+    OreTypeIDs:Set["Scordite", 1228]
+    OreTypeIDs:Set["Plagioclase", 18]
+    ; Add more ore types here (see EVE SDE for TypeIDs)
+}
+
 function CalculateOptimalLoad(string oreName)
 {
-    variable float oreVolume = ${Item[${oreName}].Volume}
-    variable float cargoCapacity = ${Ship.Cargo.Capacity}
+    ; Look up the TypeID, then query volume via EVE.ItemInfo (real ISXEVE TLO path).
+    ; NOTE: Item[name] is NOT a valid TLO in ISXEVE — use EVE.ItemInfo[typeID].
+    if !${OreTypeIDs.Element[${oreName}](exists)}
+    {
+        echo "Unknown ore: ${oreName} — add to OreTypeIDs collection"
+        return 0
+    }
+
+    variable int oreTypeID = ${OreTypeIDs.Element[${oreName}]}
+    variable float oreVolume = ${EVE.ItemInfo[${oreTypeID}].Volume}
+    variable float cargoCapacity = ${MyShip.CargoCapacity}
 
     variable int maxLoad = ${Math.Calc[${cargoCapacity} / ${oreVolume}].Int}
 
-    echo "${Me.Ship.Name} can carry ${maxLoad} units of ${oreName}"
+    echo "${MyShip.Name} can carry ${maxLoad} units of ${oreName}"
     echo "Total volume: ${Math.Calc[${maxLoad} * ${oreVolume}].Int}m3"
 
     return ${maxLoad}
 }
 
-; Usage
+; Usage (call LoadOreTypeIDs once at startup before using CalculateOptimalLoad):
+call LoadOreTypeIDs
 call This.CalculateOptimalLoad "Veldspar"
 ```
 
