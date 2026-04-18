@@ -738,8 +738,38 @@ function CheckMissileRange(int64 targetID)
     if !${target(exists)}
         return FALSE
 
-    ; Missiles have max range (example: light missiles ~50km)
-    variable float missileRange = 50000
+    ; Find the first active missile launcher and compute its max range from the
+    ; loaded charge. Missile range = Charge.MaxVelocity (m/s) * Charge.MaxFlightTime (s).
+    ; Charge.MaxVelocity and Charge.MaxFlightTime are only populated when the
+    ; charge is currently loaded in a high-slot launcher on your active ship —
+    ; see ISXEVE changelog (ISXEVE-20090310.0242, item datatype notes).
+    ; This is the canonical production pattern — see EVEBot obj_Ship.iss and
+    ; combot obj_ModuleBase.iss for the same formula.
+    variable index:module modules
+    MyShip:GetModules[modules]
+    variable iterator m
+    modules:GetIterator[m]
+    variable float missileRange = 0
+
+    if ${m:First(exists)}
+    {
+        do
+        {
+            ; GroupID 56 = Missile Launcher
+            if ${m.Value.ToItem.GroupID} == 56 && ${m.Value.Charge(exists)}
+            {
+                missileRange:Set[${Math.Calc[${m.Value.Charge.MaxVelocity} * ${m.Value.Charge.MaxFlightTime}]}]
+                break
+            }
+        }
+        while ${m:Next(exists)}
+    }
+
+    if ${missileRange} <= 0
+    {
+        echo "CheckMissileRange: no missile launcher with a loaded charge found"
+        return FALSE
+    }
 
     if ${target.Distance} > ${missileRange}
     {
