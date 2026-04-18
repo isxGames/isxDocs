@@ -585,7 +585,7 @@ method DebugDump()
     echo "CargoUsed: ${MyShip.UsedCargoCapacity}"
     echo "CargoFree: ${Math.Calc[${MyShip.CargoCapacity} - ${MyShip.UsedCargoCapacity}]}"
     echo "Shield: ${MyShip.ShieldPct.Precision[1]}%"
-    echo "Targets: ${Me.GetTargets}"
+    echo "Targets: ${Me.TargetCount}"
     echo "=================="
 }
 
