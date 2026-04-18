@@ -756,7 +756,7 @@ function ShouldReturnToStation()
         wait 20
     }
 
-    variable eveinvchildwindow Cargo = EVEWindow[Inventory].Child[ShipCargo]
+    variable eveinvchildwindow Cargo = EVEWindow[Inventory].ChildWindow[ShipCargo]
     variable float cargoFreeSpace = ${Math.Calc[${Cargo.Capacity} - ${Cargo.UsedCapacity}]}
     variable float cargoCapacity = ${Cargo.Capacity}
 
@@ -779,7 +779,7 @@ function GetCargoPercentFull()
         wait 20
     }
 
-    variable eveinvchildwindow Cargo = EVEWindow[Inventory].Child[ShipCargo]
+    variable eveinvchildwindow Cargo = EVEWindow[Inventory].ChildWindow[ShipCargo]
     variable float used = ${Cargo.UsedCapacity}
     variable float capacity = ${Cargo.Capacity}
 
@@ -1166,7 +1166,7 @@ function StationPulse()
     }
 
     ; Unload if have ore
-    if ${EVEWindow[Inventory].Child[ShipCargo].UsedCapacity} > 0
+    if ${EVEWindow[Inventory].ChildWindow[ShipCargo].UsedCapacity} > 0
     {
         call UnloadOre
     }
@@ -1342,7 +1342,7 @@ function DiagnoseCargoIssue()
     }
 
     ; Get cargo child window
-    variable eveinvchildwindow Cargo = EVEWindow[Inventory].Child[ShipCargo]
+    variable eveinvchildwindow Cargo = EVEWindow[Inventory].ChildWindow[ShipCargo]
 
     if !${Cargo(exists)}
     {
@@ -3062,7 +3062,7 @@ member:float CargoValue()
     }
 
     variable index:item cargoItems
-    EVEWindow[Inventory].Child[ShipCargo]:GetItems[cargoItems]
+    EVEWindow[Inventory].ChildWindow[ShipCargo]:GetItems[cargoItems]
 
     variable float totalValue = 0
     variable iterator itemIterator
