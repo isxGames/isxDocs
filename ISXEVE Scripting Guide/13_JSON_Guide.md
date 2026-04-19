@@ -22,6 +22,7 @@
 13. [Best Practices](#best-practices)
 14. [Complete Examples](#complete-examples)
 15. [Troubleshooting](#troubleshooting)
+16. [Quick Reference](#quick-reference)
 
 ---
 
