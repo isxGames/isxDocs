@@ -74,11 +74,6 @@
 
 ## Main Loop and State Machines
 
-**Wiki References**:
-- LavishScript Events: `LavishScriptWiki/LavishScript/Events.html`
-- ISXEVE onFrame event: `IsxeveWiki/Events.html`
-- Frame timing: `LavishScriptWiki/LavishScript/Commands/waitframe.html`
-
 ---
 
 ## Bot Lifecycle Overview
@@ -2260,11 +2255,6 @@ function atexit()
 
 ## Decision Making and Logic Patterns
 
-**Wiki References**:
-- Entity queries: `IsxeveWiki/DataType/eve.html#QueryEntities`
-- Boolean logic: `LavishScriptWiki/LavishScript/Data_Sequences.html`
-- Math operations: `LavishScriptWiki/TopLevelObjects/Math.html`
-
 **⚠️ API Note:** Some examples use simplified cargo checks (`MyShip.CargoFreeSpace`) to illustrate decision logic — note that `MyShip.CargoFreeSpace` is not present in the official changelog and should be treated as unsupported. For production code, use the modern inventory API: compute free space as `${Math.Calc[${EVEWindow[Inventory].ChildWindow[ShipCargo].Capacity} - ${EVEWindow[Inventory].ChildWindow[ShipCargo].UsedCapacity}]}`. See Files 13 and 15 for modern cargo handling.
 
 ---
@@ -3880,11 +3870,6 @@ EVE:QueryEntities[Entities, "CategoryID = CATEGORYID_ENTITY && IsNPC && Distance
 ---
 
 ## Error Handling and Recovery
-
-**Wiki References**:
-- LavishScript echo: `LavishScriptWiki/LavishScript/Commands/echo.html`
-- File I/O for logging: `LavishScriptWiki/TopLevelObjects/File.html`
-- Script timing: `LavishScriptWiki/TopLevelObjects/LavishScript.html`
 
 ---
 
@@ -5635,11 +5620,6 @@ function ActivateModule(int moduleIndex, int64 targetID)
 ---
 
 ## Performance and Timing
-
-**Wiki References**:
-- LavishScript timing: `LavishScriptWiki/LavishScript/Commands/wait.html`
-- Script profiling: `LavishScriptWiki/DataType/script.html#EnableProfiling`
-- Turbo mode: `LavishScriptWiki/LavishScript/Commands/turbo.html`
 
 ---
 
