@@ -6298,21 +6298,16 @@ if ${EVEWindow[Inventory].ChildWindow[FleetHangar].Capacity} > 0
 
 ### Theoretical Item Movement
 
-**Some item types MAY have MoveTo method** (not guaranteed):
+The `item` datatype defines a `MoveTo` method (see ISXEVEChanges.txt for the full signature and accepted destinations). The method itself is always present — the challenge is that it only works reliably when the correct windows/state are open in the EVE client:
+
 ```lavish
 variable item cargoItem = ${MyShip.Cargo[1]}
 
-; Check if MoveTo exists (rare)
-if ${cargoItem.MoveTo(exists)}
-{
-    ; Try to move to item hangar
-    cargoItem:MoveTo[${MyShip.ID}, ItemHangar]
-    wait 100
-}
-else
-{
-    echo "MoveTo method not available"
-}
+; MoveTo is defined on the item datatype — no existence check needed.
+; Success depends on EVE client state (correct window open, item visible, etc.),
+; not on whether the method exists.
+cargoItem:MoveTo[${MyShip.ID}, ItemHangar]
+wait 100
 ```
 
 **Recommendation**: **Avoid scripting item movement**. Design bots to work without moving items, or have player manually move items.
@@ -7640,7 +7635,7 @@ For hangar, ore hold, drone bay, and fleet hangar access, use the same pattern w
 **ISXEVE does NOT support drag/drop**. Must use game's right-click menu or hotkeys.
 
 **Workarounds**:
-1. **Use item.MoveTo method** (if item type supports it)
+1. **Use item:MoveTo method** (defined on all items; success depends on client state)
 2. **Use EVE:Execute[OpenCargoHold]** to open destination, then item methods
 3. **Some Evebot patterns** use complex window/button clicking (fragile)
 
@@ -7655,17 +7650,12 @@ function MoveItemToCargoHold(int64 itemID)
     if !${myItem(exists)}
         return FALSE
 
-    ; Use MoveTo if available (not always available)
-    if ${myItem.MoveTo(exists)}
-    {
-        myItem:MoveTo[${MyShip.ID}, CargoHold]
-        wait 50
-        return TRUE
-    }
-
-    ; Otherwise, must use UI clicking (complex, fragile)
-    echo "Cannot move item - no MoveTo method"
-    return FALSE
+    ; MoveTo is defined on the item datatype — call it directly.
+    ; The method itself doesn't return success/failure; verify by
+    ; re-checking cargo contents after the wait if confirmation is needed.
+    myItem:MoveTo[${MyShip.ID}, CargoHold]
+    wait 50
+    return TRUE
 }
 ```
 
