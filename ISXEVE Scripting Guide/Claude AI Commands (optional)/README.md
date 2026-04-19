@@ -55,7 +55,7 @@ Task(subagent_type="ISXEVE-Expert", prompt="Create a mining script...")
 
 - Reads your comprehensive guide (22 numbered guides plus meta/index files + quick reference)
 - Knows your directories (Scripts, Guide location)
-- Follows best practices (EVEBot patterns, NULL checks, async data handling)
+- Follows best practices (EVEBot, Yamfa, Tehbot, Metatron patterns, NULL checks, async data handling)
 - Handles all tasks (creating, editing, debugging, refactoring scripts)
 - Applies correct API usage (TLOs, datatypes, entities, modules, movement)
 - Ensures code quality (multi-timer pulses, error handling, naming conventions)
