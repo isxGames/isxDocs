@@ -1835,7 +1835,7 @@ relay all other uplink   ; Test relay communication
 **Output to Console**:
 ```lavishscript
 echo "Hello from script"
-echo "My ship: ${MyShip.ToEntity.Name}"
+echo "My ship: ${MyShip.Name}"
 
 ; Concatenation
 variable int Value = 42
@@ -2121,7 +2121,7 @@ EVE Memory Address 0x12345678:
 
 ISXEVE Reads This:
     ${MyShip.ID} = 1000000001234
-    ${MyShip.ToEntity.Name} = "Dominix"
+    ${MyShip.Name} = "Dominix"
     ${MyShip.Shield} = 8542.5
     ${MyShip.Armor} = 12000.0
 ```
@@ -2197,7 +2197,7 @@ ${ISXEVE}               ; ISXEVE extension object
 echo "${Me.Name}"
 
 ; Ship name
-echo "${MyShip.ToEntity.Name}"
+echo "${MyShip.Name}"
 
 ; Current solar system
 echo "${Me.SolarSystemID}"
