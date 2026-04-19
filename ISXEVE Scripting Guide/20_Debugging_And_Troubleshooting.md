@@ -924,48 +924,48 @@ function ValidateSession()
     ; Check character
     if ${Me(exists)}
     {
-        echo "✓ Character: ${Me.Name}"
+        echo "OK: Character: ${Me.Name}"
     }
     else
     {
-        echo "✗ Character: NOT LOADED"
+        echo "FAIL: Character: NOT LOADED"
         return FALSE
     }
 
     ; Check ship
     if ${MyShip(exists)}
     {
-        echo "✓ Ship: ${MyShip.ToEntity.Name}"
+        echo "OK: Ship: ${MyShip.ToEntity.Name}"
     }
     else
     {
-        echo "✗ Ship: NOT LOADED"
+        echo "FAIL: Ship: NOT LOADED"
         return FALSE
     }
 
     ; Check location
     if ${Me.InSpace}
     {
-        echo "✓ Location: In Space (${Me.SolarSystemID})"
+        echo "OK: Location: In Space (${Me.SolarSystemID})"
     }
     elseif ${Me.InStation}
     {
-        echo "✓ Location: In Station (${Me.StationID})"
+        echo "OK: Location: In Station (${Me.StationID})"
     }
     else
     {
-        echo "✗ Location: UNKNOWN"
+        echo "FAIL: Location: UNKNOWN"
         return FALSE
     }
 
     ; Check UI
     if ${EVE(exists)}
     {
-        echo "✓ EVE UI: Loaded"
+        echo "OK: EVE UI: Loaded"
     }
     else
     {
-        echo "✗ EVE UI: NOT LOADED"
+        echo "FAIL: EVE UI: NOT LOADED"
         return FALSE
     }
 
@@ -978,7 +978,7 @@ function ValidateSession()
 
 ## Real-Time Monitoring
 
-> **📡 IRC Remote Monitoring:** For remote bot monitoring and alerting, IRC can send critical log messages, status updates, and alerts to an IRC channel. For cross-session coordination primitives (the `relay` command and inter-session messaging), see [17_Fleet_Operations.md](17_Fleet_Operations.md) under **LavishScript Relay System**. EVEBot's `obj_Logger` (in `core/obj_Logger.iss`) already implements the log-to-IRC pattern via its `ChatIRC:QueueMessage` call for `LOG_CRITICAL` messages -- see the Log Method with Levels section above for the dispatch code.
+> **IRC Remote Monitoring:** For remote bot monitoring and alerting, IRC can send critical log messages, status updates, and alerts to an IRC channel. For cross-session coordination primitives (the `relay` command and inter-session messaging), see [17_Fleet_Operations.md](17_Fleet_Operations.md) under **LavishScript Relay System**. EVEBot's `obj_Logger` (in `core/obj_Logger.iss`) already implements the log-to-IRC pattern via its `ChatIRC:QueueMessage` call for `LOG_CRITICAL` messages -- see the Log Method with Levels section above for the dispatch code.
 
 ### Status Display
 
@@ -1129,7 +1129,7 @@ function DiagnosePerformance()
 
     if ${AllEntities.Used} > 1000
     {
-        echo "⚠ HIGH ENTITY COUNT"
+        echo "WARNING: HIGH ENTITY COUNT"
         echo "CAUSE: Large grid (busy system/belt)"
         echo "SOLUTION:"
         echo "  - Use more specific queries"
@@ -1142,7 +1142,7 @@ function DiagnosePerformance()
 
     if ${Display.FPS} < 10
     {
-        echo "⚠ LOW FPS"
+        echo "WARNING: LOW FPS"
         echo "CAUSES:"
         echo "  - UI rendering enabled (disable 3D/UI)"
         echo "  - Too many operations per frame"
@@ -1815,7 +1815,7 @@ function DiagnoseModuleActivation(int64 moduleID)
 {
     if !${Me.GetModule[${moduleID}](exists)}
     {
-        echo "✗ Module doesn't exist"
+        echo "FAIL: Module doesn't exist"
         return
     }
 
@@ -2871,7 +2871,7 @@ echo ${myTarget}    ; Works
 
 ### Mistake 4: Forgetting to Detach Events
 
-> **⚠ Warning -- atoms leak across script reloads.** LavishScript does not garbage-collect event bindings when an objectdef instance goes away. Every `Event[...]:AttachAtom[...]` call in an `Initialize` method registers a reference to the atom against the named event, and that reference persists for the lifetime of the **InnerSpace session** unless something explicitly calls `Event[...]:DetachAtom[...]`.
+> **Warning -- atoms leak across script reloads.** LavishScript does not garbage-collect event bindings when an objectdef instance goes away. Every `Event[...]:AttachAtom[...]` call in an `Initialize` method registers a reference to the atom against the named event, and that reference persists for the lifetime of the **InnerSpace session** unless something explicitly calls `Event[...]:DetachAtom[...]`.
 >
 > This matters most under the develop-reload cycle. When you `endscript` + `runscript` the same script (or use a dev-loop hotkey that does the same), the old objectdef instance is freed -- but its atoms are still attached. On the next event fire, LavishScript invokes the stale atom references, which now point to freed memory. Symptoms range from silent no-ops to "zombie handlers" that log wrong state to hard crashes of the InnerSpace session. The longer you develop without restarting InnerSpace, the more orphans accumulate and the weirder the misbehavior gets.
 >
