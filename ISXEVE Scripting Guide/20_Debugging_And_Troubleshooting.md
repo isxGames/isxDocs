@@ -2871,18 +2871,27 @@ echo ${myTarget}    ; Works
 
 ### Mistake 4: Forgetting to Detach Events
 
+> **⚠ Warning -- atoms leak across script reloads.** LavishScript does not garbage-collect event bindings when an objectdef instance goes away. Every `Event[...]:AttachAtom[...]` call in an `Initialize` method registers a reference to the atom against the named event, and that reference persists for the lifetime of the **InnerSpace session** unless something explicitly calls `Event[...]:DetachAtom[...]`.
+>
+> This matters most under the develop-reload cycle. When you `endscript` + `runscript` the same script (or use a dev-loop hotkey that does the same), the old objectdef instance is freed -- but its atoms are still attached. On the next event fire, LavishScript invokes the stale atom references, which now point to freed memory. Symptoms range from silent no-ops to "zombie handlers" that log wrong state to hard crashes of the InnerSpace session. The longer you develop without restarting InnerSpace, the more orphans accumulate and the weirder the misbehavior gets.
+>
+> The fix is always the same: any objectdef whose `Initialize` calls `AttachAtom` must define a `Shutdown` method that calls the matching `DetachAtom`. Treat the Initialize/Shutdown pair as mandatory companions whenever events are involved -- **not optional**, even for "small" scripts you expect to reload often (especially those).
+>
+> Note that `Shutdown` is called when the script exits cleanly (including via `endscript`), so the pairing works for the normal reload path. It is **not** called if InnerSpace itself is killed or the session crashes -- but in that case the whole session terminates and atom leaks die with it, so no harm done.
+
 ```lavishscript
-; WRONG - memory leak
+; WRONG - leaks atom across every script reload
 objectdef obj_LeakyObject
 {
     method Initialize()
     {
         Event[MyEvent]:AttachAtom[This:OnMyEvent]
-        ; No shutdown method!
+        ; No Shutdown method -- atom stays attached forever, fires against
+        ; freed object on next reload.
     }
 }
 
-; RIGHT - always detach
+; RIGHT - Initialize/Shutdown pair
 objectdef obj_CleanObject
 {
     method Initialize()
