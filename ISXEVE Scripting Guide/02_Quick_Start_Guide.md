@@ -641,6 +641,7 @@ if ${Target(exists)}
 
 ---
 
+<!-- CLAUDE_SKIP_START -->
 ## Practice Exercises
 
 Try building these simple scripts to practice:
@@ -743,3 +744,4 @@ echo "Total item volume: ${Total} m3"
 ```
 
 Note: the cargo collection is only populated after the cargo hold has been opened/scanned at least once in-session. If `${CargoItems.Used}` is zero, open your cargo window in EVE and re-run.
+<!-- CLAUDE_SKIP_END -->
