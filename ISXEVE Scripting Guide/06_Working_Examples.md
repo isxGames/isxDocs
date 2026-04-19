@@ -662,7 +662,7 @@ The complete mine-asteroid pattern (entity validation, target lock, mining-laser
 
 ### Check Cargo Full (Modern API - LavishScript)
 
-**⚠️ NOTE:** Old `MyShip.CargoCapacity` / `UsedCargoCapacity` members are DEPRECATED. Use EVEWindow[Inventory] instead.
+**NOTE:** Old `MyShip.CargoCapacity` / `UsedCargoCapacity` members are DEPRECATED. Use EVEWindow[Inventory] instead.
 
 ```lavishscript
 function IsCargoFull()
@@ -751,7 +751,7 @@ function HasCargoSpace(float RequiredSpace)
 
 ### Mining Loop (.NET)
 
-**⚠️ NOTE:** This example uses deprecated cargo capacity properties for simplicity. In production .NET code, use ISXEVE's EVEWindow inventory access or implement a modern inventory wrapper.
+**NOTE:** This example uses deprecated cargo capacity properties for simplicity. In production .NET code, use ISXEVE's EVEWindow inventory access or implement a modern inventory wrapper.
 
 ```csharp
 public class MiningModule
@@ -976,7 +976,7 @@ The canonical undock implementation (`Me.Station:Undock`, wait-for-in-space, tim
 
 ## Inventory Management
 
-**⚠️ WARNING: Deprecated API Below**
+**WARNING: Deprecated API Below**
 
 Most inventory management methods shown here use DEPRECATED APIs (July 2020). See File 09 and File 13 for modern `EVEWindow[Inventory]` patterns.
 
@@ -1043,7 +1043,7 @@ function StackAllCargo()
 
 ### Check Cargo Capacity (Modern API)
 
-**⚠️ NOTE:** Use modern EVEWindow[Inventory] API for cargo checks (see examples above).
+**NOTE:** Use modern EVEWindow[Inventory] API for cargo checks (see examples above).
 
 ```lavishscript
 function GetCargoPercentUsed()
@@ -1068,7 +1068,7 @@ function GetCargoPercentUsed()
 }
 ```
 
-### ⚠️ DEPRECATED: Legacy Inventory Examples
+### DEPRECATED: Legacy Inventory Examples
 
 ```lavishscript
 ; DEPRECATED - DO NOT USE IN NEW SCRIPTS
@@ -1778,7 +1778,7 @@ echo "Total lifetime earnings: ${Stats.GetTotalEarnings} ISK"
 **CRITICAL OPTIMIZATION:** Use `Distance2` (squared distance) for range comparisons - significantly faster than `Distance` because it skips the square-root operation.
 
 ```lavishscript
-; ❌ SLOW - Distance requires expensive sqrt() calculation
+; SLOW -- Distance requires expensive sqrt() calculation
 function IsEntityInRange_SLOW(int64 EntityID, float MaxRange)
 {
     if !${Entity[${EntityID}](exists)}
@@ -1790,7 +1790,7 @@ function IsEntityInRange_SLOW(int64 EntityID, float MaxRange)
     return FALSE
 }
 
-; ✅ FAST - Distance2 is raw squared distance (no sqrt)
+; FAST -- Distance2 is raw squared distance (no sqrt)
 function IsEntityInRange_FAST(int64 EntityID, float MaxRange)
 {
     if !${Entity[${EntityID}](exists)}

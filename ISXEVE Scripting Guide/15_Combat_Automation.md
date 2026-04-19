@@ -1385,7 +1385,7 @@ objectdef obj_AdvancedCombat
 
     method LoadAmmoTypes()
     {
-        ; ⚠️ Modern Inventory API (July 2020+)
+        ; NOTE: Modern Inventory API (July 2020+)
         ; Open inventory window if not already open
         if !${EVEWindow[Inventory](exists)}
         {
