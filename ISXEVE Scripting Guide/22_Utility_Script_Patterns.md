@@ -266,8 +266,23 @@ function ReturnToSavedPosition()
 
 ### Distance Calculations
 
+LavishScript provides a built-in `Math.Distance[x1,y1,z1,x2,y2,z2]` TLO that computes 3D Euclidean distance in one call. Prefer it over a hand-rolled sqrt -- it's the idiomatic form used throughout production bots.
+
 ```lavishscript
+; Recommended: Math.Distance TLO.
+; Real-world usage: EVEBot obj_Belts.iss:177, obj_Safespots.iss:127,
+; Threads/Navigator.iss:977, obj_Ship.iss (multiple warp-completion checks).
 function CalculateDistance(float X, float Y, float Z)
+{
+	return ${Math.Distance[${Me.ToEntity.X}, ${Me.ToEntity.Y}, ${Me.ToEntity.Z}, ${X}, ${Y}, ${Z}]}
+}
+```
+
+**Educational aside (prefer `Math.Distance` above in real code):** the formula `Math.Distance` computes is the standard 3D Euclidean distance, i.e. sqrt(dx^2 + dy^2 + dz^2). Written out manually, that looks like this -- useful for understanding what the TLO does, but unnecessary verbosity in a real script.
+
+```lavishscript
+; Educational -- manual expansion of the formula. Prefer Math.Distance above.
+function CalculateDistanceManual(float X, float Y, float Z)
 {
 	variable float DeltaX
 	variable float DeltaY
