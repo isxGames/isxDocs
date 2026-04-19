@@ -1,5 +1,5 @@
 # ISXEVE Master Guide
-## Complete API Reference and Navigation Hub
+**Complete API Reference and Navigation Hub**
 
 **Extension:** ISXEVE for InnerSpace
 **Target Game:** EVE Online

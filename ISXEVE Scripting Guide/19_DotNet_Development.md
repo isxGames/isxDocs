@@ -1,7 +1,6 @@
 # DotNet Development
 
-## Scripts vs DotNet Programs
-
+**Scripts vs DotNet Programs**
 
 ## Table of Contents
 1. [Fundamental Differences](#fundamental-differences)
