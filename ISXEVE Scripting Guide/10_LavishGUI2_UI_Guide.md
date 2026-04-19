@@ -36,6 +36,7 @@
 14. [Complete Working Examples](#complete-working-examples)
 15. [Best Practices](#best-practices)
 16. [Troubleshooting](#troubleshooting)
+17. [Quick Reference](#quick-reference)
 
 ---
 
