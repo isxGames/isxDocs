@@ -23,14 +23,14 @@
 
 ### Relay System and IPC
 13. [Relay System and Inter-Process Communication](#relay-system-and-inter-process-communication-ipc)
-14. [LavishScript Relay Basics](#relay-basics)
-15. [Event System Foundation](#event-system)
-16. [Basic Relay Patterns](#basic-patterns)
-17. [UplinkManager System](#uplink-system)
-18. [Fleet Coordination Patterns](#fleet-patterns)
-19. [IRC Bridge Integration](#irc-bridge)
+14. [LavishScript Relay Basics](#lavishscript-relay-basics)
+15. [Event System Foundation](#event-system-foundation)
+16. [Basic Relay Patterns](#basic-relay-patterns)
+17. [UplinkManager System](#uplinkmanager-system)
+18. [Fleet Coordination Patterns](#fleet-coordination-patterns)
+19. [IRC Bridge Integration](#irc-bridge-integration)
 20. [Uplink Networking](#uplink-networking)
-21. [Performance Considerations](#performance)
+21. [Performance Considerations](#performance-considerations)
 22. [Best Practices](#best-practices)
 23. [Complete Working Examples (Relay)](#complete-working-examples-relay)
 
