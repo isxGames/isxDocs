@@ -16,8 +16,8 @@
 1. [Installation Verification](#installation-verification)
 2. [Your First Script](#your-first-script)
 3. [Understanding the Script](#understanding-the-script)
-4. [Running the Script](#running-the-script)
-5. [Common First Scripts](#common-first-scripts)
+4. [Common First Scripts](#common-first-scripts)
+5. [Running Scripts](#running-scripts)
 6. [Next Steps](#next-steps)
 7. [Troubleshooting](#troubleshooting)
 
