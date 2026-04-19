@@ -1929,6 +1929,23 @@ LogFile:Write["Bot started at ${Time}\n"]
 LogFile:Close[]
 ```
 
+**Escape Sequences**:
+
+LavishScript supports the following escape sequences inside double-quoted command parameters (such as the string passed to `Write`, `echo`, and similar commands):
+
+| Escape | Character | Meaning                     |
+|--------|-----------|-----------------------------|
+| `\a`   | 7         | ASCII beep                  |
+| `\e`   | 27        | ESC character               |
+| `\n`   | 10        | Line feed (newline)         |
+| `\r`   | 13        | Carriage return             |
+| `\t`   | 9         | Horizontal tab              |
+| `\xFF` | 0-255     | Hex character (two digits)  |
+| `\"`   | 34        | Literal double-quote        |
+| `\\`   | 92        | Literal backslash           |
+
+These are command-parser escapes — they apply to any double-quoted parameter passed to LavishScript commands, not just string-literal positions. For example, `echo "line1\nline2"` prints two lines, and `LogFile:Write["entry\t${Value}\n"]` writes a tab-separated record terminated with a newline.
+
 ### Settings Files (XML)
 
 **Persistent Configuration**:
