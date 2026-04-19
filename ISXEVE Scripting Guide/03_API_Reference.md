@@ -214,8 +214,6 @@ else
 - Wallet
 - Standings
 
-**Wiki Reference**: `IsxeveWiki/ISXEVE/Me_(Object_Type).html`
-
 ### DataType Inheritance
 
 **CRITICAL CONCEPT**: ${Me} is a `character` datatype, which inherits from `pilot`, which inherits from `being`.
@@ -487,8 +485,6 @@ echo "Autopilot On: ${Me.AutoPilotOn}"
 - Cargo and inventory
 - Drones
 - Speed and navigation state
-
-**Wiki Reference**: `IsxeveWiki/ISXEVE/MyShip_(Object_Type).html`
 
 **CRITICAL**: ${MyShip} is probably the **most used object** in combat/mining bots.
 
@@ -809,8 +805,6 @@ echo "Signature Radius: ${MyShip.ToEntity.Radius}"
 - Game time and server status
 - Session information
 - Universe queries
-
-**Wiki Reference**: `IsxeveWiki/ISXEVE/EVE_(Object_Type).html`
 
 ### Execute Method (CRITICAL)
 
@@ -1632,22 +1626,6 @@ EVE:Execute[OpenInventory]
 
 ---
 
-## Wiki References
-
-**Me Object**:
-- `IsxeveWiki/ISXEVE/Me_(Object_Type).html` - Complete Me reference
-
-**MyShip Object**:
-- `IsxeveWiki/ISXEVE/MyShip_(Object_Type).html` - Complete MyShip reference
-
-**EVE Object**:
-- `IsxeveWiki/ISXEVE/EVE_(Object_Type).html` - Complete EVE reference
-
-**Other Objects**:
-- `IsxeveWiki/ISXEVE/` - Main index for all ISXEVE objects
-
----
-
 ## Entity System and Targeting
 
 **Complete Guide to Entity Management, Queries, and Targeting Mechanics**
@@ -1697,8 +1675,6 @@ Game World
 - **Type ID** (int) - Item type (e.g., 1230 = Veldspar)
 - **Group ID** (int) - Group type (e.g., 25 = Frigate)
 - **Category ID** (int) - Broad category (e.g., 11 = Ship)
-
-**Wiki Reference**: `IsxeveWiki/ISXEVE/Entity_(Object_Type).html`
 
 ---
 
@@ -3214,20 +3190,6 @@ ${entity.IsLockedTarget}  ; Currently locked?
 
 ---
 
-## Wiki References
-
-**Entity Object**:
-- `IsxeveWiki/ISXEVE/Entity_(Object_Type).html` - Complete entity reference
-
-**EVE Query Methods**:
-- `IsxeveWiki/ISXEVE/EVE_(Object_Type).html` - QueryEntities, GetEntities
-
-**Examples**:
-- Search Evebot source for "GetEntities" to see real-world usage
-- Search Tehbot source for entity iteration patterns
-
----
-
 ## Movement, Navigation, and Autopilot
 
 **Complete Guide to Ship Movement, Warping, Docking, and Navigation Patterns**
@@ -4574,20 +4536,6 @@ See the canonical [Movement Modes table](#quick-reference-tables) for the consol
 
 ---
 
-## Wiki References
-
-**Entity Object** (for WarpTo, Dock, Jump methods):
-- `IsxeveWiki/ISXEVE/Entity_(Object_Type).html`
-
-**EVE Execute Commands**:
-
-- `IsxeveWiki/ISXEVE/EVE_(Object_Type).html`
-
-**MyShip Movement**:
-- `IsxeveWiki/ISXEVE/MyShip_(Object_Type).html`
-
----
-
 ## Module Management and Ship Control
 
 **Complete Guide to Module Activation, Ship Control, and Combat/Mining Patterns**
@@ -4639,8 +4587,6 @@ See the canonical [Movement Modes table](#quick-reference-tables) for the consol
 - Cannot be activated/deactivated
 - Passive bonuses only
 - Not covered in detail (cannot control via script)
-
-**Wiki Reference**: `IsxeveWiki/ISXEVE/Module_(Object_Type).html`
 
 ---
 
@@ -5803,19 +5749,6 @@ if ${module.Charge(exists)}
 
 ---
 
-## Wiki References
-
-**Module Object**:
-- `IsxeveWiki/ISXEVE/Module_(Object_Type).html` - Complete module reference
-
-**Item Object** (modules inherit from item):
-- `IsxeveWiki/ISXEVE/Item_(Object_Type).html` - Item object reference
-
-**MyShip Module Access**:
-- `IsxeveWiki/ISXEVE/MyShip_(Object_Type).html` - MyShip.Module reference
-
----
-
 ## Complete Guide to Cargo Management, Hangar Access, and Item Handling
 
 ---
@@ -5940,8 +5873,6 @@ Station
 - ❌ Market transactions (very limited)
 
 **Result**: Most cargo bots focus on **reading cargo state** rather than manipulating items. Item movement typically done manually or via complex UI clicking.
-
-**Wiki Reference**: `IsxeveWiki/ISXEVE/Item_(Object_Type).html`
 
 ---
 
@@ -6831,19 +6762,6 @@ for (i:Set[1]; ${i} <= ${count}; i:Inc)
 
 ---
 
-## Wiki References
-
-**Item Object**:
-- `IsxeveWiki/ISXEVE/Item_(Object_Type).html` - Complete item reference
-
-**MyShip Cargo**:
-- `IsxeveWiki/ISXEVE/MyShip_(Object_Type).html` - Cargo methods and members
-
-**Examples**:
-- Search Evebot for "GetCargo" and "CargoCapacity" for real patterns
-
----
-
 ## UI Windows and Menus
 
 **Complete Guide to EVE UI Interaction via ISXEVE**
@@ -7106,12 +7024,11 @@ EVE:Execute[CommandName, param1, param2, ...]
 ### Finding Command Names
 
 **Methods**:
-1. **Wiki**: `IsxeveWiki/ISXEVE/EVE_(Object_Type).html` - Lists many commands
-2. **Trial and Error**: Try logical names (CmdOpen*, Cmd*, Open*)
-3. **Example Scripts**: Search Evebot/Yamfa/Tehbot for `EVE:Execute` usage
-4. **InnerSpace Console**: Some commands shown in console when you manually use UI
+1. **Trial and Error**: Try logical names (CmdOpen*, Cmd*, Open*)
+2. **Example Scripts**: Search Evebot/Yamfa/Tehbot for `EVE:Execute` usage
+3. **InnerSpace Console**: Some commands shown in console when you manually use UI
 
-**IMPORTANT**: Wiki documentation is **incomplete**. Many working commands are undocumented. Example scripts are the best reference.
+**IMPORTANT**: Example scripts are the best reference for EVE:Execute command names.
 
 ---
 
@@ -8429,20 +8346,6 @@ if ${EVEWindow[inventory](exists)}
 
 ---
 
-## Wiki References
-
-**EVE Object**:
-- `IsxeveWiki/ISXEVE/EVE_(Object_Type).html` - EVE:Execute command reference
-
-**EVEWindow Object**:
-- `IsxeveWiki/ISXEVE/EVEWindow_(Object_Type).html` - Window object reference
-
-**Common Commands** (scattered across wiki):
-- Search for "Cmd*" in wiki for command names
-- Example scripts are better reference than wiki (wiki is incomplete)
-
----
-
 ## Fleet and Social Systems
 
 **Complete Guide to Fleet Management, Social Interactions, and Yamfa-Style Coordination**
@@ -8479,8 +8382,6 @@ Fleet (up to 256 members)
 - `${Me.InFleet}` - Am I in a fleet?
 - `${Me.Fleet}` - Fleet object (if in fleet)
 - `${Me.Fleet.IsFleetCommander}` - Am I fleet commander?
-
-**Wiki Reference**: `IsxeveWiki/ISXEVE/Fleet_(Object_Type).html`
 
 ---
 
@@ -9588,22 +9489,6 @@ if ${Local["Enemy"](exists)}
 4. **Clean up relay on exit** - Use `atexit` atom
 5. **Snapshot fleet members** - List can change during iteration
 6. **Check Local for hostiles** - Safety pattern for all bots
-
----
-
-## Wiki References
-
-**Fleet Object**:
-- `IsxeveWiki/ISXEVE/Fleet_(Object_Type).html` - Fleet object reference
-
-**Fleet Member Object**:
-- `IsxeveWiki/ISXEVE/FleetMember_(Object_Type).html` - Fleet member reference
-
-**Local Object**:
-- `IsxeveWiki/ISXEVE/Local_(Object_Type).html` - Local chat reference
-
-**Relay System** (see [07_Advanced_Patterns_And_Examples.md](07_Advanced_Patterns_And_Examples.md)):
-- `LavishScriptWiki/LavishScript/Commands/relay.html` - Relay command reference
 
 ---
 
