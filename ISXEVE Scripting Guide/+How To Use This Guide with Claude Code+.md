@@ -148,17 +148,7 @@ The agent runs in an isolated context and:
 - Debugs issues
 - Has full edit authority
 
-**Large File Handling:** The agent knows which documentation files are large and can spawn sub-subagents to read them if needed:
-- `03_API_Reference.md`
-- `10_LavishGUI2_UI_Guide.md`
-- `05_Patterns_And_Best_Practices.md`
-- `07_Advanced_Patterns_And_Examples.md`
-- `17_Fleet_Operations.md`
-- `11_LavishGUI1_to_LavishGUI2_Migration.md`
-- `16_Mining_And_Hauling.md`
-- `18_Bot_Architecture_Analysis.md`
-- `20_Debugging_And_Troubleshooting.md`
-- `01_LavishScript_Fundamentals.md`
+**Large File Handling:** The agent knows which documentation files are large (3,000+ lines) and can spawn sub-subagents to read them if needed. For the canonical list — including file sizes and handling guidance for `CHANGES_FILE` — see the **Context Efficiency** section in [ISXEVE-Expert.md](Claude%20AI%20Commands%20(optional)/ISXEVE-Expert.md).
 
 ---
 
