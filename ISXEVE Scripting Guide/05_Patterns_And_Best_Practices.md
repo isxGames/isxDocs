@@ -4291,7 +4291,7 @@ function LogContext(string level, string message)
     ; Add ship context
     if ${MyShip(exists)}
     {
-        context:Concat["[${MyShip.ToEntity.Name}] "]
+        context:Concat["[${MyShip.Name}] "]
     }
 
     ; Add state context
