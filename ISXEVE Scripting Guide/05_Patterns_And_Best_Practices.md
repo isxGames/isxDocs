@@ -1680,6 +1680,8 @@ function MainLoop()
 }
 ```
 
+**Why**: Atoms are contractually guaranteed to run to completion in a single frame with no context switching. The LavishScript engine does not allow `wait`, `waitframe`, or any other command that would span frames inside an atom. Observable symptom: the `wait` does not delay execution — the atom keeps running straight through, so any code after the `wait` executes in the same frame as the first statement. State that the author assumed would change during the wait window (lock acquisition, module cycle, warp completion, etc.) is still unchanged, leading to race conditions, false-positive state checks, or silent logic failures. Use `TimedCommand` (schedule a delayed call) or a flag-plus-check-in-main-loop pattern instead.
+
 ### Mistake 7: Not Handling Ship Changes
 
 ```lavish
