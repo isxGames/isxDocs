@@ -6047,8 +6047,13 @@ objectdef obj_ConfigUI
 
     method CreateUI()
     {
-        ; Create config window
-        ui -load config_ui.xml
+        ; Create config window (LGUI2 JSON package — see config_ui.json below)
+        LGUI2:LoadPackageFile[config_ui.json]
+    }
+
+    method Shutdown()
+    {
+        LGUI2:UnloadPackageFile[config_ui.json]
     }
 
     ; Called when behavior dropdown changes
@@ -6088,45 +6093,120 @@ objectdef obj_ConfigUI
 }
 ```
 
-**config_ui.xml:**
+**config_ui.json** — LGUI2 package (see [10_LavishGUI2_UI_Guide.md](10_LavishGUI2_UI_Guide.md) for the full widget reference):
 
-```xml
-<?xml version='1.0' encoding='UTF-8'?>
-<LGUI2>
-    <window name='ConfigWindow' width='400' height='600'>
-        <label>Bot Configuration</label>
+```json
+{
+    "$schema": "http://www.lavishsoft.com/schema/lgui2Package.json",
+    "elements": [
+        {
+            "type": "window",
+            "name": "ConfigWindow",
+            "title": "Bot Configuration",
+            "width": 400,
+            "height": 600,
+            "content": {
+                "type": "stackpanel",
+                "orientation": "vertical",
+                "margin": 10,
+                "children": [
+                    {
+                        "type": "textblock",
+                        "text": "Behavior:",
+                        "margin": [0, 10, 0, 4]
+                    },
+                    {
+                        "type": "combobox",
+                        "name": "BehaviorCombo",
+                        "width": 200,
+                        "items": [
+                            { "type": "textblock", "text": "Idle" },
+                            { "type": "textblock", "text": "Mining" },
+                            { "type": "textblock", "text": "Combat" },
+                            { "type": "textblock", "text": "Hauling" }
+                        ],
+                        "eventHandlers": {
+                            "onSelectionChanged": {
+                                "type": "method",
+                                "object": "ConfigUI",
+                                "method": "OnBehaviorChanged"
+                            }
+                        }
+                    },
 
-        <!-- Behavior Selection -->
-        <label y='50'>Behavior:</label>
-        <combobox name='BehaviorCombo' x='100' y='50' width='200'>
-            <item value='Idle'>Idle</item>
-            <item value='Mining'>Mining</item>
-            <item value='Combat'>Combat</item>
-            <item value='Hauling'>Hauling</item>
-            <onselect>ConfigUI:OnBehaviorChanged</onselect>
-        </combobox>
+                    {
+                        "type": "textblock",
+                        "text": "Min Shield %:",
+                        "margin": [0, 20, 0, 4]
+                    },
+                    {
+                        "type": "stackpanel",
+                        "orientation": "horizontal",
+                        "children": [
+                            {
+                                "type": "slider",
+                                "name": "MinShieldSlider",
+                                "width": 200,
+                                "height": 20,
+                                "minimum": 0,
+                                "maximum": 100,
+                                "orientation": "horizontal",
+                                "eventHandlers": {
+                                    "onValueChanged": {
+                                        "type": "method",
+                                        "object": "ConfigUI",
+                                        "method": "OnMinShieldChanged"
+                                    }
+                                }
+                            },
+                            {
+                                "type": "textblock",
+                                "name": "MinShieldText",
+                                "text": "50%",
+                                "margin": [10, 0, 0, 0]
+                            }
+                        ]
+                    },
 
-        <!-- Min Shield Slider -->
-        <label y='100'>Min Shield %:</label>
-        <slider name='MinShieldSlider' x='100' y='100' width='200' min='0' max='100'>
-            <onchange>ConfigUI:OnMinShieldChanged</onchange>
-        </slider>
-        <label name='MinShieldText' x='310' y='100'>50%</label>
+                    {
+                        "type": "checkbox",
+                        "name": "AutoStartCheckbox",
+                        "content": "Auto Start",
+                        "margin": [0, 20, 0, 0],
+                        "checkedBinding": {
+                            "pullFormat": "${Config.General.AutoStart}",
+                            "pushFormat": ["Config.General:SetAutoStart[", "]"]
+                        }
+                    },
 
-        <!-- Auto Start Checkbox -->
-        <checkbox name='AutoStartCheckbox' x='10' y='150'>
-            <label>Auto Start</label>
-            <onclick>Config.General:SetAutoStart[${This.Checked}]</onclick>
-        </checkbox>
-
-        <!-- Save Button -->
-        <button name='SaveButton' x='150' y='550' width='100'>
-            <label>Save Config</label>
-            <onclick>ConfigUI:OnSaveClicked</onclick>
-        </button>
-    </window>
-</LGUI2>
+                    {
+                        "type": "button",
+                        "name": "SaveButton",
+                        "content": "Save Config",
+                        "width": 100,
+                        "margin": [0, 30, 0, 0],
+                        "horizontalAlignment": "center",
+                        "eventHandlers": {
+                            "onPress": {
+                                "type": "method",
+                                "object": "ConfigUI",
+                                "method": "OnSaveClicked"
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}
 ```
+
+> **Note:** This example was converted from a hybrid XML/JSON stub (an `<LGUI2>`
+> XML root wrapping lowercase LGUI1-style widget tags — invalid as either
+> LGUI1 XML or LGUI2 JSON) to canonical LGUI2 JSON. LGUI2 is JSON-based; see
+> [10_LavishGUI2_UI_Guide.md](10_LavishGUI2_UI_Guide.md) for the full reference
+> and [11_LavishGUI1_to_LavishGUI2_Migration.md](11_LavishGUI1_to_LavishGUI2_Migration.md)
+> if you need to migrate an existing LGUI1 XML file.
 
 ### Example 3: Fleet Config Sync
 
