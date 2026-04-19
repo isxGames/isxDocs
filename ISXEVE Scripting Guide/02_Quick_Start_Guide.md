@@ -153,7 +153,7 @@ function main()
 In the InnerSpace console:
 
 ```lavishscript
-run MyFirstScript
+runscript MyFirstScript
 ```
 
 **Expected output:**
@@ -340,7 +340,7 @@ function main()
 
 **Usage:**
 1. Target something in game
-2. Run: `run TargetInfo`
+2. Run: `runscript TargetInfo`
 
 ### Example 4: Auto-Lock Target
 
@@ -408,10 +408,10 @@ function main()
 
 ```lavishscript
 ; Run a script
-run ScriptName
+runscript ScriptName
 
 ; Run with parameters
-run ScriptName "param1" "param2"
+runscript ScriptName "param1" "param2"
 
 ; End a running script
 endscript ScriptName
@@ -419,8 +419,9 @@ endscript ScriptName
 ; List running scripts
 scripts
 
-; Reload a script (if changed)
-runscript ScriptName -reload
+; Reload a script (if changed) - end it first, then run it again
+endscript ScriptName
+runscript ScriptName
 ```
 
 ### Script Organization
@@ -465,7 +466,7 @@ ext load isxeve
 **Check:**
 1. File has `.iss` extension
 2. File is in `InnerSpace/Scripts/` directory
-3. Using correct syntax: `run ScriptName` (no `.iss`)
+3. Using correct syntax: `runscript ScriptName` (no `.iss`)
 
 ### Problem: "${Me} is NULL" or similar
 
