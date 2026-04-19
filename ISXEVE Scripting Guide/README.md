@@ -283,7 +283,7 @@ Found an error or have an improvement? This documentation was generated using ac
 
 - **v2.0 (2025-10-27)**
   
-  - Reorganized into 23 comprehensive guides (added 7 game-agnostic guides)
+  - Reorganized into 22 numbered guides (added 7 game-agnostic guides)
   - Added 7 game-agnostic UI/system guides from ISXEQ2 documentation
     - LavishGUI 1 UI Guide (08)
     - Advanced LGUI1 Patterns (09)
