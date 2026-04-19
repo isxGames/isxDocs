@@ -4605,7 +4605,7 @@ objectdef obj_Configuration_Base
 
 ### Derived Configuration Classes (Approach B: Inheritance + Setting Macro)
 
-For the alternative EVEBot approach using manual member/method pairs, see [Sub-Configuration Pattern (Approach A)](#sub-configuration-pattern-approach-a-manual-membermember-pairs) above.
+For the alternative EVEBot approach using manual member/method pairs, see [Sub-Configuration Pattern (Approach A)](#sub-configuration-pattern-approach-a-manual-membermethod-pairs) above.
 
 ```lavishscript
 objectdef obj_Configuration_Common inherits obj_Configuration_Base
