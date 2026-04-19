@@ -5,16 +5,16 @@
 
 ## Table of Contents
 1. [Fundamental Differences](#fundamental-differences)
-2. [LavishScript Scripts (.iss files)](#lavishscript-scripts)
+2. [LavishScript Scripts (.iss files)](#lavishscript-scripts-iss-files)
 3. [DotNet Programs (.exe/.dll files)](#dotnet-programs-exedll-files)
 4. [Language Comparison](#language-comparison)
 5. [Development Workflow](#development-workflow)
 6. [Performance Comparison](#performance-comparison)
 7. [Debugging Capabilities](#debugging-capabilities)
-8. [Deployment and Distribution](#deployment)
-9. [Maintenance and Updates](#maintenance)
+8. [Deployment and Distribution](#deployment-and-distribution)
+9. [Maintenance and Updates](#maintenance-and-updates)
 10. [Hybrid Approaches](#hybrid-approaches)
-11. [Migration Strategies](#migration)
+11. [Migration Strategies](#migration-strategies)
 12. [Decision Matrix](#decision-matrix)
 
 ---
