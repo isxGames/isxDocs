@@ -2257,7 +2257,7 @@ function atexit()
 
 ## Decision Making and Logic Patterns
 
-**⚠️ API Note:** Some examples use simplified cargo checks (`MyShip.CargoFreeSpace`) to illustrate decision logic — note that `MyShip.CargoFreeSpace` is not present in the official changelog and should be treated as unsupported. For production code, use the modern inventory API: compute free space as `${Math.Calc[${EVEWindow[Inventory].ChildWindow[ShipCargo].Capacity} - ${EVEWindow[Inventory].ChildWindow[ShipCargo].UsedCapacity}]}`. See Files 13 and 15 for modern cargo handling.
+**⚠️ API Note:** Some examples use simplified cargo checks (`MyShip.CargoFreeSpace`) to illustrate decision logic — note that `MyShip.CargoFreeSpace` is not present in the official changelog and should be treated as unsupported. For production code, use the modern inventory API: compute free space as `${Math.Calc[${EVEWindow[Inventory].ChildWindow[ShipCargo].Capacity} - ${EVEWindow[Inventory].ChildWindow[ShipCargo].UsedCapacity}]}`. See [16_Mining_And_Hauling.md](16_Mining_And_Hauling.md) and [21_Advanced_Scripting_Patterns.md](21_Advanced_Scripting_Patterns.md) for modern cargo handling.
 
 ---
 
