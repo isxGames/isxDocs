@@ -46,7 +46,7 @@ function GetClosestNPC()
     {
         do
         {
-            ; Use Distance2 (squared distance) for comparisons - 3-5x faster
+            ; Use Distance2 (squared distance) for comparisons - significantly faster (skips sqrt)
             if ${NPC.Value.Distance2} < ${ClosestDist2}
             {
                 ClosestID:Set[${NPC.Value.ID}]
@@ -60,7 +60,7 @@ function GetClosestNPC()
 }
 ```
 
-**Performance Note:** This function uses `Distance2` (squared distance) instead of `Distance` for comparisons. Distance2 is 3-5x faster because it avoids expensive square root calculations. When finding the closest entity, we only need to compare distances, not calculate the actual distance value.
+**Performance Note:** This function uses `Distance2` (squared distance) instead of `Distance` for comparisons. Distance2 is significantly faster because it returns the raw squared value and avoids the square-root operation that `Distance` performs. When finding the closest entity, we only need to compare distances, not calculate the actual distance value.
 
 ### Find Closest Entity (.NET)
 
@@ -1447,6 +1447,11 @@ _profiler.End();
 ```lavishscript
 objectdef obj_Logger
 {
+    ; Note: ${Script.CurrentDirectory} may or may not include a trailing separator
+    ; depending on how the script was loaded. The forward-slash concatenation below
+    ; is the canonical EVEBot/Tehbot idiom and LavishScript accepts paths like
+    ; "C:/path//bot.log" without issue, but for strict path construction you can
+    ; test ${Script.CurrentDirectory.Right[1].Equal["/"]} before concatenating.
     variable string LogFile = "${Script.CurrentDirectory}/bot.log"
 
     method Log(string Message, int Level)
@@ -1770,7 +1775,7 @@ echo "Total lifetime earnings: ${Stats.GetTotalEarnings} ISK"
 
 ### Distance vs Distance2 Performance (LavishScript)
 
-**CRITICAL OPTIMIZATION:** Use `Distance2` (squared distance) for range comparisons - 3-5x faster than `Distance`.
+**CRITICAL OPTIMIZATION:** Use `Distance2` (squared distance) for range comparisons - significantly faster than `Distance` because it skips the square-root operation.
 
 ```lavishscript
 ; ❌ SLOW - Distance requires expensive sqrt() calculation
@@ -1804,7 +1809,7 @@ function IsEntityInRange_FAST(int64 EntityID, float MaxRange)
 **Why this matters:**
 - `Distance` = sqrt(x² + y² + z²) → expensive square root operation
 - `Distance2` = x² + y² + z² → no square root, just multiplication/addition
-- Performance gain: 3-5x faster in tight loops with many entities
+- Performance gain: noticeably faster in tight loops with many entities (no sqrt per comparison)
 - Use Distance2 for: range checks, finding closest entity, distance comparisons
 - Use Distance only when: you need the actual distance value for display/logging
 
