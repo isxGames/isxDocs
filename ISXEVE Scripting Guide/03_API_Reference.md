@@ -72,7 +72,7 @@
 56. [Timing and Cycle Management](#timing-and-cycle-management)
 57. [Performance Optimization (Modules)](#performance-optimization-1)
 58. [Critical Gotchas (Modules)](#critical-gotchas-3)
-59. [Anti-Patterns (Modules)](#anti-patterns)
+59. [Anti-Patterns (Modules)](#anti-patterns-2)
 
 ### Inventory and Cargo
 60. [Inventory and Cargo Systems](#inventory-and-cargo-systems)
@@ -123,7 +123,7 @@
 101. [Common Patterns from Yamfa](#common-patterns-from-yamfa)
 102. [Multi-Boxing Patterns](#multi-boxing-patterns)
 103. [Critical Gotchas (Fleet)](#critical-gotchas-4)
-104. [Anti-Patterns (Fleet)](#anti-patterns-1)
+104. [Anti-Patterns (Fleet)](#anti-patterns-3)
 
 ### Quick Reference
 105. [Quick Reference Tables](#quick-reference-tables)
