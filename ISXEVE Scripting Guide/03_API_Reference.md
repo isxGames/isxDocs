@@ -8785,10 +8785,18 @@ if ${IsPilotInLocal["Enemy"]}
 ### Hostile Detection in Local
 
 ```lavish
+; Variable declarations are legal at script-file scope.
 variable(global) string[] HOSTILE_PILOTS
-HOSTILE_PILOTS:Insert["Enemy1"]
-HOSTILE_PILOTS:Insert["Enemy2"]
-HOSTILE_PILOTS:Insert["Enemy3"]
+
+; Runtime population (:Insert, :Set, etc.) is NOT legal at script scope —
+; LavishScript only permits declarations at the top level. Wrap population
+; in a function called from main().
+function LoadHostilePilots()
+{
+    HOSTILE_PILOTS:Insert["Enemy1"]
+    HOSTILE_PILOTS:Insert["Enemy2"]
+    HOSTILE_PILOTS:Insert["Enemy3"]
+}
 
 function CheckForHostilesInLocal()
 {
@@ -8805,16 +8813,22 @@ function CheckForHostilesInLocal()
     return FALSE
 }
 
-; Main loop
-while TRUE
+function main()
 {
-    if ${CheckForHostilesInLocal}
-    {
-        call EmergencyDock
-        break
-    }
+    call LoadHostilePilots
 
-    wait 1000
+    while TRUE
+    {
+        ; Function return values are accessed via ${Return} after call.
+        call CheckForHostilesInLocal
+        if ${Return}
+        {
+            call EmergencyDock
+            break
+        }
+
+        wait 1000
+    }
 }
 ```
 
