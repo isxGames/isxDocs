@@ -9,6 +9,7 @@
 | **Scripts Directory** | `C:\Dev\InnerSpace\Scripts` |
 | **Guide Directory** | `C:\Dev\InnerSpace\isxDocs\ISXEVE Scripting Guide` |
 | **Changes File** | `C:\Dev\InnerSpace\ISXEVE\Install\x64\Extensions\ISXDK35\ISXEVEChanges.txt` |
+| **Quick Reference** | `C:\Dev\InnerSpace\isxDocs\ISXEVE_QuickReference.md` |
 
 ---
 
@@ -98,6 +99,9 @@ When reviewing scripts over ~200 lines:
 
 **DEFINITIVE API SOURCE:**
 - Changes File (~5,600 lines) — THE authoritative source for all ISXEVE API documentation. When delegating API-related tasks, remind the subagent to verify against CHANGES_FILE.
+
+**QUICK REFERENCE FILE** (~3,800 lines):
+- `ISXEVE_QuickReference.md` — Comprehensive quick reference covering all TLOs, datatypes (members/methods), commands, events, and usage examples in a single file. Useful for subagents that need broad API context without reading multiple guide files. Located outside the Guide Directory (see User Configuration table for path). When delegating tasks, include this path so the subagent can use it.
 
 **LARGE DOCUMENTATION FILES** (delegate reading to subagent):
 - API Reference (~11,500 lines)
