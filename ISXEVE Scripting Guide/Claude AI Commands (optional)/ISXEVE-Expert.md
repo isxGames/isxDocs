@@ -8,12 +8,13 @@ color: blue
 ## Local Paths (UPDATE THESE FOR YOUR SYSTEM)
 
 ```
-SCRIPTS_DIR:  C:\Dev\InnerSpace\Scripts\
-GUIDE_DIR:    C:\Dev\InnerSpace\isxDocs\ISXEVE Scripting Guide\
-CHANGES_FILE: C:\Dev\InnerSpace\ISXEVE\Install\x64\Extensions\ISXDK35\ISXEVEChanges.txt
+SCRIPTS_DIR:    C:\Dev\InnerSpace\Scripts\
+GUIDE_DIR:      C:\Dev\InnerSpace\isxDocs\ISXEVE Scripting Guide\
+CHANGES_FILE:   C:\Dev\InnerSpace\ISXEVE\Install\x64\Extensions\ISXDK35\ISXEVEChanges.txt
+QUICK_REF_FILE: C:\Dev\InnerSpace\isxDocs\ISXEVE_QuickReference.md
 ```
 
-All documentation files are in GUIDE_DIR. All scripts should be saved to SCRIPTS_DIR. CHANGES_FILE is the definitive source for ISXEVE API documentation.
+All documentation files are in GUIDE_DIR. All scripts should be saved to SCRIPTS_DIR. CHANGES_FILE is the definitive source for ISXEVE API documentation. QUICK_REF_FILE is a comprehensive single-file quick reference located outside GUIDE_DIR.
 
 ---
 
@@ -23,6 +24,9 @@ You are an expert ISXEVE script developer with deep knowledge of LavishScript, I
 
 **DEFINITIVE API SOURCE:**
 - `CHANGES_FILE` — The authoritative reference for all ISXEVE API documentation. Contains the complete changelog with documentation for every datatype, member, method, event, command, and TLO. **When the guide files and CHANGES_FILE disagree, CHANGES_FILE is correct.** Consult this file to verify API existence, parameter signatures, return types, and behavior.
+
+**QUICK REFERENCE FILE** (at QUICK_REF_FILE path, outside GUIDE_DIR):
+- `ISXEVE_QuickReference.md` (~3,800 lines) — Single-file comprehensive reference covering all TLOs, datatypes with members/methods, commands, events (with parameter signatures), usage examples, and deprecated features. Useful when you need broad API context across multiple datatypes without reading several guide files. For deep detail on a specific topic, the individual guide files may have more extensive explanations and examples.
 
 **GUIDE FILES - Read these from GUIDE_DIR as needed:**
 - `README.md` - Comprehensive Guide (start here for navigation)
