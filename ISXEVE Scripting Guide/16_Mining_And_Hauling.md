@@ -745,7 +745,7 @@ function ManageMiningTarget()
 
 ```lavishscript
 ; ===== CARGO STATUS CHECKING =====
-; ⚠️ Modern Inventory API (July 2020+)
+; NOTE: Modern Inventory API (July 2020+)
 
 function ShouldReturnToStation()
 {
@@ -1157,7 +1157,7 @@ function MiningPulse()
 
 function StationPulse()
 {
-    ; ⚠️ Modern Inventory API (July 2020+)
+    ; NOTE: Modern Inventory API (July 2020+)
     ; Open inventory to check cargo
     if !${EVEWindow[Inventory](exists)}
     {
@@ -1323,7 +1323,7 @@ function DiagnoseMinerFailure(int moduleIndex, int64 asteroidID)
 ### Problem 2: Cargo Management Issues
 
 ```lavishscript
-; ⚠️ Modern Inventory API (July 2020+)
+; NOTE: Modern Inventory API (July 2020+)
 function DiagnoseCargoIssue()
 {
     ; Open inventory window if not open
@@ -3051,7 +3051,7 @@ if ${CheckGankRisk}
 ### Calculate Cargo Value
 
 ```lavishscript
-; ⚠️ Modern Inventory API (July 2020+)
+; NOTE: Modern Inventory API (July 2020+)
 member:float CargoValue()
 {
     ; Open inventory if needed
@@ -3637,6 +3637,17 @@ function DiagnosticReport()
 
 ## Summary
 
-See the [Table of Contents](#table-of-contents) above for the full topic list.
+This chapter covered two closely related bot archetypes — **mining bots** (ore extraction via asteroid/ice belts, survey scanners, module cycling, Orca support) and **hauling bots** (cargo logistics, autopilot navigation, station operations, fleet pickup, stealth hauling). Both share fundamentals around cargo capacity checks, session-change timing, and safety-first state machines.
 
-**Key Takeaway**: Hauling bots prioritize **SAFETY FIRST** - always check for hostiles, have emergency dock procedures, and use the FLEE state liberally. A successful hauler is one that doesn't get blown up!
+**Key takeaways:**
+
+- **Safety first, always.** Hauling and mining both operate in space where gankers, warp scramblers, and low-sec routes are constant threats. Detect hostiles in local (`${Local.PilotCount}`), `${Ship.IsPod}` for pod safety, and use FLEE / HARDSTOP states aggressively. A working bot that survives is worth more than an efficient one that dies.
+- **Belt/asteroid selection drives productivity.** See [Asteroid Selection Patterns](#asteroid-selection-patterns) for three production approaches: nearest-target, ore-type-priority (with an `OreValues` collection), and grouped-target selection. Choose based on ore-value priorities and fleet composition.
+- **Use the modern Inventory API for cargo access.** Prefer `EVEWindow[Inventory].ChildWindow[ShipCargo]` (and `.ChildWindow[ShipOreHold]` / `.ChildWindow[FleetHangar]` where relevant) over legacy `MyShip:GetCargo` iteration. The `; NOTE: Modern Inventory API (July 2020+)` comment marks code blocks that follow this convention.
+- **Item-type metadata lookups require numeric TypeIDs.** ISXEVE has no name-based item-info TLO. Use `${EVE.ItemInfo[<typeID>].Volume}` (or other `iteminfo` members) after resolving the TypeID — typically via a script-maintained name→TypeID collection mirroring the `OreTypeIDs` pattern in [Calculate Optimal Load](#calculate-optimal-load).
+- **Mode 3 = Warping.** Warp-wait loops use `while ${Me.ToEntity.Mode} == 3` — with a timeout guard to handle stuck-warp edge cases. See [Common Problems > Problem 1: Warp Wait Gets Stuck](#problem-1-warp-wait-gets-stuck) for the canonical timeout-bounded pattern.
+- **Session changes need explicit waits.** After `:Dock`, `:Undock`, or `:Jump`, insert at least `wait 50` to let the session change begin, then poll state with a timeout until the change completes. Skipping this causes "session change timeout" errors.
+- **`Ship` is an EVEBot wrapper, not vanilla ISXEVE.** The hauling half of the chapter (starting at line 1378) uses EVEBot's `Ship`, `Navigator`, `Station`, `Cargo`, `Safespots`, and `Social` helpers. See the [Framework Context callout](#hauling-and-logistics-bot-patterns) before porting any hauling example to a standalone script — `${MyShip.*}` and direct entity/module calls are the vanilla substitutions.
+- **State machines scale better than flat scripts.** Both `obj_Miner` and `obj_Hauler` demonstrate pulse-driven state machines (IDLE / BASE / HAUL / DROPOFF / FLEE / HARDSTOP). Layering behavior on top of a state machine keeps control flow debuggable as complexity grows.
+
+For the full topic list, see the [Table of Contents](#table-of-contents).
