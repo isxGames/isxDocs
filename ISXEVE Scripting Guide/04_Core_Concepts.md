@@ -1326,7 +1326,7 @@ InnerSpace/
 │   ├── ISXStealth.dll        # Anti-detection
 │   └── [other game extensions]
 ├── Scripts/
-│   ├── EVEBot/               # Evebot script
+│   ├── EVEBot/               # EVEBot script
 │   ├── Yamfa/                # Your fleet assist script
 │   ├── Common/               # Shared libraries
 │   └── [your scripts]
