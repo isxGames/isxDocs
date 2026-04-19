@@ -1041,7 +1041,7 @@ while (${Position:Inc}<=${Files.Files})
 
 ## Strengths and Weaknesses
 
-### Strengths ✅
+### Strengths
 
 1. **Modular Architecture**
    - Clean separation between core and behaviors
@@ -1073,7 +1073,7 @@ while (${Position:Inc}<=${Files.Files})
    - Hierarchical organization
    - Type-safe settings
 
-### Weaknesses ❌
+### Weaknesses
 
 1. **Code Age (2008-2017)**
    - Some ISXEVE APIs deprecated
@@ -1109,7 +1109,7 @@ while (${Position:Inc}<=${Files.Files})
 
 ## Code Reuse Guide
 
-### What to Reuse ✅
+### What to Reuse
 
 **Highly Recommended**:
 1. **Core Object Pattern** (`obj_BaseClass` inheritance)
@@ -1125,7 +1125,7 @@ while (${Position:Inc}<=${Files.Files})
 3. **Utility Functions** (MetersToKM_Str, ISK_To_Str)
 4. **Downtime Detection** (auto-pause before restart)
 
-### What to Avoid ❌
+### What to Avoid
 
 **Outdated Patterns**:
 1. **Heavy Thread Usage** - Use event-driven instead
@@ -1725,22 +1725,22 @@ Mission:QueueState["StartMission"]:
 
 ### Advantages of StateQueue
 
-✅ **Dynamic State Planning**
+**Dynamic State Planning**
 - Can queue states mid-execution
 - Can insert high-priority states at front
 - Self-modifying behavior
 
-✅ **Clear Sequencing**
+**Clear Sequencing**
 - States execute in order
 - Easy to visualize flow
 - Predictable behavior
 
-✅ **Reentrant States**
+**Reentrant States**
 - State returns FALSE → stays in state
 - State returns TRUE → advances
 - Perfect for "wait until done" patterns
 
-✅ **Frequency Per State**
+**Frequency Per State**
 - Each state has its own pulse frequency
 - Combat state: 100ms
 - Travel state: 3000ms
@@ -1748,17 +1748,17 @@ Mission:QueueState["StartMission"]:
 
 ### Disadvantages of StateQueue
 
-❌ **Complexity**
+**Complexity**
 - Harder to understand than simple state machine
 - Queue manipulation can be tricky
 - Debugging is difficult (what's in queue?)
 
-❌ **Global State**
+**Global State**
 - States share scope
 - Hard to isolate state logic
 - Can lead to unexpected interactions
 
-❌ **No State Parameters (Properly)**
+**No State Parameters (Properly)**
 - Args are strings, require parsing
 - Type safety issues
 - Error-prone
@@ -2221,11 +2221,11 @@ objectdef obj_Miner
 
 ### Use Yamfa-Style (Single File) When:
 
-✅ Bot has ONE specific job
-✅ Code < 1000 lines
-✅ Solo developer
-✅ Learning/prototyping
-✅ Need quick iteration
+- Bot has ONE specific job
+- Code < 1000 lines
+- Solo developer
+- Learning/prototyping
+- Need quick iteration
 
 **Example Use Cases**:
 - Fleet assist (targeting sync)
@@ -2235,11 +2235,11 @@ objectdef obj_Miner
 
 ### Use Tehbot-Style (StateQueue + MiniModes) When:
 
-✅ Complex sequences (missions, abyssals)
-✅ Multiple independent features
-✅ Need dynamic state management
-✅ Code 1000-5000 lines
-✅ Medium complexity
+- Complex sequences (missions, abyssals)
+- Multiple independent features
+- Need dynamic state management
+- Code 1000-5000 lines
+- Medium complexity
 
 **Example Use Cases**:
 - Mission runner
@@ -2249,11 +2249,11 @@ objectdef obj_Miner
 
 ### Use EVEBot-Style (Full Modularity) When:
 
-✅ Multi-purpose bot
-✅ Code > 5000 lines
-✅ Team development
-✅ Long-term maintenance
-✅ Maximum flexibility
+- Multi-purpose bot
+- Code > 5000 lines
+- Team development
+- Long-term maintenance
+- Maximum flexibility
 
 **Example Use Cases**:
 - Full automation suite
@@ -2284,14 +2284,14 @@ objectdef obj_Miner
 
 ### Patterns to Adopt
 
-✅ **StateQueue for Sequences**
+**StateQueue for Sequences**
 ```lavishscript
 This:QueueState["Step1"]
 This:QueueState["Step2"]
 ; Auto-executes in order
 ```
 
-✅ **MiniMode Pattern**
+**MiniMode Pattern**
 ```lavishscript
 ; Small independent modules, each inheriting obj_StateQueue
 obj_DroneControl
@@ -2300,7 +2300,7 @@ obj_FightOrFlight
 ; Coordinate via shared object references and per-module obj_TargetList
 ```
 
-✅ **Data-Table-Driven Decisions**
+**Data-Table-Driven Decisions**
 ```lavishscript
 ; Load static lookup tables at startup instead of querying per-decision
 NPCData:LoadData    ; from data/NPCData.xml
@@ -2310,13 +2310,13 @@ NPCData.NPCType[${TargetGroupID}]
 
 ### Patterns to Avoid
 
-❌ **Ad-Hoc Global Variables for Coordination**
+**Ad-Hoc Global Variables for Coordination**
 ```lavishscript
 ; Flat global namespace couples modules implicitly
 ; Prefer a shared object reference or a typed message bus
 ```
 
-❌ **StateQueue for Simple Bots**
+**StateQueue for Simple Bots**
 ```lavishscript
 ; Overkill for simple targeting bot
 ; Use simple loop instead

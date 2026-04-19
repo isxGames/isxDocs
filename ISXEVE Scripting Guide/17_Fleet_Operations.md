@@ -18,7 +18,7 @@
 8. [Fleet Combat Coordination](#fleet-combat-coordination)
 9. [Mining Fleet Coordination](#mining-fleet-coordination)
 10. [Event-Driven Coordination](#event-driven-coordination)
-11. [Complete Working Examples (Multi-Boxing)](#complete-working-examples)
+11. [Complete Working Examples (Multi-Boxing)](#complete-working-examples-multi-boxing)
 12. [Common Problems (Multi-Boxing)](#common-problems)
 
 ### Relay System and IPC
@@ -32,7 +32,7 @@
 20. [Uplink Networking](#uplink-networking)
 21. [Performance Considerations](#performance)
 22. [Best Practices](#best-practices)
-23. [Complete Working Examples (Relay)](#examples)
+23. [Complete Working Examples (Relay)](#complete-working-examples-relay)
 
 ### Multiboxing Patterns
 24. [Multiboxing Patterns](#multiboxing-patterns)
@@ -1265,7 +1265,7 @@ objectdef obj_EventDrivenBot
 
 ---
 
-## Complete Working Examples
+## Complete Working Examples (Multi-Boxing)
 
 ### Example 1: Simple Mining Fleet (1 Hauler + 2 Miners)
 
@@ -3470,7 +3470,7 @@ objectdef obj_MasterFailover
 
 ---
 
-## Complete Working Examples
+## Complete Working Examples (Relay)
 
 ### Example 1: Complete Fleet Combat Coordination
 
