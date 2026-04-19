@@ -167,6 +167,11 @@ Use `@` for simple, frequently accessed elements. Use `FindUsableChild` for:
 </checkbox>
 ```
 
+**Note on checkbox state-change handling:** LGUI1 checkboxes do NOT expose dedicated `OnCheck` / `OnUncheck` event hooks. The full list of embedded-script events available to any LGUI1 element is declared in the ISXDK header `ISXDK/include/ISUI/LGUIElement.h` (search for `pOnLoad`, `pOnLeftClick`, etc.) and `LGUICheckBox.h` adds none of its own. (`OnChecked` / `OnUnchecked` exist in LGUI2, not LGUI1 — see [11_LavishGUI1_to_LavishGUI2_Migration.md](11_LavishGUI1_to_LavishGUI2_Migration.md).) The two idiomatic LGUI1 patterns for reacting to a checkbox toggle are therefore:
+
+1. **`<OnLeftClick>` reading `${This.Checked}`** (shown above). Production scripts including EVEBot use this pattern extensively — `${This.Checked}` inside `OnLeftClick` reflects the toggled (post-click) state, so passing it directly to a setter method works as expected. Grep `Scripts/EVEBot/Branches/Stable/interface/EVEBot.xml` for `SetUseSound[${This.Checked}]`, `SetDisable3D[${This.Checked}]`, etc.
+2. **`<commandcheckbox>` with `<Command>` and `<CommandChecked>`** — declarative alternative when you want two different script lines for the two states rather than one parameterized call. The ISXDK header `ISXDK/include/ISUI/LGUICommandCheckBox.h` declares the `Command` (run on check) and `CommandChecked` (run on uncheck) XML properties; see `Interface/DefaultUplinkUI.xml` for shipped examples of `<commandcheckbox>` using this form.
+
 **The Listbox (triggers the same sync on selection):** (wrapper/geometry same as the canonical `FleetMembers` listbox shown in [Advanced List Management](#advanced-list-management) below — only the `<OnSelect>` handler differs)
 
 ```xml
@@ -1243,11 +1248,7 @@ Each API follows the same pattern: populate an index, iterate with an iterator, 
 </OnSelect>
 ```
 
-### Dynamic Text Input with Polymorphic Routing
-
-This section previously duplicated the Yamfa `SetDest` textentry example. It has been consolidated to avoid repetition.
-
-The `SetDest` textentry block with `OnKeyDown` Enter-key detection and polymorphic routing between bookmarks and universe destinations is shown earlier in this guide under [OnKeyDown for Enter Key Detection](#onkeydown-for-enter-key-detection). See that section for the XML and Key Techniques.
+(For the polymorphic-routing textentry pattern that dispatches between bookmarks and universe destinations based on typed input, see [OnKeyDown for Enter Key Detection](#onkeydown-for-enter-key-detection) earlier in this guide.)
 
 ---
 
@@ -1454,7 +1455,7 @@ These advanced patterns from EVE Online production scripts demonstrate:
 14. **Advanced TextEntry** - OnKeyDown for Enter key detection
 15. **ComboBox Values** - Separate display text from stored values
 16. **Dynamic ComboBox Population** - Populate from ISXEVE APIs with saved selection restore
-17. **Production Robustness** - Dynamic displays and polymorphic input
+17. **Production Robustness** - Dynamic conditional displays and combobox-driven script state
 18. **Skin File Pattern** - Template library with texture atlasing for reusable visual themes
 
 **Key Takeaways:**
