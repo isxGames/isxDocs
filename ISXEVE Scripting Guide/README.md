@@ -56,53 +56,53 @@ This comprehensive guide provides complete documentation for creating, debugging
 
 ### UI and System Guides (Game-Agnostic)
 
-8. **[08_LavishGUI1_UI_Guide.md](08_LavishGUI1_UI_Guide.md)** - LavishGUI 1 UI Creation
+9. **[08_LavishGUI1_UI_Guide.md](08_LavishGUI1_UI_Guide.md)** - LavishGUI 1 UI Creation
    Complete guide to creating custom user interfaces with LavishGUI 1 XML for InnerSpace scripts.
 
-9. **[09_Advanced_LGUI1_Patterns.md](09_Advanced_LGUI1_Patterns.md)** - Advanced LavishGUI 1 Patterns
+10. **[09_Advanced_LGUI1_Patterns.md](09_Advanced_LGUI1_Patterns.md)** - Advanced LavishGUI 1 Patterns
    Real-world patterns from production scripts: UI element navigation, dynamic updates, script communication, and advanced list management.
 
-10. **[10_LavishGUI2_UI_Guide.md](10_LavishGUI2_UI_Guide.md)** - LavishGUI 2 UI Creation
+11. **[10_LavishGUI2_UI_Guide.md](10_LavishGUI2_UI_Guide.md)** - LavishGUI 2 UI Creation
     Modern JSON-based UI system guide. Covers LGUI2 fundamentals, JSON packages, templates, data binding, and complete working examples.
 
-11. **[11_LavishGUI1_to_LavishGUI2_Migration.md](11_LavishGUI1_to_LavishGUI2_Migration.md)** - LGUI1 to LGUI2 Migration
+12. **[11_LavishGUI1_to_LavishGUI2_Migration.md](11_LavishGUI1_to_LavishGUI2_Migration.md)** - LGUI1 to LGUI2 Migration
     Convert existing LavishGUI 1 XML scripts to LavishGUI 2 JSON. Includes migration patterns, common issues, and side-by-side comparisons.
 
-12. **[12_LGUI2_Scaling_System.md](12_LGUI2_Scaling_System.md)** - UI Scaling System
+13. **[12_LGUI2_Scaling_System.md](12_LGUI2_Scaling_System.md)** - UI Scaling System
     Add dynamic UI scaling to LGUI2-based scripts. Reusable library for consistent UI scaling across different screen resolutions.
 
-13. **[13_JSON_Guide.md](13_JSON_Guide.md)** - JSON in LavishScript
+14. **[13_JSON_Guide.md](13_JSON_Guide.md)** - JSON in LavishScript
     Complete guide to JSON in LavishScript: creating, accessing, modifying JSON data, file I/O, serialization, and complete examples.
 
-14. **[14_LavishMachine_Guide.md](14_LavishMachine_Guide.md)** - LavishMachine (LMAC)
+15. **[14_LavishMachine_Guide.md](14_LavishMachine_Guide.md)** - LavishMachine (LMAC)
     LavishMachine Virtual Machine guide: async operations, time-based animations, audio control, web requests, task sequencing, and custom task types.
 
 ### Specialized Automation Guides
 
-15. **[15_Combat_Automation.md](15_Combat_Automation.md)** - Combat Bot Patterns
+16. **[15_Combat_Automation.md](15_Combat_Automation.md)** - Combat Bot Patterns
     Complete combat automation patterns: target prioritization, weapon systems, tank management, drone control, and analysis of [Tehbot](https://github.com/isxGames/Tehbot) combat patterns.
 
-16. **[16_Mining_And_Hauling.md](16_Mining_And_Hauling.md)** - Mining and Hauling Automation
+17. **[16_Mining_And_Hauling.md](16_Mining_And_Hauling.md)** - Mining and Hauling Automation
     Mining bot patterns, hauling logistics, ore management, station trading, and resource optimization.
 
-17. **[17_Fleet_Operations.md](17_Fleet_Operations.md)** - Fleet Coordination
+18. **[17_Fleet_Operations.md](17_Fleet_Operations.md)** - Fleet Coordination
     Fleet coordination patterns, [Yamfa](https://github.com/isxGames/isxScripts/tree/master/EVE-Online/Scripts/Yamfa) fleet assist analysis, relay systems for multi-character communication, and synchronized operations.
 
-18. **[18_Bot_Architecture_Analysis.md](18_Bot_Architecture_Analysis.md)** - Production Bot Analysis
+19. **[18_Bot_Architecture_Analysis.md](18_Bot_Architecture_Analysis.md)** - Production Bot Analysis
     In-depth analysis of [EVEBot](https://github.com/CyberTech/EVEBot/tree/master/Branches/Stable), [Yamfa](https://github.com/isxGames/isxScripts/tree/master/EVE-Online/Scripts/Yamfa), and [Tehbot](https://github.com/isxGames/Tehbot) architectures. Learn from battle-tested production scripts.
 
 ### Advanced Topics
 
-19. **[19_DotNet_Development.md](19_DotNet_Development.md)** - Scripts vs .NET Programs
+20. **[19_DotNet_Development.md](19_DotNet_Development.md)** - Scripts vs .NET Programs
     When to use LavishScript vs .NET, [Metatron2](https://github.com/spacekoala420/Metatron2) .NET architecture overview, and hybrid development patterns.
 
-20. **[20_Debugging_And_Troubleshooting.md](20_Debugging_And_Troubleshooting.md)** - Debugging Guide
+21. **[20_Debugging_And_Troubleshooting.md](20_Debugging_And_Troubleshooting.md)** - Debugging Guide
     Debugging techniques, common problems and solutions, troubleshooting patterns, and diagnostic tools.
 
-21. **[21_Advanced_Scripting_Patterns.md](21_Advanced_Scripting_Patterns.md)** - Advanced Patterns
+22. **[21_Advanced_Scripting_Patterns.md](21_Advanced_Scripting_Patterns.md)** - Advanced Patterns
     Production-grade patterns for script organization, main loops, state machines, error handling, relay communication, and configuration management.
 
-22. **[22_Utility_Script_Patterns.md](22_Utility_Script_Patterns.md)** - Utility Patterns
+23. **[22_Utility_Script_Patterns.md](22_Utility_Script_Patterns.md)** - Utility Patterns
     Essential utility patterns: custom timers, ISK tracking, position management, input validation, progressive tracking, and complete working examples.
 
 ---
