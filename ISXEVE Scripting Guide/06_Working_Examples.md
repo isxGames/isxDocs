@@ -17,12 +17,11 @@
 7. [Docking & Undocking](#docking--undocking)
 8. [Inventory Management](#inventory-management)
 9. [Fleet Operations](#fleet-operations)
-10. [Station Trading](#station-trading)
-11. [Safety & Defense](#safety--defense)
-12. [Performance & Profiling](#performance--profiling)
-13. [Logging & Debugging](#logging--debugging)
-14. [Configuration](#configuration)
-15. [Utility Functions](#utility-functions)
+10. [Safety & Defense](#safety--defense)
+11. [Performance & Profiling](#performance--profiling)
+12. [Logging & Debugging](#logging--debugging)
+13. [Configuration](#configuration)
+14. [Utility Functions](#utility-functions)
 
 ---
 
