@@ -2135,12 +2135,10 @@ ISXEVE Reads This:
 ### Object Creation
 
 **ISXEVE Registers Object Types**:
-```cpp
-// In ISXEVE C++ code (simplified):
-RegisterTopLevelObject("Me", &GetMeObject);
-RegisterTopLevelObject("MyShip", &GetMyShipObject);
-RegisterTopLevelObject("EVE", &GetEVEObject);
-```
+
+When the ISXEVE extension loads into InnerSpace, it registers each of its Top-Level Objects with the LavishScript engine by name (`Me`, `MyShip`, `EVE`, `ISXEVE`, `Local`, `Station`, and so on). Each registered name is wired to an internal provider inside the extension that knows how to produce the live object on demand.
+
+This registration happens at extension-load time — before any of your LavishScript code runs. Once `extension isxeve` completes (and `${ISXEVE.IsReady}` becomes TRUE), every documented TLO simply exists and is ready to query. You never call a "create" or "register" function from LavishScript; the extension handles all of that at the C++ layer, and your scripts interact only with the finished TLO names.
 
 **LavishScript Can Then Use**:
 ```lavishscript
