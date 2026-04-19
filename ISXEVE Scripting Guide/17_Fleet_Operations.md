@@ -2702,8 +2702,6 @@ objectdef obj_OrcaService
 
 ## IRC Bridge Integration
 
-> **📚 Complete ISXIM Documentation:** See `__CRITICAL_NEWEST_ISXIM_Reference.md` for full IRC extension reference including all TLOs, datatypes, events, and usage patterns.
-
 ### Overview (Tehbot ChatRelay)
 
 [Tehbot](https://github.com/isxGames/Tehbot)'s **ChatRelay** bridges EVE sessions with IRC for:

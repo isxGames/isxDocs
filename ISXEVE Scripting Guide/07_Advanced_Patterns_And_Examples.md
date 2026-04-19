@@ -2746,8 +2746,6 @@ The full Orca service pattern — including miner-side survey-scan and shield-bo
 
 ## IRC Bridge Integration
 
-> **📚 Complete ISXIM Documentation:** See `__CRITICAL_NEWEST_ISXIM_Reference.md` for full IRC extension reference including all TLOs, datatypes, events, and usage patterns.
-
 > **Framework Context:** Examples in this section use Tehbot/EVEBot object wrappers (`Logger`, `Config`, `EVEBot`) — these are `objectdef` instances from those frameworks, not vanilla ISXEVE TLOs. References like `Logger:Log[...]`, `Config.UseIRC`, `Config.IRCUsername`, `Config.IRCServer`, `Config.IRCPort`, `Config.IRCPassword`, `Config.IRCChannel`, `EVEBot:Pause`, and `EVEBot:Resume` resolve only inside those frameworks. For vanilla ISXEVE scripts, replace `Logger:Log` with `echo`/`redirect`, and store IRC settings directly via LavishSettings (see `04_Core_Concepts.md`). The ISXIM extension itself (`IRCUser`, `IRC:Connect`, `Event[IRC_ReceivedChannelMsg]`, etc.) is the same for all scripts.
 
 ### Overview (Tehbot ChatRelay)
