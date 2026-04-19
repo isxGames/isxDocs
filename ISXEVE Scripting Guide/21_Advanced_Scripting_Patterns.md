@@ -856,7 +856,7 @@ function FindSafestBookmark()
 
     ; Try to find station
     variable index:entity Stations
-    EVE:QueryEntities[Stations, "GroupID = 15"]  ; Station group
+    EVE:QueryEntities[Stations, "GroupID = 15"]  ; Station
 
     if ${Stations.Used} > 0
     {
