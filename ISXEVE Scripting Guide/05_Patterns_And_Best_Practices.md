@@ -4191,6 +4191,8 @@ function atexit()
 
 ### Pattern 3: Structured Logging with Levels
 
+> **InnerSpace echo color codes** (used below): `\ag` = green, `\ay` = yellow, `\ar` = red, `\am` = magenta, `\ax` = reset to default. Wrap colored text as `\aC...\ax` — always close with `\ax` so subsequent output isn't stuck in the previous color. `\ao` (orange) is also commonly seen in production scripts. See [20_Debugging_And_Troubleshooting.md](20_Debugging_And_Troubleshooting.md) for more examples, and Pattern 5 below for the related string-argument form (`"g"`, `"o"`, etc.) used with framework loggers.
+
 ```lavish
 ; ===== STRUCTURED LOGGING PATTERN =====
 
