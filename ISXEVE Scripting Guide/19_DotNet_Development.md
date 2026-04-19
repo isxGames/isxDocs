@@ -198,7 +198,8 @@ objectdef obj_Ship
 
     method ActivateShield()
     {
-        Ship:Activate_Shield_Booster
+        ; Activate the shield booster in the first mid-slot (vanilla ISXEVE API).
+        MyShip.Module[MedSlot0]:Activate
     }
 }
 
