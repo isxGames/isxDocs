@@ -3674,7 +3674,7 @@ function GetMovementCommand(int64 targetID)
     }
 
     ; In range - orbit
-    echo "Movement: ORBIT (${distance}m ≈ ${optimalRange}m optimal)"
+    echo "Movement: ORBIT (${distance}m ~= ${optimalRange}m optimal)"
     return "ORBIT"
 }
 
