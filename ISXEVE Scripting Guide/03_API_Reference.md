@@ -1533,11 +1533,28 @@ if ${targetCount} > 0
 
 ### Gotcha 1: State Can Change Between Checks
 
-Game state (targets, modules, pilots, inventory, entities) can change between an `(exists)` check and a subsequent use — especially across any `wait`. The mitigation is the same for all cases: cache the reference, then re-check `(exists)` after the wait before accessing members. The canonical BAD/GOOD code example lives at [Existence Changes During Execution](#existence-changes-during-execution) in the Entity Lifecycle chapter; the pattern applies equally to entities returned from `Me:GetTargets[index]`, modules, fleet members, and any other stateful accessor.
+Game state (targets, modules, pilots, inventory, entities) can change between an `(exists)` check and a subsequent use — especially across any `wait`. The mitigation is the same for all cases: cache the reference, then re-check `(exists)` after the wait before accessing members:
+
+```lavish
+variable entity ent = ${Entity[${id}]}
+wait 1000
+if ${ent(exists)}            ; Re-check after any wait
+    echo "${ent.Name}"
+```
+
+The canonical BAD/GOOD code example lives at [Existence Changes During Execution](#existence-changes-during-execution) in the Entity Lifecycle chapter; the pattern applies equally to entities returned from `Me:GetTargets[index]`, modules, fleet members, and any other stateful accessor.
 
 ### Gotcha 2: 1-Indexed Collections
 
-**CRITICAL**: `index:entity` collections (populated by `Me:GetTargets[MyTargets]`), `${MyShip.Cargo}`, and other ISXEVE collection accessors are **1-indexed** (first item at index 1, not 0). Starting a for-loop at 0 crashes on the first iteration. See [Gotcha 4: 1-Indexed Collections](#gotcha-4-1-indexed-collections) in the Entity chapter for the full WRONG/RIGHT code example.
+**CRITICAL**: `index:entity` collections (populated by `Me:GetTargets[MyTargets]`), `${MyShip.Cargo}`, and other ISXEVE collection accessors are **1-indexed** (first item at index 1, not 0). Starting a for-loop at 0 crashes on the first iteration:
+
+```lavish
+; RIGHT — start at 1, use <= (not <)
+for (i:Set[1]; ${i} <= ${MyTargets.Used}; i:Inc)
+    echo "${MyTargets.Get[${i}].Name}"
+```
+
+See [Gotcha 4: 1-Indexed Collections](#gotcha-4-1-indexed-collections) in the Entity chapter for the full WRONG/RIGHT code example.
 
 ### Gotcha 3: (exists) is Required for Optional Objects
 
@@ -3003,7 +3020,16 @@ function ProcessCombatTargets()
 
 ### Gotcha 1: Entity Can Despawn Between Check and Use
 
-Entities can disappear between an `(exists)` check and a subsequent use (despawn, warp out, death, session change). The full cache-reference + re-check pattern is documented in [Existence Changes During Execution](#existence-changes-during-execution) earlier in this chapter. See that section for the canonical BAD/GOOD code example.
+Entities can disappear between an `(exists)` check and a subsequent use (despawn, warp out, death, session change). Mitigation: cache the reference and re-check `(exists)` after any wait:
+
+```lavish
+variable entity ent = ${Entity[${id}]}
+wait 1000
+if ${ent(exists)}            ; Re-check — entity may have despawned
+    echo "${ent.Name}"
+```
+
+The full cache-reference + re-check pattern is documented in [Existence Changes During Execution](#existence-changes-during-execution) earlier in this chapter. See that section for the canonical BAD/GOOD code example.
 
 ### Gotcha 2: Distance Changes Constantly
 
@@ -3109,7 +3135,16 @@ echo "${target.Name}"
 
 ### Anti-Pattern 3: Iterating Without Snapshot
 
-Iterating a live entity query result while processing each entity (especially with `wait` calls inside the loop) is unsafe — entities can despawn between iterations and subsequent accesses will crash. The canonical fix is to snapshot entity IDs into an `int64[]` array first, then iterate the snapshot. See [Solution 2: Snapshot Entity IDs (Evebot Pattern)](#solution-2-snapshot-entity-ids-evebot-pattern) under Safe Entity Iteration for the complete `function ProcessAllAsteroids` teaching example.
+Iterating a live entity query result while processing each entity (especially with `wait` calls inside the loop) is unsafe — entities can despawn between iterations and subsequent accesses will crash. The canonical fix is to snapshot entity IDs into an `int64[]` array first, then iterate the snapshot:
+
+```lavish
+variable int64[] ids
+for (i:Set[1]; ${i} <= ${asteroids.Used}; i:Inc)
+    ids:Insert[${asteroids.Get[${i}].ID}]
+; Iterate ids[] (stable) instead of the live query result
+```
+
+See [Solution 2: Snapshot Entity IDs (Evebot Pattern)](#solution-2-snapshot-entity-ids-evebot-pattern) under Safe Entity Iteration for the complete `function ProcessAllAsteroids` teaching example.
 
 ### Anti-Pattern 4: Redundant Entity Fetches
 
@@ -6618,7 +6653,15 @@ while TRUE
 
 ### Limitation 2: Hangar Item Access Caveats
 
-Hangar contents CAN be queried via `Me.Station:GetHangarItems[index:item]` (and the related `GetHangarShips` / `GetCorpHangarItems` / `GetCorpHangarShips` methods). See the [Hangar Access](#hangar-access) section for the canonical pattern. Caveats:
+Hangar contents CAN be queried via `Me.Station:GetHangarItems[index:item]` (and the related `GetHangarShips` / `GetCorpHangarItems` / `GetCorpHangarShips` methods):
+
+```lavish
+variable index:item hangarItems
+Me.Station:GetHangarItems[hangarItems]
+echo "Items in hangar: ${hangarItems.Used}"
+```
+
+See the [Hangar Access](#hangar-access) section for the canonical pattern. Caveats:
 
 - Method populates an `index:item` — it is NOT a scalar count member.
 - Must be docked (`${Me.InStation}`) before calling.
@@ -6702,7 +6745,16 @@ function GetFreeMiningSpace()
 
 ### Gotcha 4: Session Change Invalidates Items
 
-Docking, jumping, and undocking all trigger a session change that invalidates cached `item` and `entity` references — including items you stored from `MyShip.Cargo[#]`. After any session change, re-query all cached references. The canonical session-change tracking pattern (polling `${Me.SolarSystemID}` / `${Me.InStation}` sentinels; ISXEVE does not expose a session-change counter) is documented under [Gotcha 2: Session Changes Reset State](#gotcha-2-session-changes-reset-state) in the Movement chapter.
+Docking, jumping, and undocking all trigger a session change that invalidates cached `item` and `entity` references — including items you stored from `MyShip.Cargo[#]`. After any session change, re-query all cached references:
+
+```lavish
+variable int64 lastSystemID = ${Me.SolarSystemID}
+; ... dock / jump / undock ...
+if ${Me.SolarSystemID} != ${lastSystemID}
+    echo "Session changed — re-query cached items/entities"
+```
+
+The canonical session-change tracking pattern (polling `${Me.SolarSystemID}` / `${Me.InStation}` sentinels; ISXEVE does not expose a session-change counter) is documented under [Gotcha 2: Session Changes Reset State](#gotcha-2-session-changes-reset-state) in the Movement chapter.
 
 ---
 
@@ -7626,7 +7678,15 @@ wait 20
 
 **⚠️ WARNING:** Old `MyShip.GetCargo` / `MyShip.Cargo[#]` are DEPRECATED (July 2020). Use modern `EVEWindow[Inventory]` API.
 
-The canonical modern cargo-iteration pattern (open inventory window → `EVEWindow[Inventory].ChildWindow[ShipCargo]:GetItems[index:item]` → iterator walk) is documented in the [MyShip Object](#myship-object) section at the top of this chapter, and summarized concisely in the [Ship-Cargo and Inventory-Window API Overview](#ship-cargo-and-inventory-window-api-overview) section. See either for the complete pattern.
+The canonical modern cargo-iteration pattern (open inventory window → `EVEWindow[Inventory].ChildWindow[ShipCargo]:GetItems[index:item]` → iterator walk):
+
+```lavish
+variable index:item CargoItems
+EVEWindow[Inventory].ChildWindow[ShipCargo]:GetItems[CargoItems]
+; Iterate CargoItems from index 1 using a for-loop or :GetIterator[]
+```
+
+Full pattern documented in the [MyShip Object](#myship-object) section at the top of this chapter, and summarized concisely in the [Ship-Cargo and Inventory-Window API Overview](#ship-cargo-and-inventory-window-api-overview) section. See either for the complete pattern.
 
 For hangar, ore hold, drone bay, and fleet hangar access, use the same pattern with the appropriate child name: `Child[ShipHangar]`, `Child[ShipOreHold]`, `Child[ShipDroneBay]`, `Child[ShipFleetHangar]`.
 
@@ -8218,7 +8278,18 @@ if ${EVEWindow[inventory](exists)}
 
 ### Anti-Pattern 2: No Existence Check
 
-Always `(exists)` check any object (window, entity, target) before accessing its members — skipping the check crashes the script on the first NULL access. The canonical BAD/GOOD example (with entity context) is documented under [Anti-Pattern 2: No (exists) Check](#anti-pattern-2-no-exists-check) in the Entity chapter. The same pattern applies to `EVEWindow[name]`, `${MyTargets.Get[n]}` (after `Me:GetTargets[MyTargets]`), and any other accessor that may return NULL.
+Always `(exists)` check any object (window, entity, target) before accessing its members — skipping the check crashes the script on the first NULL access:
+
+```lavish
+; BAD — crashes if window not open
+echo "${EVEWindow[inventory].Caption}"
+
+; GOOD
+if ${EVEWindow[inventory](exists)}
+    echo "${EVEWindow[inventory].Caption}"
+```
+
+The canonical BAD/GOOD example (with entity context) is documented under [Anti-Pattern 2: No (exists) Check](#anti-pattern-2-no-exists-check) in the Entity chapter. The same pattern applies to `EVEWindow[name]`, `${MyTargets.Get[n]}` (after `Me:GetTargets[MyTargets]`), and any other accessor that may return NULL.
 
 ### Anti-Pattern 3: No Timeout on Wait Loops
 
