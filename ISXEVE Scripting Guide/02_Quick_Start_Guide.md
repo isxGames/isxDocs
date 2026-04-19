@@ -20,6 +20,9 @@
 5. [Running Scripts](#running-scripts)
 6. [Next Steps](#next-steps)
 7. [Troubleshooting](#troubleshooting)
+8. [Quick Reference Card](#quick-reference-card)
+9. [Common Beginner Mistakes](#common-beginner-mistakes)
+10. [Practice Exercises](#practice-exercises)
 
 ---
 

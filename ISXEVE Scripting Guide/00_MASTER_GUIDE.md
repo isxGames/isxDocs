@@ -33,6 +33,7 @@ This master guide serves as your **quick reference hub** for all ISXEVE APIs, co
 9. [Commands](#commands)
 10. [Events](#events)
 11. [Quick Reference Tables](#quick-reference-tables)
+12. [Documentation Navigation](#documentation-navigation)
 
 ---
 

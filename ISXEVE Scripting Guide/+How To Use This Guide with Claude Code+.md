@@ -9,12 +9,13 @@ This document explains how to set up and use the ISXEVE Scripting Guide with Cla
 
 1. [Architecture Overview](#architecture-overview)
 2. [Installation](#installation)
-3. [Using the /isxeve Command](#using-the-isxeve-command)
-4. [How It Works](#how-it-works)
-5. [Example Usage](#example-usage)
-6. [Tips for Best Results](#tips-for-best-results)
-7. [Alternative: Direct Path Reference](#alternative-direct-path-reference)
-8. [Troubleshooting](#troubleshooting)
+3. [Local Paths (UPDATE THESE FOR YOUR SYSTEM)](#local-paths-update-these-for-your-system)
+4. [Using the /isxeve Command](#using-the-isxeve-command)
+5. [How It Works](#how-it-works)
+6. [Example Usage](#example-usage)
+7. [Tips for Best Results](#tips-for-best-results)
+8. [Alternative: Direct Path Reference](#alternative-direct-path-reference)
+9. [Troubleshooting](#troubleshooting)
 
 ---
 
