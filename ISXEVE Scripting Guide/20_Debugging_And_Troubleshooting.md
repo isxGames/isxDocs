@@ -132,6 +132,13 @@ function main()
 
 ### Log Method with Levels
 
+> **Framework Context (EVEBot):** The code below is taken from EVEBot's `core/obj_Logger.iss`. It references several framework-specific constructs that will not exist in a standalone script:
+> - `EVEBOT_DEBUG` / `DEBUG_TARGET` / `LOG_MINOR` / `LOG_ECHOTOO` / `LOG_CRITICAL` -- EVEBot `#define` constants set at include time.
+> - `UIElement[StatusConsole@Status@EVEBotOptionsTab@EVEBot]` -- LavishGUI1 dotted-path lookup into EVEBot's loaded XML UI tree (element `StatusConsole` inside the `Status` tab of `EVEBotOptionsTab` inside the top-level `EVEBot` window -- defined in `interface/EVEBot.xml`). In a standalone script, replace with plain `echo` or your own UI binding.
+> - `ChatIRC:QueueMessage` -- EVEBot's IRC bridge wrapper around ISXIM.
+>
+> Keep the overall dispatch shape (filter by level, build message, write to file, optionally surface to UI/IRC) and substitute your own sinks.
+
 ```lavishscript
 method Log(string StatusMessage, int Level=LOG_STANDARD, int Indent=0)
 {
@@ -226,7 +233,14 @@ Logger:Log["Distance: ${Entity[${asteroidID}].Distance}m", LOG_STANDARD, 4]
 
 ### Tehbot Log Levels
 
-Tehbot uses a different, more modern approach:
+Tehbot uses a different, more modern approach.
+
+> **Framework Context (Tehbot):** The code below is taken from Tehbot's `core/obj_Logger.iss`. It references framework-specific constructs:
+> - `LOG_DEBUG` / `LOG_INFO` / `LOG_CRITICAL` -- Tehbot `#define` constants.
+> - `UI:Update[CallingModule, Message, Color]` -- calls the `Update` method on Tehbot's `obj_TehbotUI` objectdef (defined in `core/obj_TehbotUI.iss`), which routes colored lines into Tehbot's LavishGUI2 status pane. In a standalone script, replace with plain `echo` or your own UI binding.
+> - `LogInfo` / `LogDebug` / `LogCritical` convenience methods delegate back to `Logger:Log` with the right level and color.
+>
+> The dispatch shape (filter by level, build formatted message, write to file, surface to UI) is portable even without Tehbot's UI plumbing.
 
 ```lavishscript
 ; Log level constants
@@ -964,7 +978,7 @@ function ValidateSession()
 
 ## Real-Time Monitoring
 
-> **📡 IRC Remote Monitoring:** For remote bot monitoring and alerting, IRC can send critical log messages, status updates, and alerts to an IRC channel. See File 28 (Relay_System_and_IPC.md) IRC Bridge Integration section and `__CRITICAL_NEWEST_ISXIM_Reference.md` for implementation details. EVEBot already implements this pattern (lines 173-177).
+> **📡 IRC Remote Monitoring:** For remote bot monitoring and alerting, IRC can send critical log messages, status updates, and alerts to an IRC channel. For cross-session coordination primitives (the `relay` command and inter-session messaging), see [17_Fleet_Operations.md](17_Fleet_Operations.md) under **LavishScript Relay System**. EVEBot's `obj_Logger` (in `core/obj_Logger.iss`) already implements the log-to-IRC pattern via its `ChatIRC:QueueMessage` call for `LOG_CRITICAL` messages -- see the Log Method with Levels section above for the dispatch code.
 
 ### Status Display
 
