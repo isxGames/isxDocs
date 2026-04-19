@@ -20,9 +20,13 @@ This conserves context in the main conversation while maintaining thoroughness.
 3. Edit `ISXEVE-Expert.md` and update the **Local Paths** section at the top:
    - `SCRIPTS_DIR`: Your InnerSpace Scripts directory
    - `GUIDE_DIR`: Your ISXEVE Scripting Guide directory
+   - `CHANGES_FILE`: The ISXEVEChanges.txt file from your ISXEVE installation
+   - `QUICK_REF_FILE`: Path to `ISXEVE_QuickReference.md` (in the parent `isxDocs` directory)
 4. Edit `isxeve.md` and update the **User Configuration** table at the top:
    - **Scripts Directory**: Your InnerSpace Scripts directory
    - **Guide Directory**: Your ISXEVE Scripting Guide directory
+   - **Changes File**: The ISXEVEChanges.txt file from your ISXEVE installation
+   - **Quick Reference**: Path to `ISXEVE_QuickReference.md`
 
 ---
 
@@ -49,7 +53,7 @@ Task(subagent_type="ISXEVE-Expert", prompt="Create a mining script...")
 
 ## What the Agent Does
 
-- Reads your comprehensive guide (23 documentation files)
+- Reads your comprehensive guide (22 numbered guides plus meta/index files + quick reference)
 - Knows your directories (Scripts, Guide location)
 - Follows best practices (EVEBot patterns, NULL checks, async data handling)
 - Handles all tasks (creating, editing, debugging, refactoring scripts)
