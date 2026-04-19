@@ -83,13 +83,13 @@ function main()
 	RandomDelay:Set[${Math.Rand[15000]:Inc[30000]}]
 	NextModuleTimer:Set[${RandomDelay}]
 
-	echo Next module activation in ${Math.Calc[${NextModuleTimer.TimeLeft}/1000]} seconds
+	echo "Next module activation in ${Math.Calc[${NextModuleTimer.TimeLeft}/1000]} seconds"
 
 	while 1
 	{
 		if ${NextModuleTimer.Expired}
 		{
-			echo Timer expired! Activating module...
+			echo "Timer expired! Activating module..."
 			call ActivateModule
 
 			; Reset timer for next use
@@ -99,7 +99,7 @@ function main()
 
 		; Display countdown
 		if ${Math.Calc[${NextModuleTimer.TimeLeft}/1000]} > 0
-			echo Time until next module: ${Math.Calc[${NextModuleTimer.TimeLeft}/1000]} seconds
+			echo "Time until next module: ${Math.Calc[${NextModuleTimer.TimeLeft}/1000]} seconds"
 
 		wait 1000
 	}
@@ -138,7 +138,7 @@ function CalculateTime()
 	DisplayHours:Set[${Math.Calc64[${StartTime}/60/60]}]
 
 	; Display formatted time
-	echo Script running for: ${DisplayHours.LeadingZeroes[2]}:${DisplayMinutes.LeadingZeroes[2]}:${DisplaySeconds.LeadingZeroes[2]}
+	echo "Script running for: ${DisplayHours.LeadingZeroes[2]}:${DisplayMinutes.LeadingZeroes[2]}:${DisplaySeconds.LeadingZeroes[2]}"
 }
 ```
 
@@ -167,11 +167,11 @@ function CalculateISKPerHour()
 	if ${RunHours} > 0
 	{
 		ISKPerHour:Set[${Math.Calc64[${ISKGained}/${RunHours}]}]
-		echo ISK/Hour: ${ISKPerHour.Comma} ISK
+		echo "ISK/Hour: ${ISKPerHour.Comma} ISK"
 	}
 
-	echo Total ISK Gained: ${ISKGained.Comma} ISK
-	echo Runtime: ${RunHours}h ${RunMinutes}m
+	echo "Total ISK Gained: ${ISKGained.Comma} ISK"
+	echo "Runtime: ${RunHours}h ${RunMinutes}m"
 }
 ```
 
@@ -189,13 +189,13 @@ function InitializeISKTracking()
 {
 	SessionStartISK:Set[${Me.Wallet.Balance}]
 	TotalISKGained:Set[0]
-	echo Session started with ${SessionStartISK.Comma} ISK
+	echo "Session started with ${SessionStartISK.Comma} ISK"
 }
 
 function UpdateISKGained()
 {
 	TotalISKGained:Set[${Math.Calc64[${Me.Wallet.Balance}-${SessionStartISK}]}]
-	echo ISK Gained This Session: ${TotalISKGained.Comma} ISK
+	echo "ISK Gained This Session: ${TotalISKGained.Comma} ISK"
 }
 ```
 
@@ -208,7 +208,7 @@ function CheckISKThreshold()
 {
 	if ${Me.Wallet.Balance} >= ${ISKThreshold}
 	{
-		echo ALERT: Wallet has reached ${Me.Wallet.Comma} ISK!
+		echo "ALERT: Wallet has reached ${Me.Wallet.Comma} ISK!"
 		call AudioAlert
 	}
 }
@@ -238,18 +238,18 @@ function SaveCurrentPosition()
 	}
 
 	EVE:CreateBookmark[${SavedPositionBookmark}, "Saved by script at ${Time.Time24}"]
-	echo Position saved as bookmark "${SavedPositionBookmark}"
+	echo "Position saved as bookmark ${SavedPositionBookmark}"
 }
 
 function ReturnToSavedPosition()
 {
 	if !${EVE.Bookmark[${SavedPositionBookmark}](exists)}
 	{
-		echo ERROR: No saved position bookmark found
+		echo "ERROR: No saved position bookmark found"
 		return
 	}
 
-	echo Returning to saved position...
+	echo "Returning to saved position..."
 	EVE.Bookmark[${SavedPositionBookmark}]:WarpTo[0]
 
 	; Wait for warp to begin then complete (Mode 3 = Warping)
@@ -319,12 +319,12 @@ function LoadCharacterSettings()
 	; Load character-specific values
 	if ${LavishSettings[MyBot].FindSet[${Me.Name}](exists)}
 	{
-		echo Loading settings for ${Me.Name}
+		echo "Loading settings for ${Me.Name}"
 		; Load settings here
 	}
 	else
 	{
-		echo No settings found for ${Me.Name}, using defaults
+		echo "No settings found for ${Me.Name}, using defaults"
 		call CreateDefaultSettings
 	}
 }
@@ -337,7 +337,7 @@ function CreateDefaultSettings()
 
 	; Save to file
 	LavishSettings[MyBot]:Export[${SettingsFile}]
-	echo Default settings created for ${Me.Name}
+	echo "Default settings created for ${Me.Name}"
 }
 ```
 
@@ -354,12 +354,12 @@ function LoadCharacterProfile()
 
 	if !${System.FileExists[${ProfileFile}]}
 	{
-		echo WARNING: Profile file not found: ${ProfileFile}
-		echo Using default profile
+		echo "WARNING: Profile file not found: ${ProfileFile}"
+		echo "Using default profile"
 		ProfileFile:Set["Default_Profile.iss"]
 	}
 
-	echo Loading profile: ${ProfileFile}
+	echo "Loading profile: ${ProfileFile}"
 	; Use `runscript` (runtime) -- NOT `#include`, which is a preprocessor
 	; directive evaluated at script-load time and cannot see runtime
 	; variables like ${ProfileFile}.
@@ -437,7 +437,7 @@ function FindHighestPriorityTarget()
 
 	if ${BestTargetID} > 0
 	{
-		echo Targeting priority target: ${Entity[${BestTargetID}].Name}
+		echo "Targeting priority target: ${Entity[${BestTargetID}].Name}"
 		Entity[${BestTargetID}]:LockTarget
 	}
 }
@@ -460,7 +460,7 @@ function main()
 	{
 		if ${HostileDetected}
 		{
-			echo HOSTILE DETECTED! Taking evasive action!
+			echo "HOSTILE DETECTED! Taking evasive action!"
 			call EmergencyWarp
 		}
 
@@ -475,7 +475,7 @@ atom OnChatMessage(string Message, string Channel)
 		; Check for hostile keywords
 		if ${Message.Find["gf"]} > 0 || ${Message.Find["o/"]} > 0
 		{
-			echo Possible hostile communication detected in local
+			echo "Possible hostile communication detected in local"
 			HostileDetected:Set[TRUE]
 		}
 	}
@@ -498,7 +498,7 @@ function RandomOrbit(int64 TargetID)
 	; Generate random distance
 	RandomDistance:Set[${Math.Rand[${Math.Calc[${MaxDistance}-${MinDistance}]}]:Inc[${MinDistance}]}]
 
-	echo Orbiting at ${RandomDistance}m
+	echo "Orbiting at ${RandomDistance}m"
 	Entity[${TargetID}]:Orbit[${RandomDistance}]
 }
 ```
@@ -512,7 +512,7 @@ function RandomWait(int MinMS, int MaxMS)
 
 	WaitTime:Set[${Math.Rand[${Math.Calc[${MaxMS}-${MinMS}]}]:Inc[${MinMS}]}]
 
-	echo Waiting for ${WaitTime}ms
+	echo "Waiting for ${WaitTime}ms"
 	wait ${WaitTime}
 }
 ```
@@ -535,7 +535,7 @@ function ActivateModuleWithVerification(string Slot)
 	{
 		if !${MyShip.Module[${Slot}].IsActive}
 		{
-			echo Activating module in slot ${Slot}
+			echo "Activating module in slot ${Slot}"
 			MyShip.Module[${Slot}]:Activate
 
 			wait 20
@@ -543,23 +543,23 @@ function ActivateModuleWithVerification(string Slot)
 			; Verify activation
 			if ${MyShip.Module[${Slot}].IsActive}
 			{
-				echo Module activated successfully
+				echo "Module activated successfully"
 				return TRUE
 			}
 			else
 			{
 				Attempts:Inc
-				echo Activation failed, attempt ${Attempts}/${MaxAttempts}
+				echo "Activation failed, attempt ${Attempts}/${MaxAttempts}"
 			}
 		}
 		else
 		{
-			echo Module already active
+			echo "Module already active"
 			return TRUE
 		}
 	}
 
-	echo ERROR: Failed to activate module after ${MaxAttempts} attempts
+	echo "ERROR: Failed to activate module after ${MaxAttempts} attempts"
 	return FALSE
 }
 ```
@@ -601,7 +601,7 @@ function ValidatePositiveInteger(string Input)
 
 	if !${Input.IsNumber}
 	{
-		echo ERROR: Input must be a number
+		echo "ERROR: Input must be a number"
 		return FALSE
 	}
 
@@ -609,7 +609,7 @@ function ValidatePositiveInteger(string Input)
 
 	if ${Value} <= 0
 	{
-		echo ERROR: Value must be positive
+		echo "ERROR: Value must be positive"
 		return FALSE
 	}
 
@@ -622,7 +622,7 @@ function ValidateISKAmount(string Input)
 
 	if !${Input.IsNumber}
 	{
-		echo ERROR: ISK amount must be numeric
+		echo "ERROR: ISK amount must be numeric"
 		return FALSE
 	}
 
@@ -630,13 +630,13 @@ function ValidateISKAmount(string Input)
 
 	if ${Amount} < 0
 	{
-		echo ERROR: ISK amount cannot be negative
+		echo "ERROR: ISK amount cannot be negative"
 		return FALSE
 	}
 
 	if ${Amount} > ${Me.Wallet.Balance}
 	{
-		echo ERROR: Insufficient ISK (${Amount.Comma} requested, ${Me.Wallet.Comma} available)
+		echo "ERROR: Insufficient ISK (${Amount.Comma} requested, ${Me.Wallet.Comma} available)"
 		return FALSE
 	}
 
@@ -659,8 +659,8 @@ function TrackLootedItem(string ItemName, int64 EstimatedValue)
 	TotalLootValue:Set[${Math.Calc64[${TotalLootValue}+${EstimatedValue}]}]
 	ItemsLooted:Inc
 
-	echo Looted: ${ItemName} (${EstimatedValue.Comma} ISK)
-	echo Session Total: ${ItemsLooted} items, ${TotalLootValue.Comma} ISK
+	echo "Looted: ${ItemName} (${EstimatedValue.Comma} ISK)"
+	echo "Session Total: ${ItemsLooted} items, ${TotalLootValue.Comma} ISK"
 }
 
 function DisplayLootSummary()
@@ -671,11 +671,11 @@ function DisplayLootSummary()
 	if ${RunHours} > 0
 		ISKPerHour:Set[${Math.Calc64[${TotalLootValue}/${RunHours}]}]
 
-	echo ===== LOOT SUMMARY =====
-	echo Items Looted: ${ItemsLooted}
-	echo Total Value: ${TotalLootValue.Comma} ISK
-	echo Runtime: ${RunHours} hours
-	echo ISK/Hour: ${ISKPerHour.Comma} ISK
+	echo "===== LOOT SUMMARY ====="
+	echo "Items Looted: ${ItemsLooted}"
+	echo "Total Value: ${TotalLootValue.Comma} ISK"
+	echo "Runtime: ${RunHours} hours"
+	echo "ISK/Hour: ${ISKPerHour.Comma} ISK"
 }
 ```
 
@@ -690,7 +690,7 @@ function IsScriptRunning(string ScriptName)
 {
 	if ${Script[${ScriptName}](exists)}
 	{
-		echo Script ${ScriptName} is already running
+		echo "Script ${ScriptName} is already running"
 		return TRUE
 	}
 
@@ -701,14 +701,14 @@ function LaunchScriptIfNotRunning(string ScriptPath, string ScriptName)
 {
 	if !${Script[${ScriptName}](exists)}
 	{
-		echo Launching ${ScriptName}
+		echo "Launching ${ScriptName}"
 		runscript "${ScriptPath}"
 		wait 10
 		return TRUE
 	}
 	else
 	{
-		echo ${ScriptName} is already running
+		echo "${ScriptName} is already running"
 		return FALSE
 	}
 }
@@ -748,7 +748,7 @@ function ProcessCargoQueued()
 	{
 		do
 		{
-			echo Processing: ${CargoItem.Value.Name}
+			echo "Processing: ${CargoItem.Value.Name}"
 			; Queued operations here
 			wait 2
 		}
@@ -776,8 +776,8 @@ function main()
 	SessionStartISK:Set[${Me.Wallet.Balance}]
 	MiningTimer:Set[3600000]  ; 1 hour
 
-	echo Mining session started
-	echo Starting ISK: ${SessionStartISK.Comma}
+	echo "Mining session started"
+	echo "Starting ISK: ${SessionStartISK.Comma}"
 
 	while !${MiningTimer.Expired}
 	{
@@ -791,7 +791,7 @@ function main()
 		wait 10
 	}
 
-	echo Session complete!
+	echo "Session complete!"
 	call DisplayFinalStats
 }
 
@@ -806,9 +806,9 @@ function DisplayStats()
 	variable int64 ISKGained = ${Math.Calc64[${Me.Wallet.Balance}-${SessionStartISK}]}
 	variable int MinutesLeft = ${Math.Calc[${MiningTimer.TimeLeft}/1000/60]}
 
-	echo Ore Mined: ${OreUnits} units
-	echo ISK Gained: ${ISKGained.Comma}
-	echo Time Remaining: ${MinutesLeft} minutes
+	echo "Ore Mined: ${OreUnits} units"
+	echo "ISK Gained: ${ISKGained.Comma}"
+	echo "Time Remaining: ${MinutesLeft} minutes"
 }
 
 function DisplayFinalStats()
@@ -816,10 +816,10 @@ function DisplayFinalStats()
 	variable int64 ISKGained = ${Math.Calc64[${Me.Wallet.Balance}-${SessionStartISK}]}
 	variable int RunMinutes = ${Math.Calc[${Script.RunningTime}/1000/60]}
 
-	echo ===== MINING SESSION COMPLETE =====
-	echo Total Ore Mined: ${OreUnits} units
-	echo Total ISK Gained: ${ISKGained.Comma}
-	echo Total Runtime: ${RunMinutes} minutes
+	echo "===== MINING SESSION COMPLETE ====="
+	echo "Total Ore Mined: ${OreUnits} units"
+	echo "Total ISK Gained: ${ISKGained.Comma}"
+	echo "Total Runtime: ${RunMinutes} minutes"
 }
 ```
 
