@@ -5448,18 +5448,18 @@ objectdef obj_FleetMaster
 **isxSQLite** provides an alternative to XML-based configuration using SQLite databases:
 
 **Advantages over XML/LavishSettings:**
-- ✅ Better performance for large configs
-- ✅ Easier querying with SQL
-- ✅ Built-in data validation (column types)
-- ✅ Transaction support for atomic updates
-- ✅ Can store historical data (versioning)
-- ✅ Better for complex data structures
+- Better performance for large configs
+- Easier querying with SQL
+- Built-in data validation (column types)
+- Transaction support for atomic updates
+- Can store historical data (versioning)
+- Better for complex data structures
 
 **Disadvantages:**
-- ❌ Requires isxSQLite extension
-- ❌ More complex setup
-- ❌ Not human-editable (binary format)
-- ❌ Requires manual database schema design
+- Requires isxSQLite extension
+- More complex setup
+- Not human-editable (binary format)
+- Requires manual database schema design
 
 ### Basic Database Config Pattern
 
