@@ -13,12 +13,13 @@
    - [Table DataTypes](#table-datatypes)
 4. [Commands](#commands)
    - [Test Commands](#test-commands)
-   - [Web Commands](#web-commands)
+   - [Web Commands (libisxgames builds only)](#web-commands-libisxgames-builds-only)
 5. [Events](#events)
    - [Error Events](#error-events)
    - [Status Events](#status-events)
-   - [HTTP Events](#http-events)
-6. [Usage Examples](#usage-examples)
+   - [HTTP Events (libisxgames builds only)](#http-events-libisxgames-builds-only)
+6. [Build Variants](#build-variants)
+7. [Usage Examples](#usage-examples)
    - [Checking Extension Status and Setting Up Events](#checking-extension-status-and-setting-up-events)
    - [Opening and Closing Databases](#opening-and-closing-databases)
    - [Creating Tables and Checking Schema](#creating-tables-and-checking-schema)
@@ -30,13 +31,19 @@
    - [Working with Memory Databases](#working-with-memory-databases)
    - [Using Escape_String for SQL Injection Prevention](#using-escape_string-for-sql-injection-prevention)
    - [Complete Production Script Example](#complete-production-script-example)
-7. [Notes](#notes)
+8. [Notes](#notes)
    - [Case Sensitivity](#case-sensitivity)
    - [NULL Checks](#null-checks)
    - [Parameter Notation](#parameter-notation)
    - [Resource Management](#resource-management)
    - [Database Defaults](#database-defaults)
    - [Events and Quiet Mode](#events-and-quiet-mode)
+   - [Query vs Table Usage](#query-vs-table-usage)
+   - [LastRow Behavior](#lastrow-behavior)
+   - [ExecDMLTransaction Details](#execdmltransaction-details)
+   - [File Paths](#file-paths)
+   - [Database Name Uniqueness](#database-name-uniqueness)
+   - [sqlitetable.GetFieldValue Typed-Read Caveat](#sqlitetablegetfieldvalue-typed-read-caveat)
 
 ---
 
@@ -54,18 +61,24 @@ isxSQLite allows you to create, access, and manipulate SQLite databases from Lav
 - Retrieve entire tables or execute custom queries
 - Transaction support for efficient bulk operations
 - String escaping utilities for SQL injection prevention
-- HTTP/HTTPS request capabilities (optional)
 - Event-driven error and status reporting
+- HTTP/HTTPS request capabilities (only in `libisxgames` builds — see [Build Variants](#build-variants))
+
+### Source and Versioning
+
+- **Open-source repository:** [github.com/isxGames/isxSQLite](https://github.com/isxGames/isxSQLite)
+- Bundled SQLite engine version: **3.32.3** (as of the [isxSQLite-20200812.0001](#) update).
+- Versioning scheme: `YYYYMMDD.####` (e.g., `20200812.0001`).
 
 ### Accessing DataTypes
 
 DataTypes are accessed through Top-Level Objects (TLOs) or through members of other datatypes. For example:
 
 ```lavishscript
-${ISXSQLite}                           // TLO returning 'isxsqlite' datatype
-${SQLite}                              // TLO returning 'sqlite' datatype
-${SQLite.OpenDB["MyDB","./myfile.db"]} // Member returning 'sqlitedb' datatype
-${MyDB.ExecQuery["SELECT * FROM users"]} // Member returning 'sqlitequery' datatype
+${ISXSQLite}                                    // TLO returning 'isxsqlite' datatype
+${SQLite}                                       // TLO returning 'sqlite' datatype
+${SQLite.OpenDB["MyDB","./myfile.db"]}          // Member returning 'sqlitedb' datatype
+${MyDB.ExecQuery["SELECT * FROM users"]}        // Member returning 'sqlitequery' datatype
 ```
 
 ---
@@ -78,13 +91,13 @@ Top-Level Objects (TLOs) are the entry points for accessing isxSQLite functional
 
 | TLO | DataType | Description |
 |-----|----------|-------------|
-| **ISXSQLite** | [isxsqlite](#isxsqlite) | isxSQLite extension information and utilities |
+| **ISXSQLite** | [isxsqlite](#isxsqlite) | Extension status and quiet-mode control. Available immediately on load. |
 
 ### Core TLOs
 
 | TLO | DataType | Description |
 |-----|----------|-------------|
-| **SQLite** | [sqlite](#sqlite) | Main SQLite interface for database operations |
+| **SQLite** | [sqlite](#sqlite) | Main SQLite interface for opening databases and utility helpers. Available after extension finishes loading. |
 
 ---
 
@@ -94,35 +107,46 @@ Top-Level Objects (TLOs) are the entry points for accessing isxSQLite functional
 
 #### **isxsqlite**
 
-Extension information and utilities. Accessed via ISXSQLite TLO.
+Extension information and utilities. Accessed via the [ISXSQLite](#extension-tlos) TLO.
 
 **Members:**
-- `Version` - string: isxSQLite version number
-- `IsReady` - bool: Whether extension is ready for use
-- `IsLoading` - bool: Whether extension is currently loading
-- `InQuietMode` - bool: Whether quiet mode is active (no console messages)
+
+| Member | Return Type | Description |
+|--------|-------------|-------------|
+| `Version` | string | isxSQLite version number |
+| `IsReady` | bool | Whether the extension has completed post-initialization and is ready for use |
+| `IsLoading` | bool | Whether the extension is currently in the middle of loading |
+| `InQuietMode` | bool | Whether quiet mode is active (console messages suppressed) |
 
 **Methods:**
-- `QuietMode` - Toggles quiet mode on/off. When quiet mode is active, no error messages or method results are displayed in the console. However, all messages will still be available via applicable events.
+
+| Method | Description |
+|--------|-------------|
+| `QuietMode` | Toggles quiet mode on/off. When active, no error messages or method results are printed to the console; however, all messages still fire via applicable events. |
 
 **See Also:**
-- [sqlite](#sqlite) - Main SQLite interface
+- [sqlite](#sqlite) — Main SQLite interface
 
 ---
 
 #### **sqlite**
 
-Main SQLite datatype providing database management functionality. Accessed via SQLite TLO.
+Main SQLite datatype providing database management functionality. Accessed via the [SQLite](#core-tlos) TLO.
 
 **Members:**
-- `OpenDB[name,path]` - [sqlitedb](#sqlitedb): Opens or creates a database. The first parameter is a unique name for this session, and the second parameter is the file path. Use ":Memory:" as the path to create an in-memory database. The base path is your "innerspace/Extensions" directory. If the database file does not exist, it will be created with default PRAGMA settings.
-- `GetQueryByID[id]` - [sqlitequery](#sqlitequery): Retrieves a query object by its numeric ID
-- `Escape_String[text]` - string: Returns an escaped string suitable for SQL queries (similar to sqlite3_mprintf("%q",text) or PHP's sqlite_escape_string()). For example, 'test' becomes ''test''
+
+| Member | Return Type | Description |
+|--------|-------------|-------------|
+| `OpenDB[name,path]` | [sqlitedb](#sqlitedb) | Opens or creates a database. `name` is a session-unique identifier; `path` is the file path. Use `":Memory:"` as the path to create an in-memory database. The base directory is `innerspace/Extensions`. If the file does not exist it will be created with the default PRAGMA settings (see [Database Defaults](#database-defaults)). |
+| `GetQueryByID[id]` | [sqlitequery](#sqlitequery) | Retrieves a live query object by its numeric ID |
+| `Escape_String[text]` | string | Returns an escaped string suitable for SQL use (equivalent to `sqlite3_mprintf("%q", text)` or PHP's `sqlite_escape_string()`). Example: `test` becomes `''test''`. |
+
+**Methods:** *(none)*
 
 **See Also:**
-- [sqlitedb](#sqlitedb) - Database object
-- [sqlitequery](#sqlitequery) - Query result object
-- [sqlitetable](#sqlitetable) - Table result object
+- [sqlitedb](#sqlitedb) — Database object
+- [sqlitequery](#sqlitequery) — Query result object
+- [sqlitetable](#sqlitetable) — Table result object
 
 ---
 
@@ -130,25 +154,31 @@ Main SQLite datatype providing database management functionality. Accessed via S
 
 #### **sqlitedb**
 
-Represents an open SQLite database connection. Obtained from the [sqlite](#sqlite) datatype's OpenDB member.
+Represents an open SQLite database connection. Obtained from [sqlite](#sqlite)'s `OpenDB` member, or by declaring a variable and setting it to an existing database ID.
 
 **Members:**
-- `ExecQuery[statement]` - [sqlitequery](#sqlitequery): Executes a SQL query statement and returns a query object for navigating results. Use this for SELECT statements and other queries that return data. Queries that return no results or result in an error finalize automatically.
-- `TableExists[tablename]` - bool: Returns true if the specified table exists in the database
-- `GetTable[tablename]` - [sqlitetable](#sqlitetable): Retrieves an entire table as a table object. Uses the hardcoded statement "SELECT * from TableName order by 1;". For partial table retrieval, use GetTable with a custom DML statement.
-- `GetTable[statement]` - [sqlitetable](#sqlitetable): Executes a custom SQL statement and returns the entire result set as a table object. isxSQLite assumes you're using a custom DML statement if the argument doesn't exactly match an existing table name. Note: GetTable mallocs space for entire results, which can use significant memory for large queries. Be sure to Finalize table objects when done.
-- `ID` - string: The unique identifier name for this database
+
+| Member | Return Type | Description |
+|--------|-------------|-------------|
+| `ID` | string | The unique session identifier for this database |
+| `ExecQuery[statement]` | [sqlitequery](#sqlitequery) | Executes a SQL statement (typically SELECT) and returns a query object for stepping through results. Queries that return no results, or that encounter an error, finalize automatically. |
+| `TableExists[tablename]` | bool | Returns TRUE if the named table exists in the database |
+| `GetTable[tablename]` | [sqlitetable](#sqlitetable) | Retrieves an entire table. If `tablename` exactly matches an existing table, the hardcoded statement `SELECT * from <TableName> order by 1;` is used. Otherwise `GetTable` treats the argument as a custom DML statement. |
+| `GetTable[statement]` | [sqlitetable](#sqlitetable) | Same member as above, used with a custom DML statement when the argument does not match an existing table name. Note: `GetTable` allocates space for the entire result set — memory-intensive for large queries. Always `Finalize` the result. |
 
 **Methods:**
-- `Set[sqlitedb or id]` - Sets this variable to reference another database object (by object or ID)
-- `Close` - Closes the database connection
-- `ExecDML[statement]` - Executes a Data Manipulation Language (DML) statement that doesn't require a return value (e.g., INSERT, UPDATE, DELETE, CREATE TABLE). The method succeeds silently unless an error occurs, which fires an isxSQLite_onErrorMsg event (and shows a console message unless QuietMode is active).
-- `ExecDMLTransaction[index:string]` - Executes multiple DML statements as a single transaction for improved performance. Automatically wraps the statements with "BEGIN TRANSACTION;" and "END TRANSACTION;" directives. Do NOT include these directives in your statement index. This is much more efficient than executing statements individually for bulk operations.
+
+| Method | Description |
+|--------|-------------|
+| `Set[sqlitedb or id]` | Rebinds this variable to reference another database (by object or ID) |
+| `Close` | Closes the database connection |
+| `ExecDML[statement]` | Executes a Data Manipulation Language statement that does not return data (INSERT, UPDATE, DELETE, CREATE TABLE, PRAGMA, etc.). Succeeds silently unless an error occurs, which fires [isxSQLite_onErrorMsg](#isxsqlite_onerrormsg) and prints to console unless `QuietMode` is active. |
+| `ExecDMLTransaction[index:string]` | Executes multiple DML statements as a single transaction. The method automatically wraps the statements with `BEGIN TRANSACTION;` and `END TRANSACTION;` — **do NOT include these directives** in your statement index. Much faster than individual `ExecDML` calls for bulk operations. |
 
 **See Also:**
-- [sqlite](#sqlite) - Main interface for opening databases
-- [sqlitequery](#sqlitequery) - Query result navigation
-- [sqlitetable](#sqlitetable) - Table result access
+- [sqlite](#sqlite) — Main interface for opening databases
+- [sqlitequery](#sqlitequery) — Query result navigation
+- [sqlitetable](#sqlitetable) — Table result access
 
 ---
 
@@ -156,30 +186,46 @@ Represents an open SQLite database connection. Obtained from the [sqlite](#sqlit
 
 #### **sqlitequery**
 
-Represents the results of a SQL query. Obtained from the [sqlitedb](#sqlitedb) datatype's ExecQuery member. Allows stepping through result rows one at a time.
+Represents the results of a SQL query, obtained from `sqlitedb.ExecQuery`. Allows stepping through result rows one at a time (callback-style) — more memory-efficient than loading the entire result set as a [sqlitetable](#sqlitetable).
 
 **Members:**
-- `ID` - int: Numeric identifier for this query
-- `NumRows` - int: Number of rows in the result set
-- `NumFields` - int: Number of fields (columns) in the result set
-- `GetFieldName[fieldnum]` - string: Returns the name of the specified field (1-based index)
-- `GetFieldIndex[fieldname]` - int: Returns the numeric index of the named field
-- `GetFieldDeclType[fieldnum]` - string: Returns the declared type of the specified field
-- `GetFieldType[fieldnum]` - int: Returns the type code of the specified field
-- `GetFieldValue[fieldnum or fieldname]` - string: Returns the value of the specified field as a string (default)
-- `GetFieldValue[fieldnum or fieldname, type]` - varies: Returns the value of the specified field as the specified type. Valid types: 'string', 'int', 'double', 'float' (same as double), 'int64'
-- `FieldIsNULL[fieldnum or fieldname]` - bool: Returns true if the specified field contains NULL
-- `LastRow` - bool: Returns true when at the last row. Note: NextRow must be called to move past the last row, at which point LastRow becomes true and a blank row is returned.
+
+| Member | Return Type | Description |
+|--------|-------------|-------------|
+| `ID` | int | Numeric identifier for this query |
+| `NumRows` | int | Number of rows in the result set |
+| `NumFields` | int | Number of fields (columns) in the result set |
+| `GetFieldName[fieldnum]` | string | Name of the specified field (0-based index from SQLite) |
+| `GetFieldIndex[fieldname]` | int | Numeric index of the named field (`-1` on error) |
+| `GetFieldDeclType[fieldnum]` | string | Declared SQL type of the specified field |
+| `GetFieldType[fieldnum]` | int | SQLite type code of the specified field (`-1` on error) |
+| `GetFieldValue[field]` | string | Current-row value as a string (default) |
+| `GetFieldValue[field, type]` | varies | Current-row value cast to `type`. `field` may be an index or name. See type list below. |
+| `FieldIsNULL[field]` | bool | TRUE if the specified field in the current row is NULL |
+| `LastRow` | bool | TRUE once the query has been stepped past the last row (see [LastRow Behavior](#lastrow-behavior)) |
+
+Valid `type` values for `GetFieldValue`:
+
+| Type | Result |
+|------|--------|
+| `string` | string (default if omitted) |
+| `int` | int |
+| `double` | double |
+| `float` | double (identical to `double`) |
+| `int64` | int64 |
 
 **Methods:**
-- `NextRow` - Advances to the next row in the result set
-- `Reset` - Returns to the first row in the result set
-- `Finalize` - Finalizes and releases the query object. While not strictly required, failing to finalize queries when no longer needed will cause memory leaks.
-- `Set[sqlitequery or id]` - Sets this variable to reference another query object (by object or ID)
+
+| Method | Description |
+|--------|-------------|
+| `NextRow` | Advances to the next row. When called past the last row, [LastRow](#lastrow-behavior) becomes TRUE. |
+| `Reset` | Returns to the first row in the result set |
+| `Finalize` | Finalizes and releases the query. Not strictly required, but failing to finalize when no longer needed causes memory leaks. |
+| `Set[sqlitequery or id]` | Rebinds this variable to reference another query (by object or ID) |
 
 **See Also:**
-- [sqlitedb](#sqlitedb) - Database object that creates queries
-- [sqlitetable](#sqlitetable) - Alternative for retrieving entire result sets at once
+- [sqlitedb](#sqlitedb) — Database object that creates queries
+- [sqlitetable](#sqlitetable) — Alternative for retrieving entire result sets at once
 
 ---
 
@@ -187,31 +233,47 @@ Represents the results of a SQL query. Obtained from the [sqlitedb](#sqlitedb) d
 
 #### **sqlitetable**
 
-Represents an entire table or query result set loaded into memory. Obtained from the [sqlitedb](#sqlitedb) datatype's GetTable member. Unlike queries, tables load all results at once.
+Represents an entire table (or query result) loaded into memory, obtained from `sqlitedb.GetTable`. Unlike [sqlitequery](#sqlitequery), all rows are allocated up-front for random access by row number.
 
 **Members:**
-- `ID` - int: Numeric identifier for this table
-- `NumRows` - int: Number of rows in the table
-- `NumFields` - int: Number of fields (columns) in the table
-- `GetFieldName[fieldnum]` - string: Returns the name of the specified field (1-based index)
-- `GetFieldValue[fieldnum or fieldname]` - string: Returns the value of the specified field in the current row as a string (default)
-- `GetFieldValue[fieldnum or fieldname, type]` - varies: Returns the value of the specified field in the current row as the specified type. Valid types: 'string', 'int', 'double', 'float' (same as double), 'int64'
-- `FieldIsNULL[fieldnum or fieldname]` - bool: Returns true if the specified field in the current row contains NULL
+
+| Member | Return Type | Description |
+|--------|-------------|-------------|
+| `ID` | int | Numeric identifier for this table |
+| `NumRows` | int | Number of rows in the table |
+| `NumFields` | int | Number of fields (columns) in the table |
+| `GetFieldName[fieldnum]` | string | Name of the specified field |
+| `GetFieldValue[field]` | string | Value of the specified field in the **current row** (see `SetRow`) as a string. See [sqlitetable.GetFieldValue Typed-Read Caveat](#sqlitetablegetfieldvalue-typed-read-caveat) before passing a `type` argument. |
+| `GetFieldValue[field, type]` | varies | Same as above with a typed return. *See caveat linked above.* |
+| `FieldIsNULL[field]` | bool | TRUE if the specified field in the current row is NULL |
+
+Valid `type` values for `GetFieldValue`:
+
+| Type | Result |
+|------|--------|
+| `string` | string (default if omitted) |
+| `int` | int |
+| `double` | double |
+| `float` | double (identical to `double`) |
+| `int64` | int64 |
 
 **Methods:**
-- `SetRow[rownum]` - Sets the current row to the specified row number (1-based index)
-- `Finalize` - Finalizes and releases the table object. While not strictly required, failing to finalize tables when no longer needed will cause memory leaks.
-- `Set[sqlitetable or id]` - Sets this variable to reference another table object (by object or ID)
+
+| Method | Description |
+|--------|-------------|
+| `SetRow[rownum]` | Sets the current row to `rownum` (0-based). All subsequent `GetFieldValue` / `FieldIsNULL` calls operate on this row. |
+| `Finalize` | Finalizes and releases the table. Not strictly required, but failing to finalize causes memory leaks. |
+| `Set[sqlitetable or id]` | Rebinds this variable to reference another table (by object or ID) |
 
 **See Also:**
-- [sqlitedb](#sqlitedb) - Database object that creates tables
-- [sqlitequery](#sqlitequery) - Alternative for navigating results one row at a time
+- [sqlitedb](#sqlitedb) — Database object that creates tables
+- [sqlitequery](#sqlitequery) — Alternative for stepping through results one row at a time
 
 ---
 
 ## Commands
 
-Commands extend the InnerSpace console with additional functionality.
+Commands extend the InnerSpace console with additional functionality. isxSQLite contributes the commands listed below.
 
 ### Test Commands
 
@@ -219,72 +281,95 @@ Commands extend the InnerSpace console with additional functionality.
 
 **Syntax:** `sqlite`
 
-**Description:** A test command for development and debugging purposes. This command is used for testing isxSQLite functionality during development.
+**Description:** A test command used by the developers for runtime testing while the extension is loaded. The default implementation is a no-op. Do not rely on this command for any script behavior.
 
 ---
 
-### Web Commands
+### Web Commands (libisxgames builds only)
 
-These commands are only available when isxSQLite is compiled with the USE_LIBISXGAMES flag (libisxGames integration).
+The following commands are only registered when isxSQLite is compiled with the `USE_LIBISXGAMES` preprocessor flag. They are implemented in the linked `isxGames.lib` — source in `libisxgames/isxCommands.cpp` (functions `CMD_GetURL` and `CMD_DebugSpew`). See [Build Variants](#build-variants) to determine whether your build supports them.
 
 #### **GetURL**
 
-**Syntax:** `GetURL "http://address/to/file"`
-**Syntax:** `GetURL "https://address/to/file"`
+**Syntax:**
+```
+GetURL "url"
+GetURL "url" "content_type"
+```
 
-**Description:** Retrieves content from a URL using HTTP or HTTPS. This command executes asynchronously using multiple threads, so your script will not wait or freeze after issuing the command. Multiple GetURL commands can be issued at once and will queue in the order received.
+**Description:** Retrieves content from a URL via HTTP or HTTPS using libcurl. Runs asynchronously on a new `boost::thread` (`simple_http_request`); the script continues executing immediately. Multiple `GetURL` calls serialize on an internal mutex and process in order received.
 
 **Parameters:**
-- `url` - The HTTP or HTTPS URL to retrieve. Any normalized URL should work regardless of file type.
+- `url` *(required)* — Any normalized HTTP or HTTPS URL.
+- `content_type` *(optional)* — Sets an explicit `Content-Type` header on the request (e.g., `application/json`). Omit for default behavior.
 
-**Notes:**
-- HTTPS requests typically return one response
-- HTTP requests (when response is larger than ~3000 bytes) may be split into multiple responses
-- HTTPS requests are slower than HTTP requests
-- Only HTTP and HTTPS protocols are supported
-- Responses are accessible via the isxGames_onHTTPResponse event
+**Printed syntax hint (from source when argc is out of range):**
+```
+Syntax:  GetURL "http://address" [content_type]
+         GetURL "https://address" [content_type]
+```
+
+**Notes (verified against `libisxgames/isxCurl_http.cpp` and `isxCommands.cpp`):**
+- Only HTTP and HTTPS protocols are supported. User-Agent is sent as `libisxgames`. IPv4 is forced (`CURL_IPRESOLVE_V4`). No curl-side timeout is applied (`CURLOPT_TIMEOUT = 0`).
+- TLS verification is enabled (`CURLOPT_SSL_VERIFYPEER = 1`, `CURLOPT_SSL_VERIFYHOST = 2`); self-signed certificates will fail.
+- Successful (`HTTP 200`) responses only fire [isxGames_onHTTPResponse](#isxgames_onhttpresponse) when the response `Content-Type` is one of: `text/html`, `text/plain`, `text/xml`, `application/xml`, `application/json`. Other content types log an "Unsupported Content Type" printf and are silently dropped.
+- Non-200 responses **do** fire the event, with both `ResponseText` and `ParsedBody` set to the raw response body.
+- Internal `auth.isxgames.com` / tracking URLs are intercepted before the event fires and are not surfaced to scripts.
+- HTML responses have their `<body>` extracted via libtidy into `ParsedBody`. XML and JSON responses set `ParsedBody` to the same raw text as `ResponseText` (no parsing).
 
 **Examples:**
 ```lavishscript
 GetURL "https://www.isxgames.com/libcurltest.html"
 GetURL "http://www.isxgames.com/libcurltest.html"
+GetURL "https://api.example.com/data" "application/json"
 ```
 
 **See Also:**
-- [isxGames_onHTTPResponse](#isxgames_onhttpresponse) - Event for handling URL responses
+- [isxGames_onHTTPResponse](#isxgames_onhttpresponse) — Event delivering URL responses
 
 ---
 
 #### **DebugSpew**
 
-**Syntax:** `DebugSpew`
+**Syntax:**
+```
+DebugSpew "message"
+```
 
-**Description:** A debug command for development purposes. Only available when compiled with USE_LIBISXGAMES flag.
+**Description:** Writes a single message to the Windows debug-output channel via `OutputDebugString()`. Output is **not** shown in the InnerSpace console — view it in a debugger (Visual Studio Output window) or a tool like Sysinternals DebugView. Primarily useful for extension authors debugging the loaded libisxgames build; scripts rarely need it.
+
+**Parameters:**
+- `message` *(required)* — Text to emit. If no argument is supplied the command is a silent no-op (source checks `argc < 2` and returns immediately).
+
+**Note:** libisxgames also exposes additional web commands (`PostURL`, `PostURLFiles`) and internal debug helpers, but those are **not** registered by isxSQLite — only `GetURL` and `DebugSpew` are registered in `isxSQLite/Commands.h`.
 
 ---
 
 ## Events
 
-Events allow you to respond to various isxSQLite operations and conditions.
+Events allow you to respond to isxSQLite operations and conditions. Register atoms with `Event[EventName]:AttachAtom[AtomName]`.
 
 ### Error Events
 
 #### **isxSQLite_onErrorMsg**
 
-**Description:** Fires when an error occurs during database operations.
+**Description:** Fires when an error occurs during any isxSQLite operation (database open, DML execution, query field access, etc.).
 
 **Parameters:**
-- `ErrorNum` - int: Error number (may be -1 if no unique number is available)
-- `ErrorMsg` - string: Error message describing what went wrong
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `ErrorNum` | int | Error number (`-1` if no unique numeric code is available) |
+| `ErrorMsg` | string | Error message describing the failure |
 
 **Notes:**
-- Not all errors have a unique ErrorNum. In these cases, it will be -1
-- ALL errors have a unique ErrorMsg
-- This event fires even when QuietMode is active
+- Not all errors carry a unique `ErrorNum` — it may be `-1`.
+- **Every** error has a unique `ErrorMsg`.
+- This event fires regardless of `QuietMode`.
 
 **Example:**
 ```lavishscript
-function OnSQLiteError(int ErrorNum, string ErrorMsg)
+atom(script) OnSQLiteError(int ErrorNum, string ErrorMsg)
 {
     echo "SQLite Error ${ErrorNum}: ${ErrorMsg}"
 }
@@ -298,14 +383,17 @@ Event[isxSQLite_onErrorMsg]:AttachAtom[OnSQLiteError]
 
 #### **isxSQLite_onStatusMsg**
 
-**Description:** Fires when isxSQLite generates status messages that are not errors (e.g., results from database operations like Close).
+**Description:** Fires for non-error status messages (e.g., confirmations from `sqlitedb:Close`, `sqlitequery:Finalize`, `sqlitetable:Finalize`).
 
 **Parameters:**
-- `StatusMsg` - string: Status message text
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `StatusMsg` | string | Status message text |
 
 **Example:**
 ```lavishscript
-function OnSQLiteStatus(string StatusMsg)
+atom(script) OnSQLiteStatus(string StatusMsg)
 {
     echo "SQLite Status: ${StatusMsg}"
 }
@@ -315,30 +403,35 @@ Event[isxSQLite_onStatusMsg]:AttachAtom[OnSQLiteStatus]
 
 ---
 
-### HTTP Events
+### HTTP Events (libisxgames builds only)
 
-These events are only available when isxSQLite is compiled with the USE_LIBISXGAMES flag (libisxGames integration).
+This event is registered unconditionally at extension load, but in practice it only fires when [GetURL](#geturl) is invoked — which requires a `USE_LIBISXGAMES` build. See [Build Variants](#build-variants). The firing code paths live in `libisxgames/isxCurl_http.cpp` (`http_writer`, `HandleIncomingHTML`, `HandleIncomingXML`, `HandleIncomingJSON`).
 
 #### **isxGames_onHTTPResponse**
 
-**Description:** Fires when a response is received from a GetURL command.
+**Description:** Fires exactly once per `GetURL` response, assuming the `Content-Type` is supported (see [GetURL](#geturl) notes). The event carries 7 string-typed arguments; LavishScript will coerce them into the atom's declared parameter types.
 
-**Parameters:**
-- `Size` - int: Size of the response in bytes
-- `URL` - string: The URL that was requested (may be modified by server redirects)
-- `IPAddress` - string: IP address of the responding server
-- `ResponseCode` - int: HTTP response code (e.g., 200 for success)
-- `TransferTime` - float: Time taken for the transfer in seconds
-- `ResponseText` - string: The entire response text unparsed (including all HTML/XML tags)
-- `ParsedBody` - string: Plain text extracted from the &lt;body&gt; section of HTML documents (only works for simple documents with plain text between &lt;body&gt;&lt;/body&gt; tags)
+**Parameters (in argument order from source):**
 
-**Notes:**
-- Only fires for responses from GetURL commands
-- ParsedBody parsing is currently limited to simple HTML documents
+| # | Parameter | Type | Description |
+|---|-----------|------|-------------|
+| 1 | `Size` | int | Bytes written in the current transfer chunk (`size * nmemb`) |
+| 2 | `URL` | string | Effective URL after any redirects (`CURLINFO_EFFECTIVE_URL`) |
+| 3 | `IPAddress` | string | Primary IP of the responding server (`CURLINFO_PRIMARY_IP`) |
+| 4 | `ResponseCode` | int | HTTP response code (`CURLINFO_RESPONSE_CODE`) — e.g. `200`, `404` |
+| 5 | `TransferTime` | float | Total transfer time in seconds, 2-decimal precision (`CURLINFO_TOTAL_TIME`) |
+| 6 | `ResponseText` | string | Full response body, unparsed (always populated) |
+| 7 | `ParsedBody` | string | For HTML/plain responses: text extracted from the `<body>` via libtidy. For XML / JSON / non-200 responses: a copy of `ResponseText`. |
+
+**Firing conditions (verified source behavior):**
+- Fires for `HTTP 200` responses with one of these `Content-Type` values: `text/html`, `text/plain`, `text/xml`, `application/xml`, `application/json`.
+- Fires for non-200 responses regardless of content type (both body fields are identical raw text in that case).
+- Does **not** fire for unsupported content types (silently dropped with an "Unsupported Content Type" printf).
+- Does **not** fire for responses from internal isxGames authentication / tracking domains.
 
 **Example:**
 ```lavishscript
-function OnHTTPResponse(int Size, string URL, string IPAddress, int ResponseCode, float TransferTime, string ResponseText, string ParsedBody)
+atom(script) OnHTTPResponse(int Size, string URL, string IPAddress, int ResponseCode, float TransferTime, string ResponseText, string ParsedBody)
 {
     echo "Received ${Size} bytes from ${URL}"
     echo "Response Code: ${ResponseCode}"
@@ -350,17 +443,32 @@ Event[isxGames_onHTTPResponse]:AttachAtom[OnHTTPResponse]
 ```
 
 **See Also:**
-- [GetURL](#geturl) - Command to initiate HTTP requests
+- [GetURL](#geturl) — Command to initiate HTTP requests
+
+---
+
+## Build Variants
+
+isxSQLite ships in two build variants defined in the Visual Studio project:
+
+| Configuration | `USE_LIBISXGAMES` defined? | GetURL / DebugSpew commands | HTTP response event fires |
+|---------------|---------------------------|-----------------------------|---------------------------|
+| `Release` (Win32 / x64) | No | Not registered | No |
+| `Release - with libisxgames` (Win32 / x64) | Yes | Registered (linked from libisxgames) | Yes (on GetURL response) |
+
+**Detecting your variant at runtime:** There is no direct TLO flag for this. The pragmatic test is whether the `GetURL` command exists — attempting to run it in a plain build will produce an "unknown command" error. If web functionality is required by your script, wrap it in a guard that logs and falls back gracefully.
+
+The command implementations live in the separate `libisxgames` source tree (specifically `libisxgames/isxCommands.cpp` and `libisxgames/isxCurl_http.cpp`), linked in as `isxGames.lib` at build time. The bundled tutorial script and the default public distribution are typically the plain `Release` build unless otherwise noted. If you require HTTP functionality, confirm the specific DLL you have loaded.
 
 ---
 
 ## Usage Examples
 
-This section provides comprehensive examples demonstrating common isxSQLite operations. These examples are based on the official isxSQLite tutorial script.
+This section demonstrates common isxSQLite operations. Examples are adapted from the bundled `sqlite.iss` tutorial script.
 
 ### Checking Extension Status and Setting Up Events
 
-Before using isxSQLite, verify it's loaded and ready, and set up event handlers for error and status messages.
+Before using isxSQLite, verify it's loaded and ready, and set up event handlers.
 
 ```lavishscript
 function main()
@@ -403,8 +511,6 @@ function main()
 ; Event handlers
 atom(script) isxSQLite_onErrorMsg(int ErrorNum, string ErrorMsg)
 {
-    ; Note: Not all errors have unique ErrorNum (may be -1)
-    ; But all errors have unique ErrorMsg
     if (${ErrorNum} > 0)
         echo "[sqlite] ERROR (${ErrorNum}): ${ErrorMsg}"
     else
@@ -413,7 +519,6 @@ atom(script) isxSQLite_onErrorMsg(int ErrorNum, string ErrorMsg)
 
 atom(script) isxSQLite_onStatusMsg(string StatusMsg)
 {
-    ; Status messages are typically for debugging
     echo "[sqlite] STATUS: ${StatusMsg}"
 }
 ```
@@ -446,9 +551,9 @@ if (${DBCopy.ID(exists)})
 ; Close the database when completely done
 PlayerInfoDB:Close
 
-; Note: Databases using subdirectories
+; Note: When using subdirectories, the directory must already exist
+; isxSQLite will NOT create it for you.
 ; MyDB:Set[${SQLite.OpenDB["MyDB","sqlite/PlayerInfoDB.sqlite3"]}]
-; Make sure the directory exists - isxSQLite won't create it for you
 ```
 
 ### Creating Tables and Checking Schema
@@ -466,7 +571,7 @@ if (!${PlayerInfoDB.TableExists["Amadeus_Friends"]})
 
     echo "Tables created"
 
-    ; Note: Use table name prefixes to keep names unique when sharing databases
+    ; Use table name prefixes to keep names unique when sharing databases
     ; Example: "PlayerName_TableName" helps organize multiple users' data
 }
 else
@@ -474,12 +579,12 @@ else
     echo "Tables already exist, skipping creation"
 }
 
-; For a large number of table creation statements, consider using ExecDMLTransaction
+; For a large number of table creation statements, consider ExecDMLTransaction
 ```
 
 ### Inserting Data with Transactions
 
-Transactions are much faster for bulk inserts than individual ExecDML calls.
+Transactions are dramatically faster for bulk inserts than individual `ExecDML` calls.
 
 ```lavishscript
 variable sqlitedb PlayerInfoDB
@@ -495,8 +600,8 @@ DML:Insert["insert into Amadeus_Inventory (name,mass,value) values ('iPad', 1.35
 DML:Insert["insert into Amadeus_Inventory (name,mass,value) values ('Titan(EVE)',2278125000.0,70000000000.0);"]
 DML:Insert["insert into Amadeus_Inventory (name,mass,value) values ('Public Opinion', 234234653245.254, 0.0);"]
 
-; Execute all statements as a single transaction
-; isxSQLite automatically wraps with BEGIN TRANSACTION and END TRANSACTION
+; Execute all statements as a single transaction.
+; isxSQLite automatically wraps with BEGIN TRANSACTION / END TRANSACTION.
 PlayerInfoDB:ExecDMLTransaction[DML]
 
 echo "Bulk insert completed via transaction"
@@ -504,13 +609,12 @@ echo "Bulk insert completed via transaction"
 
 ### Inserting Data Individually
 
-For smaller numbers of inserts (1-5 statements), ExecDML is fine.
+For small numbers of inserts (1-5 statements), `ExecDML` is fine.
 
 ```lavishscript
 variable sqlitedb PlayerInfoDB
 PlayerInfoDB:Set[${SQLite.OpenDB["PlayerInfoDB","PlayerInfoDB.sqlite3"]}]
 
-; Single INSERT statements
 PlayerInfoDB:ExecDML["insert into Amadeus_Friends (name,level,age,notes) values ('Cybertech', 100, 123543.25, 'CyberTech works on isxeve');"]
 PlayerInfoDB:ExecDML["insert into Amadeus_Friends (name,level,age,notes) values ('Lax', 13, 123.65, 'Lax owns Lavishsoft');"]
 PlayerInfoDB:ExecDML["insert into Amadeus_Friends (name,level,age,notes) values ('Doctor Who', 13, 995.1, 'The Doctor');"]
@@ -528,15 +632,12 @@ variable sqlitequery Level13Friends
 
 PlayerInfoDB:Set[${SQLite.OpenDB["PlayerInfoDB","PlayerInfoDB.sqlite3"]}]
 
-; Execute a SELECT query with WHERE clause
 Level13Friends:Set[${PlayerInfoDB.ExecQuery["SELECT * FROM Amadeus_Friends where level=13;"]}]
 
-; Check if query returned any rows
 if (${Level13Friends.NumRows} > 0)
 {
     echo "Amadeus has ${Level13Friends.NumRows} friends who are level 13."
 
-    ; Iterate through results using do/while pattern
     do
     {
         echo "- ${Level13Friends.GetFieldValue["name",string]}"
@@ -556,7 +657,7 @@ Level13Friends:Finalize
 
 ### Querying Data with For Loop
 
-Alternative iteration method using a counter.
+Alternative iteration using a counter.
 
 ```lavishscript
 variable sqlitedb PlayerInfoDB
@@ -571,12 +672,11 @@ if (${Friends.NumRows} > 0)
 {
     echo "Found ${Friends.NumRows} friends:"
 
-    ; Loop using counter (less efficient than do/while)
     for (i:Set[1]; ${i} <= ${Friends.NumRows}; i:Inc)
     {
         echo "${i}. ${Friends.GetFieldValue["name"]} - Level ${Friends.GetFieldValue["level",int]}"
 
-        ; Must call NextRow to advance (except on first row)
+        ; Advance to the next row (except after the final row)
         if (${i} < ${Friends.NumRows})
             Friends:NextRow
     }
@@ -596,21 +696,18 @@ function SpewTable(string DatabaseID, string TableName)
     variable int rCount = 0
     variable sqlitedb DB = ${DatabaseID}
 
-    ; Verify database is valid
     if (!${DB.ID(exists)})
     {
         echo "ERROR: Invalid Database ID (${DatabaseID})"
         return
     }
 
-    ; Verify table exists
     if (!${DB.TableExists[${TableName}]})
     {
         echo "ERROR: Table '${TableName}' does not exist"
         return
     }
 
-    ; Get the entire table
     declare Table sqlitetable ${DB.GetTable[${TableName}]}
     if (!${Table.ID(exists)})
     {
@@ -620,32 +717,28 @@ function SpewTable(string DatabaseID, string TableName)
 
     echo "Exporting table '${TableName}' (${Table.NumRows} rows, ${Table.NumFields} fields):"
 
-    ; Loop through all rows
     if (${Table.NumRows} > 0)
     {
         for (rCount:Set[0]; ${rCount} < ${Table.NumRows}; rCount:Inc)
         {
             Table:SetRow[${rCount}]
 
-            ; Loop through all fields in current row
             for (fCount:Set[0]; ${fCount} < ${Table.NumFields}; fCount:Inc)
             {
-                ; Skip NULL fields
                 if (${Table.FieldIsNULL[${fCount}]})
                     continue
 
-                ; Display field name and value
-                ; No type argument needed since we're just displaying as strings
+                ; Displaying as string — no type argument required
+                ; (see sqlitetable.GetFieldValue typed-read caveat in Notes)
                 echo "  ${rCount}. ${Table.GetFieldName[${fCount}]}: ${Table.GetFieldValue[${fCount}]}"
             }
         }
     }
 
-    ; IMPORTANT: Finalize to prevent memory leaks
     Table:Finalize
 }
 
-; Usage example:
+; Usage:
 ; call SpewTable ${PlayerInfoDB.ID} "Amadeus_Inventory"
 ```
 
@@ -658,7 +751,7 @@ variable sqlitedb MemDB
 ; Data is lost when database is closed or extension is unloaded
 MemDB:Set[${SQLite.OpenDB["TempDatabase",":Memory:"]}]
 
-; Use just like a disk database
+; Use exactly like a disk database
 MemDB:ExecDML["CREATE TABLE temp_data (id INTEGER, value TEXT)"]
 MemDB:ExecDML["INSERT INTO temp_data VALUES (1, 'temporary')"]
 MemDB:ExecDML["INSERT INTO temp_data VALUES (2, 'session-only')"]
@@ -676,7 +769,6 @@ while !${Query.LastRow}
 
 Query:Finalize
 
-; Database is lost when closed
 MemDB:Close
 echo "Memory database closed - all data is now gone"
 ```
@@ -690,10 +782,10 @@ variable string SafeInput
 
 MyDB:Set[${SQLite.OpenDB["MyDB","MyDB.sqlite3"]}]
 
-; Escape user input to prevent SQL injection
+; Escape user input to defeat SQL injection
 SafeInput:Set[${SQLite.Escape_String[${UserInput}]}]
 
-; SafeInput now contains ''O''Brien'' which is safe for SQL
+; SafeInput now contains ''O''Brien'' — safe to embed in SQL
 MyDB:ExecDML["INSERT INTO users (name) VALUES (${SafeInput})"]
 
 ; Example: "test" becomes ''test''
@@ -702,7 +794,7 @@ echo "Escaped 'test': ${SQLite.Escape_String["test"]}"
 
 ### Complete Production Script Example
 
-A complete, production-ready script demonstrating best practices.
+A production-ready script demonstrating best practices.
 
 ```lavishscript
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -712,7 +804,6 @@ A complete, production-ready script demonstrating best practices.
 
 variable sqlitedb PlayerInfoDB
 
-; Event handlers
 atom(script) isxSQLite_onErrorMsg(int ErrorNum, string ErrorMsg)
 {
     if (${ErrorNum} > 0)
@@ -728,14 +819,12 @@ atom(script) isxSQLite_onStatusMsg(string StatusMsg)
 
 function main()
 {
-    ; Verify extension is loaded
     if (!${ISXSQLite(exists)})
     {
         echo "[PlayerDB] isxSQLite is not loaded!"
         return
     }
 
-    ; Wait for extension to be ready
     if (!${ISXSQLite.IsReady})
     {
         do
@@ -745,17 +834,14 @@ function main()
         while !${ISXSQLite.IsReady}
     }
 
-    ; Attach events
     Event[isxSQLite_onErrorMsg]:AttachAtom[isxSQLite_onErrorMsg]
     Event[isxSQLite_onStatusMsg]:AttachAtom[isxSQLite_onStatusMsg]
 
-    ; Enable quiet mode (handle all output via events)
     if (!${ISXSQLite.InQuietMode})
         ISXSQLite:QuietMode
 
     echo "[PlayerDB] Using isxSQLite version ${ISXSQLite.Version}"
 
-    ; Open database
     PlayerInfoDB:Set[${SQLite.OpenDB["PlayerInfoDB","PlayerInfoDB.sqlite3"]}]
 
     if (!${PlayerInfoDB.ID(exists)})
@@ -764,23 +850,14 @@ function main()
         return
     }
 
-    ; Initialize schema if needed
     call InitializeDatabase ${PlayerInfoDB.ID}
-
-    ; Add sample data
     call AddRecords ${PlayerInfoDB.ID}
-
-    ; Query and display data
     call DisplayFriends ${PlayerInfoDB.ID}
-
-    ; Export inventory table
     call SpewTable ${PlayerInfoDB.ID} "Amadeus_Inventory"
 
-    ; Close database
     PlayerInfoDB:Close
     echo "[PlayerDB] Database closed"
 
-    ; Detach events
     Event[isxSQLite_onErrorMsg]:DetachAtom[isxSQLite_onErrorMsg]
     Event[isxSQLite_onStatusMsg]:DetachAtom[isxSQLite_onStatusMsg]
 
@@ -886,17 +963,16 @@ function SpewTable(string DatabaseID, string TableName)
 
 ### Case Sensitivity
 
-LavishScript and isxSQLite member/method names are **NOT** case-sensitive. However, SQL statements and table/column names may be case-sensitive depending on your SQL syntax and SQLite configuration.
+LavishScript (and therefore isxSQLite) member and method names are **NOT** case-sensitive. SQL statements and table/column names may or may not be case-sensitive depending on the SQL syntax and SQLite pragmas used.
 
-**Examples:**
 ```lavishscript
 ${SQLite.OpenDB["db","file.db"]}  ; Works
-${sqlite.opendb["db","file.db"]}  ; Also works (same result)
+${sqlite.opendb["db","file.db"]}  ; Also works — identical result
 ```
 
 ### NULL Checks
 
-Always check if database objects, queries, and tables exist before using them:
+Always check that database objects, queries, and tables exist before using them:
 
 ```lavishscript
 if ${MyDB.ID(exists)}
@@ -921,47 +997,42 @@ if ${MyQuery.FieldIsNULL["optional_field"]}
 In this documentation:
 - `[parameter]` indicates a required parameter
 - `[param1,param2]` indicates multiple required parameters
-- Text in italics describes the parameter type or purpose
-
-**Examples:**
-- `OpenDB[name,path]` requires two string parameters
-- `GetFieldValue[fieldnum or fieldname]` accepts either a number or string
-- `GetFieldValue[field, type]` optional second parameter specifies return type
+- `field` in `GetFieldValue[field]` accepts either a numeric index or a field name
 
 ### Resource Management
 
-**IMPORTANT:** Always finalize query and table objects when done to prevent memory leaks:
+Always finalize query and table objects when done to avoid memory leaks:
 
 ```lavishscript
 ; Queries
 MyQuery:Set[${DB.ExecQuery["SELECT * FROM table"]}]
 ; ... use query ...
-MyQuery:Finalize  ; Release memory
+MyQuery:Finalize
 
 ; Tables
 MyTable:Set[${DB.GetTable["table"]}]
 ; ... use table ...
-MyTable:Finalize  ; Release memory
+MyTable:Finalize
 ```
 
-**Note:** Queries and tables that return no results or encounter errors finalize automatically.
+Queries and tables that return no results or that encounter errors finalize automatically — manual `Finalize` is only needed for successful non-empty results.
 
 ### Database Defaults
 
-When creating a new database file, isxSQLite automatically sets these PRAGMA defaults:
+When creating a new database file, isxSQLite applies these PRAGMA defaults (note: `synchronous` is set twice — second value wins):
 
 ```sql
-PRAGMA encoding = 'UTF-8';
-PRAGMA auto_vacuum = 1;
-PRAGMA cache_size = 2048;
-PRAGMA page_size = 4096;
-PRAGMA synchronous = NORMAL;
-PRAGMA journal_mode = OFF;
-PRAGMA temp_store = MEMORY;
-PRAGMA synchronous = OFF;
+PRAGMA encoding      = 'UTF-8';
+PRAGMA auto_vacuum   = 1;
+PRAGMA cache_size    = 2048;
+PRAGMA page_size     = 4096;
+PRAGMA synchronous   = NORMAL;
+PRAGMA journal_mode  = OFF;
+PRAGMA temp_store    = MEMORY;
+PRAGMA synchronous   = OFF;
 ```
 
-You can override these settings using the ExecDML method after opening the database:
+You can override any of these with `ExecDML` after opening:
 
 ```lavishscript
 MyDB:ExecDML["PRAGMA synchronous = FULL"]
@@ -969,48 +1040,42 @@ MyDB:ExecDML["PRAGMA synchronous = FULL"]
 
 ### Events and Quiet Mode
 
-When QuietMode is enabled, console messages are suppressed, but events still fire. This is useful for production scripts that handle errors programmatically:
+When `QuietMode` is enabled, console messages are suppressed but events still fire. This is useful for production scripts that handle errors programmatically:
 
 ```lavishscript
-; Enable quiet mode
 ISXSQLite:QuietMode
 
-; Attach error handler
-function OnError(int ErrorNum, string ErrorMsg)
+atom(script) OnError(int ErrorNum, string ErrorMsg)
 {
     ; Custom error handling
     Logger:Log["SQLite Error: ${ErrorMsg}"]
 }
 Event[isxSQLite_onErrorMsg]:AttachAtom[OnError]
-
-; Now errors won't spam console but will be logged
 ```
 
 ### Query vs Table Usage
 
-**Use ExecQuery when:**
-- Working with large result sets
-- You need to process rows sequentially
-- Memory efficiency is important
-- You want to navigate forward/backward through results
+**Use `ExecQuery` (returns [sqlitequery](#sqlitequery)) when:**
+- Result sets may be large
+- You can process rows sequentially
+- Memory efficiency matters
 
-**Use GetTable when:**
+**Use `GetTable` (returns [sqlitetable](#sqlitetable)) when:**
 - Result set is small
-- You need random access to any row
-- You want all data loaded at once
-- Convenience outweighs memory concerns
+- You need random access to any row by number
+- Convenience outweighs memory cost
 
-**Key Difference:** ExecQuery uses callbacks for each row (step-through), while GetTable mallocs space for the entire result set.
+**Key difference:** `ExecQuery` steps through rows one at a time via SQLite callbacks. `GetTable` allocates space for the entire result set up front.
 
 ### LastRow Behavior
 
-The `LastRow` member of [sqlitequery](#sqlitequery) can be confusing. It works as follows:
+The changelog refers to `LastRow` as belonging to `sqlitedb`, but it is actually a member of [sqlitequery](#sqlitequery). The flag semantics:
 
-1. When you reach the last row and call `NextRow`, SQLite returns "no more rows"
-2. isxSQLite sets the `LastRow` flag to true
-3. A blank row is returned
+1. After you step past the last row (`NextRow` when already on the final row), SQLite reports no more rows.
+2. isxSQLite sets `LastRow` to TRUE and returns a blank row.
 
-This is why the do/while loop pattern works:
+This is why the canonical do/while pattern works:
+
 ```lavishscript
 do
 {
@@ -1020,27 +1085,29 @@ do
 while !${Query.LastRow}
 ```
 
-The loop processes each row, calls NextRow, and exits when LastRow becomes true.
+The loop processes each row, advances, and exits when `LastRow` becomes TRUE after the final `NextRow`.
 
 ### ExecDMLTransaction Details
 
-When using `ExecDMLTransaction`, isxSQLite automatically wraps your statements:
+`ExecDMLTransaction` automatically wraps your statement list:
 
 ```lavishscript
-; Your code:
+; Your code
 MyDB:ExecDMLTransaction[Statements]
 
-; What isxSQLite executes:
+; What isxSQLite actually executes
 ; BEGIN TRANSACTION;
 ; ... your statements ...
 ; END TRANSACTION;
 ```
 
-**Do NOT** include BEGIN/END TRANSACTION in your statement index. The method handles this automatically.
+**Do NOT** include `BEGIN TRANSACTION` / `END TRANSACTION` in your statement index — the method handles them.
+
+The method also requires the argument be an `index:string` (or `index:mutablestring`). Passing any other type fires [isxSQLite_onErrorMsg](#isxsqlite_onerrormsg).
 
 ### File Paths
 
-The base path for database files is your `innerspace/Extensions` directory. You can use relative or absolute paths:
+The base path for database files is your `innerspace/Extensions` directory. Relative and absolute paths both work:
 
 ```lavishscript
 ; Relative to innerspace/Extensions
@@ -1051,17 +1118,33 @@ ${SQLite.OpenDB["db","../databases/mydata.db"]}
 ${SQLite.OpenDB["db","C:/MyDatabases/mydata.db"]}
 ```
 
+Subdirectories must already exist — isxSQLite does not create them.
+
 ### Database Name Uniqueness
 
-Database names (first parameter to OpenDB) must be unique for each isxSQLite session. You cannot have two databases with the same name open simultaneously.
+Database names (first parameter to `OpenDB`) must be unique for the active isxSQLite session. Opening a second database with a name that is already in use fires [isxSQLite_onErrorMsg](#isxsqlite_onerrormsg) and returns a NULL `sqlitedb`.
 
 ```lavishscript
 ; First database
 DB1:Set[${SQLite.OpenDB["MyDB","./file1.db"]}]
 
-; Second database - must use different name
-DB2:Set[${SQLite.OpenDB["MyDB2","./file2.db"]}]  ; ✓ Correct
+; Second database must use a different name
+DB2:Set[${SQLite.OpenDB["MyDB2","./file2.db"]}]   ; OK
 
-; This would fail or cause conflicts:
-; DB3:Set[${SQLite.OpenDB["MyDB","./file3.db"]}]  ; ✗ Name already used
+; This will fail — name already in use
+; DB3:Set[${SQLite.OpenDB["MyDB","./file3.db"]}]
 ```
+
+### sqlitetable.GetFieldValue Typed-Read Caveat
+
+The typed form `GetFieldValue[field, type]` is reliable on [sqlitequery](#sqlitequery) but has a known implementation quirk on [sqlitetable](#sqlitetable):
+
+- On `sqlitequery`, the second argument (`argv[1]`) is correctly parsed as the type selector.
+- On `sqlitetable`, the type-selector parsing reads `argv[0]` rather than `argv[1]`, which means the field-selector and the type-selector compete for the same argument slot. In addition, the cast branches in the table implementation fall through without `break` statements.
+
+**Practical guidance:**
+- Prefer `sqlitetable.GetFieldValue[field]` (no type) and cast on the LavishScript side: `${Table.GetFieldValue[amount].Int}`, `${Table.GetFieldValue[price].Float}`, etc.
+- When you need typed numeric access to a large result set, use [sqlitequery](#sqlitequery) rather than [sqlitetable](#sqlitetable) — the typed form is well-behaved there.
+- If you do need typed table reads, test thoroughly against your specific isxSQLite build before relying on the result.
+
+This caveat is based on direct source review; the behavior has not been formally documented in [isxSQLiteChanges.txt](https://github.com/isxGames/isxSQLite/blob/master/isxSQLiteChanges.txt).
