@@ -9,13 +9,12 @@ This document explains how to set up and use the ISXEVE Scripting Guide with Cla
 
 1. [Architecture Overview](#architecture-overview)
 2. [Installation](#installation)
-3. [Local Paths (UPDATE THESE FOR YOUR SYSTEM)](#local-paths-update-these-for-your-system)
-4. [Using the /isxeve Command](#using-the-isxeve-command)
-5. [How It Works](#how-it-works)
-6. [Example Usage](#example-usage)
-7. [Tips for Best Results](#tips-for-best-results)
-8. [Alternative: Direct Path Reference](#alternative-direct-path-reference)
-9. [Troubleshooting](#troubleshooting)
+3. [Using the /isxeve Command](#using-the-isxeve-command)
+4. [How It Works](#how-it-works)
+5. [Example Usage](#example-usage)
+6. [Tips for Best Results](#tips-for-best-results)
+7. [Alternative: Direct Path Reference](#alternative-direct-path-reference)
+8. [Troubleshooting](#troubleshooting)
 
 ---
 
@@ -49,11 +48,11 @@ The ISXEVE Claude Code integration uses a **coordinator/worker architecture** de
 
 ## Installation
 
-The command and agent files are located in `Claude AI Commands (optional)/` within this guide directory. See `README.md` in that directory for a quick-start summary.
+The command and agent files are located in the `Claude AI Commands (optional)/` subdirectory within this guide directory. See [Claude AI Commands (optional)/README.md](Claude%20AI%20Commands%20(optional)/README.md) for a quick-start summary.
 
 ### Step 1: Copy the Agent File
 
-Copy `Claude AI Commands (optional)/ISXEVE-Expert.md` to your Claude agents directory:
+Copy [Claude AI Commands (optional)/ISXEVE-Expert.md](Claude%20AI%20Commands%20(optional)/ISXEVE-Expert.md) to your Claude agents directory:
 
 ```
 ~/.claude/agents/ISXEVE-Expert.md
@@ -66,7 +65,7 @@ C:\Users\<YourUsername>\.claude\agents\ISXEVE-Expert.md
 
 ### Step 2: Copy the Command File
 
-Copy `Claude AI Commands (optional)/isxeve.md` to your Claude commands directory:
+Copy [Claude AI Commands (optional)/isxeve.md](Claude%20AI%20Commands%20(optional)/isxeve.md) to your Claude commands directory:
 
 ```
 ~/.claude/commands/isxeve.md
@@ -79,14 +78,14 @@ C:\Users\<YourUsername>\.claude\commands\isxeve.md
 
 ### Step 3: Update Paths in Both Files
 
-Both `ISXEVE-Expert.md` (agent) and `isxeve.md` (coordinator) have a paths block near the top. Update all four paths in **both** files to match your system:
+Both [ISXEVE-Expert.md](Claude%20AI%20Commands%20(optional)/ISXEVE-Expert.md) (agent) and [isxeve.md](Claude%20AI%20Commands%20(optional)/isxeve.md) (coordinator) have a paths block near the top. Update all four paths in **both** files to match your system:
 
 - **Scripts Directory**: Your InnerSpace Scripts directory
 - **Guide Directory**: This ISXEVE Scripting Guide directory
 - **Changes File**: The ISXEVEChanges.txt file from your ISXEVE installation
-- **Quick Reference**: The path to `ISXEVE_QuickReference.md` (in the parent `isxDocs` directory, OUTSIDE this guide directory)
+- **Quick Reference**: The path to [ISXEVE_QuickReference.md](../ISXEVE_QuickReference.md) (in the parent `isxDocs` directory, OUTSIDE this guide directory)
 
-`ISXEVE-Expert.md` uses a **Local Paths** block:
+[ISXEVE-Expert.md](Claude%20AI%20Commands%20(optional)/ISXEVE-Expert.md) uses a **Local Paths** block:
 
 ```
 ## Local Paths (UPDATE THESE FOR YOUR SYSTEM)
@@ -97,7 +96,7 @@ CHANGES_FILE:   C:\Dev\InnerSpace\ISXEVE\Install\x64\Extensions\ISXDK35\ISXEVECh
 QUICK_REF_FILE: C:\Dev\InnerSpace\isxDocs\ISXEVE_QuickReference.md
 ```
 
-`isxeve.md` uses a **User Configuration** table:
+[isxeve.md](Claude%20AI%20Commands%20(optional)/isxeve.md) uses a **User Configuration** table:
 
 ```
 | Setting | Path |
@@ -288,8 +287,9 @@ If `/isxeve` doesn't appear in the command list:
 If the agent doesn't seem to work properly:
 
 1. Verify the agent file exists at: `~/.claude/agents/ISXEVE-Expert.md`
-2. Check that the Local Paths section has valid paths
-3. Ensure the GUIDE_DIR path points to this guide directory
+2. Verify the command file exists at: `~/.claude/commands/isxeve.md`
+3. Check that the **Local Paths** block in the agent and the **User Configuration** table in the coordinator BOTH have valid paths for all four settings (Scripts, Guide, Changes File, Quick Reference)
+4. Ensure the `GUIDE_DIR` / Guide Directory path points to this guide directory and `QUICK_REF_FILE` / Quick Reference points to `ISXEVE_QuickReference.md` in the parent `isxDocs` directory
 
 ### Documentation Not Found
 
