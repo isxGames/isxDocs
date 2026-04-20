@@ -33,8 +33,7 @@
    - [Known Issues and Gotchas](#known-issues-and-gotchas)
    - [CTCP Auto-Responses](#ctcp-auto-responses)
    - [Message Sanitization](#message-sanitization)
-8. [Private / Internal Build Features](#private--internal-build-features)
-9. [Deprecated Features](#deprecated-features)
+8. [Deprecated Features](#deprecated-features)
    - [Removed TLOs and DataTypes](#removed-tlos-and-datatypes)
    - [Removed Members](#removed-members)
    - [Removed Events](#removed-events)
@@ -357,9 +356,7 @@ ChannelUser:SetMode[+o]
 
 ## Commands
 
-The public release of ISXIM does not register any custom LavishScript commands. All functionality is exposed through the TLOs and datatypes above.
-
-Additional commands (`GetURL`, `PostURL`, `PostURLFiles`, `IRC`) exist in the source tree but are conditionally compiled under a private build flag. See [Private / Internal Build Features](#private--internal-build-features).
+ISXIM does not register any custom LavishScript commands. All functionality is exposed through the TLOs and datatypes above.
 
 ---
 
@@ -1014,24 +1011,6 @@ ISXIM automatically responds to these incoming CTCP requests without any script 
 ### Message Sanitization
 
 ISXIM strips mIRC-style formatting from incoming messages: color codes, bold, and underline are removed before event dispatch and display. Outgoing messages are not modified.
-
----
-
-## Private / Internal Build Features
-
-The ISXIM source tree contains additional commands and an event that are compiled only in a private/internal build (guarded by a `MYCOPY` preprocessor flag) and are not present in the public release DLL.
-
-**Potentially available in private builds only:**
-
-| Feature | Kind | Notes |
-|---------|------|-------|
-| GetURL | command | `GetURL "http(s)://address"` — asynchronously fetches a URL; result arrives via `isxGames_onHTTPResponse` |
-| PostURL | command | HTTP POST counterpart to GetURL |
-| PostURLFiles | command | HTTP multipart file upload |
-| IRC | command | Stub that demonstrates webhook testing |
-| isxGames_onHTTPResponse | event | `(int Size, string URL, string IPAddress, int ResponseCode, float TransferTime, string ResponseText, string ParsedBody)` — only fires in response to `GetURL`/`PostURL` |
-
-**Script implication:** do not rely on `GetURL`, `PostURL`, `PostURLFiles`, or the `isxGames_onHTTPResponse` event in scripts intended for the public ISXIM release. Attaching an atom to `isxGames_onHTTPResponse` is harmless in the public build (the event is registered) but will never fire because nothing sends HTTP requests.
 
 ---
 
