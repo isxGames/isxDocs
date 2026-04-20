@@ -13,13 +13,10 @@
    - [Table DataTypes](#table-datatypes)
 4. [Commands](#commands)
    - [Test Commands](#test-commands)
-   - [Web Commands (libisxgames builds only)](#web-commands-libisxgames-builds-only)
 5. [Events](#events)
    - [Error Events](#error-events)
    - [Status Events](#status-events)
-   - [HTTP Events (libisxgames builds only)](#http-events-libisxgames-builds-only)
-6. [Build Variants](#build-variants)
-7. [Usage Examples](#usage-examples)
+6. [Usage Examples](#usage-examples)
    - [Checking Extension Status and Setting Up Events](#checking-extension-status-and-setting-up-events)
    - [Opening and Closing Databases](#opening-and-closing-databases)
    - [Creating Tables and Checking Schema](#creating-tables-and-checking-schema)
@@ -31,7 +28,7 @@
    - [Working with Memory Databases](#working-with-memory-databases)
    - [Using Escape_String for SQL Injection Prevention](#using-escape_string-for-sql-injection-prevention)
    - [Complete Production Script Example](#complete-production-script-example)
-8. [Notes](#notes)
+7. [Notes](#notes)
    - [Case Sensitivity](#case-sensitivity)
    - [NULL Checks](#null-checks)
    - [Parameter Notation](#parameter-notation)
@@ -62,7 +59,6 @@ isxSQLite allows you to create, access, and manipulate SQLite databases from Lav
 - Transaction support for efficient bulk operations
 - String escaping utilities for SQL injection prevention
 - Event-driven error and status reporting
-- HTTP/HTTPS request capabilities (only in `libisxgames` builds — see [Build Variants](#build-variants))
 
 ### Source and Versioning
 
@@ -285,66 +281,6 @@ Commands extend the InnerSpace console with additional functionality. isxSQLite 
 
 ---
 
-### Web Commands (libisxgames builds only)
-
-The following commands are only registered when isxSQLite is compiled with the `USE_LIBISXGAMES` preprocessor flag. They are implemented in the linked `isxGames.lib` — source in `libisxgames/isxCommands.cpp` (functions `CMD_GetURL` and `CMD_DebugSpew`). See [Build Variants](#build-variants) to determine whether your build supports them.
-
-#### **GetURL**
-
-**Syntax:**
-```
-GetURL "url"
-GetURL "url" "content_type"
-```
-
-**Description:** Retrieves content from a URL via HTTP or HTTPS using libcurl. Runs asynchronously on a new `boost::thread` (`simple_http_request`); the script continues executing immediately. Multiple `GetURL` calls serialize on an internal mutex and process in order received.
-
-**Parameters:**
-- `url` *(required)* — Any normalized HTTP or HTTPS URL.
-- `content_type` *(optional)* — Sets an explicit `Content-Type` header on the request (e.g., `application/json`). Omit for default behavior.
-
-**Printed syntax hint (from source when argc is out of range):**
-```
-Syntax:  GetURL "http://address" [content_type]
-         GetURL "https://address" [content_type]
-```
-
-**Notes (verified against `libisxgames/isxCurl_http.cpp` and `isxCommands.cpp`):**
-- Only HTTP and HTTPS protocols are supported. User-Agent is sent as `libisxgames`. IPv4 is forced (`CURL_IPRESOLVE_V4`). No curl-side timeout is applied (`CURLOPT_TIMEOUT = 0`).
-- TLS verification is enabled (`CURLOPT_SSL_VERIFYPEER = 1`, `CURLOPT_SSL_VERIFYHOST = 2`); self-signed certificates will fail.
-- Successful (`HTTP 200`) responses only fire [isxGames_onHTTPResponse](#isxgames_onhttpresponse) when the response `Content-Type` is one of: `text/html`, `text/plain`, `text/xml`, `application/xml`, `application/json`. Other content types log an "Unsupported Content Type" printf and are silently dropped.
-- Non-200 responses **do** fire the event, with both `ResponseText` and `ParsedBody` set to the raw response body.
-- Internal `auth.isxgames.com` / tracking URLs are intercepted before the event fires and are not surfaced to scripts.
-- HTML responses have their `<body>` extracted via libtidy into `ParsedBody`. XML and JSON responses set `ParsedBody` to the same raw text as `ResponseText` (no parsing).
-
-**Examples:**
-```lavishscript
-GetURL "https://www.isxgames.com/libcurltest.html"
-GetURL "http://www.isxgames.com/libcurltest.html"
-GetURL "https://api.example.com/data" "application/json"
-```
-
-**See Also:**
-- [isxGames_onHTTPResponse](#isxgames_onhttpresponse) — Event delivering URL responses
-
----
-
-#### **DebugSpew**
-
-**Syntax:**
-```
-DebugSpew "message"
-```
-
-**Description:** Writes a single message to the Windows debug-output channel via `OutputDebugString()`. Output is **not** shown in the InnerSpace console — view it in a debugger (Visual Studio Output window) or a tool like Sysinternals DebugView. Primarily useful for extension authors debugging the loaded libisxgames build; scripts rarely need it.
-
-**Parameters:**
-- `message` *(required)* — Text to emit. If no argument is supplied the command is a silent no-op (source checks `argc < 2` and returns immediately).
-
-**Note:** libisxgames also exposes additional web commands (`PostURL`, `PostURLFiles`) and internal debug helpers, but those are **not** registered by isxSQLite — only `GetURL` and `DebugSpew` are registered in `isxSQLite/Commands.h`.
-
----
-
 ## Events
 
 Events allow you to respond to isxSQLite operations and conditions. Register atoms with `Event[EventName]:AttachAtom[AtomName]`.
@@ -400,65 +336,6 @@ atom(script) OnSQLiteStatus(string StatusMsg)
 
 Event[isxSQLite_onStatusMsg]:AttachAtom[OnSQLiteStatus]
 ```
-
----
-
-### HTTP Events (libisxgames builds only)
-
-This event is registered unconditionally at extension load, but in practice it only fires when [GetURL](#geturl) is invoked — which requires a `USE_LIBISXGAMES` build. See [Build Variants](#build-variants). The firing code paths live in `libisxgames/isxCurl_http.cpp` (`http_writer`, `HandleIncomingHTML`, `HandleIncomingXML`, `HandleIncomingJSON`).
-
-#### **isxGames_onHTTPResponse**
-
-**Description:** Fires exactly once per `GetURL` response, assuming the `Content-Type` is supported (see [GetURL](#geturl) notes). The event carries 7 string-typed arguments; LavishScript will coerce them into the atom's declared parameter types.
-
-**Parameters (in argument order from source):**
-
-| # | Parameter | Type | Description |
-|---|-----------|------|-------------|
-| 1 | `Size` | int | Bytes written in the current transfer chunk (`size * nmemb`) |
-| 2 | `URL` | string | Effective URL after any redirects (`CURLINFO_EFFECTIVE_URL`) |
-| 3 | `IPAddress` | string | Primary IP of the responding server (`CURLINFO_PRIMARY_IP`) |
-| 4 | `ResponseCode` | int | HTTP response code (`CURLINFO_RESPONSE_CODE`) — e.g. `200`, `404` |
-| 5 | `TransferTime` | float | Total transfer time in seconds, 2-decimal precision (`CURLINFO_TOTAL_TIME`) |
-| 6 | `ResponseText` | string | Full response body, unparsed (always populated) |
-| 7 | `ParsedBody` | string | For HTML/plain responses: text extracted from the `<body>` via libtidy. For XML / JSON / non-200 responses: a copy of `ResponseText`. |
-
-**Firing conditions (verified source behavior):**
-- Fires for `HTTP 200` responses with one of these `Content-Type` values: `text/html`, `text/plain`, `text/xml`, `application/xml`, `application/json`.
-- Fires for non-200 responses regardless of content type (both body fields are identical raw text in that case).
-- Does **not** fire for unsupported content types (silently dropped with an "Unsupported Content Type" printf).
-- Does **not** fire for responses from internal isxGames authentication / tracking domains.
-
-**Example:**
-```lavishscript
-atom(script) OnHTTPResponse(int Size, string URL, string IPAddress, int ResponseCode, float TransferTime, string ResponseText, string ParsedBody)
-{
-    echo "Received ${Size} bytes from ${URL}"
-    echo "Response Code: ${ResponseCode}"
-    echo "Transfer Time: ${TransferTime}s"
-    echo "Body: ${ParsedBody}"
-}
-
-Event[isxGames_onHTTPResponse]:AttachAtom[OnHTTPResponse]
-```
-
-**See Also:**
-- [GetURL](#geturl) — Command to initiate HTTP requests
-
----
-
-## Build Variants
-
-isxSQLite ships in two build variants defined in the Visual Studio project:
-
-| Configuration | `USE_LIBISXGAMES` defined? | GetURL / DebugSpew commands | HTTP response event fires |
-|---------------|---------------------------|-----------------------------|---------------------------|
-| `Release` (Win32 / x64) | No | Not registered | No |
-| `Release - with libisxgames` (Win32 / x64) | Yes | Registered (linked from libisxgames) | Yes (on GetURL response) |
-
-**Detecting your variant at runtime:** There is no direct TLO flag for this. The pragmatic test is whether the `GetURL` command exists — attempting to run it in a plain build will produce an "unknown command" error. If web functionality is required by your script, wrap it in a guard that logs and falls back gracefully.
-
-The command implementations live in the separate `libisxgames` source tree (specifically `libisxgames/isxCommands.cpp` and `libisxgames/isxCurl_http.cpp`), linked in as `isxGames.lib` at build time. The bundled tutorial script and the default public distribution are typically the plain `Release` build unless otherwise noted. If you require HTTP functionality, confirm the specific DLL you have loaded.
 
 ---
 
