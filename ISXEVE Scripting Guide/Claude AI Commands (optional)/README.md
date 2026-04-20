@@ -15,18 +15,18 @@ This conserves context in the main conversation while maintaining thoroughness.
 
 ## Installation
 
-1. Copy `ISXEVE-Expert.md` to `~/.claude/agents/`
-2. Copy `isxeve.md` to `~/.claude/commands/`
-3. Edit `ISXEVE-Expert.md` and update the **Local Paths** section at the top:
+1. Copy [ISXEVE-Expert.md](ISXEVE-Expert.md) to `~/.claude/agents/`
+2. Copy [isxeve.md](isxeve.md) to `~/.claude/commands/`
+3. Edit [ISXEVE-Expert.md](ISXEVE-Expert.md) and update the **Local Paths** section at the top:
    - `SCRIPTS_DIR`: Your InnerSpace Scripts directory
    - `GUIDE_DIR`: Your ISXEVE Scripting Guide directory
    - `CHANGES_FILE`: The ISXEVEChanges.txt file from your ISXEVE installation
-   - `QUICK_REF_FILE`: Path to `ISXEVE_QuickReference.md` (in the parent `isxDocs` directory)
-4. Edit `isxeve.md` and update the **User Configuration** table at the top:
+   - `QUICK_REF_FILE`: Path to [ISXEVE_QuickReference.md](../../ISXEVE_QuickReference.md) (in the parent `isxDocs` directory)
+4. Edit [isxeve.md](isxeve.md) and update the **User Configuration** table at the top:
    - **Scripts Directory**: Your InnerSpace Scripts directory
    - **Guide Directory**: Your ISXEVE Scripting Guide directory
    - **Changes File**: The ISXEVEChanges.txt file from your ISXEVE installation
-   - **Quick Reference**: Path to `ISXEVE_QuickReference.md`
+   - **Quick Reference**: Path to [ISXEVE_QuickReference.md](../../ISXEVE_QuickReference.md)
 
 ---
 
@@ -54,7 +54,7 @@ Task(subagent_type="ISXEVE-Expert", prompt="Create a mining script...")
 ## What the Agent Does
 
 - Reads your comprehensive guide (22 numbered guides plus meta/index files + quick reference)
-- Knows your directories (Scripts, Guide location)
+- Knows your directories (Scripts, Guide, Changes File, Quick Reference)
 - Follows best practices (EVEBot, Yamfa, Tehbot, Metatron patterns, NULL checks, async data handling)
 - Handles all tasks (creating, editing, debugging, refactoring scripts)
 - Applies correct API usage (TLOs, datatypes, entities, modules, movement)
