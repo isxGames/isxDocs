@@ -1,3528 +1,2349 @@
-# ISXEVE Reference
+# ISXEVE Quick Reference
 
-## Table of Contents
-
-1. [Introduction](#introduction)
-2. [Top-Level Objects](#top-level-objects)
-   - [Extension TLOs](#extension-tlos)
-   - [Core TLOs](#core-tlos)
-   - [Window TLOs](#window-tlos)
-3. [DataType Categories](#datatype-categories)
-   - [Core/Extension DataTypes](#coreextension-datatypes)
-   - [Character & Being DataTypes](#character--being-datatypes)
-   - [Entity & Space DataTypes](#entity--space-datatypes)
-   - [Item & Equipment DataTypes](#item--equipment-datatypes)
-   - [Ship DataTypes](#ship-datatypes)
-   - [Station & Structure DataTypes](#station--structure-datatypes)
-   - [Window DataTypes](#window-datatypes)
-   - [UI Element DataTypes](#ui-element-datatypes)
-   - [Interstellar DataTypes](#interstellar-datatypes)
-   - [Market DataTypes](#market-datatypes)
-   - [Scanner DataTypes](#scanner-datatypes)
-   - [Agent & Mission DataTypes](#agent--mission-datatypes)
-   - [Skill DataTypes](#skill-datatypes)
-   - [Chat DataTypes](#chat-datatypes)
-   - [Drone DataTypes](#drone-datatypes)
-   - [Fleet DataTypes](#fleet-datatypes)
-   - [Miscellaneous DataTypes](#miscellaneous-datatypes)
-4. [Commands](#commands)
-   - [Core Commands](#core-commands)
-   - [Web Commands](#web-commands)
-5. [Events](#events)
-   - [Event Registration](#event-registration)
-   - [EVE Events](#eve-events)
-   - [System Events](#system-events)
-6. [Usage Examples](#usage-examples)
-   - [Basic Information](#basic-information)
-   - [Autopilot and Navigation](#autopilot-and-navigation)
-   - [Bookmarks](#bookmarks)
-   - [Items and Inventory](#items-and-inventory)
-   - [Ship and Modules](#ship-and-modules)
-   - [Targets and Combat](#targets-and-combat)
-   - [Market Operations](#market-operations)
-   - [Scanning](#scanning)
-   - [Universe and Planetary Information](#universe-and-planetary-information)
-   - [Station and Structure Operations](#station-and-structure-operations)
-   - [UI Interaction](#ui-interaction)
-   - [Fleet Operations](#fleet-operations)
-   - [Chat Operations](#chat-operations)
-7. [Notes](#notes)
-   - [Case Sensitivity](#case-sensitivity)
-   - [NULL Checks](#null-checks)
-   - [Parameter Notation](#parameter-notation)
-   - [EVE Client Updates](#eve-client-updates)
-   - [Performance Considerations](#performance-considerations)
-   - [Authentication](#authentication)
-   - [Deprecated Features](#deprecated-features)
+<!-- CLAUDE_SKIP_START -->
+**Purpose:** Single-file quick reference for every TLO, datatype, command, and event in ISXEVE, plus common patterns and cross-references to the in-depth [ISXEVE Scripting Guide](ISXEVE%20Scripting%20Guide/README.md).
+**Audience:** Script authors who need fast lookup of API signatures, valid member/method names, and canonical usage idioms.
+**Authoritative source:** `ISXEVEChanges.txt` (the ISXEVE changelog) is the definitive source for the API surface documented here. Where this document and a guide file disagree, the changelog wins. Every member/method/command/event below has been verified against the changelog as of the rewrite date on the commit that introduced this file.
+<!-- CLAUDE_SKIP_END -->
 
 ---
 
-## Introduction
+## Table of Contents
 
-This document provides comprehensive reference documentation for all datatypes, top-level objects, commands, and events available in the ISXEVE extension for EVE Online. ISXEVE extends LavishScript to provide access to game data and functionality through a structured type system.
+1. [Bootstrap and Safety Checks](#bootstrap-and-safety-checks)
+2. [Top-Level Objects](#top-level-objects)
+3. [Datatype Inheritance Map](#datatype-inheritance-map)
+4. [Character and Being Datatypes](#character-and-being-datatypes)
+5. [Ship and Module Datatypes](#ship-and-module-datatypes)
+6. [Item and Inventory Datatypes](#item-and-inventory-datatypes)
+7. [Entity and Space Datatypes](#entity-and-space-datatypes)
+8. [Station and Structure Datatypes](#station-and-structure-datatypes)
+9. [Interstellar and Bookmark Datatypes](#interstellar-and-bookmark-datatypes)
+10. [Window Datatypes](#window-datatypes)
+11. [UI Element Datatypes](#ui-element-datatypes)
+12. [Market Datatypes](#market-datatypes)
+13. [Scanner Datatypes](#scanner-datatypes)
+14. [Agent and Mission Datatypes](#agent-and-mission-datatypes)
+15. [Skill Datatypes](#skill-datatypes)
+16. [Chat Datatypes](#chat-datatypes)
+17. [Fleet Datatypes](#fleet-datatypes)
+18. [Drone Datatypes](#drone-datatypes)
+19. [Misc Datatypes](#misc-datatypes)
+20. [Commands](#commands)
+21. [Events](#events)
+22. [EVE:Execute Command Constants](#eveexecute-command-constants)
+23. [Common Patterns and Idioms](#common-patterns-and-idioms)
+24. [Canonical Slot Names and Destinations](#canonical-slot-names-and-destinations)
+25. [Deprecated and Removed](#deprecated-and-removed)
+26. [Notes](#notes)
 
-### DataType Inheritance
+---
 
-Many datatypes inherit from other datatypes, gaining all the members and methods of their parent type. Common inheritance patterns in ISXEVE:
+## Bootstrap and Safety Checks
 
-- [**character**](#character) inherits from [**pilot**](#pilot)
-- [**pilot**](#pilot) inherits from [**being**](#being)
-- [**fleetmember**](#fleetmember) inherits from [**pilot**](#pilot)
-- [**module**](#module) inherits from [**item**](#item)
-- [**structure**](#structure) inherits from [**station**](#station)
-- [**planet**](#planet) inherits from [**interstellar**](#interstellar)
-- [**solarsystem**](#solarsystem) inherits from [**interstellar**](#interstellar)
-- [**constellation**](#constellation) inherits from [**interstellar**](#interstellar)
-- [**region**](#region) inherits from [**interstellar**](#interstellar)
-- [**entitywormhole**](#entitywormhole) inherits from [**entity**](#entity)
-- All specialized window types inherit from [**evewindow**](#evewindow)
-
-### Accessing DataTypes
-
-DataTypes are accessed through Top-Level Objects (TLOs) or through members of other datatypes. For example:
+**Every ISXEVE script must gate its first API access behind `${ISXEVE.IsReady}`**. Without this the extension may not be initialized and members will silently return NULL.
 
 ```lavishscript
-${Me}                           // TLO returning 'character' datatype
-${Me.Ship}                      // Member returning 'ship' datatype
-${Me.GetTargets}                // Method populating index with 'entity' objects
-${EVEWindow[Inventory]}         // TLO with parameter returning 'eveinvwindow' datatype
-${MyShip.Module[1]}             // Member returning 'module' datatype
+function main()
+{
+    while !${ISXEVE.IsReady}
+        wait 10
+
+    ; Safe to access ISXEVE APIs from this point on
+    while TRUE
+    {
+        if ${Me.ToEntity(exists)}
+            echo "Ship: ${MyShip.ToItem.Name} at ${Me.ToEntity.X},${Me.ToEntity.Y},${Me.ToEntity.Z}"
+        wait 50
+    }
+}
 ```
+
+**Existence checks — always validate before dereferencing.** Members and TLOs returning datatype objects can be NULL when the queried object does not exist or is out of context (e.g. station methods in space, entity lookups for IDs that have despawned). Use `(exists)` guards:
+
+```lavishscript
+if ${Entity[${TargetID}](exists)}
+    echo "Target: ${Entity[${TargetID}].Name}"
+
+if ${Me.Fleet.ID(exists)}
+    echo "Fleet of size ${Me.Fleet.Size}"
+
+if ${Me.ActiveTarget(exists)}
+    echo "Active target: ${Me.ActiveTarget.Name}"
+```
+
+**Async data prerequisites.** Several APIs require a one-time UI interaction before returning valid data in the current session:
+
+| API | Prerequisite |
+|---|---|
+| `entity.CargoCapacity` / `entity.UsedCargoCapacity` / `entity.GetCargo` | The entity's cargo hold must have been opened at least once in-session (`IsCargoAccessible` becomes TRUE). |
+| `MyShip.CargoCapacity` / `MyShip.UsedCargoCapacity` | The ship's cargo window must have been opened at least once, or use the `EVEWindow[Inventory]` child-window pattern which triggers the open implicitly. |
+| `EVEWindow[Inventory].ChildWindow[...].Capacity` / `.UsedCapacity` | Returns `-1` on error and `-2` when the child has not yet been made active. |
+| `Me.Wallet.Balance` / `Me.Wallet.BalanceAUR` / `Me.Corp.Wallet.Balance` | Returns `-1.0` until the wallet window has been opened at least once. |
+| `Universe[name]` (string lookup) | First string lookup per session caches the entire name database (~100k+ names) and lags the client. Prefer ID lookups. |
+
+See [03_API_Reference.md](ISXEVE%20Scripting%20Guide/03_API_Reference.md) for the full async-data discussion.
 
 ---
 
 ## Top-Level Objects
 
-Top-Level Objects (TLOs) are the entry points for accessing game data. They can be accessed directly in LavishScript.
+Top-Level Objects (TLOs) are the entry points for accessing game data. Syntax: `${TLO}` for parameter-less, `${TLO[argument]}` for parameterized.
 
-### Extension TLOs
+### Extension TLO
 
-| TLO | DataType | Description |
+| TLO | Datatype | Description |
 |-----|----------|-------------|
-| **ISXEVE** | [isxeve](#isxeve) | ISXEVE extension information and utilities |
+| `ISXEVE` | [isxeve](#isxeve) | Extension status, debug hooks, utility members. |
 
+### Core Game TLOs
 
-### Core TLOs
-
-| TLO | DataType | Description |
+| TLO | Datatype | Description |
 |-----|----------|-------------|
-| **EVE** | [eve](#eve) | Main game information and utilities |
-| **Me** | [character](#character) | Player character |
-| **MyShip** | [ship](#ship) | Player's active ship |
-| **EVETime** | [evetime](#evetime) | Current EVE time |
-| **Local[id/name]** | [pilot](#pilot) | Access pilot from local channel by ID or name |
-| **Chat** | [evechat](#evechat) | Access chat channels |
-| **Chat[id/name]** | [chatchannel](#chatchannel) | Access specific chat channel by ID or name |
-| **Overview** | [overview](#overview) | Overview functionality |
-| **Universe[id/name]** | [interstellar](#interstellar) | Access universe objects by ID or name |
-| **Entity[id/name]** | [entity](#entity) | Access entity by ID or name (space only) |
-| **Being[id]** | [being](#being) | Access being by ID |
-| **CharSelect** | [charselect](#charselect) | Character selection screen (login only) |
+| `EVE` | [eve](#eve) | Main game universe object. Entities, bookmarks, agents, market, drones. |
+| `Me` | [character](#character) | Your character. Inherits from [pilot](#pilot) which inherits from [being](#being). |
+| `MyShip` | [ship](#ship) | Your active ship. Same entity as `Me.Ship`. |
+| `EVETime` | [evetime](#evetime) | Current EVE server time. |
+| `Local[id]` / `Local[name]` | [pilot](#pilot) | Access a pilot from local chat by CharID (int64) or name. |
+| `Chat` | [evechat](#evechat) | Chat system root. |
+| `Chat[id]` / `Chat[name]` | [chatchannel](#chatchannel) | Specific chat channel by ID or name. |
+| `Universe[id]` / `Universe[name]` | [interstellar](#interstellar) | Universe object — solar system, constellation, region, planet, moon, etc. Returned type depends on what the ID/name resolves to. |
+| `Entity[id]` | [entity](#entity) | Entity on the current grid by ID. Only works in space. |
+| `Entity[name]` | [entity](#entity) | Entity by name. Only works in space. |
+| `Being[id]` | [being](#being) | Being (character/NPC) by CharID. |
+| `CharSelect` | [charselect](#charselect) | Character selection screen. Only valid at login before character selection. |
+| `Overview` | [overview](#overview) | Overview selected-item access. |
 
+### EVEWindow TLO
 
-### Window TLOs
+All variants return an [evewindow](#evewindow) (or a more specialized subtype when the window implies one, e.g. `evefittingwindow`, `eveinvwindow`, `evecustomsofficewindow`).
 
-| TLO | DataType | Description |
-|-----|----------|-------------|
-| **EVEWindow[name]** | [evewindow](#evewindow) | Access EVE window by name |
-| **EVEWindow[byName,name]** | [evewindow](#evewindow) | Access EVE window by exact name |
-| **EVEWindow[byCaption,text]** | [evewindow](#evewindow) | Access EVE window by caption text |
-| **EVEWindow[byItemID,id]** | [evewindow](#evewindow) | Access EVE window by item ID |
-| **EVEWindow[local]** | [evewindow](#evewindow) | Access local chat window |
-| **EVEWindow[active]** | [evewindow](#evewindow) | Access currently active window |
-| **EVEWindow[#]** | [evewindow](#evewindow) | Access window by index number |
+| Syntax | Description |
+|---|---|
+| `EVEWindow[name]` | Window by one-word name (e.g. `Inventory`, `Fitting`, `RepairShop`, `SellItems`, `MessageBox`). |
+| `EVEWindow[byName,name]` | Window by exact internal name (e.g. `byName,modal`, `byName,PlanetaryImportExportUI`). |
+| `EVEWindow[byCaption,text]` | Window by visible caption text (e.g. `byCaption,Agent Conversation`). |
+| `EVEWindow[byItemID,id]` | Window associated with an item ID. |
+| `EVEWindow[active]` | Currently focused window. |
+| `EVEWindow[local]` | Local chat window. |
+| `EVEWindow[#]` | Window by sequential index. |
 
----
+Specialized subtypes returned automatically by `EVEWindow`:
 
-## DataTypes
-
-### Core/Extension DataTypes
-
-#### **isxeve**
-
-Extension information and utilities. Accessed via ISXEVE TLO.
-
-**Members:**
-- `Version` - string: ISXEVE version number
-- `IsReady` - bool: Whether extension is ready for use
-- `IsLoading` - bool: Whether extension is currently loading
-- `SecsToString[seconds]` - string: Converts seconds to formatted time string
-- `IsSafe` - bool: Whether running safe build
-- `IsBeta` - bool: Whether running beta build
-- `Debug1` - bool: Debug flag
-
-**Methods:**
-
-*Debug Methods:*
-- `Debug_SetTypeValidation[enabled]` - Enable/disable type validation
-- `Debug_SetEntityCacheEnabled` - Enable entity caching
-- `Debug_SetEntityCacheDisabled` - Disable entity caching
-- `Debug_SetHighPerfLogging[enabled]` - Enable/disable high performance logging
-- `Debug_LogMsg[message]` - Log debug message
-- `Debug_PrintCacheInfo` - Print entity cache information
-- `Debug_DumpEntityCache` - Dump entity cache contents
-
-*Installation Methods:*
-- `InstallBeta` - Install beta version
-- `InstallTest` - Install test version
-- `InstallLive` - Install live version
+- `Inventory` → [eveinvwindow](#eveinvwindow)
+- `Fitting` → [evefittingwindow](#evefittingwindow)
+- `SellItems` → [evesellitemswindow](#evesellitemswindow)
+- `MarketAction` / `Market Action` → [evemarketactionwindow](#evemarketactionwindow)
+- `RepairShop` / `Repair Shop` → [everepairshopwindow](#everepairshopwindow)
+- `MessageBox` / `Message Box` → [evemessageboxwindow](#evemessageboxwindow)
+- `directionalScannerWindow` → [evedirectionalscannerwindow](#evedirectionalscannerwindow)
+- Customs-office windows (e.g. `byName,PlanetaryImportExportUI`) → [evecustomsofficewindow](#evecustomsofficewindow)
+- Agent dialog (`byCaption,Agent Conversation`) → [eveagentdialogwindow](#eveagentdialogwindow)
 
 ---
 
-#### **eve**
+## Datatype Inheritance Map
 
-Main EVE datatype providing core game functionality. Accessed via EVE TLO.
+```
+being
+  └─ pilot
+       ├─ character                (Me TLO)
+       └─ fleetmember
 
-**Members:**
-- `EntitiesCount` - int: Number of entities in space
-- `DistanceBetween[id1,id2]` - double: Distance between two entities
-- `Bookmark[id or label]` - [bookmark](#bookmark): Bookmark by ID or label
-- `JumpsToStation[stationID]` - int: Jumps to station
-- `Time` - string: Current EVE time
-- `Date` - string: Current EVE date
-- `NumAssetsAtStation[stationID]` - int: Number of assets at station
-- `GetLocationNameByID[id]` - string: Location name by ID
-- `Station[id]` - [station](#station): Station by ID
-- `JumpsBetween[fromID,toID]` - int: Jumps between locations
-- `JumpsTo[solarSystemID]` - int: Jumps to solar system
-- `Is3DDisplayOn` - bool: Whether 3D display is on
-- `IsUIDisplayOn` - bool: Whether UI display is on
-- `IsTextureLoadingOn` - bool: Whether texture loading is on
-- `NextSessionChange` - [evetime](#evetime): Next session change time
-- `InCriticalSection` - bool: Whether in critical section
-- `QueryEvaluate[query,entity]` - bool: Evaluates query against entity
-- `IsProgressWindowOpen` - bool: Whether progress window is open
-- `ProgressWindowTitle` - string: Progress window title
-- `AbandonedDronesExist` - bool: Whether abandoned drones exist
-- `MinWarpDistance` - double: Minimum warp distance
-- `ItemInfo[typeID]` - [iteminfo](#iteminfo): Item info by type ID
-- `Structure[id]` - [structure](#structure): Structure by ID
-- `Agent[id or name]` - [agent](#agent): Agent by ID or name
+iteminfo
+  └─ item
+       └─ module
 
-**Methods:**
+iteminfo
+  └─ iteminfolist
 
-*UI & Display:*
-- `InfoWindow[text]` - Opens info window
-- `SetInSpaceStatus[text]` - Sets in-space status text
-- `DoCommand[command]` - Executes command
-- `Execute[command]` - Executes EVE UI command
-- `Toggle3DDisplay` - Toggles 3D display
-- `ToggleUIDisplay` - Toggles UI display
-- `ToggleTextureLoading` - Toggles texture loading
-- `CloseAllMessageBoxes` - Closes all message boxes
-- `CloseAllChatInvites` - Closes all chat invites
-- `GetEVEWindows[index:evewindow]` - Populates index with EVE windows
+interstellar
+  ├─ solarsystem
+  ├─ constellation
+  ├─ region
+  └─ planet
 
-*Drones:*
-- `LaunchDrones[index:item or int64]` - Launches drones
-- `DronesMine[index:int64]` - Commands drones to mine
-- `DronesMineRepeatedly[index:int64]` - Commands drones to mine repeatedly
-- `DronesScoopToDroneBay[index:int64]` - Scoops drones to bay
-- `DronesEngageMyTarget[index:int64]` - Engages target with drones
-- `AbandonDrones[index:int64]` - Abandons drones
-- `ReturnFighterControl[index:int64]` - Returns fighter control
-- `DelegateFighterControl[index:int64,charID]` - Delegates fighter control
-- `DronesAssist[index:int64,charID]` - Drones assist character
-- `DronesGuard[index:int64,charID]` - Drones guard character
-- `DronesReturnAndOrbit[index:int64]` - Drones return and orbit
-- `DronesReturnToDroneBay[index:int64]` - Returns drones to bay
-- `ReclaimDrones` - Reclaims abandoned drones
+station
+  └─ structure                     (citadels)
 
-*Entities:*
-- `PopulateEntities[categoryID]` - Populates entity list
-- `QueryEntities[index:entity,query]` - Populates index with entities matching query
-- `GetViewedWrecks[index:int64]` - Populates index with viewed wreck IDs
+entity
+  ├─ entitywormhole
+  ├─ entityplayerstructure
+  ├─ attacker
+  │    └─ jammer
+  └─ activedrone                   (via ToActiveDrone)
 
-*Bookmarks & Navigation:*
-- `GetBookmarks[index:bookmark,folder]` - Populates index with bookmarks
-- `RefreshBookmarks` - Refreshes bookmark cache
-- `CreateBookmark[label,notes,folder,expiry]` - Creates bookmark
-- `AddWaypoint[solarSystemID]` - Adds waypoint
-- `ClearWaypoint[solarSystemID]` - Clears waypoint
-- `ClearAllWaypoints` - Clears all waypoints
-- `GetToDestinationPath[index:int]` - Gets path to destination
-- `GetWaypoints[index:int]` - Populates index with waypoint IDs
-- `OptimizeAutopilotRoute` - Optimizes autopilot route
+evewindow
+  ├─ eveinvwindow
+  ├─ evefittingwindow
+  ├─ evesellitemswindow
+  ├─ evemarketactionwindow
+  ├─ everepairshopwindow
+  ├─ eveagentdialogwindow
+  ├─ evemessageboxwindow
+  ├─ evedirectionalscannerwindow
+  └─ evecustomsofficewindow
+```
 
-*Contacts & Agents:*
-- `GetLocalPilots[index:pilot]` - Populates index with local pilots
-- `GetOnlineCorpMembers[index:being]` - Populates index with online corp members
-- `GetContacts[index:being]` - Populates index with contacts
-- `GetBuddies[index:being]` - Populates index with buddies (deprecated)
-- `GetAgents[index:agent]` - Populates index with agents
-- `GetAgentMissions[index:agentmission,agentID]` - Populates index with agent missions
-
-*Market:*
-- `FetchMarketOrders[typeID,regionID]` - Fetches market orders
-- `ClearMarketOrderCache` - Clears market order cache
-- `GetMarketOrders[index:marketorder,typeID]` - Populates index with market orders
-- `CreateMarketBuyOrder[typeID]` - Opens market buy order window
-
-*Items:*
-- `MoveItemsTo[location,destination,index:item or int64,folder]` - Moves items
-- `StackItems[location,destination,index:item or int64,folder]` - Stacks items
-
-*Other:*
-- `RefreshStandings` - Refreshes standings cache
-- `EnterCriticalSection` - Enters critical section
-- `LeaveCriticalSection` - Leaves critical section
-- `ViewPlanetaryIndustry[planetID]` - Opens planetary industry window
-
-**See Also:**
-- [character](#character) - Player character (Me TLO)
-- [ship](#ship) - Player ship (MyShip TLO)
-- [bookmark](#bookmark) - Bookmarks
-- [agent](#agent) - Agents
-- [entity](#entity) - Entities
+Inheritance means child types expose ALL members and methods of their parent(s). Casting between types uses explicit `To<Type>` members (e.g. `entity.ToFleetMember`, `pilot.ToEntity`, `module.ToItem`, `character.ToPilot`).
 
 ---
 
-#### **evetime**
+## Character and Being Datatypes
 
-EVE time representation.
+### isxeve
 
-**Members:**
-- `DateAndTime` - string: Formatted date and time string
-- `Date` - string: Date portion
-- `Time` - string: Time portion
-- `AsInt64` - int64: Time as int64 (FILETIME format)
+Access: `ISXEVE` TLO.
+
+**Members**
+
+| Member | Type | Description |
+|---|---|---|
+| `Version` | string | Extension version string. |
+| `IsReady` | bool | TRUE when ISXEVE is fully loaded and safe to use. |
+| `IsLoading` | bool | TRUE while ISXEVE is initializing. |
+| `IsSafe` | bool | TRUE if the loaded build is the "safe" (release) build. |
+| `IsBeta` | bool | TRUE if the loaded build is the beta build. |
+| `Debug1` | bool | Internal debug flag. |
+| `SecsToString[int]` | string | Formats a seconds count as `X seconds` / `X minutes and Y seconds` / `X hours, Y minutes, and Z seconds` / `X days, Y hours, Z minutes, and W seconds`. |
+| `IsNumeric[string]` | bool | TRUE if the string parses as a number (decimal point and leading minus allowed). |
+
+**Methods**
+
+- `Flush` — Release dangling ISXEVE-managed objects. Recommended every 20-30 minutes for long-running scripts (especially .NET apps).
+- `Unload` — Cleanly unload the extension.
+- `InstallBeta`, `InstallTest`, `InstallLive` — Switch channel.
+- `Debug_SetTypeValidation[bool]`, `Debug_SetEntityCacheEnabled`, `Debug_SetEntityCacheDisabled`, `Debug_SetHighPerfLogging[bool]`, `Debug_LogMsg[text]`, `Debug_PrintCacheInfo`, `Debug_DumpEntityCache` — Debug hooks.
+
+### eve
+
+Access: `EVE` TLO.
+
+**Members**
+
+| Member | Type | Description |
+|---|---|---|
+| `EntitiesCount` | int | Number of entities on the current grid. |
+| `DistanceBetween[id1,id2]` | double | Distance between two entities (meters). |
+| `Bookmark[label]` | [bookmark](#bookmark) | Bookmark by LABEL. Source only accepts a label string; despite changelog wording, the current implementation has no ID-lookup branch (there is a TODO in source to add one). To look up by ID, iterate `EVE:GetBookmarks[index:bookmark]` and filter by `bookmark.ID`. |
+| `JumpsToStation[stationID]` | int | Jumps to a station via current autopilot route logic. |
+| `JumpsBetween[fromID,toID]` | int | Jumps between two solar systems. |
+| `JumpsTo[solarSystemID]` | int | Jumps to a solar system from current location. |
+| `Time` | string | Current EVE time. |
+| `Date` | string | Current EVE date. |
+| `NumAssetsAtStation[stationID]` | int | Asset count at a station. |
+| `GetLocationNameByID[int64]` | string | Resolves a location ID to a name. |
+| `Station[id]` | [station](#station) | Station by ID. |
+| `Structure[id]` | [structure](#structure) | Structure/citadel by ID. |
+| `Agent` | int | Number of agents known to the character (0-arg form). |
+| `Agent[#]` / `Agent[id, #]` / `Agent[name]` | [eveagent](#eveagent) | Agent by 1-based index (single int), by explicit agent ID (2-arg form with literal token `id`), or by name. |
+| `ItemInfo[typeID]` | [iteminfo](#iteminfo) | Static type info by TypeID. |
+| `Is3DDisplayOn` | bool | 3D display state. |
+| `IsUIDisplayOn` | bool | UI display state. |
+| `IsTextureLoadingOn` | bool | Texture loading state. |
+| `NextSessionChange` | [evetime](#evetime) | Scheduled next session-change time. |
+| `InCriticalSection` | bool | Whether a critical-section lock is active. |
+| `IsProgressWindowOpen` | bool | Progress-window state. |
+| `ProgressWindowTitle` | string | Progress-window title text. |
+| `AbandonedDronesExist` | bool | Whether reclaimable abandoned drones exist nearby. |
+| `MinWarpDistance` | double | Minimum warp distance in meters. |
+| `QueryEvaluate[query,entity]` | bool | Evaluates a query expression against an entity (deprecated wrapper for `LavishScript:QueryEvaluate`; may be removed in future). |
+
+**Methods**
+
+| Method | Description |
+|---|---|
+| `Execute[Cmd...]` | Execute a named UI command (see [EVE:Execute Command Constants](#eveexecute-command-constants)). |
+| `DoCommand[text]` | Run an EVE chat/slash command. |
+| `InfoWindow[text]` | Open an informational popup window. |
+| `SetInSpaceStatus[text]` | Set the in-space status text. |
+| `Toggle3DDisplay`, `ToggleUIDisplay`, `ToggleTextureLoading` | Toggle client display states. |
+| `CloseAllMessageBoxes`, `CloseAllChatInvites` | Mass-close helpers. |
+| `GetEVEWindows[index:evewindow]` | Populate index with all open windows. |
+| `QueryEntities[index:entity]` | Populate with all visible entities. |
+| `QueryEntities[index:entity, "query"]` | Populate with entities matching a query string (e.g. `"CategoryID = 11 && Distance < 50000"`). |
+| `QueryEntities[index:entity, QueryID]` | Populate with entities matching a precompiled QueryID. |
+| `PopulateEntities[categoryID]` | Populate the client's entity cache for a category. |
+| `GetViewedWrecks[index:int64]` | Wreck IDs that have been viewed. |
+| `GetBookmarks[index:bookmark]` / `GetBookmarks[index:bookmark, "folder"]` | Bookmarks, optionally scoped to a folder. |
+| `RefreshBookmarks` | Refresh bookmark cache. Call once after login before using bookmark APIs. |
+| `CreateBookmark[label, notes, folder, expiry]` | Create a bookmark at current location. All params after label are optional. `expiry` is a discrete enum: `0` = no expiry (default), `1` = 3 hours, `2` = 2 days. Label capped at 100 chars, notes at 3900 chars. |
+| `AddWaypoint[solarSystemID]`, `ClearWaypoint[solarSystemID]`, `ClearAllWaypoints` | Waypoint management. |
+| `GetToDestinationPath[index:int]`, `GetWaypoints[index:int]` | Current route info. |
+| `OptimizeAutopilotRoute` | Optimize the current waypoint route. |
+| `GetLocalPilots[index:pilot]` | Populate with pilots currently in local. |
+| `GetOnlineCorpMembers[index:being]` | Online corp members. |
+| `GetContacts[index:being]` | Contacts list. |
+| `GetAgents[index:eveagent]` | All agents known to the character. |
+| `GetAgentMissions[index:agentmission, agentID]` | Active missions for an agent. |
+| `FetchMarketOrders[typeID, regionID]` | Request market orders (async — wait for cache). |
+| `ClearMarketOrderCache` | Clear cached market data. |
+| `GetMarketOrders[index:marketorder, typeID]` | Pull cached market orders for a type. |
+| `CreateMarketBuyOrder[typeID]` | Open the market buy-order window for a type. |
+| `MoveItemsTo[index:int64, destinationID, destination, folder]` | Batch move items. The index must be `index:int64` (not `index:item`) — source validates this strictly. See [Canonical Slot Names and Destinations](#canonical-slot-names-and-destinations). |
+| `StackItems[locationID, destination]` / `StackItems[locationName, destination]` / `StackItems[locationName, destination, folder]` | Stack items at a location. First arg is a location (an item/container ID, or one of the shorthands `MyShip`, `MyStationHangar`, `MyStationCorporateHangar`), second arg is a destination name (see [Canonical Slot Names and Destinations](#canonical-slot-names-and-destinations)). This is NOT an index-based batch method. |
+| `LaunchDrones[index:int64 or index:item or index:activedrone]` | Launch drones. Source accepts any of the three index types. |
+| `DronesMine[index:int64]`, `DronesMineRepeatedly[index:int64]` | Commanded mining. |
+| `DronesScoopToDroneBay[index:int64]`, `DronesReturnToDroneBay[index:int64]`, `DronesReturnAndOrbit[index:int64]` | Return commands. |
+| `DronesEngageMyTarget[index:int64]` | Engage active target. |
+| `DronesAssist[index:int64, charID]`, `DronesGuard[index:int64, charID]` | Fleet-support drones. |
+| `AbandonDrones[index:int64]` | Abandon specific drones. |
+| `ReclaimDrones` | Reclaim abandoned drones in range. |
+| `ReturnFighterControl[index:int64]`, `DelegateFighterControl[index:int64, charID]` | Fighter handoff. |
+| `RefreshStandings` | Refresh the standings cache. Call at least once after login; data is not immediately available. |
+| `EnterCriticalSection`, `LeaveCriticalSection` | Critical-section control. |
+| `ViewPlanetaryIndustry[planetID]` | Open the Planetary Industry window. |
+
+### evetime
+
+**Members**
+
+| Member | Type | Description |
+|---|---|---|
+| `DateAndTime` | string | Full formatted timestamp. |
+| `Date` | string | Date portion. |
+| `Time` | string | Time portion. |
+| `AsInt64` | int64 | Time as FILETIME-style int64. |
+
+### character
+
+Access: `Me` TLO. Inherits from [pilot](#pilot) which inherits from [being](#being).
+
+**Identity and Location**
+
+| Member | Type | Notes |
+|---|---|---|
+| `Corp` | [corporation](#corporation) | Corporation object. Use `Me.Corp.ID` for the corp ID (there is no `Me.CorpID`). |
+| `Alliance` / `AllianceID` / `AllianceTicker` | string / int / string | Alliance info (`AllianceTicker` can fail since EVE's 2015 optimization). |
+| `Wallet` | [wallet](#wallet) | Personal wallet. |
+| `RegionID` / `ConstellationID` / `SolarSystemID` | int | Current location IDs. |
+| `ShipID` | int64 | Current ship ID. |
+| `StationID` | int64 | Current station/structure ID, or 0 in space. |
+| `InStation` / `InSpace` | bool | Location predicates. Both become true inside a citadel too. |
+| `Station` | [station](#station) or [structure](#structure) | Returns structure when docked at a citadel, station otherwise. |
+| `AutoPilotOn` | bool | Autopilot state. |
+
+**Ship, Targets, and Drones**
+
+| Member | Type | Notes |
+|---|---|---|
+| `Ship` | [ship](#ship) | Current ship (same as `MyShip` TLO). |
+| `ActiveTarget` | [entity](#entity) | Currently targeted entity. Check with `Me.ActiveTarget(exists)`. |
+| `TargetCount` / `TargetingCount` / `TargetedByCount` | int | Locked, locking-in-progress, and being-targeted counts. |
+| `MaxLockedTargets` | int | Character-side max targets (compare with `MyShip.MaxLockedTargets`; effective max is the lower of the two). |
+| `MaxActiveDrones` | int | Max simultaneous active drones. |
+| `MiningDroneAmountBonus` | double | Skill-derived mining-drone bonus (%). |
+| `DroneControlDistance` | double | Drone control range (meters). |
+
+**Attributes and Skills**
+
+| Member | Type | Notes |
+|---|---|---|
+| `Intelligence` / `Perception` / `Charisma` / `Willpower` / `Memory` | int | Base attributes. |
+| `Skill[id]` / `Skill[name]` | [skill](#skill) | Specific skill. |
+| `SkillPoints` | double | Total SP. (Returns double — 2013 change from int.) |
+| `SkillCurrentlyTraining` | [skill](#skill) | Active training. |
+| `SkillQueueLength` | int | Queue length. |
+
+**Standings and Contacts**
+
+| Member | Type | Notes |
+|---|---|---|
+| `StandingTo[id]` | float | Your standing toward a character/corp/faction. |
+| `MaxJumpClones` | int | Max jump clones. |
+| `Contact[#]` / `Contact[id, charID]` / `Contact[CharID, charID]` / `Contact[name]` | [being](#being) | Contact by 1-based index, by explicit CharID (2-arg form with literal token `id` or `CharID`), or by name. |
+| `ToPilot` | [pilot](#pilot) | Cast to pilot. |
+| `ToEntity` | [entity](#entity) | Cast to entity (only valid in space). |
+| `ToFleetMember` | [fleetmember](#fleetmember) | Cast to fleet member (only valid when in a fleet). |
+| `Fleet` | [fleet](#fleet) | Fleet object (guard with `Me.Fleet.ID(exists)`). |
+
+**Methods**
+
+- Inventory: `GetHangarItems[index:item]`, `GetHangarShips[index:item]`, `GetCorpHangarItems[index:item, folder]`, `GetCorpHangarShips[index:item, folder]`, `GetStationsWithAssets[index:int64]`, `GetAssets[index:item, stationID]`.
+- UI: `OpenCorpHangar` — open the corp hangar window (must be docked in a station or structure). The 2012 changelog claims this method was removed from the `character` datatype, but source still registers and implements it (DataTypes.h:771, DT-Beings.cpp:928-939) by calling the EveCmd service's `OpenCorpHangar`. It works. `EVE:Execute[OpenHangarFloor]` is an equivalent alternative.
+- Targeting: `GetTargets[index:entity]`, `GetTargeting[index:entity]`, `GetTargetedBy[index:entity]`.
+- Combat intel: `GetAttackers[index:attacker]`, `GetJammers[index:jammer]`.
+- Drones: `GetActiveDrones[index:activedrone]`, `GetActiveDroneIDs[index:int64]`.
+- Skills: `GetSkills[index:skill]`, `GetSkillQueue[index:queuedskill]`.
+- Standings: `SetCorpStanding[id, value]`, `SetPilotStanding[id, value]`.
+- Market: `GetMyOrders[index:myorder]`, `UpdateMyOrders`.
+- Movement: `SetVelocity[0-100]` (percent of max).
+
+### pilot
+
+Inherits from [being](#being). Returned by `Local[...]`, `Entity.ToPilot` (NPCs/PCs in space), and many methods.
+
+| Member | Type | Notes |
+|---|---|---|
+| `Type` / `TypeID` | string / int | Current ship type (visible ship type). |
+| `Corp` | string | Corp name (NOT corporation object; `character.Corp` is the object). |
+| `Alliance` / `AllianceID` / `AllianceTicker` | string / int / string | Alliance info. |
+| `Standing` | float | Your standing toward this pilot. |
+| `WarFactionID` | int | Faction warfare ID. |
+| `IsLimitedEngagement` / `IsSuspect` / `IsCriminal` | bool | Flagging predicates. |
+| `ToEntity` | [entity](#entity) | Cast to entity (in-space only). |
+| `ToFleetMember` | [fleetmember](#fleetmember) | Cast to fleet member (fleet-only). |
+
+**Methods:** `SetStanding[value]`, `InviteToFleet`, `OpenShowInfo`.
+
+### being
+
+Base type for characters/NPCs.
+
+| Member | Type | Notes |
+|---|---|---|
+| `ID` / `CharID` | int64 | Being/character ID. |
+| `Name` | string | Character name. |
+| `IsOnline` | bool | Online state. |
+| `IsNPC` / `IsPC` | bool | NPC/PC flags. |
+
+**Methods:** `InviteToFleet`, `GiveMoney[amount, reason]`.
+
+### corporation
+
+| Member | Type | Notes |
+|---|---|---|
+| `ID` | int64 | Corp ID. |
+| `Name` | string | Corp name. |
+| `Ticker` | string | Corp ticker. |
+| `Wallet` | [corporationwallet](#corporationwallet) | Corp wallet (your corp only). |
+
+### corporationwallet
+
+| Member | Type | Notes |
+|---|---|---|
+| `Balance` | double | ISK balance. Returns `-1.0` until the wallet window has been opened. |
+
+### wallet
+
+| Member | Type | Notes |
+|---|---|---|
+| `Balance` | double | ISK balance. Returns `-1.0` until the wallet has been opened this session. |
+| `BalanceAUR` | double | Aurum balance. Returns 0 until the wallet has been opened. |
+
+### standing
+
+Standings lookup. Usually obtained via chained access on character/corp/alliance IDs.
+
+| Member | Type | Notes |
+|---|---|---|
+| `MeToAlliance[id]` / `MeToCorp[id]` / `MeToPilot[id]` | double | Your standings. |
+| `CorpToAlliance[id]` / `CorpToCorp[id]` / `CorpToPilot[id]` | double | Your corp's standings. |
+| `AllianceToAlliance[id]` / `AllianceToCorp[id]` / `AllianceToPilot[id]` | double | Your alliance's standings. |
+
+Deep-dive: [03_API_Reference.md — Me Object](ISXEVE%20Scripting%20Guide/03_API_Reference.md#me-object).
 
 ---
 
-### Character & Being DataTypes
+## Ship and Module Datatypes
 
-#### **character**
+### ship
 
-Player character. Inherits from [**pilot**](#pilot) which inherits from [**being**](#being).
+Access: `MyShip` TLO or `Me.Ship`. Not inherited.
 
-**Inheritance:**
-- All members and methods from [**pilot**](#pilot) (and [**being**](#being)) are available
+**Identity**
 
-**Additional Members:**
+| Member | Type | Notes |
+|---|---|---|
+| `ID` | int64 | Ship ID. |
+| `Name` | string | Ship name (custom or default). |
+| `ToItem` | [item](#item) | Ship as item (for Name, TypeID, etc.). |
+| `ToEntity` | [entity](#entity) | Ship as entity (in-space only). |
 
-*Fleet & Corporation:*
-- `Fleet` - [fleet](#fleet): Current fleet (if in fleet)
-- `ToFleetMember` - [fleetmember](#fleetmember): Converts to fleetmember type if in fleet
-- `ToEntity` - [entity](#entity): Converts to entity type
-- `Corp` - [corporation](#corporation): Corporation information
-- `Wallet` - [wallet](#wallet): Wallet information
-- `Alliance` - string: Alliance name
-- `AllianceID` - int: Alliance ID
-- `AllianceTicker` - string: Alliance ticker
+**Cargo and Bay Access**
 
-*Location:*
-- `RegionID` - int: Current region ID
-- `ConstellationID` - int: Current constellation ID
-- `SolarSystemID` - int: Current solar system ID
-- `ShipID` - int64: Current ship ID
-- `StationID` - int64: Current station/structure ID (0 if in space)
-- `InStation` - bool: Whether in station or structure
-- `InSpace` - bool: Whether in space
-- `Station` - [station](#station) or [structure](#structure): Current station/structure
-- `AutoPilotOn` - bool: Whether autopilot is on
+Note: `CargoCapacity` / `UsedCargoCapacity` require the cargo to have been opened this session (see [Bootstrap and Safety Checks](#bootstrap-and-safety-checks)). For reliable totals, prefer `EVEWindow[Inventory].ChildWindow[ShipCargo].Capacity` / `.UsedSpace`.
 
-*Ship & Target:*
-- `Ship` - [ship](#ship): Current ship
-- `ActiveTarget` - [entity](#entity): Current active target
+| Member | Type | Notes |
+|---|---|---|
+| `CargoCapacity` | double | Total cargo capacity (m³). |
+| `UsedCargoCapacity` | double | Used cargo (m³). |
+| `HasOreHold` | bool | TRUE if the ship hull has a specialized ore hold. |
+| `Cargo[#]` / `Cargo[name]` | [item](#item) | Cargo item by 1-based index or name. Use `:GetCargo` / inventory window for iteration. |
+| `Module[slotName]` | [module](#module) | Module in slot. `slotName` is `HiSlot0..HiSlot7`, `MedSlot0..MedSlot7`, `LoSlot0..LoSlot7`, or `RigSlot0..RigSlot7`. Also accepts int64 module item ID. |
+| `Drone[#]` / `Drone[name]` | [item](#item) | Drone in drone bay by 1-based index or name. |
 
-*Skills:*
-- `Skill[id or name]` - [skill](#skill): Skill by ID or name
-- `SkillPoints` - int: Total skill points
-- `SkillCurrentlyTraining` - [skill](#skill): Currently training skill
-- `SkillQueueLength` - int: Number of skills in queue
+**Drone Bay**
 
-*Attributes:*
-- `Intelligence` - int: Intelligence attribute
-- `Perception` - int: Perception attribute
-- `Charisma` - int: Charisma attribute
-- `Willpower` - int: Willpower attribute
-- `Memory` - int: Memory attribute
+| Member | Type | Notes |
+|---|---|---|
+| `DroneBandwidth` | double | Bandwidth remaining. |
+| `DronebayCapacity` | double | Total drone bay capacity. |
+| `UsedDronebayCapacity` | double | Used drone bay. |
 
-*Combat & Drones:*
-- `MaxLockedTargets` - int: Maximum locked targets
-- `MiningDroneAmountBonus` - float: Mining drone amount bonus
-- `MaxActiveDrones` - int: Maximum active drones
-- `DroneControlDistance` - double: Drone control distance
-- `TargetCount` - int: Number of locked targets
-- `TargetingCount` - int: Number of targets being locked
-- `TargetedByCount` - int: Number of entities targeting you
+**Capacitor**
 
-*Other:*
-- `MaxJumpClones` - int: Maximum jump clones
-- `StandingTo[id]` - float: Standing to specified character/corp/faction
-- `ToPilot` - [pilot](#pilot): Converts to pilot type
-- `Contact[# or id or name]` - [being](#being): Contact by index, ID, or name
+| Member | Type | Notes |
+|---|---|---|
+| `Capacitor` | double | Current capacitor energy. |
+| `MaxCapacitor` | double | Max capacitor. |
+| `CapacitorPct` | double | Percent (0-100). |
+| `CapacitorRechargeRate` | double | Recharge rate (ms). |
 
-**Additional Methods:**
+**Defense**
 
-*Inventory & Assets:*
-- `OpenCorpHangar` - Opens corp hangar
-- `GetCorpHangarItems[index:item,folder]` - Populates index with corp hangar [item](#item) objects
-- `GetCorpHangarShips[index:item,folder]` - Populates index with corp hangar ships
-- `GetHangarItems[index:item]` - Populates index with personal hangar [item](#item) objects
-- `GetHangarShips[index:item]` - Populates index with personal hangar ships
-- `GetStationsWithAssets[index:int64]` - Populates index with station IDs that have assets
-- `GetAssets[index:item,stationID]` - Populates index with [item](#item) objects at station
+| Member | Type | Notes |
+|---|---|---|
+| `Shield` / `MaxShield` / `ShieldPct` | double | Shield HP (current, max, percent). |
+| `ShieldRechargeRate` | double | Ms. |
+| `Armor` / `MaxArmor` / `ArmorPct` | double | Armor HP. |
+| `Structure` / `MaxStructure` / `StructurePct` | double | Structure HP. |
 
-*Combat:*
-- `SetVelocity[speed]` - Sets ship velocity
-- `GetTargets[index:entity]` - Populates index with locked [entity](#entity) objects
-- `GetTargeting[index:entity]` - Populates index with [entity](#entity) objects being targeted
-- `GetTargetedBy[index:entity]` - Populates index with [entity](#entity) objects targeting you
-- `GetAttackers[index:attacker]` - Populates index with [attacker](#attacker) objects
-- `GetJammers[index:jammer]` - Populates index with [jammer](#jammer) objects
+**IMPORTANT**: `Shield`, `Armor`, `Structure`, `Capacitor` are FLAT HP/EP values. Use the `Pct` variants (`ShieldPct`, `ArmorPct`, `StructurePct`, `CapacitorPct`) for percentages. Chained forms like `MyShip.Shield.Pct` do NOT exist.
 
-*Drones:*
-- `GetActiveDrones[index:activedrone]` - Populates index with [activedrone](#activedrone) objects
-- `GetActiveDroneIDs[index:int64]` - Populates index with active drone IDs
+**Resources (CPU/PG)**
 
-*Skills:*
-- `GetSkills[index:skill]` - Populates index with [skill](#skill) objects
-- `GetSkillQueue[index:queuedskill]` - Populates index with [queuedskill](#queuedskill) objects
+| Member | Type |
+|---|---|
+| `CPULoad` / `CPUOutput` / `PowerLoad` / `PowerOutput` | double |
 
-*Standing:*
-- `SetCorpStanding[id,value]` - Sets standing to corporation
-- `SetPilotStanding[id,value]` - Sets standing to pilot
+**Slots**
 
-*Market:*
-- `GetMyOrders[index:myorder]` - Populates index with [myorder](#myorder) objects
-- `UpdateMyOrders` - Updates market orders cache
+| Member | Type | Notes |
+|---|---|---|
+| `HighSlots` / `MediumSlots` / `LowSlots` | double | Slot counts. Note: registered as doubles in the changelog; safe to use as integers. |
+| `RigSlots` / `RigSlotsLeft` | double | Rig slot totals and remaining empty. |
+| `TurretSlotsLeft` | double | Empty turret slots. |
+| `LauncherSlotsLeft` | double | Empty launcher slots. |
 
-**See Also:**
-- [pilot](#pilot) - Parent type
-- [being](#being) - Base type
-- [ship](#ship) - Current ship
-- [fleet](#fleet) - Fleet information
-- [skill](#skill) - Skills
-- [corporation](#corporation) - Corporation
-- [wallet](#wallet) - Wallet
+Canonical module iteration:
+
+```lavishscript
+variable index:module Mods
+MyShip:GetModules[Mods]
+variable iterator it
+Mods:GetIterator[it]
+if ${it:First(exists)}
+    do
+    {
+        echo "${it.Value.ToItem.Name}  active=${it.Value.IsActive}"
+    }
+    while ${it:Next(exists)}
+```
+
+**Heat**
+
+| Member | Type |
+|---|---|
+| `HeatHigh` / `HeatMedium` / `HeatLow` | int |
+| `HeatCapacityHigh` / `HeatCapacityMedium` / `HeatCapacityLow` | double |
+
+**Attributes and Targeting**
+
+| Member | Type | Notes |
+|---|---|---|
+| `MaxVelocity` | double | Max sublight velocity (m/s). |
+| `Agility` | double | Hull agility. |
+| `Radius` | double | Hull radius (m). |
+| `TechLevel` | double | Tech level. |
+| `SignatureRadius` | double | Signature radius. |
+| `WarpSpeedMultiplier` | double | Warp-speed multiplier (AU/s scaling). The 2007 changelog documented this as `WarpFactor` but the member is registered as `WarpSpeedMultiplier` in source. |
+| `MaxLockedTargets` | double | Ship-side max targets (effective max is `min(ship, character)`). |
+| `MaxTargetRange` | double | Max lock range (m). |
+| `ScanSpeed` / `ScanResolution` / `ScanRadarStrength` | double | Sensor stats. |
+
+**Scanners**
+
+| Member | Type |
+|---|---|
+| `Scanners` | [scanners](#scanners) |
+
+**Methods**
+
+- Module/equipment iteration: `GetModules[index:module]`, `GetRigs[index:item]`, `GetDrones[index:item]`.
+- Drone control: `LaunchAllDrones`.
+- Fitting: `StripFitting`.
+- Window: `Open` (opens unified inventory centered on ship).
+- Movement: `Approach[x, y, z]` and `Align[x, y, z]` — these accept a three-component direction VECTOR (in space coordinates), not an entity ID or distance. To align toward or approach an entity, use the entity's own `AlignTo` / `Approach` methods instead of `MyShip:Align` / `MyShip:Approach`.
+- Cargo: `Jettison[index:item or index:int64]`.
+- POS: `SetStarbaseForcefieldPassword[password]`.
+- Danger: `SelfDestruct`.
+
+Deep-dive: [03_API_Reference.md — MyShip Object](ISXEVE%20Scripting%20Guide/03_API_Reference.md#myship-object) and [03 — Module Management](ISXEVE%20Scripting%20Guide/03_API_Reference.md#module-management-and-ship-control).
+
+### module
+
+Inherits from [item](#item).
+
+**State**
+
+| Member | Type | Notes |
+|---|---|---|
+| `IsActive` | bool | Currently cycling. |
+| `IsActivatable` | bool | Can be activated (requires a valid target if offensive). |
+| `IsOnline` | bool | Powered on. |
+| `IsOffensive` / `IsAssistance` | bool | Effect category. |
+| `IsGoingOnline` | bool | Bringing online. |
+| `IsReloading` / `IsReloadingAmmo` | bool | Reload in progress. |
+| `IsWaitingForActiveTarget` | bool | Waiting for a locked target before it can fire. |
+| `IsDeactivating` | bool | Shutting off. |
+| `IsBeingRepaired` | bool | Module repair in progress. |
+| `IsBlinking` | bool | UI-blinking (usually deactivation warning). |
+| `IsAutoReloadOn` | bool | Auto-reload setting. |
+| `AutoRepeat` | bool | Auto-repeat setting. |
+| `IsBankSlave` / `IsBankMaster` | bool | Capacitor/cap-booster banking. |
+
+**Charge and Ammo**
+
+| Member | Type | Notes |
+|---|---|---|
+| `EffectCategory` | string | Category label. |
+| `Charge` | [modulecharge](#modulecharge) | Current charge object (if any). |
+| `CurrentCharges` / `MaxCharges` | int | Charge counts. |
+| `ChargeSize` | int | Size class. |
+
+**Targeting**
+
+| Member | Type | Notes |
+|---|---|---|
+| `Target` | [entity](#entity) | Current target of this module. |
+| `TargetID` | int64 | Current target ID. |
+| `LastTarget` / `LastTargeted` | [entity](#entity) | Historical targets. |
+| `LastTargetedID` | int64 | Last target ID. |
+
+**Requirements and Stats**
+
+| Member | Type |
+|---|---|
+| `ToItem` | [item](#item) |
+| `PowergridUsage` / `CPUUsage` | double |
+| `ActivationCost` | double |
+| `ActivationTime` / `Duration` / `RateOfFire` / `ReactivationDelay` | double |
+| `OptimalRange` / `AccuracyFalloff` / `EffectivenessFalloff` | double |
+| `TrackingSpeed` | double |
+| `DamageModifier` | double |
+| `EMDamage` / `KineticDamage` / `ThermalDamage` / `ExplosiveDamage` | double |
+| `SignatureResolution` | double |
+| `HP` / `Damage` | double (module hit points and current damage) |
+| `TechLevel` | int |
+| `Volume` / `Capacity` / `Mass` | double |
+
+**Mining**
+
+| Member | Type |
+|---|---|
+| `MiningAmount` / `MiningAmountPerSecond` / `MiningAmountBonus` | double |
+| `SpecialtyCrystalMiningAmount` / `CrystalsDamage` | double |
+| `TargetGroup` | int |
+| `SurveyScanRange` | double |
+| `UsesFrequencyCrystals` | bool |
+
+**Tank/Resist Bonuses**
+
+| Member | Type |
+|---|---|
+| `ArmorHPRepaired` / `ArmorHPBonus` | double |
+| `ShieldBonus` / `ShieldHPBonus` | double |
+| `EMDmgResistanceBonus` / `KineticDmgResistanceBonus` / `ThermalDmgResistanceBonus` / `ExplosiveDmgResistanceBonus` | double |
+
+**Overload Bonuses**
+
+| Member | Type |
+|---|---|
+| `OverloadRateOfFireBonus` / `OverloadOptimalRangeBonus` / `OverloadRepairBonus` / `OverloadDurationBonus` / `OverloadSpeedFactorBonus` | double |
+
+**Propulsion**
+
+| Member | Type |
+|---|---|
+| `MaxVelocityBonus` / `MaxVelocityPenalty` | double |
+| `MassAddition` / `Thrust` / `VelocityModifier` | double |
+
+**Other**
+
+| Member | Type |
+|---|---|
+| `HeatDamage` / `ChargeRate` | double |
+| `DefaultEffectName` / `DefaultEffectDescription` | string |
+| `MaxNeutralizationRange` / `EnergyDestabilizationRange` / `EnergyNeutralized` / `EnergyDestabilizationAmount` | double |
+| `EnergyTransferAmount` / `PowerTransferAmount` / `TransferRange` / `PowerTransferRange` / `ShieldTransferRange` | double |
+| `MaxTractorVelocity` | double |
+| `WarpScrambleStrength` | int |
+| `AccessDifficultyBonus` | double |
+| `ScanResolutionBonus` / `SensorRecalibrationTime` | double |
+
+**Ship/Fitting Bonuses**
+
+| Member | Type |
+|---|---|
+| `StructureHPBonus` / `CargoCapacityBonus` / `CapacitorBonus` / `PowergridBonus` / `CPUOutputBonus` / `CPUPenaltyPercent` | double |
+| `CapacitorRechargeRateBonus` / `ShieldRechargeRateBonus` | double |
+
+**Methods**
+
+| Method | Description |
+|---|---|
+| `Activate` / `Activate[targetID]` | Activate the module. With no arg, activates on the module's implicit target (required for offensive modules — active target must be set). With a targetID, activates against that specific entity. Only works in space; does not work for grouped or passive+hidden modules. |
+| `Deactivate` | Deactivate. Only works in space. If the module is waiting for an active target, a Deactivate call triggers an OnClick fallback. |
+| `Click` | Click — same as Activate for target-requiring modules. |
+| `Reload` | Reload active charge. **Note:** source marks this as "not implemented" and it returns false with a printf. Use `ReloadAll` or `ChangeAmmo` instead. |
+| `ReloadAll` | Reload all modules of the same type. |
+| `ChangeAmmo[itemID]` | Load ammo. Takes the itemID of a charge stack to load. A second `quantity` argument was removed in 2018 and is no longer honored — the stack's full quantity is used. **Do NOT use the zero-arg form.** The 2011 changelog documented `ChangeAmmo` with no arguments as a "reload current ammo type" shortcut, but source now rejects this with `"You must specify the item id to load"` and `return false;`. Use `Reload` (NOTE: also stubbed non-functional, see above) or `ReloadAll` for same-ammo reload. |
+| `SetAutoReloadOn` / `SetAutoReloadOff` | Auto-reload toggle. |
+| `PutOnline` / `PutOffline` | Online/offline control. |
+| `GetAvailableAmmo[index:item]` | List loadable ammo. |
+| `ToggleOverload` | Toggle overload on the module. |
+| `SetManualOn` / `SetManualOff` | Manual override (for ganged module control). |
+| `UnloadToCargo` | Unload current charge to cargo. |
+| `Repair` / `CancelRepair` | Module repair control (nanite paste). |
+
+Note: there is NO `Toggle` method on module — use `Activate`/`Deactivate` or inspect `IsActive` first.
+
+### modulecharge
+
+| Member | Type |
+|---|---|
+| `ID` | int64 |
+| `Type` / `TypeID` | string / int |
+| `Group` / `GroupID` | string / int |
+| `Category` / `CategoryID` | string / int |
+| `Location` / `LocationID` / `Slot` / `SlotID` | string / int64 / string / int |
+| `Quantity` | int |
+| `MaxFlightTime` / `MaxVelocity` | double |
+| `Volume` | double |
+| `ChargeSize` | int |
+
+Deep-dive: [15_Combat_Automation.md](ISXEVE%20Scripting%20Guide/15_Combat_Automation.md), [16_Mining_And_Hauling.md](ISXEVE%20Scripting%20Guide/16_Mining_And_Hauling.md).
 
 ---
 
-#### **pilot**
+## Item and Inventory Datatypes
 
-Pilot in space or local. Inherits from [**being**](#being).
+### item
 
-**Inheritance:**
-- All members and methods from [**being**](#being) are available
+Inherits from [iteminfo](#iteminfo).
 
-**Additional Members:**
-- `Type` - string: Ship type name
-- `TypeID` - int: Ship type ID
-- `Corp` - string: Corporation name
-- `Alliance` - string: Alliance name
-- `AllianceTicker` - string: Alliance ticker
-- `AllianceID` - int: Alliance ID
-- `Standing` - float: Standing to pilot
-- `WarFactionID` - int: War faction ID
-- `IsLimitedEngagement` - bool: Whether in limited engagement
-- `IsSuspect` - bool: Whether is suspect
-- `IsCriminal` - bool: Whether is criminal
-- `ToEntity` - [entity](#entity): Converts to entity type
-- `ToFleetMember` - [fleetmember](#fleetmember): Converts to fleetmember type if in fleet
+**Identity and Location**
 
-**Additional Methods:**
-- `SetStanding[value]` - Sets standing to pilot
-- `InviteToFleet` - Invites pilot to fleet
-- `OpenShowInfo` - Opens show info window
+| Member | Type | Notes |
+|---|---|---|
+| `ID` | int64 | Unique item ID. |
+| `Name` | string | Custom name or type name. |
+| `Category` / `CategoryID` | string / int | Inventory category. |
+| `OwnerID` | int64 | Owner CharID. |
+| `Location` / `LocationID` | string / int64 | Container location. |
+| `Quantity` | int | Stack quantity. |
+| `Slot` / `SlotID` | string / int | Slot name/ID (for fitted items). |
+| `IsRepackable` | bool | Can be repackaged. |
+| `CargoCapacity` / `UsedCargoCapacity` | double | For containers/ships, requires cargo opened at least once. |
 
-**See Also:**
-- [character](#character) - Extended pilot type for player
-- [being](#being) - Parent type
-- [fleetmember](#fleetmember) - Pilot in fleet
-- [entity](#entity) - Entity conversion
+**Missile/Charge Stats**
 
----
+| Member | Type |
+|---|---|
+| `MaxFlightTime` / `MaxVelocity` | double |
+| `ExplosionRadius` / `ExplosionVelocity` | double |
+| `SignatureRadiusBonus` | double |
+| `EMDamage` / `KineticDamage` / `ThermalDamage` / `ExplosiveDamage` | double |
+| `FallofMultiplier` / `TrackingSpeedMultiplier` | double |
+| `MetaLevel` | int |
 
-#### **being**
+**Ship-as-Item Stats**
 
-Base type for any character/NPC representation.
+| Member | Type | Notes |
+|---|---|---|
+| `IsInsured` | bool | Ship insured. |
+| `InsuranceLevel` | string | Insurance tier. |
+| `BookmarkID` | int64 | Bookmark ID (for bookmark items). |
 
-**Members:**
-- `ID` - int64: Being ID
-- `CharID` - int64: Character ID
-- `Name` - string: Character name
-- `IsOnline` - bool: Whether character is online
-- `IsNPC` - bool: Whether is NPC
-- `IsPC` - bool: Whether is player character
+**Methods**
 
-**Methods:**
-- `InviteToFleet` - Invites to fleet
-- `GiveMoney[amount,reason]` - Gives money to this character
+| Method | Description |
+|---|---|
+| `MoveTo[toID, toDestination, quantity, folder]` | Move item. Destination constants listed in [Canonical Slot Names and Destinations](#canonical-slot-names-and-destinations). |
+| `Jettison` | Jettison from cargo. |
+| `LaunchDrones` | Launch drones (from cargo/drone bay). |
+| `LaunchForSelf` | Launch deployable for self. |
+| `LaunchForCorp[ignoreWarnings]` | Launch deployable for corp. |
+| `MakeActive` | Board ship (when item is a ship in hangar). |
+| `LeaveShip` | Leave current ship (board this one). |
+| `Repackage` | Repackage the item. |
+| `Compress` | Open compression window (ore). |
+| `AssembleShip` / `AssembleContainer` | Assemble packaged items. |
+| `Refine` / `Reprocess` | Refining/reprocessing flow. |
+| `TrainSkill` | Start training a skill book. |
+| `InjectSkill` | Inject a skill injector. |
+| `AddToSellOrder` | Open the sell-order flow (replaces the old `PlaceSellOrder`). |
+| `Open` | Open as container/ship. |
+| `ConsumeBooster` | Consume a booster item. |
+| `PluginImplant` | Insert an implant. |
+| `ApplyPilotLicense` | Apply a Pilot's License Extension. |
+| `GetInsuranceQuotes[index:iteminfolist]` | Get insurance quotes. |
+| `Insure[level, cost]` | Purchase insurance. |
+| `GetContrabandFactions[index:iteminfolist]` | List factions that consider the item contraband. |
+| `GetRepairQuote` | Open the repair-shop window for this item. |
+| `UseAbyssalFilament` | Activate an abyssal filament. |
 
-**See Also:**
-- [pilot](#pilot) - Inherits from being
-- [character](#character) - Player character type
+Note: `FitToActiveShip` was REMOVED in Jan 2025. Use `EVEWindow[Fitting].Slot[slotName]:FitItem[itemID]`.
 
----
+### iteminfo
 
-#### **corporation**
+Static type info (looked up via `EVE.ItemInfo[typeID]` or inherited by `item`).
 
-Corporation information.
+| Member | Type |
+|---|---|
+| `Name` / `Type` | string (alias) |
+| `TypeID` | int |
+| `Group` / `GroupID` | string / int |
+| `Capacity` / `Volume` / `Radius` | double |
+| `BasePrice` | double |
+| `PortionSize` | int |
+| `MarketGroupID` | int |
+| `RaceID` | int |
+| `Description` | string |
+| `IsContraband` | bool |
+| `GraphicID` | int |
+| `ChargeSize` | int |
+| `RangeBonus` | float |
+| `ShieldRadius` | int |
 
-**Members:**
-- `ID` - int64: Corporation ID
-- `Name` - string: Corporation name
-- `Ticker` - string: Corporation ticker
-- `Wallet` - [corporationwallet](#corporationwallet): Corporation wallet
+### iteminfolist
 
-**See Also:**
-- [character](#character) - Corp member returns corporation
-- [corporationwallet](#corporationwallet) - Corporation wallet datatype
+Inherits from [iteminfo](#iteminfo). Adds `ID` (int — same as TypeID), `TypeID` (int), `Quantity` (int64). Used by several `Get...Results` methods for scanned/listed items with stack counts.
 
----
-
-#### **wallet**
-
-Player wallet information.
-
-**Members:**
-- `Balance` - double: ISK balance
-- `BalanceAUR` - int: AURUM balance (legacy)
-
-**See Also:**
-- [character](#character) - Wallet member returns wallet
-
----
-
-#### **corporationwallet**
-
-Corporation wallet information.
-
-**Members:**
-- `Balance` - double: Corporation ISK balance
-
-**See Also:**
-- [corporation](#corporation) - Parent corporation datatype
-
----
-
-#### **standing**
-
-Standing information between entities (player, corp, alliance).
-
-**Members:**
-
-*Player to Others:*
-- `MeToAlliance[id]` - double: Your standing to alliance
-- `MeToCorp[id]` - double: Your standing to corporation
-- `MeToPilot[id]` - double: Your standing to pilot
-
-*Corporation to Others:*
-- `CorpToAlliance[id]` - double: Your corp's standing to alliance
-- `CorpToCorp[id]` - double: Your corp's standing to corporation
-- `CorpToPilot[id]` - double: Your corp's standing to pilot
-
-*Alliance to Others:*
-- `AllianceToAlliance[id]` - double: Your alliance's standing to alliance
-- `AllianceToCorp[id]` - double: Your alliance's standing to corporation
-- `AllianceToPilot[id]` - double: Your alliance's standing to pilot
-
-**See Also:**
-- [character](#character) - Character standings
-- [corporation](#corporation) - Corporation information
+Deep-dive: [03_API_Reference.md — Inventory and Cargo](ISXEVE%20Scripting%20Guide/03_API_Reference.md#inventory-and-cargo-systems).
 
 ---
 
-### Entity & Space DataTypes
+## Entity and Space Datatypes
 
-#### **entity**
+### entity
 
-Represents objects in space (ships, NPCs, gates, stations, asteroids, wrecks, drones, etc.).
+Represents anything on the current grid: ships, NPCs, stations, gates, asteroids, wrecks, containers, drones, structures. Returned by `Entity[...]` TLO, `Me.ActiveTarget`, `EVE:QueryEntities`, many chained members.
 
-**Members:**
+**Identity**
 
-*Identity:*
-- `ID` - int64: Entity ID
-- `Name` - string: Entity name
-- `Type` - string: Entity type name
-- `TypeID` - int: Entity type ID
-- `Group` - string: Entity group name
-- `GroupID` - int: Entity group ID
-- `Category` - string: Entity category name
-- `CategoryID` - int: Entity category ID
+| Member | Type |
+|---|---|
+| `ID` | int64 |
+| `Name` | string |
+| `Type` / `TypeID` | string / int |
+| `Group` / `GroupID` | string / int |
+| `Category` / `CategoryID` | string / int |
 
-*Ownership:*
-- `Owner` - string: Owner name
-- `OwnerID` - int64: Owner character ID
-- `Corp` - string: Corporation name
-- `Alliance` - string: Alliance name
-- `AllianceID` - int: Alliance ID
-- `AllianceTicker` - string: Alliance ticker
-- `CharID` - int64: Character ID (for player ships)
-- `Security` - float: Security status
+**Ownership**
 
-*Position:*
-- `X` - double: X coordinate
-- `Y` - double: Y coordinate
-- `Z` - double: Z coordinate
-- `vX` - double: X velocity component
-- `vY` - double: Y velocity component
-- `vZ` - double: Z velocity component
+| Member | Type |
+|---|---|
+| `Owner` / `OwnerID` | string / int64 |
+| `CharID` | int64 |
+| `Corp` / `Alliance` / `AllianceID` / `AllianceTicker` | string / string / int / string |
+| `Security` | float |
 
-*Distance & Movement:*
-- `Distance` - double: Distance from player
-- `Distance2` - double: Distance squared (faster for comparisons)
-- `DistanceTo` - double: Distance to specific coordinates (requires parameters)
-- `Velocity` - double: Current velocity
-- `MaxVelocity` - double: Maximum velocity
-- `AngularVelocity` - double: Angular velocity
-- `RadialVelocity` - double: Radial velocity
-- `TransversalVelocity` - double: Transversal velocity
+**Position and Motion**
 
-*Physical Properties:*
-- `Mass` - double: Entity mass
-- `Radius` - double: Entity radius
-- `Pitch` - double: Pitch angle
-- `Roll` - double: Roll angle
-- `Yaw` - double: Yaw angle
+| Member | Type |
+|---|---|
+| `X` / `Y` / `Z` | double |
+| `vX` / `vY` / `vZ` | double |
+| `Distance` | double |
+| `Distance2` | double (squared distance — use for comparisons; 3-5x faster) |
+| `Velocity` / `MaxVelocity` | double |
+| `AngularVelocity` / `RadialVelocity` / `TransversalVelocity` | double |
+| `Pitch` / `Roll` / `Yaw` | double |
+| `Mass` / `Radius` | double |
 
-*Combat & Status:*
-- `ShieldPct` - double: Shield percentage
-- `ArmorPct` - double: Armor percentage
-- `StructurePct` - double: Structure percentage
-- `Bounty` - double: NPC bounty value
+**Combat State**
 
-*Targeting:*
-- `IsActiveTarget` - bool: Whether is active target
-- `IsLockedTarget` - bool: Whether is locked target
-- `IsTargetingMe` - bool: Whether targeting player
-- `BeingTargeted` - bool: Whether being targeted
-- `IsWarpScrambled` - bool: Whether entity is warp scrambled
-- `IsWarpScramblingMe` - bool: Whether warp scrambling player
-- `IsJammingMe` - bool: Whether jamming player (any type)
-- `IsTargetJammingMe` - bool: Whether target jamming player
+| Member | Type | Notes |
+|---|---|---|
+| `ShieldPct` / `ArmorPct` / `StructurePct` | double | Percent damage values (0-100). |
+| `Bounty` | double | NPC bounty. |
+| `IsActiveTarget` | bool | Is YOUR active target. |
+| `IsLockedTarget` | bool | Is one of your locked targets. |
+| `IsTargetingMe` / `BeingTargeted` | bool | Being-targeted predicates. |
+| `IsWarpScrambled` | bool | This entity is scrambled. |
+| `IsWarpScramblingMe` | bool | This entity is scrambling you. |
+| `IsJammingMe` / `IsTargetJammingMe` | bool | ECM predicates. |
 
-*Type Checks:*
-- `IsNPC` - bool: Whether is NPC
-- `IsPC` - bool: Whether is player character
-- `IsCelestial` - bool: Whether is celestial object
-- `IsGlobal` - bool: Whether is global entity
-- `IsMassive` - bool: Whether is massive object
-- `IsInteractive` - bool: Whether is interactive
-- `IsMoribund` - bool: Whether is moribund (dying)
-- `IsCloaked` - bool: Whether is cloaked
+**Type Predicates**
 
-*Relationships:*
-- `IsFleetMember` - bool: Whether is fleet member
-- `IsOwnedByCorpMember` - bool: Whether owned by corp member
-- `IsOwnedByAllianceMember` - bool: Whether owned by alliance member
+| Member | Type |
+|---|---|
+| `IsNPC` / `IsPC` | bool |
+| `IsCelestial` / `IsGlobal` / `IsMassive` / `IsInteractive` | bool |
+| `IsMoribund` | bool (dying) |
+| `IsCloaked` | bool |
+| `IsFleetMember` | bool |
+| `IsOwnedByCorpMember` / `IsOwnedByAllianceMember` | bool |
+| `IsPOS` | bool |
+| `POSState` | string |
+| `IsDockable` | bool (citadels/structures) |
 
-*Wrecks & Loot:*
-- `IsAbandoned` - bool: Whether is abandoned
-- `HaveLootRights` - bool: Whether player has loot rights
-- `IsWreckEmpty` - bool: Whether wreck is empty
-- `IsWreckViewed` - bool: Whether wreck has been viewed
-- `WreckID` - int64: Wreck ID
+**Cargo**
 
-*Cargo:*
-- `CargoCapacity` - double: Cargo capacity
-- `UsedCargoCapacity` - double: Used cargo capacity
-- `HasOreHold` - bool: Whether has ore hold
-- `CargoWindow` - [evewindow](#evewindow): Cargo window
-- `LootWindow` - [evewindow](#evewindow): Loot window
+| Member | Type | Notes |
+|---|---|---|
+| `CargoCapacity` / `UsedCargoCapacity` | double | Requires the cargo to have been opened this session. |
+| `HasOreHold` | bool | |
+| `CargoWindow` | [evewindow](#evewindow) | Container cargo window, if open. |
+| `LootWindow` | [evewindow](#evewindow) | Wreck loot window. |
 
-*Scanning:*
-- `HasCargoScannerResults` - bool: Whether cargo scan results available
-- `HasShipScannerResults` - bool: Whether ship scan results available
-- `ShipScannerCapacitorCapacity` - double: Scanned ship capacitor capacity
-- `ShipScannerCapacitorCharge` - double: Scanned ship capacitor charge
-- `SurveyScannerOreQuantity` - int64: Survey scan ore quantity
+**Wrecks**
 
-*Fleet & Formation:*
-- `FleetTag` - string: Fleet tag
-- `FormationID` - int: Formation ID
-- `Following` - [entity](#entity): Entity being followed
-- `FollowRange` - double: Follow range
-- `Approaching` - [entity](#entity): Entity being approached
-- `Mode` - int: Entity mode
+| Member | Type |
+|---|---|
+| `IsAbandoned` / `HaveLootRights` / `IsWreckEmpty` / `IsWreckViewed` | bool |
+| `WreckID` | int64 |
 
-*POS & Structures:*
-- `IsPOS` - bool: Whether is player-owned starbase
-- `POSState` - string: POS state (anchored, online, etc.)
-- `IsDockable` - bool: Whether dockable (citadels/structures)
+**Scanner Results**
 
-*Wormholes:*
-- `WormHoleAge` - int: Wormhole age
-- `WormHoleSize` - float: Wormhole size
-- `WormHoleClass` - int: Wormhole class
+| Member | Type |
+|---|---|
+| `HasCargoScannerResults` / `HasShipScannerResults` | bool |
+| `ShipScannerCapacitorCapacity` / `ShipScannerCapacitorCharge` | double |
+| `SurveyScannerOreQuantity` | int64 |
 
-*Type Conversions:*
-- `ToActiveDrone` - [activedrone](#activedrone): Converts to activedrone type
-- `ToAttacker` - [attacker](#attacker): Converts to attacker type
-- `ToFleetMember` - [fleetmember](#fleetmember): Converts to fleetmember type
-- `ToJammer` - [jammer](#jammer): Converts to jammer type
-- `ToWormhole` - [entitywormhole](#entitywormhole): Converts to wormhole type
+**Fleet / Formation**
 
-**Methods:**
+| Member | Type |
+|---|---|
+| `FleetTag` | string |
+| `FormationID` | int |
+| `Following` | [entity](#entity) (entity this one is following) |
+| `FollowRange` | double |
+| `Approaching` | [entity](#entity) |
+| `Mode` | int (movement mode flags) |
 
-*Basic Interaction:*
-- `Set[entityID]` - Sets entity reference by ID
-- `Activate` - Activates entity (gates, etc.)
-- `Dock` - Docks with entity (station/structure)
-- `Jump` - Jumps through entity (stargate)
-- `Open` - Opens entity (cargo container, wreck, etc.)
-- `AccessCustomsOffice` - Opens customs office
+**Wormhole-Specific**
 
-*Navigation:*
-- `Approach` - Approaches entity
-- `AlignTo` - Aligns to entity
-- `Orbit[distance]` - Orbits entity at distance
-- `KeepAtRange[distance]` - Keeps at range from entity
-- `WarpTo[distance]` - Warps to entity at distance
-- `WarpTo[distance,fleet]` - Warps to entity (fleet warp if fleet=TRUE)
-- `WarpFleetTo[distance]` - Fleet warps to entity
+Available on entities that are wormholes. See [entitywormhole](#entitywormhole) for the specialized subtype.
 
-*Targeting:*
-- `LockTarget` - Locks entity as target
-- `UnlockTarget` - Unlocks entity
-- `MakeActiveTarget` - Makes entity active target
-- `SetAsSelectedItem` - Sets as overview selected item
+| Member | Type |
+|---|---|
+| `WormHoleAge` | int (-1 if not a wormhole) |
+| `WormHoleSize` | float (-10.0 on error) |
+| `WormHoleClass` | int (-10 on error) |
 
-*Scanning:*
-- `GetCargoScannerResults[index:item]` - Populates index with cargo scan [item](#item) results
-- `GetShipScannerResults[index:item]` - Populates index with ship scan [item](#item) results
+**Type Casts**
 
-*Drones:*
-- `GetActiveDrones[index:activedrone]` - Populates index with active [activedrone](#activedrone) objects
-- `Mine` - Commands drones to mine entity
-- `MineRepeatedly` - Commands drones to mine repeatedly
-- `EngageMyTarget` - Commands drones to engage target
-- `ReturnAndOrbit` - Commands drones to return and orbit
-- `ReturnToDroneBay` - Returns drones to bay
-- `ReturnFighterControl` - Returns fighter control
-- `ScoopToCargoBay` - Scoops to cargo bay
-- `ScoopToDroneBay` - Scoops to drone bay
-- `ScoopToCargoHold` - Scoops to cargo hold
-- `ScoopToShipMaintenanceBay` - Scoops to ship maintenance bay
-- `Abandon` - Abandons drone
-- `AbandonAll` - Abandons all drones
-- `AbandonDrone` - Abandons specific drone
-- `DroneAssist[charID]` - Assists character with drones
-- `DroneGuard[charID]` - Guards character with drones
-- `DelegateFighterControl[charID]` - Delegates fighter control
+| Member | Type |
+|---|---|
+| `ToActiveDrone` | [activedrone](#activedrone) |
+| `ToAttacker` | [attacker](#attacker) |
+| `ToFleetMember` | [fleetmember](#fleetmember) |
+| `ToJammer` | [jammer](#jammer) |
+| `ToWormhole` | [entitywormhole](#entitywormhole) |
 
-*Other:*
-- `CreateBookmark[label,notes,folder,expiry]` - Creates bookmark
-- `SetFleetTag[tag]` - Sets fleet tag
-- `SetName[name]` - Sets entity name
-- `MarkWreckViewed` - Marks wreck as viewed
+**Methods — Basic Interaction**
 
-**See Also:**
-- [entitywormhole](#entitywormhole) - Wormhole-specific entity
-- [entityplayerstructure](#entityplayerstructure) - Player structure entity
-- [attacker](#attacker) - Attacker entity
-- [jammer](#jammer) - Jammer entity
-- [activedrone](#activedrone) - Active drone
-- [character](#character) - Player character
-- [overview](#overview) - Overview selection
+| Method | Description |
+|---|---|
+| `Set[entityID]` | Reassign a variable reference to another entity. |
+| `Activate` | Activate (acceleration gates, etc.). |
+| `Dock` | Dock at station/citadel. Since Crucible, will auto-warp/approach as needed. |
+| `Jump` | Jump through a stargate. |
+| `Open` | Open as container/wreck/etc. |
+| `AccessCustomsOffice` | Open the customs office UI (orbital only). |
 
----
+**Methods — Navigation**
 
-#### **entitywormhole**
+| Method | Description |
+|---|---|
+| `Approach` | Approach entity. With no args, defaults to 50m hold distance. Source has an `argc > 1` guard on the distance parse, so a single-arg `Approach[1000]` actually ignores the 1000 and still uses the 50m default — prefer `KeepAtRange[distance]` when you need a specific hold distance. |
+| `AlignTo` | Align to entity. |
+| `Orbit` / `Orbit[distance]` | Orbit at distance in meters. Defaults to 5000m if distance omitted. |
+| `KeepAtRange` / `KeepAtRange[distance]` | Keep at range in meters. Defaults to 1000m if distance omitted. |
+| `WarpTo` / `WarpTo[distance]` | Warp to entity at distance in meters. Defaults to 0m if distance omitted. Source only accepts one optional arg — there is NO second "fleet warp" argument on `WarpTo`; use `WarpFleetTo` for fleet warps. |
+| `WarpFleetTo` / `WarpFleetTo[distance]` | Fleet warp to entity (FC/WC/SC only). Defaults to 0m if distance omitted. |
 
-Wormhole entity. Inherits from [**entity**](#entity).
+Note: method name is `WarpFleetTo`, not `FleetWarpTo`.
 
-**Inheritance:**
-- All members and methods from [**entity**](#entity) are available
+**Methods — Targeting**
 
-**Members:**
-- `Age` - int: Wormhole age (-10 on error)
-- `Size` - float: Wormhole size (-10.0 on error)
-- `Class` - int: Wormhole class (-10 on error)
+| Method | Description |
+|---|---|
+| `LockTarget` | Lock as a target. |
+| `UnlockTarget` | Unlock. |
+| `MakeActiveTarget` | Make the active target (must be locked first). |
+| `SetAsSelectedItem` | Set as the overview-selected item. |
 
-**Methods:**
-- `EnterWormhole` - Enters the wormhole
+**Methods — Scanning**
 
-**See Also:**
-- [entity](#entity) - Parent type
+| Method | Description |
+|---|---|
+| `GetCargoScannerResults[index:iteminfolist]` | Populate with cargo-scan results. |
+| `GetShipScannerResults[index:iteminfolist]` | Populate with ship-scan results. |
 
----
+**Methods — Drones (when the entity is one of your drones)**
 
-#### **entityplayerstructure**
+| Method | Description |
+|---|---|
+| `GetActiveDrones[index:activedrone]` | Populate with drones controlled by this entity. |
+| `Mine` / `MineRepeatedly` | Command drones to mine this entity. |
+| `EngageMyTarget` | Order drones to engage. |
+| `ReturnAndOrbit` / `ReturnToDroneBay` | Return commands. |
+| `ReturnFighterControl` | Return fighter control. |
+| `ScoopToCargoBay` / `ScoopToCargoHold` (alias) | Scoop to cargo. |
+| `ScoopToDroneBay` | Scoop to drone bay. |
+| `ScoopToShipMaintenanceBay` | Scoop to ship maintenance bay. |
+| `Abandon` / `AbandonAll` / `AbandonDrone` | Abandon drone(s). |
+| `DroneAssist[charID]` / `DroneGuard[charID]` | Drone support commands. |
+| `DelegateFighterControl[charID]` | Delegate fighter. |
 
-Player-owned structure entity (POS modules, etc.). Inherits from [**entity**](#entity).
+**Methods — Misc**
 
-**Inheritance:**
-- All members and methods from [**entity**](#entity) are available
+| Method | Description |
+|---|---|
+| `CreateBookmark[label, notes, folder, expiry]` | Bookmark at this entity's location. |
+| `SetFleetTag[tag]` | Set a fleet tag on the entity. |
+| `SetName[name]` | Rename (only for entities that support it, e.g. containers). |
+| `MarkWreckViewed` | Mark wreck as viewed. |
 
-**Members:**
-- `Anchored` - bool: Whether structure is anchored
-- `CanAnchorAt` - bool: Whether can anchor at current location
-- `CanAssumeControl` - bool: Whether can assume control
-- `CanOffline` - bool: Whether can offline
-- `CanOnline` - bool: Whether can online
-- `CanUnanchor` - bool: Whether can unanchor
-- `ControllerID` - int64: ID of controlling character
-- `ControllerName` - string: Name of controlling character
-- `CurrentTargetID` - int64: ID of current target
-- `Online` - bool: Whether structure is online
-- `Orphaned` - bool: Whether structure is orphaned
-- `State` - string: Structure state
-- `ToTower` - [entity](#entity): Converts to tower entity
+Deep-dive: [03_API_Reference.md — Entity System](ISXEVE%20Scripting%20Guide/03_API_Reference.md#entity-system-and-targeting).
 
-**Methods:**
-- `Anchor` - Anchors the structure
-- `AssumeControl` - Assumes control of structure
-- `ReleaseControl` - Releases control of structure
-- `UnlockTarget` - Unlocks current target
+### entitywormhole
 
-**See Also:**
-- [entity](#entity) - Parent type
+Inherits from [entity](#entity). Obtained via `entity.ToWormhole`.
 
----
+| Member | Type | Notes |
+|---|---|---|
+| `Age` | int | Wormhole age. -10 on error. |
+| `Size` | float | Wormhole size. -10.0 on error. |
+| `Class` | int | Wormhole class. -10 on error. |
 
-#### **attacker**
+**Methods:** `EnterWormhole`.
 
-Entity that is attacking you. Inherits from [**entity**](#entity).
+### entityplayerstructure
 
-**Inheritance:**
-- All members and methods from [**entity**](#entity) are available
+Inherits from [entity](#entity). Represents POS modules and player-structures.
 
-**Additional Members:**
-- `ID` - int64: Attacker ID
-- `IsCurrentlyAttacking` - bool: Whether currently attacking
-- `ToJammer` - [jammer](#jammer): Converts to jammer type if applicable
+| Member | Type |
+|---|---|
+| `Anchored` / `CanAnchorAt` / `CanUnanchor` | bool |
+| `CanAssumeControl` | bool |
+| `CanOffline` / `CanOnline` | bool |
+| `ControllerID` / `ControllerName` | int64 / string |
+| `CurrentTargetID` | int64 |
+| `Online` / `Orphaned` | bool |
+| `State` | string |
+| `ToTower` | [entity](#entity) |
 
-**Additional Methods:**
-- `GetAttacks[index:attack]` - Populates index with [attack](#attack) objects
+**Methods:** `Anchor`, `AssumeControl`, `ReleaseControl`, `UnlockTarget`.
 
-**See Also:**
-- [entity](#entity) - Parent type
-- [jammer](#jammer) - Jammer entity
-- [attack](#attack) - Attack instance
+### attacker
+
+Inherits from [entity](#entity). Returned by `character:GetAttackers`.
+
+| Member | Type |
+|---|---|
+| `ID` | int64 |
+| `IsCurrentlyAttacking` | bool |
+| `ToJammer` | [jammer](#jammer) |
+
+**Methods:** `GetAttacks[index:attack]`.
+
+### attack
+
+| Member | Type |
+|---|---|
+| `ID` | int64 |
+| `Name` | string |
+| `TimeStarted` | [evetime](#evetime) |
+
+### jammer
+
+Inherits from [attacker](#attacker). Returned by `character:GetJammers`.
+
+| Member | Type |
+|---|---|
+| `ID` | int64 |
+
+**Methods:** `GetJams[index:???]` — populate index with jam events from this jammer.
+
+### overview
+
+Access: `Overview` TLO.
+
+| Member | Type |
+|---|---|
+| `SelectedItem` | [entity](#entity) |
+
+**Methods:** `ClearSelectedItem`.
 
 ---
 
-#### **attack**
+## Station and Structure Datatypes
 
-Represents an attack instance.
+### station
 
-**Members:**
-- `ID` - int64: Attack ID
-- `Name` - string: Attack name
-- `TimeStarted` - [evetime](#evetime): Time attack started
+Access: `Me.Station` (when docked at an NPC station), `EVE.Station[id]`.
 
----
+| Member | Type |
+|---|---|
+| `ID` | int64 |
+| `Name` | string |
+| `TypeID` / `Type` | int / string |
+| `OwnerID` / `Owner` | int64 / string |
+| `OwnerTypeID` / `OwnerType` | int / string |
+| `SolarSystem` | [solarsystem](#solarsystem) |
+| `Cargo[#]` / `Cargo[name]` | [item](#item) (station-item access, like ship.Cargo) |
 
-#### **jammer**
+**Methods**
 
-Entity that is jamming you. Inherits from [**attacker**](#attacker) which inherits from [**entity**](#entity).
+| Method | Description |
+|---|---|
+| `GetHangarItems[index:item]` | Personal hangar items (must be docked). |
+| `GetHangarShips[index:item]` | Personal hangar ships (must be docked). |
+| `GetCorpHangarItems[index:item, division]` | Corp hangar items (must be docked). |
+| `GetCorpHangarShips[index:item, division]` | Corp hangar ships (must be docked). |
+| `GetRepairableItems[index:item]` | Items that can be repaired here. |
+| `SetDestination` / `AddWaypoint` / `ClearWaypoint` | Route management via station ID. |
+| `OpenFitting` | Open the fitting window. |
 
-**Inheritance:**
-- All members and methods from [**attacker**](#attacker) (and [**entity**](#entity)) are available
+Note: there is NO `Undock` method on station. Use `EVE:Execute[CmdExitStation]`.
 
-**See Also:**
-- [attacker](#attacker) - Parent type
-- [entity](#entity) - Grandparent type
+### structure
 
----
+Citadels and upwell structures. Inherits from [station](#station).
 
-#### **overview**
+| Member | Type |
+|---|---|
+| `CanBoard` | bool |
+| `MyCorpHasOffice` | bool |
 
-Overview functionality.
+**Methods:** `Board`.
 
-**Members:**
-- `SelectedItem` - [entity](#entity): Currently selected entity in overview
-
-**Methods:**
-- `ClearSelectedItem` - Clears overview selection
-
-**See Also:**
-- [entity](#entity) - Entities shown in overview
-
----
-
-### Item & Equipment DataTypes
-
-#### **item**
-
-Item instance in game. Inherits from [**iteminfo**](#iteminfo).
-
-**Inheritance:**
-- All members from [**iteminfo**](#iteminfo) are available
-
-**Additional Members:**
-- `Category` - string: Item category name
-- `CategoryID` - int: Item category ID
-- `OwnerID` - int64: Owner character ID
-- `Location` - string: Location name
-- `LocationID` - int64: Location ID
-- `Quantity` - int: Item quantity
-- `ID` - int64: Unique item ID
-- `Slot` - string: Slot name
-- `SlotID` - int: Slot ID
-- `IsRepackable` - bool: Whether can be repackaged
-- `GivenName` - string: Custom given name (deprecated - use Name)
-- `Name` - string: Item name (custom or type name)
-- `CargoCapacity` - double: Cargo capacity
-- `UsedCargoCapacity` - double: Used cargo capacity
-- `MaxFlightTime` - double: Max flight time (missiles/charges)
-- `MaxVelocity` - double: Max velocity
-- `ExplosionRadius` - double: Explosion radius
-- `ExplosionVelocity` - double: Explosion velocity
-- `SignatureRadiusBonus` - double: Signature radius bonus
-- `EMDamage` - double: EM damage
-- `KineticDamage` - double: Kinetic damage
-- `ThermalDamage` - double: Thermal damage
-- `ExplosiveDamage` - double: Explosive damage
-- `FallofMultiplier` - double: Falloff multiplier
-- `TrackingSpeedMultiplier` - double: Tracking speed multiplier
-- `MetaLevel` - int: Meta level
-- `IsInsured` - bool: Whether ship is insured
-- `InsuranceLevel` - string: Insurance level
-- `BookmarkID` - int64: Bookmark ID (for bookmark items)
-
-**Methods:**
-- `Jettison` - Jettisons item
-- `MoveTo[location,destination,quantity,folder]` - Moves item
-- `LaunchDrones` - Launches drones
-- `LaunchForSelf` - Launches deployable for self
-- `LaunchForCorp[ignoreWarnings]` - Launches deployable for corp
-- `MakeActive` - Makes ship active
-- `LeaveShip` - Leaves current ship (board this one)
-- `Repackage` - Repackages item
-- `Compress` - Compresses ore
-- `AssembleShip` - Assembles packaged ship
-- `AssembleContainer` - Assembles packaged container
-- `Refine` - Refines ore
-- `Reprocess` - Reprocesses item
-- `TrainSkill` - Trains skill book
-- `InjectSkill` - Injects skill injector
-- `AddToSellOrder` - Opens sell order window
-- `Open` - Opens item (container/ship)
-- `ConsumeBooster` - Consumes booster
-- `PluginImplant` - Plugs in implant
-- `ApplyPilotLicense` - Applies pilot license
-- `GetInsuranceQuotes[index:???]` - Gets insurance quotes
-- `Insure[level,cost]` - Insures ship
-- `GetContrabandFactions[index:???]` - Gets contraband factions
-- `GetRepairQuote` - Gets repair quote
-- `UseAbyssalFilament` - Uses abyssal filament
-
-**See Also:**
-- [iteminfo](#iteminfo) - Parent type with static info
-- [module](#module) - Inherits from item
-- [ship](#ship) - Ship cargo and items
+Deep-dive: [03_API_Reference.md — Station Object](ISXEVE%20Scripting%20Guide/03_API_Reference.md#station-object).
 
 ---
 
-#### **iteminfo**
+## Interstellar and Bookmark Datatypes
 
-Static information about item types (from EVE database).
+### interstellar
 
-**Members:**
-- `Name` - string: Item type name
-- `Type` - string: Item type name (alias for Name)
-- `TypeID` - int: Item type ID
-- `Group` - string: Group name
-- `GroupID` - int: Group ID
-- `IsContraband` - bool: Whether item is contraband
-- `GraphicID` - int: Graphic ID
-- `Capacity` - double: Item capacity
-- `Radius` - double: Item radius
-- `RaceID` - int: Race ID
-- `Volume` - double: Item volume
-- `BasePrice` - double: Base price
-- `PortionSize` - int: Portion size
-- `MarketGroupID` - int: Market group ID
-- `Description` - string: Item description
-- `ChargeSize` - int: Charge size
-- `RangeBonus` - float: Range bonus
-- `ShieldRadius` - int: Shield radius
+Base for universe objects. Obtained via the `Universe[id]` / `Universe[name]` TLO.
 
-**See Also:**
-- [item](#item) - Item instances (inherit from iteminfo)
-- [iteminfolist](#iteminfolist) - List item with quantity
+| Member | Type |
+|---|---|
+| `ID` | int64 |
+| `Name` | string |
 
----
+### solarsystem
 
-#### **iteminfolist**
+Inherits from [interstellar](#interstellar).
 
-Item info with quantity (used in various lists). Inherits from [**iteminfo**](#iteminfo).
+| Member | Type |
+|---|---|
+| `Security` | float |
+| `Faction` / `FactionID` | string / int |
+| `Constellation` | [constellation](#constellation) |
+| `Region` | [region](#region) |
+| `JumpsTo[solarSystemID]` | int |
+| `JumpsTo[stationID]` | int |
 
-**Inheritance:**
-- All members from [**iteminfo**](#iteminfo) are available
+**Methods**
 
-**Additional Members:**
-- `ID` - int: Type ID (same as TypeID for convenience)
-- `TypeID` - int: Item type ID
-- `Quantity` - int64: Quantity
+| Method | Description |
+|---|---|
+| `SetDestination` / `AddWaypoint` / `ClearWaypoint` | Route management. |
+| `GetNumPlanetsByType[collection:int]` | Populate collection where key=PlanetType name/ID, value=count. |
+| `GetPlanetIDs[index:int]` | List planet IDs in the system. |
 
-**See Also:**
-- [iteminfo](#iteminfo) - Parent type
+### constellation
 
----
+Inherits from [interstellar](#interstellar). Adds `Region` ([region](#region)).
 
-#### **module**
+### region
 
-Ship module. Inherits from [**item**](#item).
+Inherits from [interstellar](#interstellar).
 
-**Inheritance:**
-- All members and methods from [**item**](#item) (and [**iteminfo**](#iteminfo)) are available
+### planet
 
-**Additional Members:**
+Inherits from [interstellar](#interstellar).
 
-*State:*
-- `IsGoingOnline` - bool: Whether going online
-- `IsWaitingForActiveTarget` - bool: Whether waiting for active target
-- `IsReloadingAmmo` - bool: Whether reloading ammo
-- `IsReloading` - bool: Whether reloading
-- `IsOnline` - bool: Whether online
-- `IsActivatable` - bool: Whether can be activated
-- `IsAutoReloadOn` - bool: Whether auto-reload enabled
-- `IsActive` - bool: Whether active
-- `IsOffensive` - bool: Whether offensive module
-- `IsAssistance` - bool: Whether assistance module
-- `IsDeactivating` - bool: Whether deactivating
-- `IsBeingRepaired` - bool: Whether being repaired
-- `AutoRepeat` - bool: Whether auto-repeat enabled
-- `IsBlinking` - bool: Whether blinking
-- `IsBankSlave` - bool: Whether bank slave
-- `IsBankMaster` - bool: Whether bank master
+| Member | Type |
+|---|---|
+| `Radius` | int |
+| `Type` / `TypeID` | string / int |
+| `SolarSystem` | [solarsystem](#solarsystem) |
 
-*Charge & Ammo:*
-- `EffectCategory` - string: Effect category
-- `Charge` - [modulecharge](#modulecharge): Current charge
-- `CurrentCharges` - int: Current charges
-- `MaxCharges` - int: Max charges
-- `ChargeSize` - int: Charge size
+**Methods:** `GetOrbitalCustomsOffices[index:int64]` (populate with customs-office entity IDs; only works in space).
 
-*Targeting:*
-- `Target` - [entity](#entity): Current target
-- `TargetID` - int64: Target ID
-- `LastTarget` - [entity](#entity): Last target
-- `LastTargeted` - [entity](#entity): Last targeted entity
-- `LastTargetedID` - int64: Last targeted ID
+### bookmark
 
-*Requirements & Usage:*
-- `ToItem` - [item](#item): Converts to item type
-- `PowergridUsage` - double: Powergrid usage
-- `OptimalRange` - double: Optimal range
-- `TechLevel` - int: Tech level
-- `ActivationCost` - double: Activation cost (capacitor)
-- `HP` - double: Hit points
-- `Damage` - double: Damage taken
-- `ActivationTime` - double: Activation time (ms)
-- `Duration` - double: Duration (ms)
-- `Volume` - double: Volume
-- `CPUUsage` - double: CPU usage
-- `Capacity` - double: Capacity
-- `Mass` - double: Mass
+Obtained via `EVE.Bookmark[id]`, `EVE.Bookmark[label]`, or `EVE:GetBookmarks`.
 
-*Weapon Stats:*
-- `AccuracyFalloff` - double: Accuracy falloff
-- `EffectivenessFalloff` - double: Effectiveness falloff
-- `TrackingSpeed` - double: Tracking speed
-- `DamageModifier` - double: Damage modifier
-- `EMDamage` - double: EM damage
-- `KineticDamage` - double: Kinetic damage
-- `ThermalDamage` - double: Thermal damage
-- `ExplosiveDamage` - double: Explosive damage
-- `SignatureResolution` - double: Signature resolution
-- `RateOfFire` - double: Rate of fire
-- `OverloadRateOfFireBonus` - double: Overload rate of fire bonus
-- `OverloadOptimalRangeBonus` - double: Overload optimal range bonus
-- `RateOfFireBonus` - double: Rate of fire bonus
+**Identity**
 
-*Mining:*
-- `MiningAmount` - double: Mining amount
-- `MiningAmountPerSecond` - double: Mining amount per second
-- `MiningAmountBonus` - double: Mining amount bonus
-- `CrystalsDamage` - double: Crystal damage
-- `SpecialtyCrystalMiningAmount` - double: Specialty crystal mining amount
-- `TargetGroup` - int: Target group
-- `SurveyScanRange` - double: Survey scan range
-- `UsesFrequencyCrystals` - bool: Uses frequency crystals
+| Member | Type |
+|---|---|
+| `ID` | int64 |
+| `Label` | string |
+| `Note` | string |
+| `Type` / `TypeID` | string / int |
 
-*Repair & Tank:*
-- `OverloadRepairBonus` - double: Overload repair bonus
-- `OverloadDurationBonus` - double: Overload duration bonus
-- `ArmorHPRepaired` - double: Armor HP repaired
-- `ExplosiveDmgResistanceBonus` - double: Explosive damage resistance bonus
-- `KineticDmgResistanceBonus` - double: Kinetic damage resistance bonus
-- `ThermalDmgResistanceBonus` - double: Thermal damage resistance bonus
-- `EMDmgResistanceBonus` - double: EM damage resistance bonus
-- `ArmorHPBonus` - double: Armor HP bonus
-- `ShieldBonus` - double: Shield bonus
-- `ShieldHPBonus` - double: Shield HP bonus
+**Ownership**
 
-*Propulsion:*
-- `MaxVelocityBonus` - double: Max velocity bonus
-- `MaxVelocityPenalty` - double: Max velocity penalty
-- `OverloadSpeedFactorBonus` - double: Overload speed factor bonus
-- `MassAddition` - double: Mass addition
-- `Thrust` - double: Thrust
-- `VelocityModifier` - double: Velocity modifier
+| Member | Type |
+|---|---|
+| `OwnerID` / `CreatorID` | int64 |
+| `FolderID` | int64 |
+| `AgentID` | int64 (for agent-provided bookmarks) |
 
-*Ship Bonuses:*
-- `StructureHPBonus` - double: Structure HP bonus
-- `CargoCapacityBonus` - double: Cargo capacity bonus
-- `CapacitorRechargeRateBonus` - double: Capacitor recharge rate bonus
-- `ShieldRechargeRateBonus` - double: Shield recharge rate bonus
-- `CapacitorBonus` - double: Capacitor bonus
-- `PowergridBonus` - double: Powergrid bonus
-- `CPUOutputBonus` - double: CPU output bonus
-- `CPUPenaltyPercent` - double: CPU penalty percent
+**Location**
 
-*Scan & ECM:*
-- `ScanResolutionBonus` - double: Scan resolution bonus
-- `SensorRecalibrationTime` - double: Sensor recalibration time
-- `WarpScrambleStrength` - int: Warp scramble strength
+| Member | Type |
+|---|---|
+| `SolarSystemID` | int64 |
+| `LocationID` / `LocationType` / `LocationNumber` | int64 / string / int |
+| `ItemID` | int64 |
+| `X` / `Y` / `Z` | double |
+| `ToEntity` | [entity](#entity) (if on current grid) |
+| `DeadSpace` | bool |
 
-*Energy/Shield Transfer:*
-- `EnergyTransferAmount` - double: Energy transfer amount
-- `PowerTransferAmount` - double: Power transfer amount
-- `TransferRange` - double: Transfer range
-- `PowerTransferRange` - double: Power transfer range
-- `ShieldTransferRange` - double: Shield transfer range
+**Timestamps**
 
-*Neuts/Nos:*
-- `MaxNeutralizationRange` - double: Max neutralization range
-- `EnergyDestabilizationRange` - double: Energy destabilization range
-- `EnergyNeutralized` - double: Energy neutralized
-- `EnergyDestabilizationAmount` - double: Energy destabilization amount
+| Member | Type |
+|---|---|
+| `Created` | int64 |
+| `DateCreated` / `TimeCreated` | string |
 
-*Other:*
-- `AccessDifficultyBonus` - double: Access difficulty bonus
-- `MaxTractorVelocity` - double: Max tractor velocity
-- `HeatDamage` - double: Heat damage
-- `ChargeRate` - double: Charge rate
-- `DefaultEffectName` - string: Default effect name
-- `DefaultEffectDescription` - string: Default effect description
-- `ReactivationDelay` - double: Reactivation delay
+**Navigation**
 
-**Additional Methods:**
-- `Click` - Clicks module (for targeted modules)
-- `Activate` - Activates module
-- `Deactivate` - Deactivates module
-- `Reload` - Reloads module
-- `ChangeAmmo[itemID,quantity]` - Changes ammo
-- `SetAutoReloadOn` - Enables auto-reload
-- `SetAutoReloadOff` - Disables auto-reload
-- `PutOnline` - Puts module online
-- `PutOffline` - Puts module offline
-- `GetAvailableAmmo[index:item]` - Populates index with available ammo
-- `ToggleOverload` - Toggles overload
-- `SetManualOn` - Sets manual mode on
-- `SetManualOff` - Sets manual mode off
-- `UnloadToCargo` - Unloads charge to cargo
-- `ReloadAll` - Reloads all modules
-- `Repair` - Repairs module
-- `CancelRepair` - Cancels repair
+| Member | Type |
+|---|---|
+| `JumpsTo` | int |
+| `Distance` | double |
 
-**See Also:**
-- [item](#item) - Parent type
-- [modulecharge](#modulecharge) - Module charge
-- [ship](#ship) - Ship modules
-- [fittingslot](#fittingslot) - Fitting slot
+**Methods**
+
+| Method | Description |
+|---|---|
+| `WarpTo` / `WarpTo[distance]` | Warp to bookmark. Defaults to 0m if distance omitted. |
+| `WarpFleetTo` / `WarpFleetTo[distance]` | Fleet warp (FC/WC/SC only). Defaults to 0m. |
+| `SetDestination` / `AddWaypoint` / `ClearWaypoint` | Route management. |
+| `AlignTo` | Align. Takes no arguments. |
+| `Approach` | Approach. Takes no arguments. |
+| `Remove` | Delete the bookmark. |
+
+Deep-dive: [03_API_Reference.md — Movement and Navigation](ISXEVE%20Scripting%20Guide/03_API_Reference.md#movement-navigation-and-autopilot).
 
 ---
 
-#### **modulecharge**
+## Window Datatypes
 
-Charge/ammunition loaded in a module.
-
-**Members:**
-- `ID` - int64: Charge ID
-- `Type` - string: Charge type name
-- `TypeID` - int: Charge type ID
-- `Group` - string: Group name
-- `GroupID` - int: Group ID
-- `Category` - string: Category name
-- `CategoryID` - int: Category ID
-- `Location` - string: Location name
-- `LocationID` - int64: Location ID
-- `Slot` - string: Slot name
-- `SlotID` - int: Slot ID
-- `Quantity` - int: Quantity
-- `MaxFlightTime` - double: Max flight time
-- `MaxVelocity` - double: Max velocity
-- `Volume` - double: Volume
-- `ChargeSize` - int: Charge size
-
-**See Also:**
-- [module](#module) - Parent module
-
----
-
-### Ship DataTypes
-
-#### **ship**
-
-Player's active ship.
-
-**Members:**
-
-*Identity:*
-- `ID` - int64: Ship ID
-- `Name` - string: Ship name
-- `ToItem` - [item](#item): Converts to item type
-- `ToEntity` - [entity](#entity): Converts to entity type
-
-*Cargo & Inventory:*
-- `CargoCapacity` - double: Cargo capacity
-- `UsedCargoCapacity` - double: Used cargo capacity
-- `HasOreHold` - bool: Whether has ore hold
-- `Cargo[# or name]` - [item](#item): Cargo item by index or name
-- `Module[# or name]` - [module](#module): Module by slot or name
-- `Drone[#]` - [item](#item): Drone in bay by index
-
-*Drones:*
-- `DroneBandwidth` - double: Drone bandwidth
-- `DronebayCapacity` - double: Drone bay capacity
-- `UsedDronebayCapacity` - double: Used drone bay capacity
-
-*Capacitor:*
-- `Capacitor` - double: Current capacitor
-- `MaxCapacitor` - double: Maximum capacitor
-- `CapacitorPct` - double: Capacitor percentage
-- `CapacitorRechargeRate` - double: Capacitor recharge rate (ms)
-
-*Defense:*
-- `Shield` - double: Current shield HP
-- `MaxShield` - double: Maximum shield HP
-- `ShieldPct` - double: Shield percentage
-- `ShieldRechargeRate` - double: Shield recharge rate (ms)
-- `Armor` - double: Current armor HP
-- `MaxArmor` - double: Maximum armor HP
-- `ArmorPct` - double: Armor percentage
-- `Structure` - double: Current structure HP
-- `MaxStructure` - double: Maximum structure HP
-- `StructurePct` - double: Structure percentage
-
-*Resources:*
-- `CPULoad` - double: CPU used
-- `CPUOutput` - double: CPU available
-- `PowerLoad` - double: Powergrid used
-- `PowerOutput` - double: Powergrid available
-
-*Slots:*
-- `HighSlots` - int: Number of high slots
-- `MediumSlots` - int: Number of medium slots
-- `LowSlots` - int: Number of low slots
-- `RigSlots` - int: Number of rig slots
-- `RigSlotsLeft` - int: Number of empty rig slots
-- `TurretSlotsLeft` - int: Number of empty turret slots
-- `LauncherSlotsLeft` - int: Number of empty launcher slots
-
-*Heat:*
-- `HeatHigh` - double: High slot heat
-- `HeatMedium` - double: Medium slot heat
-- `HeatLow` - double: Low slot heat
-- `HeatCapacityHigh` - double: High slot heat capacity
-- `HeatCapacityMedium` - double: Medium slot heat capacity
-- `HeatCapacityLow` - double: Low slot heat capacity
-
-*Attributes:*
-- `MaxVelocity` - double: Max velocity
-- `Agility` - double: Agility
-- `Radius` - double: Radius
-- `TechLevel` - int: Tech level
-- `SignatureRadius` - double: Signature radius
-- `WarpSpeedMultiplier` - double: Warp speed multiplier
-
-*Targeting & Scanning:*
-- `MaxLockedTargets` - int: Max locked targets
-- `MaxTargetRange` - double: Max target range
-- `ScanSpeed` - double: Scan speed
-- `ScanResolution` - double: Scan resolution
-- `ScanRadarStrength` - double: Scan radar strength
-
-*Scanners:*
-- `Scanners` - [scanners](#scanners): Ship scanners
-
-**Methods:**
-- `StripFitting` - Strips all modules from ship
-- `LaunchAllDrones` - Launches all drones
-- `GetModules[index:module]` - Populates index with modules
-- `GetRigs[index:item]` - Populates index with rigs
-- `GetDrones[index:item]` - Populates index with drones in bay
-- `Open` - Opens ship
-- `Approach[target,distance]` - Approaches target
-- `Align[target]` - Aligns to target
-- `SelfDestruct` - Initiates self-destruct
-- `SetStarbaseForcefieldPassword[password]` - Sets POS forcefield password
-- `Jettison[index:item or int64]` - Jettisons items
-
-**See Also:**
-- [module](#module) - Ship modules
-- [item](#item) - Ship as item
-- [entity](#entity) - Ship as entity
-- [scanners](#scanners) - Ship scanners
-- [item](#item) - Ship cargo items
-- [entity](#entity) - Drones in space
-- [character](#character) - Character.Ship member
-
----
-
-### Station & Structure DataTypes
-
-#### **station**
-
-Station information and methods.
-
-**Members:**
-
-*Identity:*
-- `Name` - string: Station name
-- `ID` - int64: Station ID
-- `TypeID` - int: Station type ID
-- `Type` - string: Station type name
-
-*Ownership:*
-- `OwnerID` - int64: Owner ID
-- `Owner` - string: Owner name
-- `OwnerTypeID` - int: Owner type ID
-- `OwnerType` - string: Owner type
-
-*Location:*
-- `SolarSystem` - [solarsystem](#solarsystem): Station's solar system
-
-*Cargo:*
-- `Cargo` - [cargo](#cargo): Station cargo hold
-
-**Methods:**
-
-*Hangar:*
-- `GetHangarItems[index:item]` - Populates index with [item](#item) objects in station hangar
-- `GetHangarShips[index:item]` - Populates index with ships in station hangar
-- `GetCorpHangarItems[index:item,division]` - Populates index with corp hangar items
-- `GetCorpHangarShips[index:item,division]` - Populates index with corp hangar ships
-- `GetRepairableItems[index:item]` - Populates index with repairable [item](#item) objects
-
-*Navigation:*
-- `SetDestination` - Sets station as autopilot destination
-- `AddWaypoint` - Adds station as waypoint
-- `ClearWaypoint` - Clears station waypoint
-
-*Windows:*
-- `OpenFitting` - Opens fitting window
-
-**See Also:**
-- [structure](#structure) - Inherits from station
-- [character](#character) - Character.Station member
-- [solarsystem](#solarsystem) - Solar system location
-
----
-
-#### **structure**
-
-Structure/citadel. Inherits from [**station**](#station).
-
-**Inheritance:**
-- All members and methods from [**station**](#station) are available
-
-**Members:**
-- `CanBoard` - bool: Whether player can board structure
-- `MyCorpHasOffice` - bool: Whether player's corp has office
-
-**Methods:**
-- `Board` - Boards the structure
-
-**See Also:**
-- [station](#station) - Parent type
-- [entity](#entity) - Structure entities in space
-
----
-
-### Window DataTypes
-
-#### **evewindow**
+### evewindow
 
 Base type for all EVE windows.
 
-**Members:**
+| Member | Type |
+|---|---|
+| `Name` | string |
+| `Caption` | string |
+| `Text` / `HTML` | string |
+| `Minimized` | bool |
+| `X` / `Y` / `Width` / `Height` | int |
+| `NumButtons` | int |
+| `Button[#]` | [eveuibutton](#eveuibutton) (1-based up to NumButtons) |
+| `Button[name]` | [eveuibutton](#eveuibutton) — matches against the button widget's internal `name` attribute, which for many buttons IS the visible text but not always. The match is case-insensitive. |
 
-*Identity:*
-- `Name` - string: Window name
-- `Caption` - string: Window caption
-- `Text` - string: Window text
-- `HTML` - string: Window HTML content
+**Methods**
 
-*State:*
-- `Minimized` - bool: Whether window is minimized
+| Method | Description |
+|---|---|
+| `Close` / `Minimize` / `Maximize` | Window actions. |
+| `StackAll` | Stack items (loot/inventory windows). |
+| `LootAll` | Loot all (loot windows). |
+| `ClickButtonOK` / `ClickButtonCancel` / `ClickButtonYes` / `ClickButtonNo` / `ClickButtonClose` | Modal-button helpers. |
 
-*Position & Size:*
-- `X` - int: Window X position
-- `Y` - int: Window Y position
-- `Width` - int: Window width
-- `Height` - int: Window height
+### eveinvwindow
 
-*Buttons:*
-- `NumButtons` - int: Number of visible, enabled buttons
-- `Button[#]` - [eveuibutton](#eveuibutton): Button by number (1 to NumButtons)
-- `Button[text]` - [eveuibutton](#eveuibutton): Button by label text
+Inventory window. Inherits from [evewindow](#evewindow).
 
-**Methods:**
+| Member | Type | Notes |
+|---|---|---|
+| `ActiveChild` | [eveinvchildwindow](#eveinvchildwindow) | Currently active tab. |
+| `ChildWindow[name]` | [eveinvchildwindow](#eveinvchildwindow) | By name (e.g. `ShipCargo`, `StationItems`, `StationCorpHangars`, `Folder6`). |
+| `ChildWindow[id]` | [eveinvchildwindow](#eveinvchildwindow) | By ID (e.g. `${Me.StationID}`). |
+| `ChildWindow[id, name]` / `ChildWindow[name, location]` / `ChildWindow[id, name, location]` | [eveinvchildwindow](#eveinvchildwindow) | Disambiguated lookup. |
+| `IsInRange` | bool | |
+| `HasCapacity` | bool | |
+| `ItemID` | int64 | Container item ID. |
+| `LocationFlag` / `LocationFlagID` | string / int | |
+| `Capacity` / `UsedCapacity` | double | -1 on error, -2 if not ready. |
 
-*Window Actions:*
-- `Close` - Closes window
-- `Minimize` - Minimizes window
-- `Maximize` - Maximizes window
-- `StackAll` - Stacks all items (for loot windows)
-- `LootAll` - Loots all items (for loot windows)
+**Methods:** `GetChildren[index:eveinvchildwindow]`.
 
-*Button Clicks:*
-- `ClickButtonOK` - Clicks OK button
-- `ClickButtonCancel` - Clicks Cancel button
-- `ClickButtonYes` - Clicks Yes button
-- `ClickButtonNo` - Clicks No button
-- `ClickButtonClose` - Clicks Close button
+Note: the correct member is `ChildWindow[...]`, NOT `Child[...]`. Older examples using `.Child[ShipCargo]` will silently fail.
 
-**See Also:**
-- All specialized window types inherit from evewindow
+### eveinvchildwindow
 
----
+A single tab/child in the inventory window.
 
-#### **eveinvwindow**
+| Member | Type | Notes |
+|---|---|---|
+| `Name` | string | |
+| `Capacity` / `UsedCapacity` | double | -1 on error, -2 if not made active yet. |
+| `LocationFlag` / `LocationFlagID` | string / int | |
+| `IsInRange` / `HasCapacity` | bool | |
+| `ItemID` | int64 | |
 
-Inventory window. Inherits from [**evewindow**](#evewindow).
+**Methods**
 
-**Inheritance:**
-- All members and methods from [**evewindow**](#evewindow) are available
+| Method | Description |
+|---|---|
+| `MakeActive` | Switch to this child tab. |
+| `OpenAsNewWindow` | Break out into separate window. |
+| `GetItems[index:item]` | List items in this child. |
+| `StackAll` | Stack items in this child. |
+| `MoveTo[destID, destFlagID]` | Batch move all items. |
 
-**Additional Members:**
-- `ActiveChild` - [eveinvchildwindow](#eveinvchildwindow): Currently active child window
-- `ChildWindow[index or name]` - [eveinvchildwindow](#eveinvchildwindow): Child window by index or name
-- `IsInRange` - bool: Whether inventory is in range
-- `HasCapacity` - bool: Whether inventory has capacity
-- `ItemID` - int64: Inventory container item ID
-- `LocationFlagID` - int: Location flag ID
-- `Capacity` - double: Total capacity (-1 if error, -2 if not ready)
-- `UsedCapacity` - double: Used capacity (-1 if error, -2 if not ready)
-- `LocationFlag` - string: Location flag name
+### evefittingwindow
 
-**Methods:**
-- `GetChildren[index:eveinvchildwindow]` - Populates index with [eveinvchildwindow](#eveinvchildwindow) objects
+Inherits from [evewindow](#evewindow).
 
-**See Also:**
-- [eveinvchildwindow](#eveinvchildwindow) - Child inventory windows
-- [evewindow](#evewindow) - Parent type
+| Member | Type | Notes |
+|---|---|---|
+| `CPU` | string | Now returns the displayed text, e.g. `"78.4/80.4"` — parse it. |
+| `Power` | string | Same. |
+| `Calibration` | string | Same. |
+| `IsShipSimulated` | bool | |
+| `Slot[slotName]` | [fittingslot](#fittingslot) | E.g. `HiSlot0`, `MedSlot3`, `LoSlot1`, `RigSlot0..RigSlot7`. |
+| `Slot[id]` | [fittingslot](#fittingslot) | By numeric slot ID. |
 
----
+**Methods:** `GetSlots[index:fittingslot]`, `StripFitting`.
 
-#### **eveinvchildwindow**
+### evesellitemswindow
 
-Child inventory window (tab within inventory window).
+Inherits from [evewindow](#evewindow).
 
-**Members:**
-- `Name` - string: Child window name
-- `Capacity` - double: Total capacity (-1 if error, -2 if not ready)
-- `UsedCapacity` - double: Used capacity (-1 if error, -2 if not ready)
-- `LocationFlag` - string: Location flag name
-- `LocationFlagID` - int: Location flag ID
-- `IsInRange` - bool: Whether inventory is in range
-- `ItemID` - int64: Inventory container item ID
-- `HasCapacity` - bool: Whether inventory has capacity
+| Member | Type |
+|---|---|
+| `Duration` | int (days) |
+| `RemainingOrders` | int |
+| `BrokersFee` / `SalesTax` / `TotalAmount` | string |
+| `NumItems` | int |
+| `Item[#]` | [sellitem](#sellitem) (1-based) |
 
-**Methods:**
-- `MakeActive` - Makes child window active (switches tab)
-- `OpenAsNewWindow` - Opens child as new window
-- `GetItems[index:item]` - Populates index with [item](#item) objects
-- `StackAll` - Stacks all items in inventory
-- `MoveTo[destID,destFlagID]` - Moves all items to destination
+**Methods:** `SetDuration[days]` (0/1/3/7/14/30/90), `Sell`.
 
-**See Also:**
-- [eveinvwindow](#eveinvwindow) - Parent inventory window
-- [item](#item) - Items in inventory
+### evemarketactionwindow
 
----
+Market buy-order window. Inherits from [evewindow](#evewindow).
 
-#### **evefittingwindow**
+| Member | Type |
+|---|---|
+| `BidPrice` | [eveuisinglelineedit](#eveuisinglelineedit) |
+| `BidPricePercentageComparison` | [eveuilabel](#eveuilabel) |
+| `RegionalAverage` | double |
+| `BestRegional` / `BestMatchable` | [eveuilabel](#eveuilabel) |
+| `Quantity` / `QuantityMin` | [eveuisinglelineedit](#eveuisinglelineedit) |
+| `Duration` / `Range` | [eveuicombo](#eveuicombo) |
+| `Fee` | [eveuisinglelineedit](#eveuisinglelineedit) |
+| `Total` | [eveuilabel](#eveuilabel) |
+| `IsReady` | bool |
 
-Fitting window. Inherits from [**evewindow**](#evewindow).
+**Methods:** `Buy`, `Close`.
 
-**Inheritance:**
-- All members and methods from [**evewindow**](#evewindow) are available
+### everepairshopwindow
 
-**Members:**
+Inherits from [evewindow](#evewindow).
 
-*Ship Stats:*
-- `CPU` - string: CPU usage/total (e.g., "78.4/80.4")
-- `Power` - string: Power usage/total
-- `Calibration` - string: Calibration usage/total
+| Member | Type |
+|---|---|
+| `AverageDamage` | string |
+| `TotalCost` | string |
 
-*Status:*
-- `IsShipSimulated` - bool: Whether showing simulated ship
+**Methods:** `RepairAll`.
 
-*Slots:*
-- `Slot[id]` - [fittingslot](#fittingslot): Slot by ID number
-- `Slot[name]` - [fittingslot](#fittingslot): Slot by name (e.g., "HiSlot0")
+### eveagentdialogwindow
 
-**Methods:**
-- `GetSlots[index:fittingslot]` - Populates index with available [fittingslot](#fittingslot) objects
-- `StripFitting` - Strips all fittings from ship
+Inherits from [evewindow](#evewindow).
 
-**See Also:**
-- [fittingslot](#fittingslot) - Fitting slots
-- [module](#module) - Fitted modules
-- [evewindow](#evewindow) - Parent type
+| Member | Type |
+|---|---|
+| `BriefingHTML` / `ObjectivesHTML` | string |
 
----
+### evemessageboxwindow
 
-#### **evesellitemswindow**
+Inherits from [evewindow](#evewindow). Returned by `EVEWindow[MessageBox]` when a message box is open.
 
-Sell items window. Inherits from [**evewindow**](#evewindow).
+### evedirectionalscannerwindow
 
-**Inheritance:**
-- All members and methods from [**evewindow**](#evewindow) are available
+Inherits from [evewindow](#evewindow).
 
-**Members:**
+| Member | Type | Notes |
+|---|---|---|
+| `Range` | float | Scanner range (always in AU). |
+| `Angle` | double | Scanner angle. |
+| `IsScanning` | bool | Scan-in-progress. |
 
-*Order Info:*
-- `Duration` - int: Order duration in days
-- `RemainingOrders` - int: Remaining market orders
-- `BrokersFee` - string: Broker's fee
-- `SalesTax` - string: Sales tax
-- `TotalAmount` - string: Total amount
+**Methods:** `GetScanResults[index:directionalscannerresult]`.
 
-*Items:*
-- `NumItems` - int: Number of items to sell
-- `Item[#]` - [sellitem](#sellitem): Item by index (1 to NumItems)
+### evecustomsofficewindow
 
-**Methods:**
-- `SetDuration[days]` - Sets order duration (0,1,3,7,14,30,90)
-- `Sell` - Sells items (requires confirmation checkbox)
+Inherits from [evewindow](#evewindow). Returned by `EVEWindow[byName,PlanetaryImportExportUI]`.
 
-**See Also:**
-- [sellitem](#sellitem) - Items being sold
-- [evewindow](#evewindow) - Parent type
+| Member | Type |
+|---|---|
+| `TaxRate` | float |
+| `HeaderTitle` | string |
 
 ---
 
-#### **evemarketactionwindow**
+## UI Element Datatypes
 
-Market buy order window. Inherits from [**evewindow**](#evewindow).
+### eveuibutton
 
-**Inheritance:**
-- All members and methods from [**evewindow**](#evewindow) are available
+| Member | Type |
+|---|---|
+| `Name` | string |
+| `Text` | string |
 
-**Members:**
+**Methods:** `Press`.
 
-*Price Info:*
-- `BidPrice` - [eveuisinglelineedit](#eveuisinglelineedit): Bid price field
-- `BidPricePercentageComparison` - [eveuilabel](#eveuilabel): Price comparison label
-- `RegionalAverage` - double: Regional average price
-- `BestRegional` - [eveuilabel](#eveuilabel): Best regional price
-- `BestMatchable` - [eveuilabel](#eveuilabel): Best matchable price
+### eveuilabel
 
-*Order Details:*
-- `Quantity` - [eveuisinglelineedit](#eveuisinglelineedit): Quantity field
-- `QuantityMin` - [eveuisinglelineedit](#eveuisinglelineedit): Minimum quantity field
-- `Duration` - [eveuicombo](#eveuicombo): Duration combo box
-- `Range` - [eveuicombo](#eveuicombo): Range combo box
+| Member | Type |
+|---|---|
+| `Text` | string |
 
-*Costs:*
-- `Fee` - [eveuisinglelineedit](#eveuisinglelineedit): Fee field
-- `Total` - [eveuilabel](#eveuilabel): Total cost
+### eveuisinglelineedit
 
-*Status:*
-- `IsReady` - bool: Whether window is ready
+| Member | Type |
+|---|---|
+| `Value` | string |
 
-**Methods:**
-- `Buy` - Places buy order
-- `Close` - Closes the window
+**Methods:** `SetValue[value]`.
 
-**See Also:**
-- [evewindow](#evewindow) - Parent type
-- UI element types for field access
+### eveuicombo
 
----
+| Member | Type |
+|---|---|
+| `Index` / `Key` / `Value` | string |
 
-#### **everepairshopwindow**
+**Methods:** `SelectByIndex[#]`, `SetectByValue[#]`, `SelectByLabel[label]`.
 
-Repair shop window. Inherits from [**evewindow**](#evewindow).
+Note: the second method name is `SetectByValue` in source — a longstanding typo in the registered method name. The 2009 changelog documents it as `SelectByValue`, but calling `SelectByValue` will not resolve. Scripts must use the misspelled form `SetectByValue` to actually select by value.
 
-**Inheritance:**
-- All members and methods from [**evewindow**](#evewindow) are available
+### fittingslot
 
-**Members:**
-- `AverageDamage` - string: Average damage percentage
-- `TotalCost` - string: Total repair cost
+| Member | Type |
+|---|---|
+| `Name` | string (e.g. `HiSlot0`) |
+| `ID` | int |
+| `IsEmpty` / `IsOnline` / `ContainsCharge` | bool |
+| `Module` | [module](#module) |
 
-**Methods:**
-- `RepairAll` - Repairs all items
-
-**See Also:**
-- [evewindow](#evewindow) - Parent type
-- [item](#item) - GetRepairQuote method
+**Methods:** `FitItem[itemID]`, `Unfit`, `UnfitCharge`, `PutOnline`, `PutOffline`.
 
 ---
 
-#### **eveagentdialogwindow**
+## Market Datatypes
 
-Agent dialog window. Inherits from [**evewindow**](#evewindow).
+### marketorder
 
-**Inheritance:**
-- All members and methods from [**evewindow**](#evewindow) are available
+Market order visible to the player.
 
-**Members:**
-- `BriefingHTML` - string: Mission briefing HTML
-- `ObjectivesHTML` - string: Mission objectives HTML
+| Member | Type |
+|---|---|
+| `ID` | int64 |
+| `Name` | string |
+| `TypeID` | int |
+| `IsSellOrder` / `IsBuyOrder` | bool |
+| `Price` | double |
+| `InitialQuantity` / `QuantityRemaining` / `MinQuantityToBuy` | int |
+| `TimeStampWhenIssued` | int64 |
+| `DateWhenIssued` / `TimeWhenIssued` | string |
+| `Duration` | int |
+| `StationID` / `Station` | int64 / string |
+| `RegionID` / `Region` | int64 / string |
+| `SolarSystemID` | int64 |
+| `SolarSystem` | [solarsystem](#solarsystem) (returns solarsystem object since 2023) |
+| `Range` | int |
+| `Jumps` | int |
 
-**See Also:**
-- [evewindow](#evewindow) - Parent type
-- [eveagent](#eveagent) - Agent information
+### myorder
 
----
+Your own market order.
 
-#### **evemessageboxwindow**
+Same members as [marketorder](#marketorder), plus:
 
-Message box window. Inherits from [**evewindow**](#evewindow).
+| Member | Type |
+|---|---|
+| `IsContraband` | bool |
+| `IsCorp` | bool |
 
-**Inheritance:**
-- All members and methods from [**evewindow**](#evewindow) are available
+**Methods:** `Cancel`, `Modify[price, quantity, duration]`.
 
-**See Also:**
-- [evewindow](#evewindow) - Parent type
+### sellitem
 
----
+Item in the sell-items window.
 
-#### **evedirectionalscannerwindow**
+| Member | Type |
+|---|---|
+| `Name` | string |
+| `ItemID` | int64 |
+| `Quantity` | string |
+| `AskPrice` | string |
+| `AveragePrice` / `BestPrice` / `BestVolumeRemaining` | double |
+| `BestJumps` | int |
+| `SalesTax` / `TotalAmount` | double |
 
-Directional scanner window. Inherits from [**evewindow**](#evewindow).
-
-**Inheritance:**
-- All members and methods from [**evewindow**](#evewindow) are available
-
-**Members:**
-- `Range` - float: Scanner range (always in AU)
-- `Angle` - double: Scanner angle
-- `IsScanning` - bool: Whether currently scanning
-
-**Methods:**
-- `GetScanResults[index:directionalscannerresult]` - Populates index with [directionalscannerresult](#directionalscannerresult) objects from last scan
-
-**See Also:**
-- [directionalscannerresult](#directionalscannerresult) - Scan results
-- [evewindow](#evewindow) - Parent type
-
----
-
-#### **evecustomsofficewindow**
-
-Customs office window. Inherits from [**evewindow**](#evewindow).
-
-**Inheritance:**
-- All members and methods from [**evewindow**](#evewindow) are available
-
-**Members:**
-- `TaxRate` - float: Customs office tax rate
-- `HeaderTitle` - string: Window header title
-
-**See Also:**
-- [evewindow](#evewindow) - Parent type
-- [entity](#entity) - AccessCustomsOffice method
+**Methods:** `SetAskPrice[price]`, `SetQuantity[quantity]`.
 
 ---
 
-### UI Element DataTypes
+## Scanner Datatypes
 
-#### **eveuibutton**
+### scanners
 
-UI button element.
+Container. Access via `MyShip.Scanners`.
 
-**Members:**
-- `Name` - string: Button name
-- `Text` - string: Button text/label
+| Member | Type | Notes |
+|---|---|---|
+| `System` | [systemscanner](#systemscanner) | Probe scanner / sensor overlay. |
+| `Survey[moduleSlotOrID]` | [surveyscanner](#surveyscanner) | Requires a fitted survey scanner; argument is a slot name or module ID, same form as `MyShip.Module[]`. |
+| `Ship[moduleSlotOrID]` | [shipscanner](#shipscanner) | Requires a fitted ship scanner. |
+| `Cargo[moduleSlotOrID]` | [cargoscanner](#cargoscanner) | Requires a fitted cargo scanner. |
+| `Directional` | [directionalscanner](#directionalscanner) | Directional scan (D-scan). |
 
-**Methods:**
-- `Press` - Presses the button
+### directionalscanner
 
-**See Also:**
-- [evewindow](#evewindow) - Window buttons
+**Methods:** `StartScan[angle, range]`, `GetScanResults[index:directionalscannerresult]`.
 
----
+### systemscanner
 
-#### **eveuilabel**
+| Member | Type |
+|---|---|
+| `IsSensorOverlayActive` | bool |
 
-UI label element.
+**Methods**
 
-**Members:**
-- `Text` - string: Label text
+- `EnableSensorOverlay` / `DisableSensorOverlay`
+- `GetAnomalies[index:systemanomaly]`
+- `GetSignatures[index:systemsignature]`
 
----
+### surveyscanner
 
-#### **eveuisinglelineedit**
+**Methods:** `StartScan`, `ClearSurveyResults`. Data arrives via `EVE_OnSurveyScanData` event.
 
-UI single-line edit field.
+### shipscanner
 
-**Members:**
-- `Value` - string: Field value
+**Methods:** `StartScan[entityID]`. Results via `entity.GetShipScannerResults`.
 
-**Methods:**
-- `SetValue[value]` - Sets field value
+### cargoscanner
 
----
+**Methods:** `StartScan[entityID]`. Results via `entity.GetCargoScannerResults`.
 
-#### **eveuicombo**
+### directionalscannerresult
 
-UI combo box element.
+| Member | Type |
+|---|---|
+| `ID` | int64 |
+| `Name` | string |
+| `Group` / `GroupID` | string / int |
+| `Type` / `TypeID` | string / int |
+| `ToEntity` | [entity](#entity) (only if on grid) |
 
-**Members:**
-- `Index` - string: Selected index
-- `Key` - string: Selected key
-- `Value` - string: Selected value
+### systemsignature
 
-**Methods:**
-- `SelectByIndex[#]` - Selects by index
-- `SelectByValue[#]` - Selects by value
-- `SelectByLabel[label]` - Selects by label
+Wormhole, data/relic site, gas site, etc.
 
----
+| Member | Type |
+|---|---|
+| `ID` | string (e.g. `"ABC-123"`) |
+| `Name` | string |
+| `Group` / `GroupID` | string / int |
+| `SignalStrength` / `Deviation` | double |
+| `Difficulty` | string |
+| `IsWarpable` | bool |
+| `X` / `Y` / `Z` | double |
+| `ToEntity` | [entity](#entity) |
+| `ToItem` | [item](#item) |
 
-### Interstellar DataTypes
+**Methods:** `WarpTo[distance]`, `AlignTo`, `Approach[distance]`.
 
-#### **interstellar**
+### systemanomaly
 
-Base type for universe objects (systems, constellations, regions, planets, etc.).
+Combat/ore/ice site.
 
-**Members:**
-- `Name` - string: Object name
-- `ID` - int64: Object ID
+| Member | Type |
+|---|---|
+| `ID` | int64 |
+| `Name` | string |
+| `Group` / `GroupID` | string / int |
+| `DungeonID` / `DungeonName` | int / string |
+| `Faction` / `FactionID` | string / int |
+| `Difficulty` | string |
+| `ScanStrength` / `SignalStrength` | double |
+| `IsWarpable` | bool |
+| `X` / `Y` / `Z` | double |
 
-**See Also:**
-- [solarsystem](#solarsystem) - Inherits from interstellar
-- [constellation](#constellation) - Inherits from interstellar
-- [region](#region) - Inherits from interstellar
-- [planet](#planet) - Inherits from interstellar
-
----
-
-#### **solarsystem**
-
-Solar system. Inherits from [**interstellar**](#interstellar).
-
-**Inheritance:**
-- All members and methods from [**interstellar**](#interstellar) are available
-
-**Additional Members:**
-- `Security` - float: Security status
-- `Faction` - string: Faction name
-- `FactionID` - int: Faction ID
-- `Constellation` - [constellation](#constellation): Parent constellation
-- `Region` - [region](#region): Parent region
-- `JumpsTo[solarSystemID]` - int: Jumps to specified solar system
-- `JumpsTo[stationID]` - int: Jumps to specified station
-
-**Methods:**
-- `SetDestination` - Sets as autopilot destination
-- `AddWaypoint` - Adds as waypoint
-- `ClearWaypoint` - Clears waypoint
-- `GetNumPlanetsByType[collection:int]` - Populates collection with planet type counts (key=TypeID, value=count)
-- `GetPlanetIDs[index:int]` - Populates index with planet IDs
-
-**See Also:**
-- [interstellar](#interstellar) - Parent type
-- [constellation](#constellation) - Parent constellation
-- [region](#region) - Parent region
-- [planet](#planet) - System planets
+**Methods:** `WarpTo[distance]`, `AlignTo`, `Approach[distance]`.
 
 ---
 
-#### **constellation**
+## Agent and Mission Datatypes
 
-Constellation. Inherits from [**interstellar**](#interstellar).
+### eveagent
 
-**Inheritance:**
-- All members and methods from [**interstellar**](#interstellar) are available
+| Member | Type |
+|---|---|
+| `ID` | int64 |
+| `Name` | string |
+| `TypeID` / `AgentTypeID` / `AgentTypeName` | int / int / string |
+| `Index` | int |
+| `Gender` | string |
+| `Division` / `DivisionID` | string / int |
+| `CorporationID` / `FactionID` | int / int |
+| `Level` | int |
+| `StandingTo` / `StandingToCorp` / `StandingToFaction` | double |
+| `EffectiveStanding` | double |
+| `Station` / `StationID` | string / int64 |
+| `Solarsystem` | [solarsystem](#solarsystem) |
+| `IsLocatorAgent` | bool |
 
-**Additional Members:**
-- `Region` - [region](#region): Parent region
+**Methods:** `StartConversation`.
 
-**See Also:**
-- [interstellar](#interstellar) - Parent type
-- [region](#region) - Parent region
-- [solarsystem](#solarsystem) - Child solar systems
+### agentmission
 
----
+| Member | Type |
+|---|---|
+| `ID` | int |
+| `Name` / `Type` | string |
+| `AgentID` | int64 |
+| `State` | string |
+| `Expires` | int64 (seconds) |
+| `ExpirationTime` | [evetime](#evetime) |
+| `ImportantMission` | bool |
+| `RemoteOfferable` / `RemoteCompletable` | bool |
 
-#### **region**
-
-Region. Inherits from [**interstellar**](#interstellar).
-
-**Inheritance:**
-- All members and methods from [**interstellar**](#interstellar) are available
-
-**Additional Members:**
-- None (only inherited members)
-
-**See Also:**
-- [interstellar](#interstellar) - Parent type
-- [constellation](#constellation) - Child constellations
-
----
-
-#### **planet**
-
-Planet. Inherits from [**interstellar**](#interstellar).
-
-**Inheritance:**
-- All members and methods from [**interstellar**](#interstellar) are available
-
-**Additional Members:**
-- `Radius` - int: Planet radius
-- `Type` - string: Planet type name
-- `TypeID` - int: Planet type ID
-- `SolarSystem` - [solarsystem](#solarsystem): Parent solar system
-
-**Methods:**
-- `GetOrbitalCustomsOffices[index:int64]` - Populates index with orbital customs office entity IDs (only works in space)
-
-**See Also:**
-- [interstellar](#interstellar) - Parent type
-- [solarsystem](#solarsystem) - Parent solar system
-- [evecustomsofficewindow](#evecustomsofficewindow) - Customs office window
+**Methods:** `GetBookmarks[index:bookmark]`.
 
 ---
 
-#### **bookmark**
+## Skill Datatypes
 
-Bookmark information and navigation.
+### skill
 
-**Members:**
+| Member | Type |
+|---|---|
+| `Name` | string |
+| `TrainedLevel` | int (renamed from `SkillLevel` in 2023) |
+| `EffectiveLevel` | int (2023) |
+| `Points` | int (renamed from `SkillPoints` in 2023) |
+| `TimeToTrain` | int64 (seconds to next level) |
+| `TrainingTimeMultiplier` | double |
 
-*Identity:*
-- `ID` - int64: Bookmark ID
-- `Label` - string: Bookmark label
-- `Note` - string: Bookmark notes
-- `Type` - string: Bookmark type
-- `TypeID` - int: Bookmark type ID
+**Methods:** `StartTraining`, `AddToQueue[level]`.
 
-*Ownership:*
-- `OwnerID` - int64: Owner ID
-- `CreatorID` - int64: Creator ID
-- `FolderID` - int64: Folder ID
-- `AgentID` - int64: Agent ID (for agent bookmarks)
+### queuedskill
 
-*Location:*
-- `SolarSystemID` - int64: Solar system ID
-- `LocationID` - int64: Location ID
-- `LocationType` - string: Location type
-- `LocationNumber` - int: Location number
-- `ItemID` - int64: Item ID
-- `X` - double: X coordinate
-- `Y` - double: Y coordinate
-- `Z` - double: Z coordinate
-- `ToEntity` - [entity](#entity): Entity if bookmark is on grid
-- `DeadSpace` - bool: Whether bookmark is in deadspace
-
-*Timestamps:*
-- `Created` - int64: Creation timestamp
-- `DateCreated` - string: Date created
-- `TimeCreated` - string: Time created
-
-*Navigation:*
-- `JumpsTo` - int: Jumps to bookmark
-- `Distance` - double: Distance to bookmark
-
-**Methods:**
-- `WarpTo[distance]` - Warps to bookmark at distance
-- `WarpFleetTo[distance]` - Warps fleet to bookmark
-- `SetDestination` - Sets bookmark as autopilot destination
-- `AddWaypoint` - Adds bookmark as waypoint
-- `ClearWaypoint` - Clears bookmark waypoint
-- `AlignTo` - Aligns to bookmark
-- `Approach[distance]` - Approaches bookmark
-- `Remove` - Removes bookmark
-
-**See Also:**
-- [eve](#eve) - EVE.Bookmark member
-- [solarsystem](#solarsystem) - Bookmark location
+| Member | Type |
+|---|---|
+| `Name` | string |
+| `TrainingTo` | int |
+| `ToSkill` | [skill](#skill) |
+| `StartTime` / `EndTime` | [evetime](#evetime) |
+| `QueuePosition` | int (0-based) |
+| `StartSkillPoints` / `DestinationSkillPoints` | int |
 
 ---
 
-### Market DataTypes
+## Chat Datatypes
 
-#### **marketorder**
+### evechat
 
-Market order (buy or sell) visible in the market.
+Access: `Chat` TLO.
 
-**Members:**
+| Member | Type |
+|---|---|
+| `ChannelCount` | int |
 
-*Order Info:*
-- `ID` - int64: Order ID
-- `Name` - string: Item name
-- `TypeID` - int: Item type ID
-- `IsSellOrder` - bool: Whether this is a sell order
-- `IsBuyOrder` - bool: Whether this is a buy order
+**Methods:** `GetChannels[index:chatchannel]`.
 
-*Pricing & Quantity:*
-- `Price` - double: Price per unit
-- `InitialQuantity` - int: Initial order quantity
-- `QuantityRemaining` - int: Quantity remaining
-- `MinQuantityToBuy` - int: Minimum quantity to buy
+### chatchannel
 
-*Timing:*
-- `TimeStampWhenIssued` - int64: Timestamp when issued
-- `DateWhenIssued` - string: Date when issued
-- `TimeWhenIssued` - string: Time when issued
-- `Duration` - int: Order duration
+Access: `Chat[id]` or `Chat[name]`.
 
-*Location:*
-- `StationID` - int64: Station ID
-- `Station` - string: Station name
-- `RegionID` - int64: Region ID
-- `Region` - string: Region name
-- `SolarSystemID` - int64: Solar system ID
-- `SolarSystem` - string: Solar system name
-- `Range` - int: Order range
-- `Jumps` - int: Jumps from current location
+| Member | Type |
+|---|---|
+| `Name` | string |
+| `ID` | int64 |
+| `PilotCount` | int |
+| `Category` | string |
+| `MOTD` | string |
+| `LastActivityTime` | [evetime](#evetime) |
 
-**See Also:**
-- [eve](#eve) - GetMarketOrders method
-- [myorder](#myorder) - Your own market orders
+**Methods**
 
----
+- `GetMembers[index:pilot]` — recent speakers for some channel types.
+- `GetMessages[index:chatchannelmessage]` — up to 100 cached messages.
 
-#### **myorder**
+Note: `MarkAsRead`, `Echo`, `Send`, `NewMessageReceived`, `CanSpeak` were REMOVED in 2018 when EVE changed the chat system. Use LavishScript's own chat send/echo where applicable.
 
-Your own market order (buy or sell).
+### chatchannelmessage
 
-**Members:**
-
-*Order Info:*
-- `ID` - int64: Order ID
-- `Name` - string: Item name
-- `TypeID` - int: Item type ID
-- `IsSellOrder` - bool: Whether this is a sell order
-- `IsBuyOrder` - bool: Whether this is a buy order
-- `IsContraband` - bool: Whether item is contraband
-- `IsCorp` - bool: Whether this is a corporation order
-
-*Pricing & Quantity:*
-- `Price` - double: Price per unit
-- `InitialQuantity` - int: Initial order quantity
-- `QuantityRemaining` - int: Quantity remaining
-- `MinQuantityToBuy` - int: Minimum quantity to buy
-
-*Timing:*
-- `TimeStampWhenIssued` - int64: Timestamp when issued
-- `DateWhenIssued` - string: Date when issued
-- `TimeWhenIssued` - string: Time when issued
-- `Duration` - int: Order duration
-
-*Location:*
-- `StationID` - int64: Station ID
-- `Station` - string: Station name
-- `RegionID` - int64: Region ID
-- `Region` - string: Region name
-- `SolarSystemID` - int64: Solar system ID
-- `SolarSystem` - string: Solar system name
-- `Range` - int: Order range
-
-**Methods:**
-- `Cancel` - Cancels this order
-- `Modify[price,quantity,duration]` - Modifies order price, quantity, and/or duration
-
-**See Also:**
-- [character](#character) - GetMyOrders method
-- [marketorder](#marketorder) - General market orders
+| Member | Type |
+|---|---|
+| `Author` | [pilot](#pilot) |
+| `Message` | string |
+| `Timestamp` | [evetime](#evetime) |
 
 ---
 
-#### **sellitem**
+## Fleet Datatypes
 
-Item being sold in sell window.
+### fleet
 
-**Members:**
+Access: `Me.Fleet`. Guard with `${Me.Fleet.ID(exists)}`.
 
-*Item Info:*
-- `Name` - string: Item name
-- `ItemID` - int64: Item ID
-- `Quantity` - string: Quantity to sell
+| Member | Type | Notes |
+|---|---|---|
+| `ID` | int64 | Fleet ID. |
+| `IsFleetCommander` | bool | You are the FC. There is NO `IsBoss` or `IsLeader` — this is the only FC predicate. |
+| `Size` | int | Number of members. There is NO `MemberCount` — use `Size`. |
+| `Invited` | bool | You have a pending invitation. |
+| `InvitationText` | string | Invitation text (HTML). |
+| `Member[charID]` | [fleetmember](#fleetmember) | Member by character ID (int64). Source parses argv[0] as int64 only — does NOT accept numeric 1-based index or character name strings despite the changelog's suggestion otherwise. To look up by name, use `Me.Fleet:GetMembers[index:fleetmember]` and filter by `fleetmember.Name`. |
+| `IsMember[charID]` | bool | Check membership by CharID. Requires a CharID argument — there is NO zero-arg `IsMember`. To check if you are in a fleet, use `${Me.Fleet.ID(exists)}`. |
+| `SquadName[squadID]` | string | Squad name (returns `"Squad <id>"` unless customized). |
+| `SquadNameToID[name]` | int64 | Squad ID by name. |
+| `WingName[wingID]` | string | Wing name. |
+| `WingNameToID[name]` | int64 | Wing ID. |
 
-*Pricing:*
-- `AskPrice` - string: Ask price
-- `AveragePrice` - double: Average price
-- `BestPrice` - double: Best price
-- `BestVolumeRemaining` - double: Best volume remaining
-- `BestJumps` - int: Jumps to best price
+**Methods — Invitation**
 
-*Costs:*
-- `SalesTax` - double: Sales tax
-- `TotalAmount` - double: Total amount
+| Method | Description |
+|---|---|
+| `Invite[charID]` | Send invitation. Source only accepts a numeric charID via atoi — passing a name string will not work despite older changelog wording. |
+| `AcceptInvite` / `RejectInvite` | Respond to pending invite. |
+| `LeaveFleet` | Leave the fleet. |
 
-**Methods:**
-- `SetAskPrice[price]` - Sets ask price
-- `SetQuantity[quantity]` - Sets quantity
+**Methods — Structure**
 
-**See Also:**
-- [evesellitemswindow](#evesellitemswindow) - Sell items window
-- [item](#item) - Item information
+| Method | Description |
+|---|---|
+| `CreateWing[name]` | Create a wing. |
+| `DeleteWing[wingID]` | Delete a wing. |
+| `ChangeWingName[wingID, name]` | Rename a wing (max 10 chars). |
+| `CreateSquad[wingID]` | Create a squad in a wing. |
+| `DeleteSquad[squadID]` | Delete a squad. |
+| `ChangeSquadName[squadID, name]` | Rename a squad (max 10 chars). |
 
----
+**Methods — Iteration**
 
-### Scanner DataTypes
+| Method | Description |
+|---|---|
+| `GetMembers[index:fleetmember]` | All fleet members. |
+| `GetWings[index:int64]` | Wing IDs. |
+| `GetSquads[index:int64]` / `GetSquads[index:int64, wingID]` | All squad IDs, or squads in a specific wing. |
 
-#### **scanners**
+**Methods — Commands**
 
-Container datatype providing access to all scanner types.
+| Method | Description |
+|---|---|
+| `WarpFleetToMember[charID, optionalDistance]` | Warp the fleet to a member. |
+| `Regroup` | Issue fleet regroup. |
+| `SetIgnoreFleetWarp` / `SetTakesFleetWarp` | Configure your ship's fleet-warp behavior. |
 
-**Members:**
-- `Directional` - [directionalscanner](#directionalscanner): Directional scanner
-- `System` - [systemscanner](#systemscanner): System/probe scanner
-- `Survey` - [surveyscanner](#surveyscanner): Survey scanner
-- `Ship` - [shipscanner](#shipscanner): Ship scanner
-- `Cargo` - [cargoscanner](#cargoscanner): Cargo scanner
+**Methods — Broadcasts**
 
-**See Also:**
-- [character](#character) - Access scanners via Me TLO
+| Method | Description |
+|---|---|
+| `Broadcast_Target[entityID]` | Broadcast a target. Works. |
+| `Broadcast_TravelTo[solarSystemID]` | Travel-to broadcast. Works. |
+| `Broadcast_Location` | Broadcast your current location. Takes no arguments despite older changelog wording that hints at `[itemID]`. |
+| `Broadcast_HoldPosition` / `Broadcast_InPosition` | Position broadcasts. No arguments. |
+| `Broadcast_NeedBackup` / `Broadcast_EnemySpotted` | Combat broadcasts. No arguments. |
+| `Broadcast_HealArmor` / `Broadcast_HealShield` / `Broadcast_HealCapacitor` | Heal broadcasts. No arguments. |
+| `Broadcast_JumpBeacon` | Jump-to-beacon broadcast. Takes no arguments (the changelog's `[charID]` signature is not accepted; source calls the Python method with no parameters). |
+| `Broadcast_AlignTo[entityID]` | BROKEN. Source has been stubbed out with an unconditional `return false;` since 2012 ("requires typeid as second param as of 4/24/12" — never fixed). The method is registered but non-functional. |
+| `Broadcast_WarpTo[entityID]` | BROKEN. Same stub pattern as `Broadcast_AlignTo`. Non-functional since 2012. |
+| `Broadcast_JumpTo[solarSystemID]` | BROKEN. Same stub pattern. Non-functional since 2012. |
 
----
+For the three broken broadcasts, use `EVE:Execute[CmdSendBroadcast_*]` equivalents where they exist, or post directly to fleet chat as a workaround.
 
-#### **directionalscanner**
+### fleetmember
 
-Directional scanner (D-scan).
+Inherits from [pilot](#pilot) (and therefore [being](#being)).
 
-**Methods:**
-- `StartScan[angle,range]` - Starts directional scan with angle and range
-- `GetScanResults[index:directionalscannerresult]` - Populates index with scan results
+| Member | Type |
+|---|---|
+| `Boosting` | bool |
+| `HasActiveBeacon` | bool |
+| `Job` / `JobID` | string / int |
+| `Role` / `RoleID` | string / int |
+| `SquadID` / `WingID` | int64 / int64 |
+| `IsFleetCommander` / `IsWingCommander` / `IsSquadCommander` | bool |
+| `ToEntity` | [entity](#entity) (on-grid only) |
+| `ToPilot` | [pilot](#pilot) |
 
-**See Also:**
-- [directionalscannerresult](#directionalscannerresult) - Scan results
+**Methods**
 
----
+| Method | Description |
+|---|---|
+| `AddToWatchList` / `RemoveFromWatchList` | Watchlist management. |
+| `Kick` | Kick from fleet. |
+| `MakeLeader` | Promote to fleet commander. |
+| `Move[wingID, squadID]` | Move within fleet. |
+| `MoveToFleetCommander` / `MoveToWingCommander[wingID]` / `MoveToSquadCommander[wingID, squadID]` | Promotion helpers. |
+| `SetBooster` | Set as booster. |
+| `WarpFleetTo[entity, distance]` | Fleet warp to specified entity. |
+| `WarpTo[entity, distance]` | Warp solo to entity. |
 
-#### **systemscanner**
-
-System scanner (probe scanner).
-
-**Members:**
-- `IsSensorOverlayActive` - bool: Whether sensor overlay is active
-
-**Methods:**
-- `EnableSensorOverlay` - Enables sensor overlay
-- `DisableSensorOverlay` - Disables sensor overlay
-- `GetAnomalies[index:systemanomaly]` - Populates index with [systemanomaly](#systemanomaly) objects
-- `GetSignatures[index:systemsignature]` - Populates index with [systemsignature](#systemsignature) objects
-
-**See Also:**
-- [systemanomaly](#systemanomaly) - Combat/data/relic sites
-- [systemsignature](#systemsignature) - Wormholes and other signatures
-- [systemscannerresult](#systemscannerresult) - Scanner result container
-
----
-
-#### **systemscannerresult**
-
-System scanner result container (returned from scan operations).
-
-**Methods:**
-- `StartScan` - Starts system scan
-- `GetScanResults[index:result]` - Retrieves scan results
-
-**See Also:**
-- [systemscanner](#systemscanner) - System scanner
-
----
-
-#### **surveyscanner**
-
-Survey scanner for mining.
-
-**Methods:**
-- `StartScan` - Starts survey scan
-- `ClearSurveyResults` - Clears survey scan results
-
-**See Also:**
-- EVE_OnSurveyScanData event provides survey data
+Deep-dive: [17_Fleet_Operations.md](ISXEVE%20Scripting%20Guide/17_Fleet_Operations.md).
 
 ---
 
-#### **shipscanner**
+## Drone Datatypes
 
-Ship scanner.
+### activedrone
 
-**Methods:**
-- `StartScan[entityID]` - Starts ship scan on entity
+Drone currently in space. Returned by `character:GetActiveDrones` or `entity:GetActiveDrones`, or cast from entity via `entity.ToActiveDrone`.
 
----
+| Member | Type |
+|---|---|
+| `ID` | int64 |
+| `Owner` | string |
+| `Controller` | string |
+| `Type` / `TypeID` | string / int |
+| `State` | string |
+| `Target` | [entity](#entity) |
+| `ToEntity` | [entity](#entity) |
 
-#### **cargoscanner**
-
-Cargo scanner.
-
-**Methods:**
-- `StartScan[entityID]` - Starts cargo scan on entity
-
----
-
-#### **directionalscannerresult**
-
-Directional scanner result.
-
-**Members:**
-- `ID` - int64: Entity ID
-- `Name` - string: Entity name
-- `Group` - string: Entity group name
-- `GroupID` - int: Entity group ID
-- `Type` - string: Entity type name
-- `TypeID` - int: Entity type ID
-- `ToEntity` - [entity](#entity): Entity object (if on grid)
-
-**See Also:**
-- [evedirectionalscannerwindow](#evedirectionalscannerwindow) - D-scan window
-- [entity](#entity) - Entity objects
+Note: drone-control methods (Mine/EngageMyTarget/etc.) live on the `entity` datatype, not here. Pass lists of int64 IDs to `EVE:LaunchDrones` / `EVE:DronesMine` / etc.
 
 ---
 
-#### **systemsignature**
+## Misc Datatypes
 
-System signature (wormhole, data/relic site, gas site, etc.).
+### charselect
 
-**Members:**
+Access: `CharSelect` TLO. Only valid at the character-selection screen (before character enters the game).
 
-*Identity:*
-- `ID` - string: Signature ID (e.g., "ABC-123")
-- `Name` - string: Signature name
-- `Group` - string: Signature group
-- `GroupID` - int: Signature group ID
+| Member | Type |
+|---|---|
+| `SelectedChar` | string |
+| `SelectedCharID` | int |
+| `CharExists[name]` | bool |
 
-*Scanning:*
-- `SignalStrength` - double: Signal strength percentage
-- `Deviation` - double: Deviation value
-- `Difficulty` - string: Scan difficulty
-
-*Navigation:*
-- `IsWarpable` - bool: Whether signature can be warped to
-- `X` - double: X coordinate
-- `Y` - double: Y coordinate
-- `Z` - double: Z coordinate
-- `ToEntity` - [entity](#entity): Entity if signature is on grid
-- `ToItem` - [item](#item): Item representation
-
-**Methods:**
-- `WarpTo[distance]` - Warps to signature at distance
-- `AlignTo` - Aligns to signature
-- `Approach[distance]` - Approaches signature
-
-**See Also:**
-- [systemscanner](#systemscanner) - GetSignatures method
-- [entity](#entity) - Entity representation
-
----
-
-#### **systemanomaly**
-
-System anomaly (combat site, ore site, etc.).
-
-**Members:**
-
-*Identity:*
-- `ID` - int64: Anomaly ID
-- `Name` - string: Anomaly name
-- `Group` - string: Anomaly group
-- `GroupID` - int: Anomaly group ID
-- `DungeonID` - int: Dungeon ID
-- `DungeonName` - string: Dungeon name
-
-*Faction:*
-- `Faction` - string: Faction name
-- `FactionID` - int: Faction ID
-
-*Scanning:*
-- `Difficulty` - string: Site difficulty
-- `ScanStrength` - double: Scan strength
-- `SignalStrength` - double: Signal strength
-
-*Navigation:*
-- `IsWarpable` - bool: Whether anomaly can be warped to
-- `X` - double: X coordinate
-- `Y` - double: Y coordinate
-- `Z` - double: Z coordinate
-
-**Methods:**
-- `WarpTo[distance]` - Warps to anomaly at distance
-- `AlignTo` - Aligns to anomaly
-- `Approach[distance]` - Approaches anomaly
-
-**See Also:**
-- [systemscanner](#systemscanner) - GetAnomalies method
-
----
-
-### Agent & Mission DataTypes
-
-#### **eveagent**
-
-EVE agent information and interaction.
-
-**Members:**
-
-*Identity:*
-- `ID` - int64: Agent ID
-- `Name` - string: Agent name
-- `TypeID` - int: Agent type ID
-- `AgentTypeID` - int: Agent type ID
-- `AgentTypeName` - string: Agent type name
-- `Index` - int: Agent index
-- `Gender` - string: Agent gender
-
-*Organization:*
-- `Division` - string: Division name
-- `DivisionID` - int: Division ID
-- `CorporationID` - int: Corporation ID
-- `FactionID` - int: Faction ID
-- `Level` - int: Agent level
-
-*Standing:*
-- `StandingTo` - double: Your standing to agent
-- `StandingToCorp` - double: Your standing to agent's corporation
-- `StandingToFaction` - double: Your standing to agent's faction
-- `EffectiveStanding` - double: Effective standing
-
-*Location:*
-- `Station` - string: Station name
-- `StationID` - int64: Station ID
-- `Solarsystem` - [solarsystem](#solarsystem): Solar system location
-
-*Special:*
-- `IsLocatorAgent` - bool: Whether this is a locator agent
-
-**Methods:**
-- `StartConversation` - Starts conversation with agent
-
-**See Also:**
-- [eve](#eve) - Agent method returns eveagent
-- [character](#character) - GetAgents method
-- [agentmission](#agentmission) - Agent missions
-
----
-
-#### **agentmission**
-
-Agent mission information.
-
-**Members:**
-
-*Identity:*
-- `ID` - int: Mission ID
-- `Name` - string: Mission name
-- `Type` - string: Mission type
-- `AgentID` - int64: Agent ID
-
-*Status:*
-- `State` - string: Mission state
-- `Expires` - int64: Expiration time (seconds)
-- `ExpirationTime` - [evetime](#evetime): Expiration time
-- `ImportantMission` - bool: Whether mission is important
-
-*Capabilities:*
-- `RemoteOfferable` - bool: Whether mission can be offered remotely
-- `RemoteCompletable` - bool: Whether mission can be completed remotely
-
-**Methods:**
-- `GetBookmarks[index:bookmark]` - Populates index with mission [bookmark](#bookmark) objects
-
-**See Also:**
-- [eveagent](#eveagent) - Agent information
-- [character](#character) - GetAgentMissions method
-
----
-
-### Skill DataTypes
-
-#### **skill**
-
-Character skill.
-
-**Members:**
-- `Name` - string: Skill name
-- `TrainedLevel` - int: Trained skill level
-- `EffectiveLevel` - int: Effective skill level (with bonuses)
-- `Points` - int: Current skill points
-- `TimeToTrain` - int64: Time to train next level (seconds)
-- `TrainingTimeMultiplier` - double: Training time multiplier
-
-**Methods:**
-- `StartTraining` - Starts training this skill
-- `AddToQueue[level]` - Adds skill to queue at specified level
-
-**See Also:**
-- [character](#character) - Character.Skill member
-- [queuedskill](#queuedskill) - Queued skills
-
----
-
-#### **queuedskill**
-
-Skill in training queue.
-
-**Members:**
-- `Name` - string: Skill name
-- `TrainingTo` - int: Target skill level
-- `ToSkill` - [skill](#skill): Skill being trained
-- `StartTime` - [evetime](#evetime): Training start time
-- `EndTime` - [evetime](#evetime): Training end time
-- `QueuePosition` - int: Position in queue (0-based)
-- `StartSkillPoints` - int: Skill points at start
-- `DestinationSkillPoints` - int: Skill points at completion
-
-**See Also:**
-- [skill](#skill) - Skill information
-- [character](#character) - GetSkillQueue method
-
----
-
-### Chat DataTypes
-
-#### **evechat**
-
-Chat system.
-
-**Members:**
-- `ChannelCount` - int: Number of chat channels
-
-**Methods:**
-- `GetChannels[index:chatchannel]` - Populates index with [chatchannel](#chatchannel) objects
-
-**See Also:**
-- [chatchannel](#chatchannel) - Chat channels
-
----
-
-#### **chatchannel**
-
-Chat channel.
-
-**Members:**
-
-*Identity:*
-- `Name` - string: Channel name
-- `ID` - int64: Channel ID
-- `Category` - string: Channel category
-
-*Status:*
-- `MOTD` - string: Message of the day
-- `LastActivityTime` - [evetime](#evetime): Last activity time
-
-**Methods:**
-
-*Members:*
-- `GetMembers[index:pilot]` - Populates index with [pilot](#pilot) objects (recent speakers for some channel types)
-
-*Messages:*
-- `GetMessages[index:chatchannelmessage]` - Populates index with cached [chatchannelmessage](#chatchannelmessage) objects (up to 100)
-
-**See Also:**
-- [evechat](#evechat) - Chat system
-- [chatchannelmessage](#chatchannelmessage) - Channel messages
-- [pilot](#pilot) - Channel members
-
----
-
-#### **chatchannelmessage**
-
-Chat channel message.
-
-**Members:**
-- `Author` - [pilot](#pilot): Message author
-- `Message` - string: Message text
-- `Timestamp` - [evetime](#evetime): Message timestamp
-
-**See Also:**
-- [chatchannel](#chatchannel) - Chat channels
-- [pilot](#pilot) - Message author
-
----
-
-### Drone DataTypes
-
-#### **activedrone**
-
-Represents a drone currently active in space.
-
-**Members:**
-
-*Identity:*
-- `ID` - int64: Drone ID
-- `Owner` - string: Owner name
-- `Controller` - string: Controller name
-- `Type` - string: Drone type name
-- `TypeID` - int: Drone type ID
-
-*Status & Control:*
-- `State` - string: Current drone state
-- `Target` - [entity](#entity): Drone's current target
-- `ToEntity` - [entity](#entity): Drone as entity object
-
-**See Also:**
-- [character](#character) - GetActiveDrones method returns activedrone collection
-- [entity](#entity) - Drone entity representation
-
----
-
-### Fleet DataTypes
-
-#### **fleet**
-
-Fleet information and management.
-
-**Members:**
-
-*Identity & Status:*
-- `ID` - int64: Fleet ID
-- `IsMember` - bool: Whether you are a fleet member
-- `IsFleetCommander` - bool: Whether you are fleet commander
-- `Size` - int: Number of members in fleet
-
-*Invitations:*
-- `Invited` - bool: Whether you have a pending fleet invitation
-- `InvitationText` - string: Fleet invitation text
-
-*Organization:*
-- `Member[charID or name]` - [fleetmember](#fleetmember): Gets fleet member by ID or name
-- `SquadName[squadID]` - string: Squad name by ID
-- `SquadNameToID[name]` - int64: Squad ID by name
-- `WingName[wingID]` - string: Wing name by ID
-- `WingNameToID[name]` - int64: Wing ID by name
-
-**Methods:**
-
-*Invitation Management:*
-- `Invite[charID or name]` - Invites character to fleet
-- `AcceptInvite` - Accepts fleet invitation
-- `RejectInvite` - Rejects fleet invitation
-- `LeaveFleet` - Leaves the fleet
-
-*Fleet Structure:*
-- `CreateWing[name]` - Creates new wing
-- `DeleteWing[wingID]` - Deletes wing
-- `ChangeWingName[wingID,newName]` - Renames wing
-- `CreateSquad[wingID,name]` - Creates new squad in wing
-- `DeleteSquad[squadID]` - Deletes squad
-- `ChangeSquadName[squadID,newName]` - Renames squad
-
-*Fleet Information:*
-- `GetMembers[index:fleetmember]` - Populates index with all [fleetmember](#fleetmember) objects
-- `GetWings[index:int64]` - Populates index with wing IDs
-- `GetSquads[index:int64]` - Populates index with squad IDs
-
-*Fleet Commands:*
-- `WarpFleetToMember[charID]` - Warps fleet to member
-- `Regroup` - Issues fleet regroup command
-- `SetIgnoreFleetWarp` - Sets your ship to ignore fleet warps
-- `SetTakesFleetWarp` - Sets your ship to take fleet warps
-
-*Fleet Broadcasts:*
-- `Broadcast_Target[targetID]` - Broadcasts target
-- `Broadcast_Location[itemID]` - Broadcasts location
-- `Broadcast_AlignTo[celestialID]` - Broadcasts align to
-- `Broadcast_WarpTo[celestialID]` - Broadcasts warp to
-- `Broadcast_TravelTo[solarSystemID]` - Broadcasts travel to
-- `Broadcast_JumpTo[solarSystemID]` - Broadcasts jump to
-- `Broadcast_JumpBeacon[charID]` - Broadcasts jump to beacon
-- `Broadcast_HoldPosition` - Broadcasts hold position
-- `Broadcast_InPosition` - Broadcasts in position
-- `Broadcast_NeedBackup` - Broadcasts need backup
-- `Broadcast_EnemySpotted` - Broadcasts enemy spotted
-- `Broadcast_HealArmor` - Broadcasts need armor repair
-- `Broadcast_HealShield` - Broadcasts need shield repair
-- `Broadcast_HealCapacitor` - Broadcasts need capacitor
-
-**See Also:**
-- [fleetmember](#fleetmember) - Fleet members
-- [character](#character) - Character.Fleet member
-
----
-
-#### **fleetmember**
-
-Fleet member. Inherits from [**pilot**](#pilot) which inherits from [**being**](#being).
-
-**Inheritance:**
-- All members and methods from [**pilot**](#pilot) (and [**being**](#being)) are available
-
-**Additional Members:**
-- `Boosting` - bool: Whether providing fleet boosts
-- `HasActiveBeacon` - bool: Whether has active fleet beacon
-- `Job` - string: Fleet job name
-- `JobID` - int: Fleet job ID
-- `Role` - string: Fleet role name
-- `RoleID` - int: Fleet role ID
-- `SquadID` - int64: Squad ID
-- `WingID` - int64: Wing ID
-- `IsFleetCommander` - bool: Whether is fleet commander
-- `IsWingCommander` - bool: Whether is wing commander
-- `IsSquadCommander` - bool: Whether is squad commander
-- `ToEntity` - [entity](#entity): Converts to entity type
-- `ToPilot` - [pilot](#pilot): Converts to pilot type
-
-**Additional Methods:**
-- `AddToWatchList` - Adds to watch list
-- `RemoveFromWatchList` - Removes from watch list
-- `Kick` - Kicks from fleet
-- `MakeLeader` - Makes fleet leader
-- `Move[wingID,squadID]` - Moves to wing/squad
-- `MoveToFleetCommander` - Moves to fleet commander level
-- `MoveToWingCommander` - Moves to wing commander level
-- `MoveToSquadCommander` - Moves to squad commander level
-- `SetBooster` - Sets as booster
-- `WarpFleetTo[entity,distance]` - Warps fleet to entity
-- `WarpTo[entity,distance]` - Warps to entity
-
-**See Also:**
-- [pilot](#pilot) - Parent type
-- [being](#being) - Base type
-- [fleet](#fleet) - Fleet information
-- [entity](#entity) - Entity conversion
-
----
-
-### Miscellaneous DataTypes
-
-#### **charselect**
-
-Character selection interface. Used to select characters at login.
-
-**Members:**
-- `SelectedChar` - string: Currently selected character name
-- `SelectedCharID` - int: Currently selected character ID
-- `CharExists[name]` - bool: Whether character with name exists
-
-**Methods:**
-- `ClickCharacter[name]` - Clicks character by name in character selection screen
-
-**See Also:**
-- [character](#character) - Active character datatype
-
----
-
-#### **fittingslot**
-
-Ship fitting slot.
-
-**Members:**
-
-*Identity:*
-- `Name` - string: Slot name (e.g., "HiSlot0")
-- `ID` - int: Slot ID
-
-*Status:*
-- `IsEmpty` - bool: Whether slot is empty
-- `IsOnline` - bool: Whether slot is online
-- `ContainsCharge` - bool: Whether slot contains charge
-
-*Module:*
-- `Module` - [module](#module): Module in slot (if not empty)
-
-**Methods:**
-
-*Fitting:*
-- `FitItem[itemID]` - Fits item to slot (checks if slot is empty)
-- `Unfit` - Unfits module from slot
-- `UnfitCharge` - Unfits charge from slot
-
-*Status:*
-- `PutOnline` - Puts module online
-- `PutOffline` - Puts module offline
-
-**See Also:**
-- [evefittingwindow](#evefittingwindow) - Fitting window
-- [module](#module) - Fitted modules
+**Methods:** `ClickCharacter[name]`.
 
 ---
 
 ## Commands
 
+Commands are first-class ISXEVE commands invoked directly from scripts (as opposed to `EVE:Execute[...]` which drives EVE's internal UI commands).
+
 ### Core Commands
 
-#### **UnloadISXEVE**
+#### UnloadISXEVE
 
 **Syntax:** `UnloadISXEVE`
 
-**Description:** Safely unloads ISXEVE extension. Logs to console when unload completes.
+Safely unload ISXEVE. Logs to console when the unload completes.
 
-**Examples:**
-```lavishscript
-UnloadISXEVE
-```
-
----
-
-#### **DebugSpew**
+#### DebugSpew
 
 **Syntax:** `DebugSpew <message>`
 
-**Description:** Writes debug messages to the ISXEVE debug log file.
+Write a debug message to ISXEVE's debug log file.
 
-**Parameters:**
-- `message` - Debug message to write to log
-
-**Examples:**
 ```lavishscript
-DebugSpew "Starting mining script"
+DebugSpew "Starting mining routine"
 ```
-
----
 
 ### Web Commands
 
-#### **GetURL**
+All web commands are multi-threaded. The script does NOT block waiting for a response. Handle responses via the [isxGames_onHTTPResponse](#isxgames_onhttpresponse) event.
 
-**Syntax:** `GetURL "http://address" [content_type]`
+#### GetURL
 
-**Description:** Sends HTTP GET request to specified URL. Response is received via `isxGames_onHTTPResponse` event. This command uses multiple threads, so script will not freeze.
+**Syntax:** `GetURL "<url>" [content_type]`
 
-**Parameters:**
-- `url` - URL to fetch (http or https)
-- `content_type` - Optional content type (default: auto-detected)
+HTTP GET. `https://` supported.
 
-**Examples:**
 ```lavishscript
-GetURL "https://api.example.com/data.json" "application/json"
+GetURL "https://example.com/api/data.json" "application/json"
 ```
 
-**See Also:**
-- [PostURL](#posturl) - HTTP POST requests
-- [isxGames_onHTTPResponse](#isxgames_onhttpresponse) - HTTP response event
+#### PostURL
 
----
+**Syntax:** `PostURL "<url>" "<post_data>" [content_type]`
 
-#### **PostURL**
+HTTP POST.
 
-**Syntax:** `PostURL "http://address" "post_data" [content_type]`
-
-**Description:** Sends HTTP POST request to specified URL. Response is received via `isxGames_onHTTPResponse` event. This command uses multiple threads, so script will not freeze.
-
-**Parameters:**
-- `url` - URL to post to (http or https)
-- `post_data` - Data to post
-- `content_type` - Optional content type (default: auto-detected)
-
-**Examples:**
 ```lavishscript
-PostURL "https://discord.com/api/webhooks/123456789/abcdefg" "{\"content\":\"This is a test\"}" "application/json"
+PostURL "https://discord.com/api/webhooks/..." "{\"content\":\"hello\"}" "application/json"
 ```
 
-**See Also:**
-- [GetURL](#geturl) - HTTP GET requests
-- [PostURLFiles](#posturlfiles) - HTTP POST with file uploads
-- [isxGames_onHTTPResponse](#isxgames_onhttpresponse) - HTTP response event
+#### PostURLFiles
 
----
+**Syntax:** `PostURLFiles "<url>" "<file1>" ["<file2>" ...] [content_type]`
 
-#### **PostURLFiles**
+HTTP POST with file uploads (multiple files supported).
 
-**Syntax:** `PostURLFiles "http://address" "file_path1" ["file_path2" ...] [content_type]`
-
-**Description:** Sends HTTP POST request with file uploads to specified URL. Response is received via `isxGames_onHTTPResponse` event. This command uses multiple threads, so script will not freeze.
-
-**Parameters:**
-- `url` - URL to post to (http or https)
-- `file_path1` - Path to first file to upload
-- `file_path2` - Optional additional file paths
-- `content_type` - Optional content type (default: auto-detected)
-
-**Examples:**
 ```lavishscript
-PostURLFiles "https://api.example.com/upload" "C:\\logs\\combat.log"
-PostURLFiles "https://api.example.com/upload" "C:\\logs\\mining.log" "C:\\logs\\trading.log"
+PostURLFiles "https://example.com/upload" "C:/logs/combat.log"
 ```
-
-**See Also:**
-- [GetURL](#geturl) - HTTP GET requests
-- [PostURL](#posturl) - HTTP POST requests
-- [isxGames_onHTTPResponse](#isxgames_onhttpresponse) - HTTP response event
 
 ---
 
 ## Events
 
-ISXEVE provides events that fire when specific game actions occur. Events are registered using LavishScript's event system.
-
-### Event Registration
-
-Events are registered using LavishScript's event system:
+Events fire when specific game actions occur. Attach handlers via LavishScript's event system:
 
 ```lavishscript
-Event[EventName]:AttachAtom[FunctionName]
-```
-
-Example:
-```lavishscript
-function OnChannelMessage(int channelID, int senderID, string message)
-{
-    echo "Channel: ${channelID}, Sender: ${senderID}, Message: ${message}"
-}
-
-Event[EVE_OnChannelMessage]:AttachAtom[OnChannelMessage]
+Event[EventName]:AttachAtom[HandlerFunction]
 ```
 
 ### EVE Events
 
-#### **EVE_OnChannelMessage**
+#### EVE_OnChannelMessage
 
-**Description:** Fires when a chat message is received in any channel.
+Fires when a chat message is received in any channel.
 
-**Parameters:**
-- `ChannelID` - int: Channel ID
-- `SenderID` - int: Sender character ID
-- `Message` - string: Message text
+| Parameter | Type | Description |
+|---|---|---|
+| `ChannelID` | int | Channel ID (use with `Chat[id]`). |
+| `SenderID` | int | Sender CharID. |
+| `Message` | string | Message text. |
 
-**Example:**
 ```lavishscript
-function OnChannelMessage(int channelID, int senderID, string message)
+atom(script) OnChannelMessage(int channelID, int senderID, string message)
 {
-    echo "Channel ${channelID}: ${message}"
+    echo "[${Chat[${channelID}].Name}] ${Being[${senderID}].Name}: ${message}"
 }
 
-Event[EVE_OnChannelMessage]:AttachAtom[OnChannelMessage]
-```
-
-**Notes:**
-- Use the Chat TLO to get channel and sender details from IDs
-
----
-
-#### **EVE_OnPilotJoinedChannel**
-
-**Description:** Fires when a pilot joins a channel. **NOTE:** This event has been disabled since March 2018 due to EVE client chat system changes.
-
-**Status:** DISABLED (March 21, 2018)
-
----
-
-#### **EVE_OnPilotLeftChannel**
-
-**Description:** Fires when a pilot leaves a channel. **NOTE:** This event has been disabled since March 2018 due to EVE client chat system changes.
-
-**Status:** DISABLED (March 21, 2018)
-
----
-
-#### **EVE_OnSurveyScanData**
-
-**Description:** Fires when survey scanner results are received.
-
-**Parameters:**
-- `ResultCount` - int: Number of asteroids/objects returned
-
-**Example:**
-```lavishscript
-function OnSurveyScan(int resultCount)
+function main()
 {
-    echo "Survey scan returned ${resultCount} asteroids"
-    ; Scan results available in entity list
+    while !${ISXEVE.IsReady}
+        wait 10
+    Event[EVE_OnChannelMessage]:AttachAtom[OnChannelMessage]
+    ; ...
 }
-
-Event[EVE_OnSurveyScanData]:AttachAtom[OnSurveyScan]
 ```
 
-**Notes:**
-- Added May 10, 2020
-- Survey data is available in the entity list after this event fires
-- Use entity queries to access the survey results
+#### EVE_OnPilotJoinedChannel
 
----
+DISABLED since March 21, 2018 — EVE's chat-system rewrite removed the underlying events. Kept for legacy detection only.
+
+#### EVE_OnPilotLeftChannel
+
+DISABLED since March 21, 2018 — see above.
+
+#### EVE_OnSurveyScanData
+
+Fires when survey-scanner results are received (added May 10, 2020).
+
+| Parameter | Type | Description |
+|---|---|---|
+| `ResultCount` | int | Number of asteroids returned. |
+
+After this event fires, ore-quantity data is available on nearby asteroid entities via `entity.SurveyScannerOreQuantity`.
 
 ### System Events
 
-#### **isxGames_onHTTPResponse**
+#### ISXEVE_onFrame
 
-**Description:** Fires when HTTP response is received from GetURL or PostURL command.
+Fires each ISXEVE pulse. This is the canonical pulse event for ISXEVE scripts — use it instead of LavishScript's generic `onFrame` event so your handlers only run when ISXEVE has fully pulsed and refreshed its state. Takes no parameters.
 
-**Parameters:**
-- `URL` - string: Requested URL
-- `ResponseCode` - int: HTTP response code
-- `ResponseText` - string: Response content
-
-**Example:**
 ```lavishscript
-function OnHTTPResponse(string url, int code, string response)
+atom(script) OnISXEVEFrame()
 {
-    echo "Response from ${url}: Code ${code}"
+    ; This fires every ISXEVE pulse; keep the body cheap.
+    if ${Me.ToEntity(exists)} && ${MyShip.ShieldPct} < 30
+        echo "Shield low: ${MyShip.ShieldPct.Int}%"
+}
+
+function main()
+{
+    while !${ISXEVE.IsReady}
+        wait 10
+    Event[ISXEVE_onFrame]:AttachAtom[OnISXEVEFrame]
+    while TRUE
+        waitframe
+}
+```
+
+#### isxGames_onHTTPResponse
+
+Fires when an HTTP response is received from `GetURL` / `PostURL` / `PostURLFiles`.
+
+| Parameter | Type | Description |
+|---|---|---|
+| `Size` | int | Response size (bytes). |
+| `URL` | string | Requested URL. |
+| `IPAddress` | string | Remote IP. |
+| `ResponseCode` | int | HTTP status code. |
+| `TransferTime` | float | Seconds. |
+| `ResponseText` | string | Full response body. |
+| `ParsedBody` | string | Parsed body (server-dependent). |
+
+```lavishscript
+atom(script) OnHTTPResponse(int size, string url, string ip, int code, float time, string body, string parsed)
+{
     if ${code.Equal[200]}
-    {
-        echo "Success: ${response}"
-    }
+        echo "OK from ${url}: ${size} bytes in ${time}s"
+    else
+        echo "FAIL ${code} from ${url}"
 }
 
 Event[isxGames_onHTTPResponse]:AttachAtom[OnHTTPResponse]
 ```
 
-**See Also:**
-- [GetURL](#geturl) - HTTP GET command
-- [PostURL](#posturl) - HTTP POST command
+---
 
-**Notes:**
-- Both GetURL and PostURL use this same event
-- Commands are non-blocking (script continues while request is processed)
+## EVE:Execute Command Constants
+
+Use `EVE:Execute[<Cmd>]` to drive EVE's built-in UI commands. The full list from the changelog:
+
+**Movement:** `CmdAccelerate`, `CmdDecelerate`, `CmdStopShip`
+**Modules:** `CmdActivateHighPowerSlot1..CmdActivateHighPowerSlot8`, `CmdActivateMediumPowerSlot1..CmdActivateMediumPowerSlot8`, `CmdActivateLowPowerSlot1..CmdActivateLowPowerSlot8`, `CmdReloadAmmo`
+**Station:** `CmdExitStation`
+**Windows:** `CmdCloseActiveWindow`, `CmdCloseAllWindows`, `CmdMinimizeActiveWindow`, `CmdMinimizeAllWindows`
+**Autopilot/UI:** `CmdToggleAutopilot`, `CmdToggleMap`, `CmdToggleAudio`, `CmdToggleWindowed`
+**Monitor/Dev:** `CmdResetMonitor`, `CmdQuitGame`
+**Broadcasts:** `CmdSendBroadcast_EnemySpotted`, `CmdSendBroadcast_HealArmor`, `CmdSendBroadcast_HealCapacitor`, `CmdSendBroadcast_HealShield`, `CmdSendBroadcast_HoldPosition`, `CmdSendBroadcast_InPosition`, `CmdSendBroadcast_JumpBeacon`, `CmdSendBroadcast_Location`, `CmdSendBroadcast_NeedBackup`
+**Window Openers (no Cmd prefix):** `OpenInventory`, `OpenAssets`, `OpenBrowser`, `OpenCalculator`, `OpenCargoHoldOfActiveShip`, `OpenChannels`, `OpenCharactersheet`, `OpenConfigMenu`, `OpenContracts`, `OpenCorporationPanel`, `OpenDroneBayOfActiveShip`, `OpenFactory`, `OpenFitting`, `OpenFpsMonitor`, `OpenHangarFloor`, `OpenHelp`, `OpenInbox`, `OpenJournal`, `OpenJukebox`, `OpenLog`, `OpenMapBrowser`, `OpenMarket`, `OpenMonitor`, `OpenMoonMining`, `OpenNotepad`, `OpenOverviewSettings`, `OpenPeopleAndPlaces`, `OpenScanner`, `OpenShipConfig`, `OpenShipHangar`, `OpenStationManagement`, `OpenTutorials`, `OpenWallet`
+**Other:** `PrintScreen`
+
+Note: window-opener commands do NOT have a `Cmd` prefix. `OpenInventory` is the idiomatic way to open the unified inventory window.
 
 ---
 
-## Usage Examples
+## Common Patterns and Idioms
 
-### Basic Information
+### Main-Loop Skeleton
 
-#### Getting Character Information
 ```lavishscript
-echo "Character: ${Me.Name}"
-echo "Character ID: ${Me.ID}"
-echo "Corporation ID: ${Me.CorpID}"
-echo "Alliance ID: ${Me.AllianceID}"
-echo "Current Ship: ${MyShip.ToItem.Name}"
-echo "In Station: ${Me.InStation}"
-echo "In Space: ${Me.InSpace}"
-```
-
-#### Getting Location Information
-```lavishscript
-echo "Solar System ID: ${Me.SolarSystemID}"
-if ${Me.InStation}
+function main()
 {
-    echo "Station ID: ${Me.StationID}"
-    echo "Station Name: ${Me.Station.Name}"
-}
-```
+    while !${ISXEVE.IsReady}
+        wait 10
 
----
-
-### Autopilot and Navigation
-
-#### Setting Destination
-```lavishscript
-; Set destination by solar system ID
-EVE:SetDestination[30000142]
-
-; Add waypoint
-EVE:AddWaypoint[30000143]
-
-; Clear all waypoints
-EVE:ClearAllWaypoints
-
-; Optimize route
-EVE:OptimizeAutopilotRoute
-```
-
-#### Using Bookmarks for Navigation
-```lavishscript
-; Warp to bookmark
-EVE.Bookmark[Safe Spot]:WarpTo
-
-; Warp to bookmark within 50km
-EVE.Bookmark[Safe Spot]:WarpTo[50000]
-
-; Set bookmark as destination
-EVE.Bookmark[Mission System]:SetDestination
-```
-
-#### Jumps Calculation
-```lavishscript
-; Get jumps to solar system
-echo "Jumps to Jita: ${EVE.JumpsTo[30000142]}"
-
-; Get jumps between systems
-echo "Jumps between systems: ${EVE.JumpsBetween[30000142,30000143]}"
-
-; Get jumps from bookmark
-echo "Jumps to bookmark: ${EVE.Bookmark[Home]:JumpsTo[30000142]}"
-```
-
----
-
-### Bookmarks
-
-#### Creating Bookmarks
-```lavishscript
-; Create bookmark in current location (personal folder)
-EVE:CreateBookmark[My Safe Spot]
-
-; Create bookmark with notes
-EVE:CreateBookmark[My Safe Spot,"This is a safe location"]
-
-; Create corp bookmark
-EVE:CreateBookmark[Corp Safe,"Safe for all members","corp"]
-
-; Create bookmark in specific folder
-EVE:CreateBookmark[Mission Spot,"Mission location","My Missions"]
-
-; Create bookmark with expiry (3 hours)
-EVE:CreateBookmark[Temp Spot,"Temporary location","Personal",1]
-
-; Create bookmark at entity location
-Target:CreateBookmark[Target Location,"Where I found the target"]
-```
-
----
-
-### Items and Inventory
-
-#### Accessing Inventory
-```lavishscript
-; Open inventory window
-EVEWindow[Inventory]:MakeActive
-
-; Access inventory child windows
-echo "Cargo capacity: ${EVEWindow[Inventory].Child[ShipCargo].Capacity}"
-echo "Cargo used: ${EVEWindow[Inventory].Child[ShipCargo].UsedCapacity}"
-
-; Get items from cargo
-variable index:item CargoItems
-EVEWindow[Inventory].Child[ShipCargo]:GetItems[CargoItems]
-echo "Items in cargo: ${CargoItems.Used}"
-```
-
-#### Moving Items
-```lavishscript
-; Move single item to ship cargo
-MyItem:MoveTo[CargoHold]
-
-; Move specific quantity
-MyItem:MoveTo[CargoHold,100]
-
-; Move items from index to hangar
-variable index:item ItemsToMove
-; ... populate ItemsToMove ...
-EVE:MoveItemsTo[MyStationHangar,ItemsToMove]
-
-; Stack all items in cargo
-EVEWindow[Inventory].Child[ShipCargo]:StackAll
-```
-
-#### Item Compression
-```lavishscript
-; Open compress window for ore
-MyOre:Compress
-wait 10 ${EVEWindow[Compress](exists)}
-EVEWindow[Compress]:ClickButtonOK
-```
-
----
-
-### Ship and Modules
-
-#### Accessing Modules
-```lavishscript
-; Get module by slot index
-variable module MyModule
-MyModule:Set[${MyShip.Module[1]}]
-echo "Module: ${MyModule.ToItem.Name}"
-
-; Get module by name
-MyModule:Set[${MyShip.Module[Medium Shield Booster II]}]
-
-; Get all modules
-variable index:module AllModules
-MyShip:GetModules[AllModules]
-echo "Total modules: ${AllModules.Used}"
-```
-
-#### Activating Modules
-```lavishscript
-; Activate specific module
-MyShip.Module[1]:Activate
-
-; Deactivate module
-MyShip.Module[1]:Deactivate
-
-; Toggle module
-MyShip.Module[1]:Toggle
-
-; Activate module on target
-MyShip.Module[1]:Click
-```
-
-#### Module Status
-```lavishscript
-; Check module status
-if ${MyShip.Module[1].IsOnline}
-{
-    echo "Module is online"
-}
-
-if ${MyShip.Module[1].IsActive}
-{
-    echo "Module is active"
-}
-
-if ${MyShip.Module[1].IsReloading}
-{
-    echo "Module is reloading"
-}
-```
-
-#### Reloading and Changing Ammo
-```lavishscript
-; Change ammo
-MyShip.Module[1]:ChangeAmmo[24493]
-
-; Change ammo with quantity
-MyShip.Module[1]:ChangeAmmo[24493,1000]
-
-; Enable auto-reload
-MyShip.Module[1]:SetAutoReloadOn
-
-; Disable auto-reload
-MyShip.Module[1]:SetAutoReloadOff
-```
-
-#### Drones
-```lavishscript
-; Launch all drones
-MyShip:LaunchAllDrones
-
-; Recall all drones
-MyShip:RecallAllDrones
-
-; Get drones in bay
-variable index:item DronesInBay
-MyShip:GetDrones[DronesInBay]
-echo "Drones in bay: ${DronesInBay.Used}"
-
-; Get active drones
-variable index:entity ActiveDrones
-MyShip:GetActiveDrones[ActiveDrones]
-echo "Active drones: ${ActiveDrones.Used}"
-```
-
----
-
-### Targets and Combat
-
-#### Targeting Entities
-```lavishscript
-; Lock target
-Target:LockTarget
-
-; Unlock target
-Target:UnlockTarget
-
-; Make active target
-Target:MakeActiveTarget
-
-; Set as overview selected item
-Target:SetAsSelectedItem
-```
-
-#### Querying Entities
-```lavishscript
-; Get all entities
-variable index:entity AllEntities
-EVE:GetEntities[AllEntities]
-echo "Total entities: ${AllEntities.Used}"
-
-; Query specific entities (NPCs)
-variable index:entity NPCs
-EVE:QueryEntities[NPCs,"CategoryID = 11"]
-echo "NPCs found: ${NPCs.Used}"
-
-; Query entities in range
-EVE:QueryEntities[NPCs,"Distance < 50000 && CategoryID = 11"]
-```
-
-#### Combat Status
-```lavishscript
-; Check if being targeted
-if ${Target.IsTargetingMe}
-{
-    echo "Entity is targeting me"
-}
-
-; Check if being jammed
-if ${Target.IsJammingMe}
-{
-    echo "Being jammed!"
-}
-
-; Check if being scrambled
-if ${Target.IsWarpScramblingMe}
-{
-    echo "Being scrambled!"
-}
-```
-
----
-
-### Market Operations
-
-#### Creating Buy Orders
-```lavishscript
-; Open market buy order window
-EVE:CreateMarketBuyOrder[34]
-
-; Wait for window
-wait 20 ${EVEWindow[MarketActionWindow](exists)}
-
-; Set price
-EVEWindow[MarketActionWindow].BidPrice:SetValue[1000000]
-
-; Set quantity
-EVEWindow[MarketActionWindow].Quantity:SetValue[100]
-
-; Place order
-EVEWindow[MarketActionWindow]:Buy
-```
-
-#### Selling Items
-```lavishscript
-; Add item to sell order
-MyItem:AddToSellOrder
-
-; Wait for sell window
-wait 20 ${EVEWindow[SellItems](exists)}
-
-; Set duration (90 days)
-EVEWindow[SellItems]:SetDuration[90]
-
-; Set price for first item
-EVEWindow[SellItems].Item[1]:SetAskPrice[5000000]
-
-; Sell items
-EVEWindow[SellItems]:Sell
-```
-
----
-
-### Scanning
-
-#### Directional Scanner - Basic
-```lavishscript
-; Access d-scan window
-echo "D-scan range: ${EVEWindow[directionalScannerWindow].Range} AU"
-echo "D-scan angle: ${EVEWindow[directionalScannerWindow].Angle}"
-
-; Wait for scan to complete
-wait 50 !${EVEWindow[directionalScannerWindow].IsScanning}
-
-; Get scan results
-variable index:directionalscannerresult DScanResults
-EVEWindow[directionalScannerWindow]:GetScanResults[DScanResults]
-
-; Process results
-variable iterator ResultIterator
-DScanResults:GetIterator[ResultIterator]
-if ${ResultIterator:First(exists)}
-{
-    do
+    while TRUE
     {
-        echo "ID: ${ResultIterator.Value.ID}"
-        echo "Name: ${ResultIterator.Value.Name}"
-        echo "Type: ${ResultIterator.Value.Type}"
-        echo "Group: ${ResultIterator.Value.Group}"
+        call Pulse
+        wait 10
     }
-    while ${ResultIterator:Next(exists)}
 }
-```
 
-#### Directional Scanner - Complete Example with Error Handling
-```lavishscript
-function PerformDScan()
+function Pulse()
 {
-    variable index:directionalscannerresult ScanResults
-    variable iterator ScanResultsIterator
-    variable int Counter = 1
-
-    ; Open directional scanner window if not already open
-    if (!${EVEWindow[directionalScannerWindow](exists)})
-    {
-        EVE:Execute[OpenDirectionalScanner]
-        do
-        {
-            waitframe
-        }
-        while !${EVEWindow[directionalScannerWindow](exists)} && ${Counter:Inc} < 1000
-        wait 15
-        if (!${EVEWindow[directionalScannerWindow](exists)})
-        {
-            echo "[DScanWindow] ERROR - Unable to Open and/or Access the DirectionalScannerWindow."
-            return
-        }
-        Counter:Set[1]
-    }
-
-    echo "[DScanWindow] Range set to ${EVEWindow[directionalScannerWindow].Range}"
-    echo "[DScanWindow] Angle set to ${EVEWindow[directionalScannerWindow].Angle}"
-
-    ; Perform scan
-    echo "[DScanWindow] Scanning..."
-    EVEWindow[directionalScannerWindow].Button[1]:Press
-    do
-    {
-        waitframe
-    }
-    while ${EVEWindow[directionalScannerWindow].IsScanning} && ${Counter:Inc} < 1000
-    if (${EVEWindow[directionalScannerWindow].IsScanning})
-    {
-        echo "[DScanWindow] ERROR - IsScanning TRUE too long"
+    if !${Me.ToEntity(exists)}
         return
-    }
-    else
-        Counter:Set[1]
+    ; ... bot logic
+}
+```
 
-    ; Get and process scan results
-    EVEWindow[directionalScannerWindow]:GetScanResults[ScanResults]
-    ScanResults:GetIterator[ScanResultsIterator]
-    echo "[DScanWindow] Scan Finished - ${ScanResults.Used} entries:"
+### Targeting an Entity by Query
 
-    if ${ScanResultsIterator:First(exists)}
+```lavishscript
+variable index:entity Targets
+EVE:QueryEntities[Targets, "CategoryID = 11 && Distance < 50000"]
+
+variable iterator it
+Targets:GetIterator[it]
+if ${it:First(exists)}
     do
     {
-        echo "[DScanWindow] ${Counter}. ${ScanResultsIterator.Value.Name} (ID: ${ScanResultsIterator.Value.ID})"
-        echo "[DScanWindow] ${Counter}. -- Type: ${ScanResultsIterator.Value.Type} (${ScanResultsIterator.Value.TypeID})"
-        echo "[DScanWindow] ${Counter}. -- Group: ${ScanResultsIterator.Value.Group} (${ScanResultsIterator.Value.GroupID})"
-        if (${ScanResultsIterator.Value.ToEntity.ID} > 0)
-        {
-            echo "[DScanWindow] ${Counter}. -- Distance: ${ScanResultsIterator.Value.ToEntity.Distance}"
-        }
-        else
-        {
-            echo "[DScanWindow] ${Counter}. -- Distance: Unknown"
-        }
-        echo "==="
-        Counter:Inc
+        if !${it.Value.IsLockedTarget}
+            it.Value:LockTarget
     }
-    while ${ScanResultsIterator:Next(exists)}
+    while ${it:Next(exists)}
+```
+
+Categories: `6` = Ship, `11` = Entity (NPCs), `25` = Asteroid, `7` = Module, `18` = Drone. See [03_API_Reference.md — Entity Categories](ISXEVE%20Scripting%20Guide/03_API_Reference.md#entity-categories-and-groups) for the canonical table.
+
+### Iterating Locked Targets
+
+```lavishscript
+variable index:entity Locked
+Me:GetTargets[Locked]
+echo "Locked: ${Me.TargetCount} / ${MyShip.MaxLockedTargets}"
+```
+
+### Iterating Modules by Slot Name
+
+```lavishscript
+variable int i
+i:Set[0]
+while ${i} < ${MyShip.HighSlots}
+{
+    if ${MyShip.Module[HiSlot${i}](exists)} && !${MyShip.Module[HiSlot${i}].IsActive}
+        MyShip.Module[HiSlot${i}]:Activate
+    i:Inc
 }
 ```
 
----
+### Iterating Modules via GetModules (Canonical)
 
-### Universe and Planetary Information
-
-#### Accessing Planet Information
 ```lavishscript
-function GetPlanetInfo()
-{
-    variable index:int Planets
-    variable iterator PlanetsIterator
-    variable iterator PlanetsByTypeIterator
-    variable collection:int PlanetsByType
-    variable int Counter = 1
-
-    ; Using system Gulfonodi as example (Gulfonodi's ID is 30002384)
-    Universe[30002384]:GetPlanetIDs[Planets]
-    Planets:GetIterator[PlanetsIterator]
-    Universe[30002384]:GetNumPlanetsByType[PlanetsByType]
-    PlanetsByType:GetIterator[PlanetsByTypeIterator]
-
-    ; Display planet details
-    if ${PlanetsIterator:First(exists)}
-    {
-        echo "[PI] The Gulfonodi System has ${Planets.Used} planets:"
-        do
-        {
-            echo "[PI] - ${Counter}. ${PlanetsIterator.Value}: ${Universe[${PlanetsIterator.Value}].Name}"
-            Counter:Inc
-        }
-        while ${PlanetsIterator:Next(exists)}
-    }
-    Counter:Set[1]
-
-    ; Display planet type breakdown
-    if ${PlanetsByTypeIterator:First(exists)}
-    {
-        echo "[PI] The breakdown of planet types in the Gulfondi System are as follows:"
-        do
-        {
-            echo "[PI] - ${Counter}. ${PlanetsByTypeIterator.Key}: ${PlanetsByTypeIterator.Value}"
-            Counter:Inc
-        }
-        while ${PlanetsByTypeIterator:Next(exists)}
-
-        ; Note: To get quantities by type, use ${PlanetsByType.Element["Barren"]}, for example.
-    }
-    Counter:Set[1]
-
-    return
-}
-```
-
-#### Accessing Solar System Information
-```lavishscript
-; Access solar system by ID
-echo "System: ${Universe[30000142].Name}"
-echo "Security: ${Universe[30000142].Security}"
-
-; Access solar system by name
-echo "System ID: ${Universe[Jita].ID}"
-
-; Get constellation and region
-echo "Constellation: ${Universe[30000142].Constellation.Name}"
-echo "Region: ${Universe[30000142].Region.Name}"
-
-; Get celestial objects
-variable index:int Celestials
-Universe[30000142]:GetCelestials[Celestials]
-echo "Celestial objects: ${Celestials.Used}"
-```
-
-#### Using Collections and Iterators
-```lavishscript
-; Collections store key-value pairs
-variable collection:int MyCollection
-variable iterator MyIterator
-
-; Populate collection (example with planet types)
-Universe[30002384]:GetNumPlanetsByType[MyCollection]
-MyCollection:GetIterator[MyIterator]
-
-; Iterate through collection
-if ${MyIterator:First(exists)}
-{
+variable index:module Mods
+MyShip:GetModules[Mods]
+variable iterator it
+Mods:GetIterator[it]
+if ${it:First(exists)}
     do
     {
-        echo "Key: ${MyIterator.Key}, Value: ${MyIterator.Value}"
-        ; Access specific element: ${MyCollection.Element[${MyIterator.Key}]}
+        if ${it.Value.IsActivatable} && !${it.Value.IsActive}
+            it.Value:Activate
     }
-    while ${MyIterator:Next(exists)}
-}
+    while ${it:Next(exists)}
 ```
 
----
+### Reading Ship and Capacitor Health
 
-### Station and Structure Operations
-
-#### Docking
 ```lavishscript
-; Dock with station entity
-Target:Dock
-
-; Wait for docking
-wait 50 ${Me.InStation}
+echo "Shield ${MyShip.ShieldPct.Precision[2]}%  Armor ${MyShip.ArmorPct.Precision[2]}%  Structure ${MyShip.StructurePct.Precision[2]}%  Cap ${MyShip.CapacitorPct.Precision[2]}%"
 ```
 
-#### Undocking
+Remember: `Shield`, `Armor`, `Structure`, `Capacitor` are absolute HP/EP. Use the `Pct` variants for percentages.
+
+### Unified Inventory Cargo Access
+
+The modern, reliable pattern — avoids the "cargo not opened yet" caveat:
+
 ```lavishscript
-; Undock from station
-Me.Station:Undock
+EVE:Execute[OpenInventory]
+wait 15 ${EVEWindow[Inventory](exists)}
 
-; Wait for undocking
-wait 50 ${Me.InSpace}
-```
-
-#### Accessing Station Services
-```lavishscript
-; Open fitting window
-Me.Station:OpenFitting
-
-; Get repairable items
-variable index:item RepairItems
-Me.Station:GetRepairableItems[RepairItems]
-echo "Repairable items: ${RepairItems.Used}"
-```
-
-#### Repairing Ship
-```lavishscript
-; Get repair quote
-MyShip.ToItem:GetRepairQuote
-
-; Wait for repair window
-wait 20 ${EVEWindow[RepairShop](exists)}
-
-; Check repair cost
-echo "Total cost: ${EVEWindow[RepairShop].TotalCost}"
-echo "Average damage: ${EVEWindow[RepairShop].AverageDamage}"
-
-; Repair all
-EVEWindow[RepairShop]:RepairAll
-```
-
-#### Citadel/Structure Operations
-```lavishscript
-; Check if structure is dockable
-if ${Target.IsDockable}
-{
-    Target:Dock
-}
-
-; Check if can board structure
-if ${Me.Station.CanBoard}
-{
-    Me.Station:Board
-}
-
-; Check if corp has office
-if ${Me.Station.MyCorpHasOffice}
-{
-    echo "Corp has office here"
-}
-```
-
----
-
-### UI Interaction
-
-#### Window Management
-```lavishscript
-; Check if window exists
 if ${EVEWindow[Inventory](exists)}
 {
-    echo "Inventory window is open"
+    if ${EVEWindow[Inventory].ChildWindow[ShipCargo](exists)}
+    {
+        EVEWindow[Inventory].ChildWindow[ShipCargo]:MakeActive
+        ; Source enforces a 0.5-second cooldown between MakeActive and GetItems;
+        ; wait >= 10 deciseconds to avoid the "too soon after MakeActive" rejection.
+        wait 10
+
+        variable index:item Items
+        EVEWindow[Inventory].ChildWindow[ShipCargo]:GetItems[Items]
+        echo "Cargo: ${EVEWindow[Inventory].ChildWindow[ShipCargo].UsedCapacity} / ${EVEWindow[Inventory].ChildWindow[ShipCargo].Capacity} m³  (${Items.Used} stacks)"
+    }
 }
-
-; Open window by name
-EVEWindow[Inventory]:MakeActive
-
-; Close window
-EVEWindow[Inventory]:Close
-
-; Get window position and size
-echo "X: ${EVEWindow[Inventory].X}"
-echo "Y: ${EVEWindow[Inventory].Y}"
-echo "Width: ${EVEWindow[Inventory].Width}"
-echo "Height: ${EVEWindow[Inventory].Height}"
 ```
 
-#### Button Interaction
+### Fleet Member Iteration
+
 ```lavishscript
-; Click OK button
-EVEWindow[Modal]:ClickButtonOK
+if ${Me.Fleet.ID(exists)}
+{
+    variable index:fleetmember Members
+    Me.Fleet:GetMembers[Members]
+    echo "Fleet size: ${Me.Fleet.Size}"
 
-; Click Yes button
-EVEWindow[Modal]:ClickButtonYes
-
-; Access specific button
-EVEWindow[Modal].Button[1]:Press
-
-; Access button by text
-EVEWindow[Modal].Button[Accept]:Press
+    variable iterator it
+    Members:GetIterator[it]
+    if ${it:First(exists)}
+        do
+        {
+            echo "${it.Value.Name} (${it.Value.Role})  FC=${it.Value.IsFleetCommander}"
+        }
+        while ${it:Next(exists)}
+}
 ```
 
-#### Agent Dialog
+### Warping to a Bookmark
+
 ```lavishscript
-; Access agent dialog
-variable eveagentdialogwindow AgentDialog
-AgentDialog:Set[${EVEWindow[ByCaption,Agent Conversation]}]
-
-; Get briefing
-echo "${AgentDialog.BriefingHTML}"
-
-; Get objectives
-echo "${AgentDialog.ObjectivesHTML}"
-
-; Press dialog button
-AgentDialog.Button[Accept]:Press
+if ${EVE.Bookmark["Safe Spot"](exists)}
+    EVE.Bookmark["Safe Spot"]:WarpTo[0]
 ```
+
+### Docking a Station by ID
+
+```lavishscript
+variable int64 StationID = 60003760
+if ${Entity[${StationID}](exists)}
+    Entity[${StationID}]:Dock
+else
+{
+    ; Station not on grid — set it as autopilot destination and travel
+    EVE.Station[${StationID}]:SetDestination
+    EVE:Execute[CmdToggleAutopilot]
+}
+```
+
+### Undocking
+
+```lavishscript
+if ${Me.InStation}
+{
+    EVE:Execute[CmdExitStation]
+    wait 150 ${Me.InSpace}
+}
+```
+
+### Drone Engage-and-Return
+
+```lavishscript
+if ${Me.ActiveTarget(exists)}
+{
+    variable index:int64 DroneIDs
+    Me:GetActiveDroneIDs[DroneIDs]
+    if ${DroneIDs.Used} == 0
+        MyShip:LaunchAllDrones
+    else
+        EVE:DronesEngageMyTarget[DroneIDs]
+}
+```
+
+### Reading the Wallet
+
+```lavishscript
+; Balance returns -1.0 until the wallet window has been opened at least once.
+if ${Me.Wallet.Balance} >= 0
+    echo "ISK: ${Me.Wallet.Balance.Int}"
+else
+{
+    EVE:Execute[OpenWallet]
+    wait 30
+    echo "ISK: ${Me.Wallet.Balance.Int}"
+}
+```
+
+### D-Scan
+
+```lavishscript
+function DoDScan()
+{
+    if !${EVEWindow[directionalScannerWindow](exists)}
+    {
+        EVE:Execute[OpenScanner]
+        wait 15 ${EVEWindow[directionalScannerWindow](exists)}
+    }
+    if !${EVEWindow[directionalScannerWindow](exists)}
+        return
+
+    ; Start the scan via the scan button, then poll IsScanning
+    EVEWindow[directionalScannerWindow].Button[1]:Press
+    wait 50 !${EVEWindow[directionalScannerWindow].IsScanning}
+
+    variable index:directionalscannerresult Results
+    EVEWindow[directionalScannerWindow]:GetScanResults[Results]
+
+    variable iterator it
+    Results:GetIterator[it]
+    if ${it:First(exists)}
+        do
+        {
+            echo "${it.Value.Name}  (${it.Value.Group})"
+        }
+        while ${it:Next(exists)}
+}
+```
+
+### Bookmark Creation
+
+```lavishscript
+; Simple
+EVE:CreateBookmark["Safe Spot"]
+
+; With notes
+EVE:CreateBookmark["Safe Spot", "Deep safe"]
+
+; Corp folder
+EVE:CreateBookmark["Corp Safe", "Fleet rally", "corp"]
+
+; Temporary (3-hour expiry) — the 4th argument is a discrete enum: 0=no expiry, 1=3 hours, 2=2 days
+EVE:CreateBookmark["Temp", "Short-lived", "Personal", 1]
+
+; At an entity's location
+${Entity[${ID}]}:CreateBookmark["Mission Spot", "Where the pocket starts"]
+```
+
+For deeper patterns see [05_Patterns_And_Best_Practices.md](ISXEVE%20Scripting%20Guide/05_Patterns_And_Best_Practices.md), [15_Combat_Automation.md](ISXEVE%20Scripting%20Guide/15_Combat_Automation.md), [16_Mining_And_Hauling.md](ISXEVE%20Scripting%20Guide/16_Mining_And_Hauling.md), [17_Fleet_Operations.md](ISXEVE%20Scripting%20Guide/17_Fleet_Operations.md).
 
 ---
 
-### Fleet Operations
+## Canonical Slot Names and Destinations
 
-#### Fleet Information
-```lavishscript
-; Check if in fleet
-if ${Me.Fleet(exists)}
-{
-    echo "In fleet with ${Me.Fleet.MemberCount} members"
-    echo "Fleet MotD: ${Me.Fleet.MotD}"
-}
+### Module Slot Names
 
-; Check fleet roles
-if ${Me.Fleet.IsBoss}
-{
-    echo "I am fleet boss"
-}
+`MyShip.Module[...]` and `EVEWindow[Fitting].Slot[...]` both accept these string names (case-insensitive):
 
-if ${Me.Fleet.IsCommander}
-{
-    echo "I am wing commander"
-}
-```
+| Slot Type | Valid names |
+|---|---|
+| High | `HiSlot0`, `HiSlot1`, `HiSlot2`, `HiSlot3`, `HiSlot4`, `HiSlot5`, `HiSlot6`, `HiSlot7` |
+| Medium | `MedSlot0`, `MedSlot1`, `MedSlot2`, `MedSlot3`, `MedSlot4`, `MedSlot5`, `MedSlot6`, `MedSlot7` |
+| Low | `LoSlot0`, `LoSlot1`, `LoSlot2`, `LoSlot3`, `LoSlot4`, `LoSlot5`, `LoSlot6`, `LoSlot7` |
+| Rig | `RigSlot0`, `RigSlot1`, `RigSlot2`, `RigSlot3`, `RigSlot4`, `RigSlot5`, `RigSlot6`, `RigSlot7` |
 
-#### Fleet Commands
-```lavishscript
-; Warp fleet to target
-Me.Fleet:WarpFleet[${Target.ID}]
+Also accepted: the module's int64 item ID.
 
-; Issue regroup command
-Me.Fleet:Regroup
+Note: numeric-index forms like `MyShip.Module[0]` and two-arg forms like `MyShip.Module[HiSlot, 0]` are NOT supported. Use the concatenated token (`HiSlot0`) or a module ID.
 
-; Leave fleet
-Me.Fleet:LeaveFleet
-```
+### MoveTo Destinations
 
-#### Fleet Settings
-```lavishscript
-; Set to ignore fleet warps
-Me.Fleet:SetIgnoreFleetWarp
+Used by `item:MoveTo[toID, destination, ...]` and `EVE:MoveItemsTo[items, toID, destination, ...]`:
 
-; Set to take fleet warps
-Me.Fleet:SetTakesFleetWarp
-```
+`CargoHold`, `DroneBay`, `CorpHangars`, `MaintenanceBay`, `OreHold`, `FuelBay`, `GasHold`, `MineralHold`, `SalvageHold`, `IndustrialShipHold`, `AmmoHold`, `StationCorporateHangar`, `Hangar`, `None`, `N/A`, `FleetHangar`, `CommandCenterHold`, `PlanetaryCommoditiesHold`.
 
-#### Fleet Members
-```lavishscript
-; Get all fleet members
-variable index:fleetmember FleetMembers
-Me.Fleet:GetMembers[FleetMembers]
+### ToLocation Short-hands
 
-; Iterate through members
-variable iterator MemberIterator
-FleetMembers:GetIterator[MemberIterator]
-if ${MemberIterator:First(exists)}
-{
-    do
-    {
-        echo "Member: ${MemberIterator.Value.Name}"
-        echo "System: ${MemberIterator.Value.SolarSystemID}"
-        echo "Ship: ${MemberIterator.Value.ShipTypeID}"
-        echo "Role: ${MemberIterator.Value.Role}"
-    }
-    while ${MemberIterator:Next(exists)}
-}
-```
+For the `toID` / `toLocation` first argument, these string aliases are also accepted in place of a numeric location ID:
+
+`MyShip`, `MyStationHangar`, `MyStationCorporateHangar`.
+
+### Corp Folder Names
+
+Used as the trailing `folder` argument when moving to/from `CorpHangars` or `StationCorporateHangar`:
+
+`Corporation Folder 1` through `Corporation Folder 7`.
 
 ---
 
-### Chat Operations
+## Deprecated and Removed
 
-#### Accessing Channels
-```lavishscript
-; Get channel count
-echo "Channels: ${Chat.ChannelCount}"
+This section tracks APIs removed from ISXEVE over time. Scripts using them must be updated. Sourced from `ISXEVEChanges.txt`; dates are the official changelog-recorded removals.
 
-; Access specific channel
-variable chatchannel LocalChannel
-LocalChannel:Set[${Chat[Local]}]
+### High-Impact Migrations
 
-; Access channel by ID
-LocalChannel:Set[${Chat[123456]}]
+| From (removed) | To (current) | Notes |
+|---|---|---|
+| `item:FitToActiveShip` | `EVEWindow[Fitting].Slot[slotName]:FitItem[itemID]` | Jan 2025 |
+| Ship/Entity/Item cargo methods (`GetCargo`, `OpenCargo`, `CloseCargo`, `StackAllCargo`, `OpenStorage`, `OpenMaintenanceBay`, `OpenCorpHangars`, `OpenDroneBay`, `OpenOreHold`, `StorageWindow`, and the specialized `Get*HoldCargo` family) | `EVEWindow[Inventory].ChildWindow[name]:GetItems[index:item]` and related child-window methods | July 2020 |
+| `eve:PlaceBuyOrder[typeID]` | `eve:CreateMarketBuyOrder[typeID]` | April 2018 |
+| `eve:PlaceSellOrder` | `item:AddToSellOrder` | January 2015 |
+| `character:Undock` | `EVE:Execute[CmdExitStation]` | July 2007 |
+| `station:OpenCorpHangar` | `EVE:Execute[OpenHangarFloor]` | 2012. NOTE: the changelog also claims `character:OpenCorpHangar` was removed at this time, but source still implements that character-datatype method. See [character methods](#character) — `OpenCorpHangar` is documented there as a working API. Only the `station` version was actually removed. |
+| `Agent` TLO | `EVE.Agent[#]` (index), `EVE.Agent[id, #]` (explicit ID), or `EVE.Agent[name]` | May 2020 |
+| `Login` TLO / `login` datatype | Removed — in-game login no longer supported by EVE | June 2020 |
 
-; Get all channels
-variable index:chatchannel AllChannels
-Chat:GetChannels[AllChannels]
-```
+### Removed Members
 
-#### Reading Messages
-```lavishscript
-; Get messages from channel
-variable index:chatchannelmessage Messages
-Chat[Local]:GetMessages[Messages]
+| Datatype | Member | Date | Notes |
+|---|---|---|---|
+| `module` | `Accuracy` | May 2020 | Had been disabled for years. |
+| `module` | `TimeLastClicked` | 2019 | |
+| `module` | `IsChangingAmmo` | 2019 | Replaced by `IsReloadingAmmo`. |
+| `skill` | `ID`, `Group`, `GroupID`, `IsTraining` | Nov 2015 | |
+| `evewindow` | `ItemID`, `Capacity`, `UsedCapacity` | Aug 2018 | Moved to `eveinvwindow`. |
+| `chatchannel` | `NewMessageReceived`, `CanSpeak` | Apr 2018 | EVE chat rewrite. |
+| `agent` / `eveagent` | `Dialog` | Feb 2021 | |
+| `skill` | Renamed `SkillLevel` → `TrainedLevel`, `SkillPoints` → `Points` | 2023 | `EffectiveLevel` added. |
+| `marketorder` / `myorder` | `SolarSystem` (return type changed) | June 2023 | Now returns `solarsystem` object, not string. |
 
-; Iterate through messages
-variable iterator MsgIterator
-Messages:GetIterator[MsgIterator]
-if ${MsgIterator:First(exists)}
-{
-    do
-    {
-        echo "[${MsgIterator.Value.Timestamp.DateAndTime}] ${MsgIterator.Value.Author.Name}: ${MsgIterator.Value.Message}"
-    }
-    while ${MsgIterator:Next(exists)}
-}
-```
+### Removed Methods
 
-#### Channel Members
-```lavishscript
-; Get channel members
-variable index:pilot ChannelMembers
-Chat[Corp]:GetMembers[ChannelMembers]
+| Datatype | Method | Date | Replacement |
+|---|---|---|---|
+| `agentmission` | `GetDetails` | June 2023 | — |
+| `chatchannel` | `MarkAsRead`, `Echo`, `Send` | April 2018 | LavishScript chat send (may return in a future build). |
+| `skill` | `AbortTraining` | Nov 2015 | — |
+| `isxeve` | `Debug_SetFullMiniDumps` | July 2020 | — |
+| `evewindow` | `MoveBookmarkHere[bookmarkID]` | July 2020 | — |
+| `eveinvwindow` | Various older `ChildCapacity` / `ChildWindowExists` member flavors | December 2012 | Use `ChildWindow[name].HasCapacity`, `ChildWindow[name].Capacity`, etc. |
+| `entity` | `StackAllCargo` | March 2012 | `evewindow:StackAll`. |
+| `ship` | `StackAllCargo` | March 2012 | `evewindow:StackAll`. |
+| `item` | `Launch` | ~2014 | `LaunchDrones`. |
 
-; Iterate through members
-variable iterator MemberIterator
-ChannelMembers:GetIterator[MemberIterator]
-if ${MemberIterator:First(exists)}
-{
-    do
-    {
-        echo "Member: ${MemberIterator.Value.Name}"
-    }
-    while ${MemberIterator:Next(exists)}
-}
-```
+### Removed Datatypes
+
+- `dialogstring` (Feb 2021) — removed when agent dialog system changed.
+- `login` (June 2020) — removed.
+
+### Removed Events
+
+- `EVE_OnPilotJoinedChannel` (disabled March 2018) — EVE chat-system change.
+- `EVE_OnPilotLeftChannel` (disabled March 2018) — EVE chat-system change.
+
+ISXEVE maintains backward compatibility for a transition period: deprecated APIs log a console warning identifying the replacement. Update scripts promptly when a warning appears.
 
 ---
 
@@ -3530,315 +2351,100 @@ if ${MemberIterator:First(exists)}
 
 ### Case Sensitivity
 
-LavishScript and ISXEVE are **case-insensitive** for:
-- Member names
-- Method names
-- Datatype names
-- TLO names
+Case-INSENSITIVE:
+- TLO names, datatype names, member names, method names
+- `EVE:Execute` command constants (though idiomatic form is `CmdExitStation` etc.)
 
-However, **case-sensitive** for:
-- String comparisons in queries
-- Character names, item names, etc.
+Case-SENSITIVE:
+- Entity/item/character names (string comparisons within queries)
+- Query expressions in `EVE:QueryEntities[]` — strings inside the query are compared case-sensitively
+- File-system paths when writing portable code
 
-Best practice is to maintain consistent casing for readability.
+### Existence and NULL
 
-### NULL Checks
-
-Always check if an object exists before accessing its members:
+Every datatype-returning member may be NULL. Always guard:
 
 ```lavishscript
-; Bad - will crash if Target doesn't exist
-echo ${Target.Name}
+; WRONG — crashes / prints NULL
+echo ${Me.ActiveTarget.Name}
 
-; Good - checks existence first
-if ${Target(exists)}
-{
-    echo ${Target.Name}
-}
+; RIGHT
+if ${Me.ActiveTarget(exists)}
+    echo ${Me.ActiveTarget.Name}
 ```
 
-For datatypes that can return NULL or invalid data:
-- Check with `(exists)` before using
-- Some members return -1, -2, or -10 to indicate errors (documented in member descriptions)
-- Always validate return values before using them in calculations
+**Sentinel return values:** many numeric members return sentinels on error or unready data:
+- `-1` — error.
+- `-2` — data not ready yet (inventory child windows in particular).
+- `-10` / `-10.0` — wormhole members when the entity isn't a wormhole.
 
-### Parameter Notation
+Always validate before arithmetic.
 
-In this documentation:
-- `[parameter]` - Required parameter
-- `[optional_parameter]` - Optional parameter (may be omitted)
-- `#` - Numeric value
-- `"text"` - String value
-- `id` - ID number (usually int64)
-- `name` - Name string
+### Parameter Notation in This Document
 
-Method syntax examples:
-- `Method` - No parameters
-- `Method[param]` - One required parameter
-- `Method[param1,param2]` - Multiple required parameters
-- `Method[param1,optional]` - Required and optional parameters
+- `[param]` — required.
+- `[optional]` — optional.
+- `#` — any integer/numeric.
+- `"text"` — string literal.
+- `id` — int64 entity/character/item/etc. ID.
+- `name` — string name lookup.
 
 ### EVE Client Updates
 
-ISXEVE is updated regularly to maintain compatibility with EVE Online client patches. After major EVE expansions or patches:
-1. Wait for ISXEVE update announcement
-2. Update ISXEVE to latest version
-3. Test your scripts for any breaking changes
-4. Review changelog for new features and changes
+ISXEVE is updated regularly to track EVE client patches. When EVE patches:
+1. Wait for the ISXEVE update announcement.
+2. Update ISXEVE via `ext isxeve` reload or InnerSpace's built-in updater.
+3. Re-test scripts against the changelog for any breaking changes.
 
-### Performance Considerations
+### Performance Notes
 
-**Entity Queries:**
-- Use specific queries rather than getting all entities
-- Cache entity lists when possible rather than querying every frame
-- Use Distance2 instead of Distance when you only need comparison (faster)
+**Entity queries**: Cache results when possible; don't re-query every frame. Prefer `Distance2` to `Distance` for comparisons (skips the square-root).
 
-**Inventory Access:**
-- Unified inventory methods are more reliable than old deprecated methods
-- Wait for inventory windows to be ready before accessing (check IsReady or wait for capacities != -2)
-- Batch item moves when possible using index:item collections
+**Universe TLO**: The first string-lookup against `Universe[name]` each session caches the entire name database and causes a visible lag spike. Prefer ID lookups, or do your first name lookup during startup before the main loop.
 
-**Universe TLO:**
-- First use each session with string parameter will lag (caches hundreds of thousands of names)
-- Use ID numbers instead of names when possible for better performance
-- Cache frequently accessed universe objects
+**Inventory**: `EVEWindow[Inventory].ChildWindow[...]` methods are far more reliable than the deprecated cargo methods. They also trigger the "cargo has been opened" side-effect automatically so you don't need to pre-open anything.
+
+**Fleet/standings**: `EVE:RefreshStandings` and `EVE:RefreshBookmarks` must be called at least once after login. Data is not immediately available.
 
 ### Authentication
 
-ISXEVE requires valid isxGames credentials. Credentials can be set in two ways:
+ISXEVE requires valid isxGames credentials. Set via either:
 
-1. **ISXEVE.xml configuration file** (default method)
-2. **Global variables** (for shared computers or temporary sessions):
+1. `ISXEVE.xml` configuration file (default method), or
+2. Global variables (for shared machines or temporary sessions):
    ```lavishscript
    declarevariable isxGames_Login string globalkeep YourUsername
    declarevariable isxGames_Password string globalkeep YourPassword
    ext isxeve
    ```
 
-Variables persist through ISXEVE reloads but not between sessions. Change password at https://auth.isxgames.com/login
-
-**Security best practices:**
-- Use unique isxGames password (different from other sites)
-- Don't share scripts containing credentials
-- Store credentials in separate, private script files
-
-### Deprecated Features
-
-This section documents features that have been removed from ISXEVE over time. These are no longer available and scripts using them must be updated to use the replacements.
-
-**Deprecation Policy:**
-
-ISXEVE maintains backward compatibility for deprecated members and methods for a transition period. When a member or method is deprecated, it will log a warning to the console indicating the deprecated feature and the recommended replacement. Script writers should update their scripts to use the new methods to ensure future compatibility.
-
-**Major deprecation changes:**
-- **2015-2018**: Gradual migration to new UI element and window datatypes
-- **July 2020**: Many cargo and inventory methods deprecated in favor of unified inventory window child methods
-- **2020**: Migration from 32-bit to 64-bit EVE client
-
----
-
-#### DataType Members/Methods
-
-##### Item DataType (January 2025)
-
-**Removed Method:**
-
-- `FitToActiveShip` - Use `EVEWindow[fitting].Slot[SlotName]:FitItem[itemID]` instead
-
-**Removed:** January 7, 2025 [20240603.0012]
-
----
-
-##### Agent DataType (June 2023)
-
-**Removed Method:**
-- `GetDetails` - Method removed
-
-**Removed:** June 13, 2023 [20230613.0001]
-
----
-
-##### Module DataType (May 2020)
-
-**Removed Member:**
-- `Accuracy` - Had been disabled for years
-
-**Removed:** May 10, 2020 [20200430.0003]
-
----
-
-##### Entity DataType (July 2020)
-
-**Deprecated Methods:**
-- `StackAllCargo`
-- `OpenCargo`
-- `CloseCargo`
-- `GetCargo`
-- `GetCorpHangarsCargo`
-- `OpenCorpHangars`
-- `OpenMaintenanceBay`
-- `OpenStorage`
-- `StorageWindow`
-
-**Replacement:** Use `EVEWindow[Inventory].Child[name]:GetItems[index:item]` and related methods
-
-**Removed:** July 12, 2020 [20200625.0002]
-
----
-
-##### Item DataType (July 2020)
-
-**Deprecated Methods:**
-- `Close`
-- `GetCargo`
-
-**Replacement:** Use inventory window child methods
-
-**Removed:** July 12, 2020 [20200625.0002]
-
----
-
-##### Ship DataType (July 2020)
-
-**Deprecated Methods:**
-- `Cargo`
-- `GetCargo`
-- `GetCorpHangarsCargo`
-- `GetFleetHangarCargo`
-- `GetOreHoldCargo`
-- `GetFuelHoldCargo`
-- `GetGasHoldCargo`
-- `GetMineralHoldCargo`
-- `GetSalvageHoldCargo`
-- `GetIndustrialShipHoldCargo`
-- `GetAmmoHoldCargo`
-- `GetMaintenanceHoldCargo`
-
-**Replacement:** Use inventory window child methods
-
-**Removed:** July 12, 2020 [20200625.0002]
-
----
-
-##### EVEWindow DataType (August 2018)
-
-**Removed Members:**
-- `ItemID` - Moved to eveinvwindow
-- `Capacity` - Moved to eveinvwindow
-- `UsedCapacity` - Moved to eveinvwindow
-
-**Removed:** August 23, 2018 [20180823.0003]
-
----
-
-##### EVEWindow DataType (July 2020)
-
-**Removed Method:**
-- `MoveBookmarkHere[BookmarkID]`
-
-**Removed:** July 12, 2020 [20200625.0002]
-
----
-
-##### EVE DataType (April 2018)
-
-**Removed Method:**
-- `PlaceBuyOrder` - Use `CreateMarketBuyOrder[typeID]` instead
-
-**Removed:** April 21, 2018 [20180417.0003]
-
----
-
-##### EVE DataType (January 2015)
-
-**Removed Method:**
-- `PlaceSellOrder` - Use `Item:AddToSellOrder` instead
-
-**Removed:** January 22, 2015 [ISXEVE-20150113.0002]
-
----
-
-##### ISXEVE DataType (July 2020)
-
-**Removed Method:**
-- `Debug_SetFullMiniDumps`
-
-**Removed:** July 12, 2020 [20200625.0002]
-
----
-
-##### Agent DataType (February 2021)
-
-**Removed Members:**
-- `Dialog`
-
-**Removed Methods:**
-- `GetDialogResponses`
-
-**Removed:** February 15, 2021 [20210209.0004]
-
----
-
-##### Skill DataType (November 2015)
-
-**Removed Members:**
-- `ID`
-- `Group`
-- `GroupID`
-- `IsTraining`
-
-**Removed Methods:**
-- `AbortTraining`
-
-**Removed:** November 12, 2015 [ISXEVE-20151110.0002]
-
----
-
-##### ChatChannel DataType (March 2018)
-
-**Removed Members:**
-- `NewMessageReceived`
-- `CanSpeak`
-
-**Removed Methods:**
-- `MarkAsRead`
-- `Echo`
-- `Send`
-
-**Removed:** April 1, 2018 [20180327.0004] (temporarily removed, may return)
-
----
-
-#### Removed DataTypes
-
-##### **dialogstring**
-
-**Description:** Dialog string datatype removed when agent dialog system was updated.
-
-**Removed:** February 15, 2021 [20210209.0004]
-
----
-
-##### **login**
-
-**Description:** Login datatype removed as in-game login hasn't been supported by EVE in years.
-
-**Removed:** June 4, 2020 [20200604.0001]
-
----
-
-#### Removed TLOs
-
-##### **Agent**
-
-**Description:** Agent TLO removed. Use `EVE.Agent[id]` or `EVE.Agent[name]` instead.
-
-**Removed:** May 19, 2020 [20200519.0001]
-
----
-
-##### **Login**
-
-**Description:** Login TLO removed as in-game login hasn't been supported by EVE in years.
-
-**Removed:** June 4, 2020 [20200604.0001]
+Global variables persist across ISXEVE reloads within a session but not across InnerSpace sessions. Change password at [https://auth.isxgames.com/login](https://auth.isxgames.com/login).
+
+Best practices:
+- Use a unique isxGames password (not shared with other services).
+- Don't commit credentials into scripts.
+- Keep credentials in a separate private file that isn't tracked or shared.
+
+### Async Data Gotchas (Quick Checklist)
+
+- Cargo members (`ship.CargoCapacity`, `entity.CargoCapacity`, etc.) require the corresponding inventory/cargo window to have been opened at least once this session.
+- `Me.Wallet.Balance` returns `-1.0` until the wallet window has been opened.
+- `Universe[name]` first-call lag — see above.
+- `ChildWindow[...].Capacity` / `.UsedCapacity` return `-2` when the child hasn't been made active yet.
+- Standings/bookmark caches need `EVE:RefreshStandings` / `EVE:RefreshBookmarks` after login.
+- Market data needs `EVE:FetchMarketOrders[typeID, regionID]` before `EVE:GetMarketOrders`.
+
+### Cross-References
+
+For deep-dives into any area, see the [ISXEVE Scripting Guide](ISXEVE%20Scripting%20Guide/README.md). Particular chapters:
+
+- LavishScript fundamentals → [01_LavishScript_Fundamentals.md](ISXEVE%20Scripting%20Guide/01_LavishScript_Fundamentals.md)
+- Getting started → [02_Quick_Start_Guide.md](ISXEVE%20Scripting%20Guide/02_Quick_Start_Guide.md)
+- Full API reference → [03_API_Reference.md](ISXEVE%20Scripting%20Guide/03_API_Reference.md)
+- Core concepts → [04_Core_Concepts.md](ISXEVE%20Scripting%20Guide/04_Core_Concepts.md)
+- Patterns and best practices → [05_Patterns_And_Best_Practices.md](ISXEVE%20Scripting%20Guide/05_Patterns_And_Best_Practices.md)
+- Working examples → [06_Working_Examples.md](ISXEVE%20Scripting%20Guide/06_Working_Examples.md)
+- Combat → [15_Combat_Automation.md](ISXEVE%20Scripting%20Guide/15_Combat_Automation.md)
+- Mining and hauling → [16_Mining_And_Hauling.md](ISXEVE%20Scripting%20Guide/16_Mining_And_Hauling.md)
+- Fleet operations → [17_Fleet_Operations.md](ISXEVE%20Scripting%20Guide/17_Fleet_Operations.md)
+- Debugging and troubleshooting → [20_Debugging_And_Troubleshooting.md](ISXEVE%20Scripting%20Guide/20_Debugging_And_Troubleshooting.md)
