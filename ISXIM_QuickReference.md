@@ -8,43 +8,57 @@
    - [IRC TLOs](#irc-tlos)
 3. [DataTypes](#datatypes)
    - [Extension DataTypes](#extension-datatypes)
+     - [im](#im)
    - [IRC DataTypes](#irc-datatypes)
-4. [Events](#events)
+     - [irc](#irc)
+     - [ircuser](#ircuser)
+     - [channel](#channel)
+     - [nick](#nick)
+4. [Commands](#commands)
+5. [Events](#events)
    - [Event Registration](#event-registration)
    - [IRC Events](#irc-events)
-5. [Usage Examples](#usage-examples)
+   - [Extension Events](#extension-events)
+6. [Usage Examples](#usage-examples)
    - [IRC Connection and Authentication](#irc-connection-and-authentication)
    - [Joining and Leaving Channels](#joining-and-leaving-channels)
    - [Sending Messages](#sending-messages)
    - [Working with Channel Members](#working-with-channel-members)
    - [Event Handling](#event-handling)
-6. [Notes](#notes)
+7. [Notes](#notes)
    - [Case Sensitivity](#case-sensitivity)
    - [NULL Checks](#null-checks)
    - [Parameter Notation](#parameter-notation)
    - [IRC Connection Sequence](#irc-connection-sequence)
-   - [Deprecated Features](#deprecated-features)
+   - [Known Issues and Gotchas](#known-issues-and-gotchas)
+   - [CTCP Auto-Responses](#ctcp-auto-responses)
+   - [Message Sanitization](#message-sanitization)
+8. [Private / Internal Build Features](#private--internal-build-features)
+9. [Deprecated Features](#deprecated-features)
+   - [Removed TLOs and DataTypes](#removed-tlos-and-datatypes)
+   - [Removed Members](#removed-members)
+   - [Removed Events](#removed-events)
 
 ---
 
 ## Introduction
 
-This document provides comprehensive reference documentation for all datatypes, top-level objects, and events available in the ISXIM extension. ISXIM extends LavishScript to provide IRC (Internet Relay Chat) communication functionality through a structured type system.
+This document provides reference documentation for all datatypes, top-level objects, commands, and events exposed by the ISXIM extension. ISXIM extends LavishScript to provide IRC (Internet Relay Chat) client functionality.
 
 ### DataType Inheritance
 
-ISXIM uses a simple type hierarchy where all IRC datatypes are standalone with no inheritance relationships.
+ISXIM uses a flat type hierarchy — IRC datatypes do not inherit from each other.
 
 ### Accessing DataTypes
 
-DataTypes are accessed through Top-Level Objects (TLOs) or through members of other datatypes. For example:
+DataTypes are accessed through Top-Level Objects (TLOs) or through members of other datatypes:
 
 ```lavishscript
-${IM}                           // TLO returning 'im' datatype
-${IRC}                          // TLO returning 'irc' datatype
-${IRCUser[MyNick]}              // TLO with parameter returning 'ircuser' datatype
-${IRCUser[MyNick].Channel[#general]}  // Member returning 'channel' datatype
-${IRCUser[MyNick].Channel[#general].Nick[SomeUser]}  // Member returning 'nick' datatype
+${IM}                                                 // TLO returning 'im' datatype
+${IRC}                                                // TLO returning 'irc' datatype
+${IRCUser[MyNick]}                                    // TLO with parameter returning 'ircuser' datatype
+${IRCUser[MyNick].Channel[#general]}                  // Member returning 'channel' datatype
+${IRCUser[MyNick].Channel[#general].Nick[SomeUser]}   // Member returning 'nick' datatype
 ```
 
 ---
@@ -57,15 +71,15 @@ Top-Level Objects (TLOs) are the entry points for accessing extension functional
 
 | TLO | DataType | Description |
 |-----|----------|-------------|
-| **IM** | [im](#im) | ISXIM extension information and utilities |
+| IM | [im](#im) | ISXIM extension information and utilities |
 
 ### IRC TLOs
 
 | TLO | DataType | Description |
 |-----|----------|-------------|
-| **IRC** | [irc](#irc) | Main IRC functionality and utilities |
-| **IRCUser[#]** | [ircuser](#ircuser) | Access IRC user by index (1 to IRC.NumUsers) |
-| **IRCUser[nickname]** | [ircuser](#ircuser) | Access IRC user by exact nickname match |
+| IRC | [irc](#irc) | Main IRC functionality |
+| IRCUser[#] | [ircuser](#ircuser) | IRC user by 1-based index (1 to IRC.NumUsers) |
+| IRCUser[nickname] | [ircuser](#ircuser) | IRC user by exact nickname match |
 
 ---
 
@@ -75,27 +89,35 @@ Top-Level Objects (TLOs) are the entry points for accessing extension functional
 
 #### **im**
 
-Extension information and utilities. Accessed via IM TLO.
+Extension information and utilities. Accessed via the `IM` TLO.
 
 **Members:**
-- `InQuietMode` - bool: Whether extension is in quiet mode (suppresses output)
-- `Version` - string: ISXIM version number
-- `IsReady` - bool: Whether extension is ready for use
+
+| Member | Type | Description |
+|--------|------|-------------|
+| IsReady | bool | TRUE when extension has completed loading |
+| Version | string | ISXIM product version string |
+| InQuietMode | bool | TRUE when extension is suppressing informational output |
 
 **Methods:**
-- `QuietMode[on]` - Enable quiet mode (suppresses extension output)
-- `QuietMode[off]` - Disable quiet mode
+
+| Method | Description |
+|--------|-------------|
+| QuietMode[on] | Enable quiet mode (suppresses most extension printf output) |
+| QuietMode[off] | Disable quiet mode |
 
 **Example:**
 ```lavishscript
+if !${IM.IsReady}
+{
+    echo "ISXIM is not ready yet"
+    return
+}
+
 echo "ISXIM Version: ${IM.Version}"
-echo "Is Ready: ${IM.IsReady}"
 
-; Enable quiet mode to suppress output
+; Suppress extension output
 IM:QuietMode[on]
-
-; Disable quiet mode
-IM:QuietMode[off]
 ```
 
 ---
@@ -104,79 +126,113 @@ IM:QuietMode[off]
 
 #### **irc**
 
-Main IRC datatype providing core IRC functionality. Accessed via IRC TLO.
+Global IRC datatype providing the entry point for creating IRC connections. Accessed via the `IRC` TLO.
 
 **Members:**
-- `NumUsers` - int: Number of currently connected IRC users
-- `CWD` - string: Current Working Directory
+
+| Member | Type | Description |
+|--------|------|-------------|
+| NumUsers | int | Number of IRCUser sessions currently tracked (connected or connecting) |
+| CWD | string | Current working directory used by the extension (trailing backslash included) |
 
 **Methods:**
-- `Connect[server,nickname]` - Connect to IRC server with specified nickname
-- `Connect[server,nickname,port]` - Connect to IRC server on specific port
-- `Connect[server,nickname,port,password]` - Connect to IRC server with server password
+
+| Method | Description |
+|--------|-------------|
+| Connect[server,nickname] | Connect to IRC server (default port 6667) |
+| Connect[server,nickname,port] | Connect on specified port |
+| Connect[server,nickname,port,password] | Connect with server password (PASS) |
+
+**Notes:**
+- `Connect` adds the `ircuser` to the user list **immediately** and returns. The user starts with `IsConnecting = TRUE` and `IsConnected = FALSE`. See [IRC Connection Sequence](#irc-connection-sequence).
+- Attempting to `Connect` with a nickname that is already in use by another `ircuser` session in this extension instance will be rejected.
+- There is no `IRC:Disconnect`. Use `IRCUser[name]:Disconnect` on a specific connection.
 
 **Example:**
 ```lavishscript
-; Connect to IRC server
-IRC:Connect[irc.lavishsoft.com,MyNickname]
-
-; Connect with custom port
+IRC:Connect[irc.example.com,MyNickname]
 IRC:Connect[irc.example.com,MyNickname,6667]
-
-; Connect with server password
 IRC:Connect[irc.example.com,MyNickname,6667,serverpass]
 
-echo "Connected users: ${IRC.NumUsers}"
+echo "Tracked IRC users: ${IRC.NumUsers}"
+echo "ISXIM CWD: ${IRC.CWD}"
 ```
 
-**See Also:**
-- [ircuser](#ircuser) - Connected IRC user instances
+**See Also:** [ircuser](#ircuser)
 
 ---
 
 #### **ircuser**
 
-Represents a connected IRC user session. Accessed via IRCUser TLO.
+Represents a single IRC client session (one connection to one server). Accessed via the `IRCUser` TLO or as a return from `IRC:Connect`.
 
 **Members:**
 
 *Identity:*
-- `MyNick` - string: Your nickname for this connection
-- `ID` - int: Unique identifier for this IRC user session
-- `Server` - string: IRC server address
-- `Port` - int: IRC server port
+
+| Member | Type | Description |
+|--------|------|-------------|
+| MyNick | string | Your nickname on this connection |
+| Server | string | Server address (as passed to Connect) |
+| Port | int | Server port |
+| ID | int | Internal thread ID for this connection (not a persistent/stable identifier) |
 
 *Status:*
-- `IsConnecting` - bool: Whether connection is in progress (TRUE while connecting, FALSE when complete)
-- `IsConnected` - bool: Whether connection is established (FALSE while connecting, TRUE when complete)
+
+| Member | Type | Description |
+|--------|------|-------------|
+| IsConnecting | bool | TRUE while the socket/handshake is in progress |
+| IsConnected | bool | TRUE once the connection is established and usable |
 
 *Channels:*
-- `NumChannelsIn` - int: Number of channels you're currently in
-- `Channel[#]` - [channel](#channel): Access channel by index (1 to NumChannelsIn)
-- `Channel[name]` - [channel](#channel): Access channel by exact name match
 
-*Users:*
-- `Nick[name]` - [nick](#nick): Access nick by exact name match
+| Member | Returns | Description |
+|--------|---------|-------------|
+| NumChannelsIn | int | Number of channels this user is currently in |
+| Channel[#] | [channel](#channel) | Channel by 1-based index |
+| Channel[name] | [channel](#channel) | Channel by exact (case-insensitive) name match |
+
+*Users (searches across all joined channels):*
+
+| Member | Returns | Description |
+|--------|---------|-------------|
+| Nick[name] | [nick](#nick) | Nick by exact name match, searched across all joined channels |
 
 **Methods:**
-- `Disconnect` - Disconnect with default quit reason
-- `Disconnect[reason]` - Disconnect with custom quit reason
-- `Join[channelname]` - Join IRC channel (requires wait after call - see notes)
-- `Join[channelname,key]` - Join password-protected channel
-- `PM[to,message]` - Send private message to user or channel
-- `ChangeNickTo[newnick]` - Change your nickname
-- `Notice[to,message]` - Send notice to user or channel (no auto-response)
-- `Emote[to,message]` - Send emote/action message
-- `SendRaw[string]` - Send raw IRC command to server (no alterations)
+
+| Method | Description |
+|--------|-------------|
+| Disconnect | QUIT with a default reason ("Disconnecting...") |
+| Disconnect[reason] | QUIT with a custom reason string |
+| Join[channel] | JOIN a channel. Channel name must begin with `#` or `&` |
+| Join[channel,key] | JOIN a password-protected channel |
+| PM[to,message] | PRIVMSG to a nick or channel |
+| ChangeNickTo[newnick] | NICK change |
+| Emote[to,message] | Send a CTCP ACTION to a nick or channel |
+| SendRaw[string] | Send a raw line to the server (no alterations; `\n` is appended automatically) |
+| Notice[to,message] | See [Known Issues and Gotchas](#known-issues-and-gotchas) — this method is registered but not functional in the current source. Use `SendRaw` to send raw `NOTICE` lines. |
+
+**Connection Guard:**
+All methods on `ircuser` (except accessing members) silently no-op if the user is still connecting or is not yet connected — i.e., commands are ignored when `IsConnecting` is TRUE or `IsConnected` is FALSE. Always wait for connection to complete before issuing methods.
+
+**Important: Join Latency:**
+The `Join` method requires server round-trips. After calling it, wait at least `wait 25` (or longer on high-latency links) before assuming the channel is populated. The channel object is created immediately when `Join` is called; it populates with nicks, topic, etc. as the server responds.
 
 **Example:**
 ```lavishscript
 ; Wait for connection to complete
+IRC:Connect[irc.example.com,MyNick]
 do
 {
     wait 3
 }
 while (${IRCUser[MyNick](exists)} && ${IRCUser[MyNick].IsConnecting})
+
+if !${IRCUser[MyNick].IsConnected}
+{
+    echo "Connection failed"
+    return
+}
 
 ; Join a channel (requires wait time)
 IRCUser[MyNick]:Join[#general]
@@ -185,75 +241,46 @@ wait 25
 ; Send messages
 IRCUser[MyNick]:PM[#general,Hello everyone!]
 IRCUser[MyNick]:PM[SomeUser,Private message]
-
-; Send notice (no auto-response capability)
-IRCUser[MyNick]:Notice[SomeUser,This is a notice]
-
-; Send emote
 IRCUser[MyNick]:Emote[#general,waves hello]
+IRCUser[MyNick]:ChangeNickTo[NewName]
 
-; Change nickname
-IRCUser[MyNick]:ChangeNickTo[NewNickname]
+; Send a raw IRC command
+IRCUser[MyNick]:SendRaw[WHOIS SomeUser]
 
-; Disconnect
+; Disconnect with reason
 IRCUser[MyNick]:Disconnect[Goodbye!]
 ```
 
-**Important Notes:**
-- The Join method requires communication between client and server. Use `wait 25` (or higher for high-latency connections) after each Join call
-- When IsConnecting is TRUE and IsConnected is FALSE, the user is still connecting - do not issue commands yet
-- When IsConnecting is FALSE and IsConnected is TRUE, connection is complete and commands can be issued
-- Private messages (PM) can trigger auto-responses; Notices cannot (per IRC protocol)
-
-**See Also:**
-- [channel](#channel) - IRC channel information
-- [nick](#nick) - IRC nickname/user information
+**See Also:** [channel](#channel), [nick](#nick)
 
 ---
 
 #### **channel**
 
-Represents an IRC channel. Accessed via IRCUser.Channel member.
+Represents a joined IRC channel. Accessed via `ircuser.Channel`.
 
 **Members:**
 
-*Identity:*
-- `Name` - string: Channel name
-- `Topic` - string: Current channel topic
-- `TopicBy` - string: Who set the current topic
-
-*Members:*
-- `NumNicks` - int: Number of users in channel
-- `Nick[#]` - [nick](#nick): Access nick by index (1 to NumNicks)
-- `Nick[name]` - [nick](#nick): Access nick by exact name match
-
-*Modes:*
-- `IsSet[mode]` - bool: Check if channel mode is set
-- `Limit` - int: User limit for channel (-1 if no limit set)
-- `Password` - string: Channel password (if set)
-
-**Valid Mode Values for IsSet:**
-- `PASSWORD` - Channel requires password
-- `LIMIT` - Channel has user limit
-- `SECRET` - Channel is secret
-- `PRIVATE` - Channel is private
-- `INVITEONLY` - Invite-only channel
-- `MODERATED` - Channel is moderated
-- `NOEXTERNALMSGS` - No external messages allowed
-- `ONLYOPSCHANGETOPIC` - Only operators can change topic
-- `REGISTERED` - Channel is registered
-- `REGISTRATIONREQ` - Registration required
-- `NOCOLORSALLOWED` - No color codes allowed
+| Member | Type | Description |
+|--------|------|-------------|
+| Name | string | Channel name (including the `#` or `&` prefix) |
+| Topic | string | Current channel topic |
+| TopicBy | string | Who set the current topic |
+| NumNicks | int | Number of users in the channel |
+| Nick[#] | [nick](#nick) | Nick by 1-based index |
+| Nick[name] | [nick](#nick) | Nick by exact name match |
 
 **Methods:**
-- `Leave` - Leave the channel
-- `Say[message]` - Send message to channel
-- `SetMode[arguments]` - Set channel mode (see IRC protocol documentation)
-- `GetBans[variable]` - Populate index:string variable with channel ban list
+
+| Method | Description |
+|--------|-------------|
+| Leave | PART the channel and clean up internal state |
+| Say[message] | PRIVMSG to this channel |
+| SetMode[arguments] | MODE change on this channel — arguments are appended to `MODE <channel>` |
+| GetBans[variable] | Populate an `index:string` variable with the cached ban list for this channel |
 
 **Example:**
 ```lavishscript
-; Get channel information
 variable channel MyChannel
 MyChannel:Set[${IRCUser[MyNick].Channel[#general]}]
 
@@ -262,12 +289,6 @@ echo "Topic: ${MyChannel.Topic}"
 echo "Set by: ${MyChannel.TopicBy}"
 echo "Users: ${MyChannel.NumNicks}"
 
-; Check channel modes
-if ${MyChannel.IsSet[INVITEONLY]}
-{
-    echo "This is an invite-only channel"
-}
-
 ; Send message to channel
 MyChannel:Say[Hello everyone!]
 
@@ -275,46 +296,49 @@ MyChannel:Say[Hello everyone!]
 variable index:string BanList
 MyChannel:GetBans[BanList]
 
-; Leave channel
+; Set a channel mode
+MyChannel:SetMode[+i]
+
+; Leave
 MyChannel:Leave
 ```
 
-**See Also:**
-- [ircuser](#ircuser) - IRC user connection
-- [nick](#nick) - Channel member information
+**Note on Channel Mode Queries:**
+The C++ source additionally defines `IsSet[mode]`, `Limit`, and `Password` members in its internal enum, and the corresponding `GetMember` switch handles them. However, these members are **not registered** with LavishScript via `TypeMember` in the current source build and therefore **are not accessible from scripts**. To observe channel mode changes, subscribe to the [IRC_ChannelModeChange](#irc_channelmodechange) event. See [Known Issues and Gotchas](#known-issues-and-gotchas).
+
+**See Also:** [ircuser](#ircuser), [nick](#nick)
 
 ---
 
 #### **nick**
 
-Represents a nickname/user in an IRC channel. Accessed via Channel.Nick or IRCUser.Nick members.
+Represents a user in an IRC channel. Accessed via `channel.Nick` or `ircuser.Nick`.
 
 **Members:**
-- `Name` - string: Nickname
-- `Type` - string: User type/privilege level in channel
 
-**Valid Type Values:**
-- `Owner` - Channel owner
-- `SOP` - Super operator
-- `OP` - Operator
-- `HOP` - Half operator
-- `Voice` - Voiced user
-- `Normal` - Normal user (no special privileges)
+| Member | Type | Description |
+|--------|------|-------------|
+| Name | string | Nickname |
+| Type | string | Privilege level in the channel (see below) |
+
+**Valid Type values:** `Owner`, `SOP`, `OP`, `HOP`, `Voice`, `Normal`
 
 **Methods:**
-- `PM[message]` - Send private message to this user
-- `SetMode[arguments]` - Set mode for this user (see IRC protocol documentation)
+
+| Method | Description |
+|--------|-------------|
+| PM[message] | PRIVMSG directly to this user |
+| SetMode[arguments] | MODE change targeting this user in the parent channel; arguments are in the form e.g. `+o`, `-v`, etc. (ISXIM constructs `MODE <channel> <args> <nick>`) |
 
 **Example:**
 ```lavishscript
-; Get user information
 variable nick ChannelUser
 ChannelUser:Set[${IRCUser[MyNick].Channel[#general].Nick[SomeUser]}]
 
 echo "Nickname: ${ChannelUser.Name}"
 echo "Type: ${ChannelUser.Type}"
 
-; Send private message
+; Send a private message
 ChannelUser:PM[Hello there!]
 
 ; Check privilege level
@@ -322,11 +346,20 @@ if ${ChannelUser.Type.Equal[OP]} || ${ChannelUser.Type.Equal[SOP]} || ${ChannelU
 {
     echo "This user is an operator or higher"
 }
+
+; Op someone (you must have the required privilege)
+ChannelUser:SetMode[+o]
 ```
 
-**See Also:**
-- [channel](#channel) - IRC channel containing this nick
-- [ircuser](#ircuser) - IRC user connection
+**See Also:** [channel](#channel), [ircuser](#ircuser)
+
+---
+
+## Commands
+
+The public release of ISXIM does not register any custom LavishScript commands. All functionality is exposed through the TLOs and datatypes above.
+
+Additional commands (`GetURL`, `PostURL`, `PostURLFiles`, `IRC`) exist in the source tree but are conditionally compiled under a private build flag. See [Private / Internal Build Features](#private--internal-build-features).
 
 ---
 
@@ -334,42 +367,47 @@ if ${ChannelUser.Type.Equal[OP]} || ${ChannelUser.Type.Equal[SOP]} || ${ChannelU
 
 ### Event Registration
 
-ISXIM events follow standard LavishScript event registration patterns. Events are registered using the Event system and attached with atoms.
+ISXIM events use standard LavishScript event registration. Register an atom with `Event[name]:AttachAtom[atomname]` and remove it with `DetachAtom` when no longer needed.
 
 **Example Event Registration:**
 ```lavishscript
-function OnIRCMessage(string User, string Channel, string From, string Message)
+atom OnIRCMessage(string User, string Channel, string From, string Message)
 {
     echo "Message in ${Channel} from ${From}: ${Message}"
 }
 
-; Register the event handler
 Event[IRC_ReceivedChannelMsg]:AttachAtom[OnIRCMessage]
 
-; Later: Detach when no longer needed
+; Later: detach when no longer needed
 Event[IRC_ReceivedChannelMsg]:DetachAtom[OnIRCMessage]
 ```
 
+**Event names are case-sensitive.** All events below are written using their exact registered name. Pay particular attention to [IRC_ReceivedNOTICE](#irc_receivednotice), which uses an uppercase suffix.
+
 ### IRC Events
 
-#### **IRC_ReceivedNotice**
+In every event below, the `User` parameter is your own nickname (i.e., the nickname of the `ircuser` that observed the event). This lets a single atom dispatch correctly when your script holds multiple simultaneous IRC sessions.
 
-Fires when a notice is received.
+---
+
+#### **IRC_ReceivedNOTICE**
+
+Fires when a NOTICE message is received. Note the all-caps `NOTICE` — this is the exact registered event name.
 
 **Parameters:**
-- `User` - string: Your IRC user nickname
-- `From` - string: Who sent the notice
-- `To` - string: Notice recipient (you or channel)
-- `Message` - string: Notice text
+- `User` — string: Your nickname
+- `From` — string: Who sent the notice
+- `To` — string: Notice recipient (you or a channel)
+- `Message` — string: Notice text
 
 **Example:**
 ```lavishscript
-function OnIRCNotice(string User, string From, string To, string Message)
+atom OnIRCNotice(string User, string From, string To, string Message)
 {
     echo "Notice from ${From} to ${To}: ${Message}"
 }
 
-Event[IRC_ReceivedNotice]:AttachAtom[OnIRCNotice]
+Event[IRC_ReceivedNOTICE]:AttachAtom[OnIRCNotice]
 ```
 
 ---
@@ -379,150 +417,82 @@ Event[IRC_ReceivedNotice]:AttachAtom[OnIRCNotice]
 Fires when a channel message is received.
 
 **Parameters:**
-- `User` - string: Your IRC user nickname
-- `Channel` - string: Channel where message was sent
-- `From` - string: Who sent the message
-- `Message` - string: Message text
-
-**Example:**
-```lavishscript
-function OnChannelMessage(string User, string Channel, string From, string Message)
-{
-    echo "[${Channel}] ${From}: ${Message}"
-}
-
-Event[IRC_ReceivedChannelMsg]:AttachAtom[OnChannelMessage]
-```
+- `User` — string: Your nickname
+- `Channel` — string: Channel where the message was sent
+- `From` — string: Who sent the message
+- `Message` — string: Message text
 
 ---
 
 #### **IRC_ReceivedPrivateMsg**
 
-Fires when a private message is received.
+Fires when a private message (PM) is received.
 
 **Parameters:**
-- `User` - string: Your IRC user nickname
-- `From` - string: Who sent the message
-- `To` - string: Message recipient (your nickname)
-- `Message` - string: Message text
-
-**Example:**
-```lavishscript
-function OnPrivateMessage(string User, string From, string To, string Message)
-{
-    echo "PM from ${From}: ${Message}"
-}
-
-Event[IRC_ReceivedPrivateMsg]:AttachAtom[OnPrivateMessage]
-```
+- `User` — string: Your nickname
+- `From` — string: Who sent the message
+- `To` — string: Message recipient (you)
+- `Message` — string: Message text
 
 ---
 
 #### **IRC_ReceivedCTCP**
 
-Fires when a CTCP (Client-To-Client Protocol) request is received. ISXIM automatically responds to: Version, Finger, Ping, Time, Userinfo, and Clientinfo.
+Fires when a CTCP (Client-To-Client Protocol) request is received. ISXIM automatically responds to: `VERSION`, `FINGER`, `PING`, `TIME`, `USERINFO`, and `CLIENTINFO`. This event fires **in addition** to the auto-response so your script can observe the incoming CTCP.
 
 **Parameters:**
-- `User` - string: Your IRC user nickname
-- `From` - string: Who sent the CTCP
-- `To` - string: CTCP recipient
-- `Message` - string: CTCP command/message
-
-**Example:**
-```lavishscript
-function OnCTCP(string User, string From, string To, string Message)
-{
-    echo "CTCP from ${From}: ${Message}"
-}
-
-Event[IRC_ReceivedCTCP]:AttachAtom[OnCTCP]
-```
+- `User` — string: Your nickname
+- `From` — string: Who sent the CTCP
+- `To` — string: CTCP recipient
+- `Message` — string: CTCP command/payload
 
 ---
 
 #### **IRC_ReceivedEmote**
 
-Fires when an emote/action message is received.
+Fires when an emote/ACTION message is received.
 
 **Parameters:**
-- `User` - string: Your IRC user nickname
-- `From` - string: Who sent the emote
-- `To` - string: Emote recipient (you or channel)
-- `Message` - string: Emote text
-
-**Example:**
-```lavishscript
-function OnEmote(string User, string From, string To, string Message)
-{
-    echo "* ${From} ${Message}"
-}
-
-Event[IRC_ReceivedEmote]:AttachAtom[OnEmote]
-```
+- `User` — string: Your nickname
+- `From` — string: Who sent the emote
+- `To` — string: Emote recipient (you or a channel)
+- `Message` — string: Emote text
 
 ---
 
 #### **IRC_NickJoinedChannel**
 
-Fires when a user joins a channel you're in.
+Fires when a user joins a channel you are in.
 
 **Parameters:**
-- `User` - string: Your IRC user nickname
-- `Channel` - string: Channel that was joined
-- `WhoJoined` - string: Nickname of user who joined
-
-**Example:**
-```lavishscript
-function OnUserJoined(string User, string Channel, string WhoJoined)
-{
-    echo "${WhoJoined} joined ${Channel}"
-}
-
-Event[IRC_NickJoinedChannel]:AttachAtom[OnUserJoined]
-```
+- `User` — string: Your nickname
+- `Channel` — string: Channel joined
+- `WhoJoined` — string: Nickname of the user who joined
 
 ---
 
 #### **IRC_NickLeftChannel**
 
-Fires when a user leaves a channel you're in (via PART command).
+Fires when a user PARTs a channel you are in.
 
 **Parameters:**
-- `User` - string: Your IRC user nickname
-- `Channel` - string: Channel that was left
-- `WhoLeft` - string: Nickname of user who left
-
-**Example:**
-```lavishscript
-function OnUserLeft(string User, string Channel, string WhoLeft)
-{
-    echo "${WhoLeft} left ${Channel}"
-}
-
-Event[IRC_NickLeftChannel]:AttachAtom[OnUserLeft]
-```
+- `User` — string: Your nickname
+- `Channel` — string: Channel left
+- `WhoLeft` — string: Nickname of the user who left
 
 ---
 
 #### **IRC_NickQuit**
 
-Fires when a user quits IRC entirely.
+Fires when a user quits IRC entirely (QUIT).
 
 **Parameters:**
-- `User` - string: Your IRC user nickname
-- `Channel` - string: Channel where you saw the quit
-- `Nick` - string: Nickname of user who quit
-- `Reason` - string: Quit message
+- `User` — string: Your nickname
+- `Channel` — string: Channel where the quit was observed
+- `Nick` — string: Nickname of the user who quit
+- `Reason` — string: Quit message
 
-**Example:**
-```lavishscript
-function OnUserQuit(string User, string Channel, string Nick, string Reason)
-{
-    echo "${Nick} quit (${Reason})"
-}
-
-Event[IRC_NickQuit]:AttachAtom[OnUserQuit]
-```
+**Note:** If the quitting user shared multiple channels with you, this event may fire multiple times (once per channel).
 
 ---
 
@@ -531,295 +501,170 @@ Event[IRC_NickQuit]:AttachAtom[OnUserQuit]
 Fires when a channel topic is set or changed.
 
 **Parameters:**
-- `User` - string: Your IRC user nickname
-- `Channel` - string: Channel whose topic changed
-- `NewTopic` - string: New topic text
-- `TopicSetBy` - string: Who set the topic
-
-**Example:**
-```lavishscript
-function OnTopicChanged(string User, string Channel, string NewTopic, string TopicSetBy)
-{
-    echo "${Channel} topic set by ${TopicSetBy}: ${NewTopic}"
-}
-
-Event[IRC_TopicSet]:AttachAtom[OnTopicChanged]
-```
+- `User` — string: Your nickname
+- `Channel` — string: Channel whose topic changed
+- `NewTopic` — string: New topic text
+- `TopicSetBy` — string: Who set the topic
 
 ---
 
 #### **IRC_NickChanged**
 
-Fires when a user (including yourself) changes nickname.
+Fires when a user (including possibly yourself) changes nickname.
 
 **Parameters:**
-- `User` - string: Your IRC user nickname (may be old or new depending on who changed)
-- `OldNick` - string: Previous nickname
-- `NewNick` - string: New nickname
-
-**Example:**
-```lavishscript
-function OnNickChange(string User, string OldNick, string NewNick)
-{
-    echo "${OldNick} is now known as ${NewNick}"
-}
-
-Event[IRC_NickChanged]:AttachAtom[OnNickChange]
-```
+- `User` — string: Your nickname
+- `OldNick` — string: Previous nickname
+- `NewNick` — string: New nickname
 
 ---
 
 #### **IRC_KickedFromChannel**
 
-Fires when someone is kicked from a channel.
+Fires when someone is KICKed from a channel (yourself or anyone else).
 
 **Parameters:**
-- `User` - string: Your IRC user nickname
-- `Channel` - string: Channel where kick occurred
-- `WhoKicked` - string: Nickname of user who was kicked
-- `KickedBy` - string: Who performed the kick
-- `Reason` - string: Kick reason/message
-
-**Example:**
-```lavishscript
-function OnUserKicked(string User, string Channel, string WhoKicked, string KickedBy, string Reason)
-{
-    echo "${WhoKicked} was kicked from ${Channel} by ${KickedBy} (${Reason})"
-}
-
-Event[IRC_KickedFromChannel]:AttachAtom[OnUserKicked]
-```
+- `User` — string: Your nickname
+- `Channel` — string: Channel where the kick occurred
+- `WhoKicked` — string: Nickname of the kicked user
+- `KickedBy` — string: Who performed the kick
+- `Reason` — string: Kick reason
 
 ---
 
 #### **IRC_PRIVMSGErrorResponse**
 
-Fires when a PRIVMSG command fails (e.g., user doesn't exist, external messages not allowed).
+Fires when a PRIVMSG you sent fails.
 
 **Parameters:**
-- `User` - string: Your IRC user nickname
-- `ErrorType` - string: Type of error (see below)
-- `To` - string: Who/where you tried to message
-- `Response` - string: Server error response text
+- `User` — string: Your nickname
+- `ErrorType` — string: See values below
+- `To` — string: Intended recipient
+- `Response` — string: Raw server error response
 
-**Valid ErrorType Values:**
-- `NO_SUCH_NICKORCHANNEL` - Recipient doesn't exist
-- `NO_EXTERNAL_MSGS_ALLOWED` - Channel doesn't allow external messages
-
-**Example:**
-```lavishscript
-function OnPMError(string User, string ErrorType, string To, string Response)
-{
-    echo "Failed to message ${To}: ${ErrorType}"
-}
-
-Event[IRC_PRIVMSGErrorResponse]:AttachAtom[OnPMError]
-```
+**Valid ErrorType values:**
+- `NO_SUCH_NICKORCHANNEL` — Recipient does not exist
+- `NO_EXTERNAL_MSGS_ALLOWED` — Channel does not allow external (non-member) messages
 
 ---
 
 #### **IRC_JOINErrorResponse**
 
-Fires when a JOIN command fails.
+Fires when a JOIN you issued fails.
 
 **Parameters:**
-- `User` - string: Your IRC user nickname
-- `ErrorType` - string: Type of error (see below)
-- `Channel` - string: Channel you tried to join
-- `Response` - string: Server error response text
+- `User` — string: Your nickname
+- `ErrorType` — string: See values below
+- `Channel` — string: Channel you tried to join
+- `Response` — string: Raw server error response
 
-**Valid ErrorType Values:**
-- `BANNED` - You are banned from the channel
-- `MUST_BE_REGISTERED` - Channel requires registration
-- `REQUIRES_KEY` - Channel requires password
-
-**Example:**
-```lavishscript
-function OnJoinError(string User, string ErrorType, string Channel, string Response)
-{
-    echo "Failed to join ${Channel}: ${ErrorType}"
-}
-
-Event[IRC_JOINErrorResponse]:AttachAtom[OnJoinError]
-```
+**Valid ErrorType values:**
+- `BANNED` — You are banned from the channel
+- `MUST_BE_REGISTERED` — Channel requires a registered nick
+- `REQUIRES_KEY` — Channel requires a password (key)
 
 ---
 
 #### **IRC_NickTypeChange**
 
-Fires when a user's privilege level changes in a channel (e.g., opped, deopped, voiced).
+Fires when a user's privilege level changes in a channel (opped, deopped, voiced, etc.).
 
 **Parameters:**
-- `User` - string: Your IRC user nickname
-- `Channel` - string: Channel where change occurred
-- `NickName` - string: User whose type changed
-- `NickType` - string: Type of privilege (see below)
-- `Toggle` - string: "TRUE" if granted, "FALSE" if removed
-- `WhoSet` - string: Who made the change
+- `User` — string: Your nickname
+- `Channel` — string: Channel where the change occurred
+- `NickName` — string: User whose type changed
+- `NickType` — string: See values below
+- `Toggle` — string: `"TRUE"` if granted, `"FALSE"` if removed
+- `WhoSet` — string: Who made the change
 
-**Valid NickType Values:**
-- `OWNER` - Channel owner
-- `SOP` - Super operator
-- `OP` - Operator
-- `HOP` - Half operator
-- `Voice` - Voice privilege
-- `Normal` - Normal user
-
-**Example:**
-```lavishscript
-function OnNickTypeChange(string User, string Channel, string NickName, string NickType, string Toggle, string WhoSet)
-{
-    if ${Toggle.Equal[TRUE]}
-    {
-        echo "${NickName} was granted ${NickType} by ${WhoSet} in ${Channel}"
-    }
-    else
-    {
-        echo "${NickName} had ${NickType} removed by ${WhoSet} in ${Channel}"
-    }
-}
-
-Event[IRC_NickTypeChange]:AttachAtom[OnNickTypeChange]
-```
+**Valid NickType values:** `OWNER`, `SOP`, `OP`, `HOP`, `Voice`, `Normal`
 
 ---
 
 #### **IRC_ChannelModeChange**
 
-Fires when a channel mode is changed.
+Fires when a channel mode changes.
 
 **Parameters:**
-- `User` - string: Your IRC user nickname
-- `Channel` - string: Channel whose mode changed
-- `ModeType` - string: Type of mode (see below)
-- `Toggle` - string: "TRUE" if enabled, "FALSE" if disabled
-- `WhoSet` - string: Who made the change
-- `Extra` - string: Additional info (password for PASSWORD mode, limit for LIMIT mode)
+- `User` — string: Your nickname
+- `Channel` — string: Channel whose mode changed
+- `ModeType` — string: See values below
+- `Toggle` — string: `"TRUE"` if enabled, `"FALSE"` if disabled
+- `WhoSet` — string: Who made the change
+- `Extra` — string: Additional context — password for `PASSWORD`, limit for `LIMIT`
 
-**Valid ModeType Values:**
-- `PASSWORD` - Channel password
-- `LIMIT` - User limit
-- `SECRET` - Secret channel
-- `PRIVATE` - Private channel
-- `INVITEONLY` - Invite-only
-- `MODERATED` - Moderated channel
-- `NOEXTERNALMSGS` - No external messages
-- `ONLYOPSCHANGETOPIC` - Only ops change topic
-- `REGISTERED` - Registered channel
-- `REGISTRATIONREQ` - Registration required
-- `NOCOLORSALLOWED` - No color codes
-
-**Example:**
-```lavishscript
-function OnChannelModeChange(string User, string Channel, string ModeType, string Toggle, string WhoSet, string Extra)
-{
-    if ${Toggle.Equal[TRUE]}
-    {
-        echo "${Channel} mode ${ModeType} enabled by ${WhoSet}"
-        if ${ModeType.Equal[LIMIT]}
-        {
-            echo "Limit set to: ${Extra}"
-        }
-    }
-    else
-    {
-        echo "${Channel} mode ${ModeType} disabled by ${WhoSet}"
-    }
-}
-
-Event[IRC_ChannelModeChange]:AttachAtom[OnChannelModeChange]
-```
+**Valid ModeType values:**
+- `PASSWORD` — Channel password set/cleared
+- `LIMIT` — User limit set/cleared
+- `SECRET` — +s
+- `PRIVATE` — +p
+- `INVITEONLY` — +i
+- `MODERATED` — +m
+- `NOEXTERNALMSGS` — +n
+- `ONLYOPSCHANGETOPIC` — +t
+- `REGISTERED` — Channel is registered
+- `REGISTRATIONREQ` — Registration required
+- `NOCOLORSALLOWED` — +c
 
 ---
 
 #### **IRC_AddChannelBan**
 
-Fires when a ban is added to a channel.
+Fires when a ban mask is added to a channel.
 
 **Parameters:**
-- `User` - string: Your IRC user nickname
-- `Channel` - string: Channel where ban was added
-- `WhoSet` - string: Who set the ban
-- `Ban` - string: Ban mask
-
-**Example:**
-```lavishscript
-function OnBanAdded(string User, string Channel, string WhoSet, string Ban)
-{
-    echo "Ban added to ${Channel} by ${WhoSet}: ${Ban}"
-}
-
-Event[IRC_AddChannelBan]:AttachAtom[OnBanAdded]
-```
+- `User` — string: Your nickname
+- `Channel` — string: Channel where the ban was added
+- `WhoSet` — string: Who set the ban
+- `Ban` — string: Ban mask
 
 ---
 
 #### **IRC_RemoveChannelBan**
 
-Fires when a ban is removed from a channel.
+Fires when a ban mask is removed from a channel.
 
 **Parameters:**
-- `User` - string: Your IRC user nickname
-- `Channel` - string: Channel where ban was removed
-- `WhoSet` - string: Who removed the ban
-- `Ban` - string: Ban mask that was removed
-
-**Example:**
-```lavishscript
-function OnBanRemoved(string User, string Channel, string WhoSet, string Ban)
-{
-    echo "Ban removed from ${Channel} by ${WhoSet}: ${Ban}"
-}
-
-Event[IRC_RemoveChannelBan]:AttachAtom[OnBanRemoved]
-```
+- `User` — string: Your nickname
+- `Channel` — string: Channel where the ban was removed
+- `WhoSet` — string: Who removed the ban
+- `Ban` — string: Ban mask that was removed
 
 ---
 
 #### **IRC_UnhandledEvent**
 
-Fires for IRC protocol events not specifically handled by other ISXIM events.
+Fires for IRC protocol messages that ISXIM does not specifically handle. Useful as a fallback for raw IRC numerics and other server messages.
 
 **Parameters:**
-- `User` - string: Your IRC user nickname
-- `Command` - string: IRC command received
-- `Param` - string: Command parameters
-- `Rest` - string: Remaining data
-
-**Example:**
-```lavishscript
-function OnUnhandledEvent(string User, string Command, string Param, string Rest)
-{
-    echo "Unhandled IRC event - Command: ${Command}, Param: ${Param}"
-}
-
-Event[IRC_UnhandledEvent]:AttachAtom[OnUnhandledEvent]
-```
+- `User` — string: Your nickname
+- `Command` — string: IRC command or numeric received
+- `Param` — string: Command parameters
+- `Rest` — string: Remaining data (trailing parameter)
 
 ---
 
 #### **IRC_UserDisconnected**
 
-Fires when you are disconnected from IRC server.
+Fires when your IRC user is disconnected from the server (whether voluntarily or not).
 
 **Parameters:**
-- `User` - string: Your IRC user nickname
-- `Reason` - string: Disconnect reason
-- `OptionalServerResponse` - string: Optional server response message
+- `User` — string: Your nickname
+- `Reason` — string: Disconnect reason (set by `Disconnect[reason]` or by ISXIM internally)
+- `OptionalServerResponse` — string: Optional server-supplied message
 
-**Example:**
-```lavishscript
-function OnDisconnected(string User, string Reason, string OptionalServerResponse)
-{
-    echo "Disconnected: ${Reason}"
-    if ${OptionalServerResponse.Length}
-    {
-        echo "Server said: ${OptionalServerResponse}"
-    }
-}
+---
 
-Event[IRC_UserDisconnected]:AttachAtom[OnDisconnected]
-```
+### Extension Events
+
+#### **ISXIM_onInstanceReloadingAfterUpdate**
+
+Fires when an ISX extension is updated and another InnerSpace session is reloading after patch. If auto-reload is enabled, ISXIM uses this to reload itself 3 seconds later when the update occurred in a different session.
+
+**Parameters:**
+- `SessionPatched` — string: Name of the InnerSpace session that received the patch
+
+**Note:** Scripts generally do not need to attach to this event — it is handled internally. It is documented here for completeness.
 
 ---
 
@@ -831,7 +676,6 @@ Event[IRC_UserDisconnected]:AttachAtom[OnDisconnected]
 ; Basic IRC connection
 function main()
 {
-    ; Check if extension is ready
     if !${IM.IsReady}
     {
         echo "ISXIM is not ready yet"
@@ -840,9 +684,8 @@ function main()
 
     echo "ISXIM Version: ${IM.Version}"
 
-    ; Connect to IRC server
     echo "Connecting to IRC..."
-    IRC:Connect[irc.lavishsoft.com,MyNickname]
+    IRC:Connect[irc.example.com,MyNickname]
 
     ; Wait for connection to complete
     do
@@ -851,16 +694,15 @@ function main()
     }
     while (${IRCUser[MyNickname](exists)} && ${IRCUser[MyNickname].IsConnecting})
 
-    ; Check if connected
     if !${IRCUser[MyNickname](exists)}
     {
-        echo "Failed to connect"
+        echo "Failed to connect — user no longer exists"
         return
     }
 
     if ${IRCUser[MyNickname].IsConnected}
     {
-        echo "Successfully connected to ${IRCUser[MyNickname].Server}:${IRCUser[MyNickname].Port}"
+        echo "Connected to ${IRCUser[MyNickname].Server}:${IRCUser[MyNickname].Port}"
         echo "Your nickname: ${IRCUser[MyNickname].MyNick}"
     }
 }
@@ -869,37 +711,27 @@ function main()
 ### Joining and Leaving Channels
 
 ```lavishscript
-; Join multiple channels
 function JoinChannels()
 {
     variable string MyNick = "MyNickname"
 
-    ; Join first channel
     echo "Joining #general..."
     IRCUser[${MyNick}]:Join[#general]
     wait 25
 
-    ; Join password-protected channel
     echo "Joining #private..."
     IRCUser[${MyNick}]:Join[#private,secretkey]
     wait 25
 
-    ; Join another channel
-    echo "Joining #bots..."
-    IRCUser[${MyNick}]:Join[#bots]
-    wait 25
-
     echo "Joined ${IRCUser[${MyNick}].NumChannelsIn} channels"
 
-    ; List all channels
     variable int i
-    for (i:Set[1]; ${i} <= ${IRCUser[${MyNick}].NumChannelsIn}; i:Inc)
+    for (i:Set[1] ; ${i} <= ${IRCUser[${MyNick}].NumChannelsIn} ; i:Inc)
     {
         echo "Channel ${i}: ${IRCUser[${MyNick}].Channel[${i}].Name}"
     }
 }
 
-; Leave a specific channel
 function LeaveChannel(string ChannelName)
 {
     variable string MyNick = "MyNickname"
@@ -919,40 +751,37 @@ function LeaveChannel(string ChannelName)
 ### Sending Messages
 
 ```lavishscript
-; Send various types of messages
 function SendMessages()
 {
     variable string MyNick = "MyNickname"
 
-    ; Send channel message
+    ; Channel message
     IRCUser[${MyNick}]:PM[#general,Hello everyone!]
 
-    ; Send private message to user
+    ; Private message
     IRCUser[${MyNick}]:PM[SomeUser,Hi there!]
 
-    ; Send notice (no auto-response capability)
-    IRCUser[${MyNick}]:Notice[#general,This is a notice]
-
-    ; Send emote/action
+    ; Emote/action
     IRCUser[${MyNick}]:Emote[#general,waves hello]
 
-    ; Send message using channel object
+    ; Raw IRC command (e.g., NOTICE, since ircuser:Notice is non-functional)
+    IRCUser[${MyNick}]:SendRaw[NOTICE SomeUser :This is a notice]
+
+    ; Use the channel object directly
     variable channel MyChannel
     MyChannel:Set[${IRCUser[${MyNick}].Channel[#general]}]
     MyChannel:Say[Hello via channel object]
 }
 
-; Respond to commands in channel
-function OnChannelMsg(string User, string Channel, string From, string Message)
+; Respond to chat commands
+atom OnChannelMsg(string User, string Channel, string From, string Message)
 {
-    ; Check for !hello command
-    if ${Message.Find[!hello]}
+    if ${Message.Equal[!hello]}
     {
         IRCUser[${User}]:PM[${Channel},Hello ${From}!]
     }
 
-    ; Check for !time command
-    if ${Message.Find[!time]}
+    if ${Message.Equal[!time]}
     {
         IRCUser[${User}]:PM[${Channel},The time is ${Time}]
     }
@@ -964,7 +793,6 @@ Event[IRC_ReceivedChannelMsg]:AttachAtom[OnChannelMsg]
 ### Working with Channel Members
 
 ```lavishscript
-; List all members of a channel
 function ListChannelMembers(string ChannelName)
 {
     variable string MyNick = "MyNickname"
@@ -986,89 +814,44 @@ function ListChannelMembers(string ChannelName)
     variable int i
     variable nick CurrentNick
 
-    for (i:Set[1]; ${i} <= ${MyChannel.NumNicks}; i:Inc)
+    for (i:Set[1] ; ${i} <= ${MyChannel.NumNicks} ; i:Inc)
     {
         CurrentNick:Set[${MyChannel.Nick[${i}]}]
         echo "[${CurrentNick.Type}] ${CurrentNick.Name}"
     }
 }
 
-; Check if user has operator privileges
 function IsUserOp(string ChannelName, string UserName)
 {
     variable string MyNick = "MyNickname"
-    variable nick User
+    variable nick U
 
-    User:Set[${IRCUser[${MyNick}].Channel[${ChannelName}].Nick[${UserName}]}]
+    U:Set[${IRCUser[${MyNick}].Channel[${ChannelName}].Nick[${UserName}]}]
 
-    if !${User(exists)}
-    {
+    if !${U(exists)}
         return FALSE
-    }
 
-    if ${User.Type.Equal[OP]} || ${User.Type.Equal[SOP]} || ${User.Type.Equal[Owner]}
-    {
+    if ${U.Type.Equal[OP]} || ${U.Type.Equal[SOP]} || ${U.Type.Equal[Owner]}
         return TRUE
-    }
 
     return FALSE
-}
-
-; Get channel information
-function GetChannelInfo(string ChannelName)
-{
-    variable string MyNick = "MyNickname"
-    variable channel Chan
-
-    Chan:Set[${IRCUser[${MyNick}].Channel[${ChannelName}]}]
-
-    if !${Chan(exists)}
-    {
-        echo "Not in channel ${ChannelName}"
-        return
-    }
-
-    echo "Channel: ${Chan.Name}"
-    echo "Topic: ${Chan.Topic} (set by ${Chan.TopicBy})"
-    echo "Members: ${Chan.NumNicks}"
-
-    ; Check modes
-    if ${Chan.IsSet[INVITEONLY]}
-        echo "Mode: Invite Only"
-    if ${Chan.IsSet[MODERATED]}
-        echo "Mode: Moderated"
-    if ${Chan.IsSet[SECRET]}
-        echo "Mode: Secret"
-    if ${Chan.IsSet[PRIVATE]}
-        echo "Mode: Private"
-
-    ; Check limit
-    if ${Chan.Limit} > 0
-        echo "User Limit: ${Chan.Limit}"
-
-    ; Check password
-    if ${Chan.IsSet[PASSWORD]}
-        echo "Password Protected: Yes"
 }
 ```
 
 ### Event Handling
 
 ```lavishscript
-; Complete IRC bot example with event handling
+; Complete IRC bot example
 variable string gMyNick = "MyBot"
 variable bool gRunning = TRUE
 
 function main()
 {
-    ; Register all event handlers
     RegisterEvents
 
-    ; Connect to IRC
     echo "Connecting..."
-    IRC:Connect[irc.lavishsoft.com,${gMyNick}]
+    IRC:Connect[irc.example.com,${gMyNick}]
 
-    ; Wait for connection
     do
     {
         wait 3
@@ -1078,22 +861,19 @@ function main()
     if !${IRCUser[${gMyNick}].IsConnected}
     {
         echo "Connection failed"
+        UnregisterEvents
         return
     }
 
-    echo "Connected! Joining channels..."
-
-    ; Join channels
+    echo "Connected! Joining channel..."
     IRCUser[${gMyNick}]:Join[#general]
     wait 25
 
-    ; Main loop
     while ${gRunning}
     {
         wait 10
     }
 
-    ; Cleanup
     UnregisterEvents
     IRCUser[${gMyNick}]:Disconnect[Bot shutting down]
 }
@@ -1116,43 +896,35 @@ function UnregisterEvents()
     Event[IRC_UserDisconnected]:DetachAtom[OnDisconnected]
 }
 
-function OnChannelMsg(string User, string Channel, string From, string Message)
+atom OnChannelMsg(string User, string Channel, string From, string Message)
 {
     echo "[${Channel}] <${From}> ${Message}"
 
-    ; Respond to !quit command from ops only
     if ${Message.Equal[!quit]}
     {
-        if ${IsUserOp[${Channel},${From}]}
-        {
-            IRCUser[${User}]:PM[${Channel},Shutting down as requested by ${From}]
-            gRunning:Set[FALSE]
-        }
+        IRCUser[${User}]:PM[${Channel},Shutting down as requested by ${From}]
+        gRunning:Set[FALSE]
     }
 }
 
-function OnPrivateMsg(string User, string From, string To, string Message)
+atom OnPrivateMsg(string User, string From, string To, string Message)
 {
     echo "[PM] <${From}> ${Message}"
-
-    ; Auto-respond to PMs
     IRCUser[${User}]:PM[${From},Thanks for your message!]
 }
 
-function OnUserJoined(string User, string Channel, string WhoJoined)
+atom OnUserJoined(string User, string Channel, string WhoJoined)
 {
     echo "*** ${WhoJoined} joined ${Channel}"
-
-    ; Greet new users
     IRCUser[${User}]:PM[${Channel},Welcome ${WhoJoined}!]
 }
 
-function OnUserLeft(string User, string Channel, string WhoLeft)
+atom OnUserLeft(string User, string Channel, string WhoLeft)
 {
     echo "*** ${WhoLeft} left ${Channel}"
 }
 
-function OnDisconnected(string User, string Reason, string Response)
+atom OnDisconnected(string User, string Reason, string Response)
 {
     echo "*** Disconnected: ${Reason}"
     gRunning:Set[FALSE]
@@ -1165,16 +937,17 @@ function OnDisconnected(string User, string Reason, string Response)
 
 ### Case Sensitivity
 
-LavishScript is generally case-insensitive for datatypes and members. However, IRC nicknames and channel names are case-sensitive on the IRC protocol level and should be matched exactly.
+- **LavishScript datatypes and members** are case-insensitive.
+- **Event names are case-sensitive** on registration/attachment. Use the exact names shown in [IRC Events](#irc-events) — in particular, [IRC_ReceivedNOTICE](#irc_receivednotice) uses an uppercase `NOTICE` suffix.
+- **IRC nicknames and channel names** are protocol-level strings and should be matched exactly as the server presents them; however, ISXIM's internal lookups use case-insensitive comparison (via `stricmp`) when looking up a channel or nick by name.
 
 ### NULL Checks
 
-Always check if objects exist before accessing their members:
+Always check existence before accessing members:
 
 ```lavishscript
 if ${IRCUser[MyNick](exists)}
 {
-    ; Safe to access
     echo ${IRCUser[MyNick].Server}
 }
 ```
@@ -1182,76 +955,119 @@ if ${IRCUser[MyNick](exists)}
 ### Parameter Notation
 
 In this documentation:
-- `[parameter]` - Required parameter
-- `[parameter,optional]` - Parameter with optional additional parameter
-- Multiple syntax variations are shown as separate lines
+- `[parameter]` — parameter list passed to a method/member
+- `[param1,param2]` — multiple parameters separated by commas
+- Optional parameters are shown as separate method overloads on their own lines
 
 ### IRC Connection Sequence
 
-As of April 13, 2012, the IRC connection logic works as follows:
+Since ISXIM-20120413.0024, `IRC:Connect[...]` behaves asynchronously:
 
-**Previous Behavior (Before 20120413.0024):**
-- `IRC:Connect[]` initiated connection and waited until fully connected
-- User was only added and valid after connection completed
+**Behavior:**
+- `IRC:Connect[]` initiates a connection and adds the `ircuser` to the user list immediately.
+- While connecting: `IsConnecting = TRUE`, `IsConnected = FALSE`.
+- Once established: `IsConnecting = FALSE`, `IsConnected = TRUE`.
+- The `ircuser` only goes invalid if the connection fails.
 
-**Current Behavior (20120413.0024 and later):**
-- `IRC:Connect[]` initiates connection and adds user to list immediately
-- User has `IsConnecting = TRUE` and `IsConnected = FALSE` while connecting
-- User becomes fully usable when `IsConnecting = FALSE` and `IsConnected = TRUE`
-- User only becomes invalid if connection fails
+**Method Guard:**
+All `ircuser` methods silently no-op while the user is still connecting or not yet connected. Your script must wait for connection to complete before issuing commands.
 
-**Important:** Scripts must check `IsConnecting` and wait for connection to complete before issuing commands. The extension ignores commands issued while still connecting.
-
-**Recommended Connection Pattern:**
+**Recommended Pattern:**
 ```lavishscript
-IRC:Connect[irc.lavishsoft.com,MyNick]
+IRC:Connect[irc.example.com,MyNick]
 do
 {
     wait 3
 }
 while (${IRCUser[MyNick](exists)} && ${IRCUser[MyNick].IsConnecting})
+
+if !${IRCUser[MyNick](exists)} || !${IRCUser[MyNick].IsConnected}
+{
+    echo "Connection failed"
+    return
+}
 ```
 
-### Deprecated Features
+### Known Issues and Gotchas
 
-This section documents features that have been removed from ISXIM. These are no longer available and scripts using them must be updated.
+These items are documented in `ISXIMChanges.txt` as available features, but inspection of the current source in `ISXIM\src` shows they are not fully wired up in the build. Scripts should work around them as noted.
 
-#### Removed TLOs and DataTypes
+1. **`ircuser:Notice[to,message]` is non-functional.**
+   The `Notice` method is declared in the type's method table, but the current `IRCUserType::GetMethod` switch in `IRCDataTypes.cpp` does not include a `case Notice:` handler, so invoking it has no effect. Use `SendRaw` instead:
+   ```lavishscript
+   IRCUser[MyNick]:SendRaw[NOTICE SomeUser :Your notice text]
+   ```
 
-##### Yahoo/Y TLO and yahoo/y datatype (March 21, 2022)
+2. **`channel.IsSet[mode]`, `channel.Limit`, `channel.Password` are not accessible.**
+   These members are defined in the enum and implemented in `ChannelType::GetMember`, but the `ChannelType` constructor does not register them via `TypeMember(...)`, so LavishScript does not expose them. To track channel modes, subscribe to [IRC_ChannelModeChange](#irc_channelmodechange) and maintain state in your script.
 
-**Removed:** March 21, 2022 (ISXIM-20220321.0001)
+3. **`IRC:QuietMode[...]` is not functional.**
+   The global `IRC` datatype declares a `QuietMode` method in its enum but does not register it via `TypeMethod` and has no case in `GetMethod`. Use [`IM:QuietMode[on|off]`](#im) instead, which controls the same global `gQuietMode` flag.
 
-The Yahoo instant messaging functionality was completely removed, including:
-- **Yahoo** TLO (formerly **Y** TLO)
-- **yahoo** datatype (formerly **y** datatype)
-- **buddy** datatype
-- All Yahoo-related events (see below)
+4. **`ircuser:Join` channel-name prefix.**
+   ISXIM enforces that channel names begin with `#` or `&` (standard IRC prefixes). Attempting to join a name without one of these prefixes is rejected with an error message.
+
+### CTCP Auto-Responses
+
+ISXIM automatically responds to these incoming CTCP requests without any script intervention: `VERSION`, `FINGER`, `PING`, `TIME`, `USERINFO`, `CLIENTINFO`. The [IRC_ReceivedCTCP](#irc_receivedctcp) event still fires, so your script can observe them.
+
+### Message Sanitization
+
+ISXIM strips mIRC-style formatting from incoming messages: color codes, bold, and underline are removed before event dispatch and display. Outgoing messages are not modified.
+
+---
+
+## Private / Internal Build Features
+
+The ISXIM source tree contains additional commands and an event that are compiled only in a private/internal build (guarded by a `MYCOPY` preprocessor flag) and are not present in the public release DLL.
+
+**Potentially available in private builds only:**
+
+| Feature | Kind | Notes |
+|---------|------|-------|
+| GetURL | command | `GetURL "http(s)://address"` — asynchronously fetches a URL; result arrives via `isxGames_onHTTPResponse` |
+| PostURL | command | HTTP POST counterpart to GetURL |
+| PostURLFiles | command | HTTP multipart file upload |
+| IRC | command | Stub that demonstrates webhook testing |
+| isxGames_onHTTPResponse | event | `(int Size, string URL, string IPAddress, int ResponseCode, float TransferTime, string ResponseText, string ParsedBody)` — only fires in response to `GetURL`/`PostURL` |
+
+**Script implication:** do not rely on `GetURL`, `PostURL`, `PostURLFiles`, or the `isxGames_onHTTPResponse` event in scripts intended for the public ISXIM release. Attaching an atom to `isxGames_onHTTPResponse` is harmless in the public build (the event is registered) but will never fire because nothing sends HTTP requests.
+
+---
+
+## Deprecated Features
+
+This section documents features that have been removed from ISXIM. Scripts using any of these must be updated.
+
+### Removed TLOs and DataTypes
+
+#### Yahoo/Y TLO and yahoo/y datatype — March 21, 2022
+
+**Removed in:** ISXIM-20220321.0001
+
+The Yahoo Messenger functionality was removed in its entirety, including:
+- The `Yahoo` TLO (previously `Y`)
+- The `yahoo` datatype (previously `y`)
+- The `buddy` datatype
+- All Yahoo-related events (see [Removed Events](#removed-events))
 
 **Reason:** Yahoo Messenger was discontinued by Yahoo.
 
----
+### Removed Members
 
-#### Removed Members
+#### irc.IsConnecting — April 13, 2012
 
-##### irc.IsConnecting (April 13, 2012)
+**Removed in:** ISXIM-20120413.0024
 
-**Removed:** April 13, 2012 (ISXIM-20120413.0024)
+**Removed:** `IsConnecting` member on the `irc` datatype.
 
-**Removed Member:**
-- `IsConnecting` - Previously on irc datatype
+**Replacement:** Use per-session state on the user itself: `${IRCUser[nickname].IsConnecting}` and `${IRCUser[nickname].IsConnected}`. See [IRC Connection Sequence](#irc-connection-sequence).
 
-**Replacement:** Use `IRCUser[nickname].IsConnecting` and `IRCUser[nickname].IsConnected` instead.
+### Removed Events
 
-The connection logic was changed so individual IRC users track their own connection state rather than the global IRC object.
+#### Yahoo Events — March 21, 2022
 
----
-
-#### Removed Events
-
-##### Yahoo Events (March 21, 2022)
-
-**Removed:** March 21, 2022 (ISXIM-20220321.0001)
+**Removed in:** ISXIM-20220321.0001
 
 All Yahoo-related events were removed:
 - `Yahoo_onSystemMessage`
