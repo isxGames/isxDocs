@@ -100,9 +100,12 @@ Change these paths to match where you have:
 Edit `isxeq2.md` and update the **User Configuration** table at the very top of the file:
 
 ```
-Scripts Directory	C:\Dev\InnerSpace\Scripts
-Guide Directory		C:\Dev\InnerSpace\isxDocs\ISXEQ2 Scripting Guide
-Changes File		C:\Dev\InnerSpace\ISXEQ2\Install\x64\Extensions\ISXDK35\ISXEQ2Changes.txt
+| Setting | Path |
+|---------|------|
+| **Scripts Directory** | `C:\Dev\InnerSpace\Scripts` |
+| **Guide Directory** | `C:\Dev\InnerSpace\isxDocs\ISXEQ2 Scripting Guide` |
+| **Changes File** | `C:\Dev\InnerSpace\ISXEQ2\Install\x64\Extensions\ISXDK35\ISXEQ2Changes.txt` |
+| **Quick Reference** | `C:\Dev\InnerSpace\isxDocs\ISXEQ2_QuickReference.md` |
 ```
 
 Change these paths to match where you have:
