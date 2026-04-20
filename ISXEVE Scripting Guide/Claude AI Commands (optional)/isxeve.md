@@ -100,8 +100,8 @@ When reviewing scripts over ~200 lines:
 **DEFINITIVE API SOURCE:**
 - Changes File (~5,600 lines) — THE authoritative source for all ISXEVE API documentation. When delegating API-related tasks, remind the subagent to verify against CHANGES_FILE.
 
-**QUICK REFERENCE FILE** (~3,800 lines):
-- `ISXEVE_QuickReference.md` — Comprehensive quick reference covering all TLOs, datatypes (members/methods), commands, events, and usage examples in a single file. Useful for subagents that need broad API context without reading multiple guide files. Located outside the Guide Directory (see User Configuration table for path). When delegating tasks, include this path so the subagent can use it.
+**QUICK REFERENCE FILE** (~2,450 lines, 26-section TOC):
+- [ISXEVE_QuickReference.md](../../ISXEVE_QuickReference.md) — Source-verified single-file reference covering every TLO (13), every datatype with its members/methods (60+), every registered command (5), every event (including `ISXEVE_onFrame`), `EVE:Execute` command constants, a curated Common Patterns and Idioms section, canonical slot/destination/folder name tables, and the Deprecated/Removed section. Each API entry was cross-checked against both `CHANGES_FILE` and the ISXEVE C++ source; where the two disagreed, the source is cited and a clarifying note flags the discrepancy (see for example the three broken `Broadcast_*` methods, the `SetectByValue` source typo, and the `character:OpenCorpHangar` stale-removal-claim). Located OUTSIDE the Guide Directory — see the User Configuration table above for the exact path. **When to pass it to the subagent:** any task that needs lookups across multiple datatypes (e.g., "how do modules interact with entities", "what's the inventory-window flow", "fleet broadcasts"). Passing the QR saves the subagent from opening 3-5 numbered guides for common cross-datatype questions. For deep single-topic dives (LGUI2, mining-fleet architecture, relay IPC), the matching numbered guide still has more extensive coverage.
 
 **LARGE DOCUMENTATION FILES** (delegate reading to subagent):
 - API Reference (~11,500 lines)

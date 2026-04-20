@@ -79,20 +79,22 @@ C:\Users\<YourUsername>\.claude\commands\isxeve.md
 
 ### Step 3: Update Paths in Both Files
 
-Both `ISXEVE-Expert.md` (agent) and `isxeve.md` (coordinator) have a paths block near the top. Update all three paths in **both** files to match your system:
+Both `ISXEVE-Expert.md` (agent) and `isxeve.md` (coordinator) have a paths block near the top. Update all four paths in **both** files to match your system:
 
 - **Scripts Directory**: Your InnerSpace Scripts directory
 - **Guide Directory**: This ISXEVE Scripting Guide directory
 - **Changes File**: The ISXEVEChanges.txt file from your ISXEVE installation
+- **Quick Reference**: The path to `ISXEVE_QuickReference.md` (in the parent `isxDocs` directory, OUTSIDE this guide directory)
 
 `ISXEVE-Expert.md` uses a **Local Paths** block:
 
 ```
 ## Local Paths (UPDATE THESE FOR YOUR SYSTEM)
 
-SCRIPTS_DIR: C:\Dev\InnerSpace\Scripts\
-GUIDE_DIR:   C:\Dev\InnerSpace\isxDocs\ISXEVE Scripting Guide\
-CHANGES_FILE: C:\Dev\InnerSpace\ISXEVE\Install\x64\Extensions\ISXDK35\ISXEVEChanges.txt
+SCRIPTS_DIR:    C:\Dev\InnerSpace\Scripts\
+GUIDE_DIR:      C:\Dev\InnerSpace\isxDocs\ISXEVE Scripting Guide\
+CHANGES_FILE:   C:\Dev\InnerSpace\ISXEVE\Install\x64\Extensions\ISXDK35\ISXEVEChanges.txt
+QUICK_REF_FILE: C:\Dev\InnerSpace\isxDocs\ISXEVE_QuickReference.md
 ```
 
 `isxeve.md` uses a **User Configuration** table:
@@ -103,6 +105,7 @@ CHANGES_FILE: C:\Dev\InnerSpace\ISXEVE\Install\x64\Extensions\ISXDK35\ISXEVEChan
 | **Scripts Directory** | `C:\Dev\InnerSpace\Scripts` |
 | **Guide Directory** | `C:\Dev\InnerSpace\isxDocs\ISXEVE Scripting Guide` |
 | **Changes File** | `C:\Dev\InnerSpace\ISXEVE\Install\x64\Extensions\ISXDK35\ISXEVEChanges.txt` |
+| **Quick Reference** | `C:\Dev\InnerSpace\isxDocs\ISXEVE_QuickReference.md` |
 ```
 
 ### Step 4: Verify Installation
