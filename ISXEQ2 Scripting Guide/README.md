@@ -364,7 +364,7 @@ Found an error or have an improvement? This documentation was generated using ac
   - EQ2-specific common-problems catalog: zoning (`${EQ2.Zoning}` int values, `EQ2_StartedZoning` / `EQ2_FinishedZoning(string TimeInSeconds)` events), ability-casting diagnosis, async `IsItemInfoAvailable` / `IsActorInfoAvailable` timeouts, EQ2Bot class-routine `#include` parse-time evaluation gotcha, maintained-effect vs buff-check confusion, inventory iterator invalidation, `ExactName` case sensitivity, LGUI1 `_executeOnSelect` recursion (cross-links to 15), LGUI2 element-not-found diagnosis
   - Performance profiling, stuck detection, dead-man's switch, periodic restart, config backup/restore, relay event debugging
   - Designed as a capstone — cross-links heavily to existing coverage in 02/04/05/07/15/18 rather than duplicating
-  - Updated cross-references in FILE_MANIFEST.md, 00_MASTER_GUIDE.md, +How To Use+.md, ISXEQ2-Expert.md
+  - Updated cross-references in 00_MASTER_GUIDE.md, +How To Use+.md, ISXEQ2-Expert.md
 
 - **4.1** (2026-04-12) — Added .NET Development guide
   - Added [19_DotNet_Development.md](19_DotNet_Development.md) — Scripts vs .NET decision-and-orientation guide
@@ -372,7 +372,7 @@ Found an error or have an improvement? This documentation was generated using ac
   - Documents the ISXEQ2-specific .NET interop model: `LavishScript.Objects.GetObject`, `EQ2.ISXEQ2.Extension` static helpers, domain wrapper methods
   - Explicitly contrasts with ISXEVE's `Execute(ExecuteCommand)` pattern — **no `ExecuteCommand` enum or universal `Execute(enum)` method exists in `ISXEQ2Wrapper`**; attempting that pattern will fail
   - Includes `ISXEQ2Wrapper.dll` namespace/assembly reference map
-  - Updated cross-references in FILE_MANIFEST.md, 00_MASTER_GUIDE.md, +How To Use+.md, ISXEQ2-Expert.md
+  - Updated cross-references in 00_MASTER_GUIDE.md, +How To Use+.md, ISXEQ2-Expert.md
 
 - **4.0** (2026-04-09) — Comprehensive Accuracy Audit and QuickReference Overhaul
   - **MAJOR UPDATE:** Line-by-line accuracy audit of all guides and QuickReference against ISXEQ2 source code and ISXEQ2Changes.txt
@@ -381,7 +381,7 @@ Found an error or have an improvement? This documentation was generated using ac
   - **API Reference (03) major fixes:** removed fabricated members (reward, achievement, reforgewindow, merchantwindow), fixed wrong types (OffersQuest bool→string, AbilityCastingID int→uint, HealthRegen/PowerRegen float→int64), removed nonexistent raidmember datatype, fixed zone members (removed Description, added RoomID), corrected actor Move method signature, fixed GetInventory/GetEquipment/GetAbilities from members to methods
   - **Event documentation fixes across guides:** corrected EQ2_ExamineAchievement parameter order, fixed EQ2_onIncomingChatText/EQ2_onIncomingText signatures, added missing EQ2_onSellItem parameter, fixed ISXEQ2: prefix for actor event methods
   - **Code example fixes across 12+ guides:** corrected wait values (deciseconds not milliseconds), replaced fabricated commands/methods with real API, fixed incorrect member names (MerchantWindow.Item→MerchantInventory, Actor.InCombat→InCombatMode, Me.Power→CurrentPower), corrected Me:DoFace→Target:DoFace, fixed function/atom mismatches, added ISXEQ2.IsReady checks to working examples
-  - **Cross-reference and structural fixes:** fixed 15+ broken cross-references, corrected event counts (43 not 40+/48), fixed stale file counts in FILE_MANIFEST and README, removed hardcoded line counts from guide footers, added/fixed Tables of Contents in 8 guides
+  - **Cross-reference and structural fixes:** fixed 15+ broken cross-references, corrected event counts (43 not 40+/48), fixed stale file counts in the README, removed hardcoded line counts from guide footers, added/fixed Tables of Contents in 8 guides
   - **Claude AI integration improvements:** established CHANGES_FILE as definitive API source in agent prompts, added QUICK_REF_FILE path to all config files, improved How To Use guide setup instructions, added CRITICAL sections to ISXEQ2-Expert agent
   - **Formatting cleanup:** added CLAUDE_SKIP tags to human-oriented sections, removed informational footers and stale "last updated" lines, general linting
 
