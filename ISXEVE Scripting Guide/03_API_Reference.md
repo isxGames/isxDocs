@@ -7831,8 +7831,8 @@ if ${repair(exists)}
 
 **Opening Reprocessing**:
 ```lavish
-; Note: no Cmd prefix, and lowercase 'p' in "plant"
-EVE:Execute[OpenReprocessingplant]
+; Note: no Cmd prefix required for this command
+EVE:Execute[OpenReprocessingPlant]
 wait 50
 ```
 
