@@ -75,6 +75,7 @@
    - [Case Sensitivity](#case-sensitivity)
    - [NULL Checks](#null-checks)
    - [Parameter Notation](#parameter-notation)
+   - [Cross-References](#cross-references)
 
 ---
 
@@ -4857,5 +4858,37 @@ if ${Target(exists)}
 - `[parameter]` - Optional parameter
 - `parameter` - Required parameter
 - `param1|param2` - Alternative parameters (use one or the other)
+
+### Cross-References
+
+Every guide in the [ISXEQ2 Scripting Guide](ISXEQ2%20Scripting%20Guide/README.md) tree, with a one-line "best for" hint to route a query to the right next-hop:
+
+- [README.md](ISXEQ2%20Scripting%20Guide/README.md) — top-level navigation hub (file list, learning paths, version history). Best for orienting a fresh session or finding which numbered guide covers a topic.
+- [00_MASTER_GUIDE.md](ISXEQ2%20Scripting%20Guide/00_MASTER_GUIDE.md) — quick-reference cheat sheet (essential TLOs, common members, control-flow snippets, debugging tips). Best for fast in-conversation lookup when this QuickReference would be overkill; complementary to this file.
+- [01_LavishScript_Fundamentals.md](ISXEQ2%20Scripting%20Guide/01_LavishScript_Fundamentals.md) — tutorial-style introduction to LavishScript (variables, functions, objectdefs, atoms, events, triggers, aliases, modules, input emulation, web requests, audio). Best for "how does the language work" / "explain this concept" / onboarding-shape questions.
+- [01b_LavishScript_Reference.md](ISXEQ2%20Scripting%20Guide/01b_LavishScript_Reference.md) — exhaustive command/datatype/Top-Level-Object inventory for LavishScript core, Inner Space core, and bundled first-party subsystems (LavishGUI, LavishGUI 2, LavishNav, LavishSettings, LavishMachine), one canonical entry per feature with wiki links. Best for "does X exist", "what's the exact signature", platform/Inner-Space lookup.
+- [02_Quick_Start_Guide.md](ISXEQ2%20Scripting%20Guide/02_Quick_Start_Guide.md) — "your first ISXEQ2 script" walkthrough plus install verification. Best for first-run setup confirmation, not for API depth.
+- [03_API_Reference.md](ISXEQ2%20Scripting%20Guide/03_API_Reference.md) — exhaustive ISXEQ2 API (every TLO, datatype, member, method, command, event). Best for ISXEQ2-specific surface lookup — pairs with this QuickReference; use 03 for full prose context, this file for dense at-a-glance scan.
+- [04_Core_Concepts.md](ISXEQ2%20Scripting%20Guide/04_Core_Concepts.md) — datatype inheritance, NULL checks, async data loading, query syntax, collections + iterators, scoping. Best for "why is this returning NULL", "how do queries actually work", conceptual ISXEQ2 mechanics.
+- [05_Patterns_And_Best_Practices.md](ISXEQ2%20Scripting%20Guide/05_Patterns_And_Best_Practices.md) — naming conventions, error handling, pulse architecture, structural patterns from EQ2Bot. Best for "how should this script be organized" / code-quality questions.
+- [06_Working_Examples.md](ISXEQ2%20Scripting%20Guide/06_Working_Examples.md) — runnable example scripts (combat, inventory, crafting, UI, events). Best for "show me a working script that does X" / starting templates.
+- [07_Advanced_Patterns_And_Examples.md](ISXEQ2%20Scripting%20Guide/07_Advanced_Patterns_And_Examples.md) — mouse automation, LavishSettings XML, command-line parsing, triggers, broker automation, raid tracking, localization, navigation integration. Best for production-shape patterns beyond the basics.
+- [08_LavishGUI1_UI_Guide.md](ISXEQ2%20Scripting%20Guide/08_LavishGUI1_UI_Guide.md) — LavishGUI 1 XML UI creation (legacy). Best for maintaining or reading existing XML-based UIs; do NOT use for new UI work.
+- [09_Advanced_LGUI1_Patterns.md](ISXEQ2%20Scripting%20Guide/09_Advanced_LGUI1_Patterns.md) — production LGUI1 patterns from MyPrices (FindChild navigation, alpha show/hide, Script:QueueCommand, settings integration, color-coded lists). Best for diagnosing or extending real-world LGUI1 scripts.
+- [10_LavishGUI2_UI_Guide.md](ISXEQ2%20Scripting%20Guide/10_LavishGUI2_UI_Guide.md) — LavishGUI 2 JSON UI creation (modern, recommended). Best for ALL new UI work — windows, buttons, data binding, event handlers, templates, styling.
+- [11_LavishGUI1_to_LavishGUI2_Migration.md](ISXEQ2%20Scripting%20Guide/11_LavishGUI1_to_LavishGUI2_Migration.md) — convert LGUI1 XML to LGUI2 JSON (element mapping, event-handler rewriting, data-binding migration, known limitations). Best for porting an existing LGUI1 UI; not relevant for greenfield UI work.
+- [12_LGUI2_Scaling_System.md](ISXEQ2%20Scripting%20Guide/12_LGUI2_Scaling_System.md) — dynamic LGUI2 scaling (font/dimension scaling, window-position preservation, percentage-to-absolute conversion). Best for making an LGUI2 UI resolution-flexible.
+- [13_JSON_Guide.md](ISXEQ2%20Scripting%20Guide/13_JSON_Guide.md) — JSON datatypes, file I/O, AsJSON/FromJSON serialization, collection (de)serialization. Best for config persistence and data-exchange questions.
+- [14_LavishMachine_Guide.md](ISXEQ2%20Scripting%20Guide/14_LavishMachine_Guide.md) — LavishMachine (LMAC) asynchronous task system: task managers, built-in task types (echo/audio/webrequest/chains), custom task types, controller pattern. Best for time-based fades, async callbacks, and task-chain orchestration.
+- [15_Advanced_Scripting_Patterns.md](ISXEQ2%20Scripting%20Guide/15_Advanced_Scripting_Patterns.md) — production-grade patterns from EQ2OgreFree and EQ2Track: multi-threading, LavishSettings XML, LavishNav, timer objects, modern EQ2:GetActors, triggers, controller pattern, dynamic variables, zone-aware auto-config. Best for big-script architecture.
+- [16_Utility_Script_Patterns.md](ISXEQ2%20Scripting%20Guide/16_Utility_Script_Patterns.md) — practical utility patterns from EQ2BJCommon (custom timers, currency tracking, position tracking, character-specific configs, dynamic file loading, prioritized item lists, event parsing, ApplyVerb, ReplyDialog, audio alerts, XP tracking, ExecuteQueued). Best for small focused utility scripts.
+- [17_Crafting_Script_Patterns.md](ISXEQ2%20Scripting%20Guide/17_Crafting_Script_Patterns.md) — tradeskill automation patterns from EQ2Craft (recipe queues, crafting window monitoring, reaction arts, writ automation, durability/quality management, localization). Best for crafting-domain scripts.
+- [18_Navigation_Library_Patterns.md](ISXEQ2%20Scripting%20Guide/18_Navigation_Library_Patterns.md) — EQ2Nav patterns (LavishNav integration, Dijkstra pathfinding, region-based nav, collision/stuck detection, door automation, aggro-aware navigation, dual precision). Best for movement/pathfinding subsystems.
+- [19_DotNet_Development.md](ISXEQ2%20Scripting%20Guide/19_DotNet_Development.md) — Scripts vs .NET decision-and-orientation, ISXEQ2-specific .NET interop (`LavishScript.Objects.GetObject`, `Extension` static helpers, domain wrapper methods), `ISXEQ2Wrapper.dll` namespace map. Best for .NET integration questions or deciding whether to use .NET at all.
+- [20_Debugging_And_Troubleshooting.md](ISXEQ2%20Scripting%20Guide/20_Debugging_And_Troubleshooting.md) — diagnostic capstone: `Debug:` built-in, logging with `redirect`, performance profiling, session validation, EQ2-specific problem catalog (zoning, ability casting, async data, deprecated API migration, EQ2Bot include gotchas, maintained-effect confusion, iterator invalidation, ExactName case sensitivity, LGUI1/LGUI2 element diagnosis). Best for "my script broke, what's wrong" / triage.
+- [+How To Use This Guide with Claude Code+.md](ISXEQ2%20Scripting%20Guide/%2BHow%20To%20Use%20This%20Guide%20with%20Claude%20Code%2B.md) — human-facing setup guide for Claude Code integration. Mostly out of agent scope (skip-blocked); useful only if a user asks about installing or configuring the coordinator/agent.
+- [Claude AI Commands (optional)/isxeq2.md](ISXEQ2%20Scripting%20Guide/Claude%20AI%20Commands%20%28optional%29/isxeq2.md) — master copy of the `/isxeq2` Claude Code coordinator command (slash-command definition that spawns the ISXEQ2-Expert agent). Best for the user's reference when re-installing the integration.
+- [Claude AI Commands (optional)/ISXEQ2-Expert.md](ISXEQ2%20Scripting%20Guide/Claude%20AI%20Commands%20%28optional%29/ISXEQ2-Expert.md) — master copy of the ISXEQ2-Expert worker-agent definition. Best for the user's reference when re-installing the integration.
+- [Claude AI Commands (optional)/README.md](ISXEQ2%20Scripting%20Guide/Claude%20AI%20Commands%20%28optional%29/README.md) — quick-start summary for installing the Claude Code coordinator + agent files into `~/.claude/`. Best for the user when first setting up the integration.
 
 ---
