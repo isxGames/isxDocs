@@ -1,55 +1,68 @@
 # LavishScript Fundamentals
 
-**Purpose:** Complete introduction to LavishScript programming for scripters
-**Audience:** Beginners with little to no LavishScript experience
+**Purpose:** Tutorial-style introduction to LavishScript programming. Concepts, intuition, short examples.
+**Audience:** Beginners learning LavishScript. Already-fluent scripters who want exhaustive command/datatype/TLO lookup tables should use [01b_LavishScript_Reference.md](01b_LavishScript_Reference.md) instead.
+
+> **For exhaustive reference content, see [01b_LavishScript_Reference.md](01b_LavishScript_Reference.md).** This file teaches concepts; `01b` lists every command, object type, and Top-Level Object with links to canonical wiki pages.
 
 ---
 
 ## Table of Contents
 
 1. [Introduction](#introduction)
-2. [Your First Script - "Hello World"](#your-first-script---hello-world)
+2. [Your First Script](#your-first-script)
 3. [Variables and Data Types](#variables-and-data-types)
-4. [Data Sequences](#data-sequences)
-5. [Parameters](#parameters)
-6. [Text Escaping](#text-escaping)
-7. [Functions](#functions)
-8. [Return Values](#return-values)
-9. [Object-Oriented Programming](#object-oriented-programming)
-10. [Members](#members)
-11. [Methods](#methods)
-12. [Initialize and Shutdown](#initialize-and-shutdown)
-13. [Inheritance and Type Casting](#inheritance-and-type-casting)
-14. [Atoms and Atomicity](#atoms-and-atomicity)
-15. [Wait Commands](#wait-commands)
-16. [Conditional Branching](#conditional-branching)
-17. [Loops](#loops)
-18. [Switch Statements](#switch-statements)
-19. [Collections and Lists (index)](#collections-and-lists-index)
-20. [Web Requests](#web-requests)
-21. [Audio System](#audio-system)
-22. [Best Practices Summary](#best-practices-summary)
-23. [Type Inspection and Debugging Commands](#type-inspection-and-debugging-commands)
+4. [Top-Level Objects](#top-level-objects)
+5. [Data Sequences](#data-sequences)
+6. [Parameters](#parameters)
+7. [Text Escaping](#text-escaping)
+8. [Functions](#functions)
+9. [Return Values](#return-values)
+10. [Object-Oriented Programming](#object-oriented-programming)
+11. [Members](#members)
+12. [Methods](#methods)
+13. [Initialize and Shutdown](#initialize-and-shutdown)
+14. [Inheritance and Type Casting](#inheritance-and-type-casting)
+15. [Atoms and Atomicity](#atoms-and-atomicity)
+16. [Wait Commands](#wait-commands)
+17. [Conditional Branching](#conditional-branching)
+18. [Loops](#loops)
+19. [Switch Statements](#switch-statements)
+20. [Collections and Lists](#collections-and-lists)
+21. [Events](#events)
+22. [Triggers](#triggers)
+23. [Aliases](#aliases)
+24. [Modules](#modules)
+25. [Input Emulation](#input-emulation)
+26. [Web Requests](#web-requests)
+27. [Audio System](#audio-system)
+28. [Best Practices Summary](#best-practices-summary)
+29. [Type Inspection and Debugging](#type-inspection-and-debugging)
+30. [Additional Resources](#additional-resources)
 
 ---
 
 ## Introduction
 
-**LavishScript** is the scripting language used by InnerSpace and all InnerSpace extensions. Before diving into game-specific scripting, it's essential to understand the fundamentals of LavishScript itself.
+**LavishScript** is the scripting language used by Inner Space and the extensions that load into it. Before diving into extension-specific scripting, it's essential to understand the fundamentals of LavishScript itself.
 
 ### What is LavishScript?
 
-LavishScript is a **custom scripting language** designed specifically for game automation and extension. It provides:
+LavishScript is a custom scripting language designed for Inner-Space-hosted automation. It provides:
 
-- **Object-oriented programming** with inheritance
-- **Strong typing** with built-in and custom types
-- **Atomic execution** for performance-critical code
-- **Direct game memory access** through InnerSpace extensions
-- **Event-driven programming** for reactive scripts
+- Object-oriented programming with single inheritance
+- Static type declarations with runtime coercion at data-sequence resolution
+- Atomic execution for callbacks and accessors that must resolve immediately
+- Direct access to Inner Space subsystems and any registered extensions
+- Event-driven and trigger-driven programming for reactive scripts
+
+LavishScript has no block-comment syntax; only line comments via `;`. There is no `/* */` form.
+
+For the canonical language reference, see [LavishScript on the Lavish Software wiki](https://www.lavishsoft.com/wiki/index.php/LavishScript).
 
 ---
 
-## Your First Script - "Hello World"
+## Your First Script
 
 ### Basic Script Structure
 
@@ -66,46 +79,53 @@ function main()
 ### Key Elements
 
 **1. Comments**
-- Single-line comments begin with `;` (semicolon)
-- Must appear at the start of a line (after any whitespace)
+- Single-line comments begin with `;` (semicolon).
+- Must appear at the start of a line (after any whitespace). Trailing same-line comments are not supported.
 
 ```lavishscript
 ; This is a valid comment
     ; This is also a valid comment (indented)
+
+echo "Hello"  ; NOT a comment -- this is part of the echo argument!
 ```
 
 **2. The main Function**
-- Entry point for script execution
-- Defined with `function main()`
-- Code block enclosed in `{` and `}`
+- Entry point for script execution.
+- Defined with `function main()`.
+- Code block enclosed in `{` and `}`.
 
-**3. Code Block Braces**
-- Opening `{` and closing `}` **must each be on their own line**
-- This is a strict requirement in LavishScript
+**3. Code Block Braces for Definitions and Control Flow**
+- For `function`, `atom`, `objectdef`, `member`, `method`, `if`/`elseif`/`else`, `while`/`do-while`/`for`, and `switch`/`case`: opening `{` and closing `}` must each be on their own line.
+- This rule does NOT apply to JSON object/array literals inside data sequences (e.g., `{}` and `[1,2,3]` inside `${...}` are part of JSON syntax, not LavishScript blocks).
 
 ```lavishscript
-; CORRECT
+; CORRECT - control-flow braces on their own lines
 function main()
 {
     echo "Hello"
 }
 
-; INCORRECT - Will cause errors
+; INCORRECT - opening brace on same line as function
 function main() {
     echo "Hello"
 }
+
+; FINE - JSON literal inside data sequence is exempt
+variable jsonvalue jo={"key":"value"}
 ```
 
-**4. Commands**
-- `echo` outputs text to the console
-- Commands are executed line by line
+For the canonical syntax reference, see [LavishScript:Syntax](https://www.lavishsoft.com/wiki/index.php/LavishScript:Syntax).
+
+**4. The echo Command**
+
+`echo` writes text to the console. It is the platform's `echo` command -- documented at [ISKernel:Echo (Command)](https://www.lavishsoft.com/wiki/index.php/ISKernel:Echo_(Command)) -- and is one of the commands you will use most often in tutorial code.
 
 <!-- CLAUDE_SKIP_START -->
 ### Running Your First Script
 
-1. Save the file as `hello.iss` in your `Scripts` directory
-2. In the InnerSpace console, type: `run hello`
-3. You should see: `Hello World!`
+1. Save the file as `hello.iss` in your `Scripts` directory.
+2. In the Inner Space console, type: `run hello`.
+3. You should see: `Hello World!`.
 <!-- CLAUDE_SKIP_END -->
 
 ---
@@ -114,43 +134,74 @@ function main() {
 
 ### Declaring Variables
 
-Variables store data and are declared with the `variable` keyword:
+Variables are declared with the `variable` keyword:
 
 ```lavishscript
 variable string TextToDisplay="Hello World!"
 ```
 
 **Syntax:**
+
 ```
-variable <type> <name> = <optional_initial_value>
+variable[(<scope>)] <type> <name>[=<initial_value>]
 ```
 
-**Examples:**
+**Scope qualifier (optional):**
+
+| Scope | Lifetime |
+|---|---|
+| (omitted) | Function-local; destroyed when the enclosing function returns. |
+| `script` | Script-scope; lives for the duration of the script. |
+| `global` | Global; lives until Inner Space exits. |
+| `globalkeep` | Global plus persisted across script restarts. |
+
 ```lavishscript
-variable string Name="Alice"
-variable int Counter=0
-variable string Message    ; No initial value
+variable string Name="Alice"           ; function-local
+variable(script) int Counter=0         ; script-scope
+variable(global) bool Initialized      ; global
 ```
+
+For the canonical reference, see [LavishScript:Variables](https://www.lavishsoft.com/wiki/index.php/LavishScript:Variables). The runtime forms `DeclareVariable` and `DeleteVariable` are documented in [01b §2.1 Variable Management](01b_LavishScript_Reference.md#21-lavishscript-core-commands).
 
 ### Common Data Types
 
 | Type | Description | Example Values |
-|------|-------------|----------------|
+|---|---|---|
 | `string` | Text data | `"Hello"`, `"Bob"` |
-| `int` | 32-bit signed integer | `-1`, `0`, `100`, `2147483647` |
-| `uint` | 32-bit unsigned integer | `0`, `100`, `4294967295` |
-| `float` | Floating-point number | `1.5`, `-3.14`, `0.001` |
-| `bool` | Boolean (TRUE/FALSE) | `TRUE`, `FALSE` |
+| `int` | 32-bit signed integer | `-1`, `0`, `2147483647` |
+| `uint` | 32-bit unsigned integer | `0`, `4294967295` |
+| `int64` | 64-bit signed integer | Used for IDs/values exceeding 32-bit range |
+| `byte` | 8-bit unsigned integer | `0`-`255` |
+| `float` | Single-precision float | `1.5`, `-3.14`, `0.001` |
+| `float64` | Double-precision float | Higher precision than `float` |
+| `bool` | TRUE or FALSE | `TRUE`, `FALSE` |
 
-### Integer Types
+When a `variable` is `string`-typed, the engine actually creates a [`mutablestring`](https://www.lavishsoft.com/wiki/index.php/ObjectType:mutablestring) (the mutable form of `string`). The two are interoperable; you generally don't need to think about the distinction.
 
-**Signed Integer (`int`):**
-- Range: -2,147,483,648 to 2,147,483,647
-- Can be positive or negative
+For the complete object-types catalogue, see [01b §3](01b_LavishScript_Reference.md#3-object-types).
 
-**Unsigned Integer (`uint`):**
-- Range: 0 to 4,294,967,295
-- Cannot be negative (more room for positive values)
+### Integer Range
+
+- **Signed (`int`):** -2,147,483,648 to 2,147,483,647.
+- **Unsigned (`uint`):** 0 to 4,294,967,295.
+- **64-bit signed (`int64`):** -2^63 to 2^63 - 1. Use when values exceed 32-bit range.
+
+### Type Conversion
+
+LavishScript exposes conversion Top-Level Objects for converting between primitive types in data sequences:
+
+| TLO | Use |
+|---|---|
+| [`Bool`](https://www.lavishsoft.com/wiki/index.php/TLO:Bool) | `${Bool[expr]}` evaluates `expr` as a boolean. |
+| [`Float`](https://www.lavishsoft.com/wiki/index.php/TLO:Float) | `${Float[stringValue]}` parses to a float. |
+| [`Int`](https://www.lavishsoft.com/wiki/index.php/TLO:Int) | `${Int[stringValue]}` parses to an int. |
+| [`String`](https://www.lavishsoft.com/wiki/index.php/TLO:String) | `${String[value]}` wraps for further `.string` member access. |
+
+```lavishscript
+variable string CountText="42"
+variable int Count=${Int[${CountText}]}
+echo "Parsed: ${Count}"
+```
 
 ### Using Variables
 
@@ -167,11 +218,59 @@ function main()
 
 ---
 
+## Top-Level Objects
+
+A **Top-Level Object** (TLO) is the entry point of a data sequence. When you write `${Math.Calc[1+1]}` you are reading the `Math` TLO, calling its `Calc` member, and emplacing the result. The general form is:
+
+```
+${TLO[indexargs].Member.Member.Method:colonAccessor}
+```
+
+Anything to the left of the first `.` is a TLO. Everything to the right walks members and methods.
+
+### Why TLOs Matter
+
+Code samples elsewhere in this file reference `${Math.Calc[...]}`, `${Script.RunningTime}`, `${Time.Timestamp}`, and similar. Each of those names is a TLO documented on the wiki. Knowing the TLO concept lets you find the canonical reference for any of them.
+
+### LavishScript-Core TLOs
+
+The engine ships 22 LavishScript-core TLOs (see [01b §4.1](01b_LavishScript_Reference.md#41-lavishscript-core-tlos) for the full table):
+
+- **Type conversion:** `Bool`, `Float`, `Int`, `String`, `Enum`
+- **Date/time:** `Time`
+- **Events:** `Event`
+- **Inline branching:** `If` (form: `${If[condition,trueValue,falseValue]}`)
+- **Math:** `Math`
+- **Misc:** `Arg`, `Execute`, `LavishScript`, `Script`, `Select`, `Type`
+- **Operating system:** `System`
+- **Scripting:** `QueuedCommands`, `Return`, `Variable`, `This`, `VariableScope`, `ForEach`, `Context`
+
+### Inner Space TLOs
+
+Inner Space adds further TLOs when loaded as the host. Highlights:
+
+- **Audio / Display / Input:** `Audio`, `Display`, `Input`, `Keyboard`, `Mouse`
+- **Multi-boxing:** `Session`, `Sessions`
+- **Subsystems:** `InnerSpace`, `Console`, `Extension`, `Localization`, `MIDI`, `Game`, `Profile`
+- **UI / Tasks:** `LGUI`, `LGUI2`, `LMAC`
+
+The full Inner Space TLO list is in [01b §4.2 -- §4.4](01b_LavishScript_Reference.md#42-inner-space-kernel-tlos).
+
+### Enumerating TLOs at Runtime
+
+Run [`TopLevelObject`](https://www.lavishsoft.com/wiki/index.php/Command:TopLevelObject) at the console with no argument to list every TLO registered in the current session, including those added by extensions.
+
+### Per-Extension TLOs
+
+Game-specific extensions register their own TLOs (e.g., character/world/inventory entry points). Those are documented in their respective extension guide files; they are out of scope for this tutorial.
+
+---
+
 ## Data Sequences
 
 ### What is a Data Sequence?
 
-A **Data Sequence** retrieves a value and **emplaces** it in a command before execution.
+A **data sequence** retrieves a value and **emplaces** it in a command before execution.
 
 **Syntax:** `${ }`
 
@@ -184,14 +283,16 @@ echo "Hello ${Name}!"
 
 ### How Data Sequences Work
 
-1. LavishScript encounters `${Name}`
-2. Looks up the value of `Name` (which is `"Alice"`)
-3. Replaces `${Name}` with `Alice` in the command
-4. Executes: `echo "Hello Alice!"`
+1. The parser encounters `${Name}`.
+2. It looks up `Name` (which is `"Alice"`).
+3. It replaces `${Name}` with `Alice` in the surrounding text.
+4. The resulting `echo "Hello Alice!"` is executed.
+
+For the canonical reference, see [LavishScript:Data Sequences](https://www.lavishsoft.com/wiki/index.php/LavishScript:Data_Sequences) and the "Data" section of [LavishScript:Syntax](https://www.lavishsoft.com/wiki/index.php/LavishScript:Syntax).
 
 ### Multiple Data Sequences
 
-You can use multiple Data Sequences in a single command:
+You can use multiple data sequences in a single command:
 
 ```lavishscript
 variable string First="John"
@@ -204,7 +305,7 @@ echo "${First} ${Last} ${First} ${Last}"
 
 ### Accessing Nested Data
 
-Data Sequences can access nested properties using `.` (dot) notation:
+Data sequences walk nested properties using `.` (dot) notation:
 
 ```lavishscript
 variable string Name="Alice"
@@ -213,18 +314,34 @@ echo "Name length: ${Name.Length}"
 
 **Output:** `Name length: 5`
 
-Here, `Length` is a **member** of the `string` type (more on members later).
+Here, `Length` is a member of the `string` type. The `string` type has many more members (`Upper`, `Lower`, `Find`, `Token`, `Replace`, `Trim`, etc.) -- see [01b §3.1 Text](01b_LavishScript_Reference.md#31-text) for the full list, or the canonical [`ObjectType:string`](https://www.lavishsoft.com/wiki/index.php/ObjectType:string) wiki page.
 
-### Data Sequence Best Practice
+### The Tilde Escape -- REQUIRED for Re-Parsed Output
 
-When using Data Sequences that may contain special characters (like quotes), use the tilde `~` for escaping:
+When a data sequence's value will be **re-parsed** by another command, you MUST use the tilde (`~`) suffix to escape parser-significant characters in the value:
 
 ```lavishscript
 variable string Text="He said \"Hello\""
 echo "${Text~}"
 ```
 
-The `~` ensures the text is properly escaped (more on escaping later).
+**The rule:** use `~` whenever the data sequence output is consumed by a second command parse pass. Specifically:
+
+1. Inside a quoted string passed to another command (e.g., `call MyFunction "${Text~}"`).
+2. Inside method index brackets (e.g., `Object:Method["${Value~}"]`).
+3. When constructing JSON or other quoted-text content from variables.
+
+Without `~`, code that LOOKS correct will mis-parse the moment the variable contains a `"`, `\`, `}`, or other parser-significant character.
+
+```lavishscript
+; BAD - breaks if Text contains quotes or special characters
+call SomeFunction ${Text}
+
+; CORRECT - the ~ escapes any parser-significant characters in Text
+call SomeFunction "${Text~}"
+```
+
+This is not a "best practice" -- it is the rule. Quoted-string parameters and method indices both trigger a second parse pass.
 
 ---
 
@@ -232,7 +349,7 @@ The `~` ensures the text is properly escaped (more on escaping later).
 
 ### Function Parameters
 
-Functions can accept parameters (input values):
+Functions can accept parameters:
 
 ```lavishscript
 function main(string TextToDisplay)
@@ -242,6 +359,7 @@ function main(string TextToDisplay)
 ```
 
 **Syntax:**
+
 ```
 function name(type param1, type param2)
 ```
@@ -259,11 +377,13 @@ function main(string Text="Hello World!", int Count=3)
 ```
 
 If you run the script without parameters:
+
 ```
 run myscript
 ```
 
-It will use the defaults. But you can override them:
+It uses the defaults. Override them by passing values:
+
 ```
 run myscript "Custom text" 5
 ```
@@ -280,14 +400,22 @@ function main(string First, string Last, int Age)
 }
 ```
 
-**Usage:**
+**Usage:** `run myscript "John" "Smith" 30`
+
+### Accessing Arguments by Position
+
+The [`Arg` TLO](https://www.lavishsoft.com/wiki/index.php/TLO:Arg) reads command-line arguments by position when you don't want to declare named parameters:
+
+```lavishscript
+echo "First arg: ${Arg[1]}"
+echo "Second arg: ${Arg[2]}"
 ```
-run myscript "John" "Smith" 30
-```
+
+Useful for variadic / generic scripts.
 
 ### Command Parameter Splitting
 
-**Important:** Parameters are split by **spaces**.
+Parameters are split by spaces:
 
 ```lavishscript
 echo Multiple Parameters
@@ -297,7 +425,7 @@ echo "One Parameter"
 ; This passes ONE parameter to echo: "One Parameter"
 ```
 
-**Rule:** If a parameter contains spaces, it **must be quoted** with `"`.
+If a parameter contains spaces, it MUST be quoted:
 
 ```lavishscript
 run myscript "Hello World" 42
@@ -317,11 +445,12 @@ run myscript Hello World 42
 ### Why Escape Text?
 
 Certain characters have special meaning in LavishScript:
-- `"` (quote) - Splits parameters
-- `\` (backslash) - Escape character
-- `~` (tilde) - Escape in Data Sequences
 
-### Escaping Quotes in Commands
+- `"` (quote) -- splits parameters
+- `\` (backslash) -- escape character inside quoted strings
+- `~` (tilde) -- data-sequence escape (see [Data Sequences](#data-sequences))
+
+### Escaping Quotes in Quoted Strings
 
 Use `\` (backslash) to escape quotes:
 
@@ -333,37 +462,14 @@ echo "He said \"Hello World!\""
 
 ### Escaping in Data Sequences
 
-Use `~` (tilde) to escape Data Sequences:
-
-```lavishscript
-variable string Text="He said \"Hello\""
-echo "${Text~}"
-```
-
-**Why use `~`?**
-
-Without `~`, if the variable contains quotes or other special characters, they might interfere with parameter parsing:
+Use `~` (tilde) to escape data sequences -- see the [Tilde Escape rule](#the-tilde-escape----required-for-re-parsed-output) above. The short form: any time the data sequence's value will be re-parsed (inside a quoted string parameter, inside method index brackets, etc.), use `~`.
 
 ```lavishscript
 ; BAD - May break if Text contains quotes
 call SomeFunction ${Text}
 
-; GOOD - Safely escapes any special characters
+; CORRECT - Safely escapes any special characters
 call SomeFunction "${Text~}"
-```
-
-### Best Practice for Escaping
-
-**Always quote and escape `string` parameters:**
-
-```lavishscript
-variable string Message="Hello \"World\""
-
-; BEST PRACTICE
-call MyFunction "${Message~}"
-
-; RISKY - May fail if Message has spaces or quotes
-call MyFunction ${Message}
 ```
 
 ### Escaping Example
@@ -377,6 +483,7 @@ function main(string Phrase)
 ```
 
 **Usage:**
+
 ```
 run myscript "He said \"Hi there\""
 ```
@@ -389,7 +496,7 @@ run myscript "He said \"Hi there\""
 
 ### Defining Functions
 
-Functions are code blocks that can be called (executed) by name:
+Functions are code blocks invoked by name:
 
 ```lavishscript
 function SayHello()
@@ -412,6 +519,7 @@ call FunctionName parameters
 ```
 
 **Example:**
+
 ```lavishscript
 function Greet(string Name)
 {
@@ -426,6 +534,7 @@ function main()
 ```
 
 **Output:**
+
 ```
 Hello Alice!
 Hello Bob!
@@ -433,7 +542,7 @@ Hello Bob!
 
 ### Function Parameters
 
-Functions can accept parameters just like `main`:
+Functions accept parameters just like `main`:
 
 ```lavishscript
 function Add(int A, int B)
@@ -450,7 +559,7 @@ function main()
 
 ### Parameter Escaping with Functions
 
-Just like with commands, **quote and escape** string parameters:
+Just like with commands, quote and escape string parameters:
 
 ```lavishscript
 function DisplayMessage(string Message)
@@ -462,10 +571,14 @@ function main()
 {
     variable string Text="Important \"Info\""
 
-    ; BEST PRACTICE - Quote and escape
+    ; CORRECT - Quote and escape
     call DisplayMessage "${Text~}"
 }
 ```
+
+### Script Lifecycle Commands
+
+The bare `run myscript` form is shorthand for [`RunScript`](https://www.lavishsoft.com/wiki/index.php/Command:RunScript). Related script-lifecycle commands -- [`EndScript`](https://www.lavishsoft.com/wiki/index.php/Command:EndScript), [`WaitScript`](https://www.lavishsoft.com/wiki/index.php/Command:WaitScript), [`Scripts`](https://www.lavishsoft.com/wiki/index.php/Command:Scripts) -- are documented in [01b §2.1 Script Lifecycle](01b_LavishScript_Reference.md#21-lavishscript-core-commands).
 
 ---
 
@@ -473,10 +586,10 @@ function main()
 
 ### The return Command
 
-The `return` command has two purposes:
+The [`return`](https://www.lavishsoft.com/wiki/index.php/Command:Return) command has two purposes:
 
-1. **Immediately exits** the current function
-2. **Provides a value** to the caller
+1. Immediately exits the current function.
+2. Provides a value to the caller.
 
 ```lavishscript
 function GetAnswer()
@@ -487,7 +600,7 @@ function GetAnswer()
 
 ### Return Without a Value
 
-You can use `return` without a value to exit early:
+Use `return` with no value to exit early:
 
 ```lavishscript
 function CheckAge(int Age)
@@ -504,7 +617,7 @@ function CheckAge(int Age)
 
 ### Accessing Return Values
 
-After calling a function, access the return value via `${Return}`:
+After `call`-ing a function, access the return value via the [`Return` Top-Level Object](https://www.lavishsoft.com/wiki/index.php/TLO:Return) -- written as `${Return}`:
 
 ```lavishscript
 function GetAnswer()
@@ -565,15 +678,15 @@ function main()
 }
 ```
 
+`Return` is one of the LavishScript-core TLOs (see [Top-Level Objects](#top-level-objects)). The "lifespan until next `call`" behavior is the TLO's defining contract -- save the value into your own variable immediately if you need it later.
+
 ---
 
 ## Object-Oriented Programming
 
 ### What is Object-Oriented Programming?
 
-Object-Oriented Programming (OOP) allows you to **tie available functionality to a type of data**.
-
-In LavishScript, this is done with `objectdef` (object definition), equivalent to a `class` in many other languages.
+Object-Oriented Programming (OOP) ties available functionality to a type of data. In LavishScript, this is done with `objectdef` (object definition) -- equivalent to a `class` in many other languages.
 
 ### Defining an Object
 
@@ -586,13 +699,13 @@ objectdef fruit
 ```
 
 **Key points:**
-- `objectdef` keyword followed by the type name
-- Code block with `{` and `}` on separate lines
-- Can contain variables, members, and methods
+- `objectdef` keyword followed by the type name.
+- Code block with `{` and `}` on separate lines.
+- Can contain variables, members, and methods.
 
 ### Creating Object Variables
 
-Once defined, you can create variables of your custom type:
+Once defined, create variables of your custom type:
 
 ```lavishscript
 variable fruit MyFruit
@@ -604,7 +717,7 @@ This creates a `fruit` object called `MyFruit` with:
 
 ### Accessing Object Variables
 
-Use `.` (dot) notation in Data Sequences:
+Use `.` (dot) notation in data sequences:
 
 ```lavishscript
 objectdef fruit
@@ -623,6 +736,7 @@ function main()
 ```
 
 **Output:**
+
 ```
 Name: Apple
 Color: Red
@@ -630,13 +744,13 @@ Color: Red
 
 ### Data Sequence as Address
 
-Think of `${MyFruit.Name}` as an **address**:
+Think of `${MyFruit.Name}` as an address:
 
-- Start at `MyFruit`
-- Navigate to `Name`
-- Retrieve the value
+- Start at `MyFruit`.
+- Navigate to `Name`.
+- Retrieve the value.
 
-Just like a postal address leads to a house, a Data Sequence leads to data.
+Just like a postal address leads to a house, a data sequence leads to data.
 
 ### Nested Objects
 
@@ -670,9 +784,7 @@ function main()
 
 ### What is a Member?
 
-A **member** is a specialized function that **provides a value** when accessed in a Data Sequence.
-
-Unlike a variable (which stores a value), a member **calculates and returns** a value.
+A **member** is a specialized function that provides a value when accessed in a data sequence. Where a `variable` stores a value, a member calculates and returns one.
 
 ### Defining a Member
 
@@ -693,7 +805,7 @@ objectdef fruit
 
 ### The ToText Member
 
-`ToText` is special - it's called when you access an object's value directly:
+`ToText` is special: it is called when an object's value is accessed directly in a data sequence (the object's "reduces to" value).
 
 ```lavishscript
 variable fruit MyFruit
@@ -732,7 +844,7 @@ function main()
 ### Members vs Variables
 
 | Feature | Variable | Member |
-|---------|----------|--------|
+|---|---|---|
 | Stores value | Yes | No |
 | Calculates value | No | Yes |
 | Access syntax | `${Object.Variable}` | `${Object.Member}` |
@@ -740,7 +852,7 @@ function main()
 
 ### Built-in Type Members
 
-Built-in types like `string` have members too:
+Built-in types like `string` ship with many members. The basics:
 
 ```lavishscript
 variable string Name="Alice"
@@ -751,15 +863,18 @@ echo "Lower: ${Name.Lower}"
 ```
 
 **Output:**
+
 ```
 Length: 5
 Upper: ALICE
 Lower: alice
 ```
 
+`string` has many more members beyond `Length`/`Upper`/`Lower` (`Find`, `Token`, `Replace`, `Trim`, `Equal`, `URLEncode`, etc.). For the full member list, see the canonical [`ObjectType:string`](https://www.lavishsoft.com/wiki/index.php/ObjectType:string) wiki page or [01b §3.1 Text](01b_LavishScript_Reference.md#31-text).
+
 ### Member Parameters
 
-Members can accept parameters (using index syntax `[ ]`):
+Members can accept parameters using index syntax `[ ]`:
 
 ```lavishscript
 objectdef calculator
@@ -780,7 +895,7 @@ function main()
 
 **Output:** `Sum: 15`
 
-**Note:** Parameters use `[` `]` brackets and are separated by `,` commas.
+Parameters use `[` `]` brackets and are separated by `,` commas.
 
 ---
 
@@ -788,9 +903,7 @@ function main()
 
 ### What is a Method?
 
-A **method** is a specialized function that **performs an action** using an object.
-
-Where a **member** retrieves a value, a **method** does something (and may or may not return the same object).
+A **method** is a specialized function that performs an action on an object. Where a member retrieves a value, a method does something.
 
 ### Defining a Method
 
@@ -832,6 +945,7 @@ function main()
 ```
 
 **Output:**
+
 ```
 Before: Apple
 After: Banana
@@ -840,32 +954,48 @@ After: Banana
 ### Member vs Method Syntax
 
 | Type | Syntax | Purpose | Example |
-|------|--------|---------|---------|
-| **Member** | `.` (dot) | Retrieve value | `${Object.Member}` |
-| **Method** | `:` (colon) | Perform action | `Object:Method` |
+|---|---|---|---|
+| Member | `.` (dot) | Retrieve value | `${Object.Member}` |
+| Method | `:` (colon) | Perform action | `Object:Method` |
 
-### Methods as Commands
+### Methods in Data Sequences vs As Commands
 
-Methods can be used **as commands** (without `${ }`):
+Methods can be invoked two ways, with subtly different behavior:
+
+**As a command (recommended for actions):**
 
 ```lavishscript
-function main()
+MyFruit:SetName["Banana"]
+```
+
+The method runs. The result is discarded.
+
+**Inside a data sequence:**
+
+```lavishscript
+echo "${MyFruit:SetName["Banana"]}"
+```
+
+The method runs, then the resulting object's reduced-text representation is emplaced into the data sequence.
+
+There are two further wrinkles when calling methods inside data sequences:
+
+1. The method call retains the original object (which is what allows method chaining -- see below).
+2. If the method `return FALSE`s to indicate failure or destruction, the entire data sequence resolves to `NULL` instead of the object's reduced text.
+
+```lavishscript
+method Destroy()
 {
-    variable fruit MyFruit
-
-    ; As a command (recommended for actions)
-    MyFruit:SetName["Banana"]
-
-    ; In a Data Sequence (calls SetName, then echoes the object's string value)
-    echo "${MyFruit:SetName["Banana"]}"
+    ; Cleanup code here
+    return FALSE
 }
 ```
 
-**Best practice:** Use methods as commands when you're performing an action, not retrieving a value. Using a method inside `${}` will execute the method AND output the object's string representation, which is usually not the intent.
+**Best practice:** invoke methods as commands when you intend an action. Use the data-sequence form only when you specifically want to chain or to detect failure via NULL.
 
 ### Method Chaining
 
-Methods can be chained together:
+Methods can be chained:
 
 ```lavishscript
 function main()
@@ -879,20 +1009,6 @@ function main()
 ```
 
 **Output:** `Fruit: Banana Yellow`
-
-### Method Return Values
-
-In a Data Sequence, a method call retains the original object, allowing further chaining. A method may `return FALSE` to indicate failure or destruction, which causes the sequence to result in `NULL`:
-
-```lavishscript
-method Destroy()
-{
-    ; Cleanup code here
-    return FALSE
-}
-```
-
-When a method returns `FALSE`, the Data Sequence results in `NULL` (no object).
 
 ### String Set Method
 
@@ -908,7 +1024,7 @@ echo "${Name}"  ; Output: Bob
 
 ### Parameter Escaping in Methods
 
-When passing string parameters to methods, **quote and escape**:
+When passing string parameters to methods, quote and escape (the same rule as the [Tilde Escape](#the-tilde-escape----required-for-re-parsed-output)):
 
 ```lavishscript
 objectdef person
@@ -926,7 +1042,6 @@ function main()
     variable person P
     variable string NewName="John \"Johnny\" Smith"
 
-    ; BEST PRACTICE
     P:SetName["${NewName~}"]
 }
 ```
@@ -937,12 +1052,12 @@ function main()
 
 ### The Initialize Method
 
-`Initialize` is a special method called when an object is **created** (instantiated).
+`Initialize` is a special method called when an object is created (instantiated).
 
 **Purpose:**
-1. Event handler for object creation
-2. Accepts initial values
-3. Sets up default state
+1. Event handler for object creation.
+2. Accepts initial values.
+3. Sets up default state.
 
 ```lavishscript
 objectdef fruit
@@ -973,8 +1088,8 @@ objectdef fruit
 ```lavishscript
 function main()
 {
-    variable fruit Fruit1  ; Uses default "Apple"
-    variable fruit Fruit2="Banana"  ; Passes "Banana" to Initialize
+    variable fruit Fruit1                ; Uses default "Apple"
+    variable fruit Fruit2="Banana"       ; Passes "Banana" to Initialize
 
     echo "Fruit1: ${Fruit1.Name}"
     echo "Fruit2: ${Fruit2.Name}"
@@ -982,6 +1097,7 @@ function main()
 ```
 
 **Output:**
+
 ```
 Fruit1: Apple
 Fruit2: Banana
@@ -989,12 +1105,12 @@ Fruit2: Banana
 
 ### The Shutdown Method
 
-`Shutdown` is called when an object is **destroyed**.
+`Shutdown` is called when an object is destroyed.
 
 **Purpose:**
-1. Event handler for object destruction
-2. Cleanup resources (destroy GUI, close files, etc.)
-3. No parameters accepted
+1. Event handler for object destruction.
+2. Cleanup resources (destroy GUI, close files, etc.).
+3. No parameters accepted.
 
 ```lavishscript
 objectdef logger
@@ -1018,6 +1134,7 @@ function main()
 ```
 
 **Output:**
+
 ```
 Logger created
 Logger active
@@ -1026,9 +1143,7 @@ Logger destroyed
 
 ### The This Reference
 
-**`This`** is a special reference to the **current object** being operated on.
-
-**Why use `This`?**
+`This` is a special reference to the current object being operated on -- the object whose method or member is currently executing.
 
 Inside a member or method, you don't have access to the variable name (like `MyFruit`). You only know it's "some fruit object". `This` refers to that object.
 
@@ -1050,7 +1165,7 @@ objectdef fruit
 }
 ```
 
-### Accessing Members/Methods with This
+### Accessing Members and Methods with This
 
 ```lavishscript
 objectdef person
@@ -1073,7 +1188,49 @@ objectdef person
 
 **Why `This.FirstName` instead of just `FirstName`?**
 
-Inside an objectdef, `This` refers to the current object instance. Variables defined in the objectdef **can** be accessed directly by name (e.g., `FirstName:Set[...]`), but members and methods **must** be accessed through an object reference like `This` (e.g., `This:SetName[...]`). Using `This.VariableName` for variables is optional but recommended for clarity and forward-compatibility.
+Inside an `objectdef`, variables defined in the objectdef CAN be accessed directly by name (e.g., `FirstName:Set[...]`). Members and methods MUST be accessed through an object reference like `This` (e.g., `This:SetName[...]`). Using `This.VariableName` for variables is optional but is recommended for clarity and forward-compatibility.
+
+### atexit and Object Lifecycle Globals
+
+A common pattern: declare a script-scope or global object whose `Initialize`/`Shutdown` runs the entire script's lifecycle, with an `atexit` atom forwarding the exit signal.
+
+```lavishscript
+objectdef MyApp
+{
+    variable bool IsRunning=TRUE
+
+    method Initialize()
+    {
+        echo "App started"
+    }
+
+    method Shutdown()
+    {
+        echo "Shutting down..."
+        IsRunning:Set[FALSE]
+    }
+}
+
+variable(global) MyApp App
+
+atom atexit()
+{
+    App:Shutdown
+}
+
+function main()
+{
+    App:Initialize
+
+    while ${App.IsRunning}
+    {
+        ; Main loop
+        waitframe
+    }
+}
+```
+
+**Avoid shadowing built-in TLOs.** Don't name a custom global `Script`, `Math`, `Time`, `System`, `Event`, etc. -- those are built-in TLOs (see [Top-Level Objects](#top-level-objects)) and your global will shadow them, breaking later `${Script.RunningTime}`-style references in the same script. Use a clearly distinct name like `App`, `MyApp`, `Bot`, `Controller`, or your project name.
 
 ---
 
@@ -1081,9 +1238,9 @@ Inside an objectdef, `This` refers to the current object instance. Variables def
 
 ### Object Inheritance
 
-Inheritance allows one object type to **inherit** properties and behavior from another.
+Inheritance allows one object type to inherit properties and behavior from another.
 
-**Example:** Apples, Bananas, and Cherries are all **fruit**.
+**Example:** Apples, Bananas, and Cherries are all fruit.
 
 ```lavishscript
 objectdef fruit
@@ -1126,9 +1283,10 @@ objectdef apple inherits fruit
 ### How Inheritance Works
 
 An `apple` object has:
-- All variables from `fruit` (Name, Color)
-- All methods from `fruit` (SetName)
-- Plus any new variables/methods defined in `apple` (SetColor)
+
+- All variables from `fruit` (Name, Color).
+- All methods from `fruit` (SetName).
+- Plus any new variables and methods defined in `apple` (SetColor).
 
 ```lavishscript
 function main()
@@ -1147,7 +1305,7 @@ function main()
 
 ### Overriding Members and Methods
 
-Child objects can **override** (replace) members/methods from parent objects:
+Child objects can override (replace) members and methods from parent objects:
 
 ```lavishscript
 objectdef fruit
@@ -1179,18 +1337,20 @@ function main()
 }
 ```
 
-### Type Casting
+### Type Casting -- Two Forms
 
-**Type casting** allows you to access a parent type's members/methods even when they're overridden.
+Type casting lets you access a parent type's members or methods even when they have been overridden. There are two cast forms with distinct purposes:
 
-**Syntax:** `Object(type)`
+**Named-type cast: `Object(<typeName>)`**
+
+Treats the object as the named type. Used most often inside an overriding method to call the named parent's version:
 
 ```lavishscript
 objectdef banana inherits fruit
 {
     method Initialize()
     {
-        ; Call fruit's Initialize method
+        ; Call fruit's Initialize method specifically
         This(fruit):Initialize["Banana"]
 
         ; Then do banana-specific stuff
@@ -1199,9 +1359,19 @@ objectdef banana inherits fruit
 }
 ```
 
-**Why is this useful?**
+**Parent-keyword cast: `Object(parent)`**
 
-The `banana` object overrides `Initialize`, but we still want to call `fruit`'s `Initialize` first. Type casting lets us do that.
+`(parent)` is a special keyword cast that resolves to the immediate parent of whatever the object's type is, regardless of name. Use it when you want "call the inherited type's method" without naming the parent type explicitly:
+
+```lavishscript
+method Initialize()
+{
+    This(parent):Initialize          ; Call inherited type's Initialize
+    ; Child-specific initialization
+}
+```
+
+The `(parent)` form keeps working if you later refactor the inheritance chain, because it is resolved against the actual parent type at parse time. Prefer it over a named-type cast when you're calling "the inherited version" of the same-named method.
 
 ### Type Casting Example
 
@@ -1220,8 +1390,8 @@ objectdef apple inherits fruit
 {
     method Initialize()
     {
-        ; Call the parent's Initialize
-        This(fruit):Initialize["Apple"]
+        ; Call the parent's Initialize using the (parent) keyword cast
+        This(parent):Initialize["Apple"]
 
         echo "Apple initialized!"
     }
@@ -1234,13 +1404,15 @@ function main()
 ```
 
 **Output:**
+
 ```
 Apple initialized!
 ```
 
 ### Inheritance Best Practices
 
-1. **Call parent Initialize** when overriding:
+1. **Call parent Initialize when overriding:**
+
 ```lavishscript
 method Initialize()
 {
@@ -1249,11 +1421,11 @@ method Initialize()
 }
 ```
 
-2. **Use inheritance for "is-a" relationships**:
-   - An Apple **is a** Fruit ✓
-   - An Apple **has a** Color (use a variable instead) ✓
+2. **Use inheritance for "is-a" relationships.**
+   - An Apple **is a** Fruit -- inherit.
+   - An Apple **has a** Color -- use a variable instead.
 
-3. **Override carefully** - Make sure you understand what the parent method does
+3. **Override carefully.** Make sure you understand what the parent method does.
 
 ---
 
@@ -1261,28 +1433,28 @@ method Initialize()
 
 ### What is Atomicity?
 
-"Atomic" means **unbroken, as a whole**. In programming, atomic functions **must complete immediately** without waiting.
+"Atomic" means **unbroken, as a whole**. In programming, atomic functions must complete immediately without waiting.
 
 ### Atomic vs Non-Atomic
 
-| Function Type | Can Wait? | Can Use waitframe? | Blocks Game? |
-|---------------|-----------|-------------------|--------------|
-| `function` | Yes | Yes | No |
-| `atom` | No | No | Yes |
-| `member` | No | No | Yes |
-| `method` | No | No | Yes |
+| Function Type | Can `wait` / `waitframe`? | Blocks Frame? |
+|---|---|---|
+| `function` | Yes | No |
+| `atom` | No | Yes |
+| `member` | No | Yes |
+| `method` | No | Yes |
 
-**Atomic functions** (`atom`, `member`, `method`) **block** the host game from advancing until they complete.
+Atomic functions (`atom`, `member`, `method`) block the host frame from advancing until they complete.
 
 ### Why Atomicity Matters
 
-**Members and methods must be atomic** because they're used in Data Sequences, which must resolve immediately:
+Members and methods MUST be atomic because they're used in data sequences, which must resolve immediately:
 
 ```lavishscript
 echo "${Object.Member}"
 ```
 
-If `Member` could wait for frames, the `echo` command would be stuck waiting, freezing the entire script.
+If `Member` could wait for frames, the `echo` command would be stuck waiting, freezing the entire host until the wait elapsed.
 
 ### Defining an Atom
 
@@ -1297,7 +1469,7 @@ atom MyCommand()
 
 ### Using Atoms as Commands
 
-Atoms can be executed **as commands**:
+Atoms are executed as commands by name (no `call` needed, unlike functions):
 
 ```lavishscript
 atom greet(string Name)
@@ -1313,6 +1485,7 @@ function main()
 ```
 
 **Output:**
+
 ```
 Hello Alice!
 Hello Bob!
@@ -1321,18 +1494,27 @@ Hello Bob!
 ### Atoms vs Functions
 
 | Feature | function | atom |
-|---------|----------|------|
-| Can use waitframe | Yes | No |
-| Can use wait | Yes | No |
+|---|---|---|
+| Can use `waitframe` | Yes | No |
+| Can use `wait` | Yes | No |
 | Can run for minutes | Yes | No |
-| Can be used as named command (without `call`) | No | Yes |
-| Blocks game | No | Yes |
+| Invoked as named command (no `call`) | No | Yes |
+| Invoked with `call` | Yes | No |
+| Blocks frame | No | Yes |
+
+### Registered Atoms (cross-script invocation)
+
+The `atom` keyword defines an atom in the local script. To make an atom callable from outside the defining script (from another script, from the console, or from a `Relay`-broadcast command), use the [`AddAtom`](https://www.lavishsoft.com/wiki/index.php/Command:AddAtom) / [`DeleteAtom`](https://www.lavishsoft.com/wiki/index.php/Command:DeleteAtom) / [`ExecuteAtom`](https://www.lavishsoft.com/wiki/index.php/Command:ExecuteAtom) commands:
+
+- `AddAtom <name>` -- register the atom under a global name.
+- `ExecuteAtom <name> [args]` -- invoke a registered atom by name.
+- `DeleteAtom <name>` -- unregister.
+
+This is the mechanism `Relay` uses under the hood to invoke atoms in other sessions. See [01b §2.1 Atom Registration](01b_LavishScript_Reference.md#21-lavishscript-core-commands) for the table of commands and [Input Emulation](#input-emulation) below for the multi-boxing context.
 
 ### The atexit Atom
 
-`atexit` is a special atom called **when a script is ending**.
-
-**Purpose:** Cleanup before script shutdown (destroy GUI, save data, etc.)
+`atexit` is a special atom called when a script is ending. Use it for cleanup before script shutdown (destroy GUI, save data, close files, etc.):
 
 ```lavishscript
 atom atexit()
@@ -1347,57 +1529,21 @@ function main()
 ```
 
 **Output:**
+
 ```
 Script running
 Script ending - cleanup complete
 ```
 
-### Common atexit Usage
-
-```lavishscript
-objectdef MyScript
-{
-    variable bool IsRunning=TRUE
-
-    method Initialize()
-    {
-        echo "Script started"
-    }
-
-    method Shutdown()
-    {
-        echo "Shutting down..."
-        IsRunning:Set[FALSE]
-    }
-}
-
-variable(global) MyScript Script
-
-atom atexit()
-{
-    Script:Shutdown
-}
-
-function main()
-{
-    Script:Initialize
-
-    while ${Script.IsRunning}
-    {
-        ; Main script loop
-        waitframe
-    }
-}
-```
-
 ### Atomic Restrictions
 
-**Cannot use in atomic code:**
+Cannot use in atomic code:
+
 - `waitframe`
 - `wait`
 - Anything that depends on frame updates
 
-**Attempting to use these will cause a script error:**
+Attempting these will produce a script error:
 
 ```lavishscript
 ; BAD - This will error!
@@ -1407,13 +1553,43 @@ atom BadAtom()
 }
 ```
 
+### Deferring Work From an Atom
+
+Atoms can't `wait`, but they can defer work for the main loop to pick up. Two canonical mechanisms:
+
+**[`QueueCommand`](https://www.lavishsoft.com/wiki/index.php/Command:QueueCommand)** -- append a command to the script's command queue:
+
+```lavishscript
+atom OnSomeEvent()
+{
+    ; Can't wait inside an atom, so defer the work
+    QueueCommand "call ProcessEvent"
+}
+```
+
+The main loop pulls and runs queued commands between frames. Related: [`ExecuteQueued`](https://www.lavishsoft.com/wiki/index.php/Command:ExecuteQueued) (run queued commands now), [`FlushQueued`](https://www.lavishsoft.com/wiki/index.php/Command:FlushQueued) (discard the queue), and the [`QueuedCommands` TLO](https://www.lavishsoft.com/wiki/index.php/TLO:QueuedCommands).
+
+**[`TimedCommand`](https://www.lavishsoft.com/wiki/index.php/Command:TimedCommand)** -- schedule a command to run after a delay (deciseconds), without blocking the calling code:
+
+```lavishscript
+atom OnTrigger()
+{
+    ; Run a follow-up after half a second, non-blocking
+    TimedCommand 5 "call FollowUp"
+}
+```
+
+Use `TimedCommand` when you need a one-shot delayed action; use `QueueCommand` when you want the next main-loop tick to pick it up immediately.
+
+For both commands' full surface, see [01b §2.1 Command Execution and Command Queue](01b_LavishScript_Reference.md#21-lavishscript-core-commands).
+
 ---
 
 ## Wait Commands
 
 ### Script Running Time
 
-Access the current script's running time via `${Script.RunningTime}`:
+The current script's running time (in milliseconds) is exposed via the [`Script` TLO](https://www.lavishsoft.com/wiki/index.php/TLO:Script):
 
 ```lavishscript
 function main()
@@ -1425,6 +1601,7 @@ function main()
 ```
 
 **Output:**
+
 ```
 Start: 0 ms
 After wait: 1000 ms
@@ -1432,7 +1609,7 @@ After wait: 1000 ms
 
 ### The waitframe Command
 
-`waitframe` waits until the game prepares and renders the next frame.
+`waitframe` waits until the host prepares and renders the next frame.
 
 ```lavishscript
 function main()
@@ -1444,43 +1621,53 @@ function main()
 ```
 
 **When to use:**
-- In loops (to avoid max CPU usage)
-- When waiting for game state changes
-- To yield control back to the game
+
+- In long-running loops (to avoid maximum CPU usage).
+- When waiting for host state changes that update frame-to-frame.
+- To yield control back to the host.
 
 ### The wait Command
 
-`wait` waits for **at least** a specified amount of time.
+The [`wait`](https://www.lavishsoft.com/wiki/index.php/Command:Wait) command pauses execution for at least a specified duration. It has three forms:
 
-**Two syntax options:**
+**1. Deciseconds (tenths of a second):**
 
-1. **Deciseconds (tenths of a second):**
 ```lavishscript
-wait 10  ; Wait 1 second (10 deciseconds)
-wait 50  ; Wait 5 seconds
+wait 10  ; Wait 1 second  (10 deciseconds)
+wait 50  ; Wait 5 seconds (50 deciseconds)
 ```
 
-2. **Seconds (with -s parameter):**
+**2. Seconds (with `-s` flag):**
+
 ```lavishscript
 wait -s 1.0    ; Wait 1 second
 wait -s 2.5    ; Wait 2.5 seconds
-wait -s 0.001  ; Wait 0.001 seconds (1 millisecond)
 ```
 
-### Wait Precision
-
-Wait precision depends on **framerate (FPS)**:
-
-- At **60 FPS**, each frame takes ~16.7ms
-- At **10 FPS**, each frame takes ~100ms
+**3. With early-continue condition:**
 
 ```lavishscript
-wait -s 0.001  ; Request 1ms wait
+wait <max_deciseconds> <condition>
 ```
 
-At **10 FPS**, this actually waits ~100ms (one frame).
+The script waits up to `max_deciseconds` OR until `condition` becomes non-zero, whichever happens first. Both decisecond and `-s` seconds forms support the condition:
 
-**Rule:** Waits are "quantized" to framerate intervals.
+```lavishscript
+; Wait up to 10 seconds for MyObject to exist
+wait 100 ${MyObject(exists)}
+
+; Wait up to 5 seconds (in seconds form) for IsLoaded
+wait -s 5.0 ${MyObject.IsLoaded}
+```
+
+### Wait Precision is Frame-Quantized
+
+Wait precision depends on host framerate (FPS):
+
+- At **60 FPS**, each frame takes ~16.7ms.
+- At **10 FPS**, each frame takes ~100ms.
+
+`wait` cannot resolve below one frame. A request like `wait -s 0.001` (1 millisecond) actually waits one full frame (~16.7ms at 60fps). The rule: waits are quantized to frame intervals, so do NOT rely on sub-frame precision.
 
 ### Wait Example
 
@@ -1498,27 +1685,16 @@ function main()
 ```
 
 **Output:**
+
 ```
 Starting: 0ms
 After 1 second: 1000ms
 After 5 more seconds: 6000ms
 ```
 
-### Conditional Wait
+### Infinite Loops Need waitframe
 
-Wait for a condition to become true:
-
-```lavishscript
-wait 100 ${MyObject(exists)}
-```
-
-**Syntax:** `wait <max_time> <condition>`
-
-This waits up to 10 seconds (100 deciseconds) for `${MyObject(exists)}` to become TRUE.
-
-### Infinite Loops with waitframe
-
-**Always use `waitframe` in infinite loops:**
+Always use `waitframe` (or `wait`) in infinite loops:
 
 ```lavishscript
 function main()
@@ -1529,33 +1705,33 @@ function main()
     {
         ; Do work here
 
-        waitframe  ; IMPORTANT - Yields CPU
+        waitframe  ; IMPORTANT - Yields the frame
     }
 }
 ```
 
-**Why?** Without `waitframe`, the loop would consume maximum CPU and freeze the game.
+Without `waitframe`, the loop consumes the entire frame budget and the host appears frozen.
 
 ### Wait Restrictions
 
-**Cannot use in atomic code:**
+`wait` and `waitframe` are forbidden in atomic code:
 
 ```lavishscript
-; BAD - Will cause error
+; ERROR - members are atomic
 member BadMember()
 {
-    waitframe  ; ERROR!
+    waitframe
     return "value"
 }
 
-; BAD - Will cause error
+; ERROR - atoms are atomic
 atom BadAtom()
 {
-    wait 10  ; ERROR!
+    wait 10
 }
 ```
 
-Only use `wait` and `waitframe` in regular `function`s.
+Only `function`s can wait. From inside an atom or method, defer via [`QueueCommand`](#deferring-work-from-an-atom) or [`TimedCommand`](#deferring-work-from-an-atom) instead.
 
 ---
 
@@ -1563,7 +1739,7 @@ Only use `wait` and `waitframe` in regular `function`s.
 
 ### The if Statement
 
-Execute code **only if a condition is met**:
+Execute code only if a condition is met:
 
 ```lavishscript
 if condition
@@ -1571,6 +1747,7 @@ if condition
 ```
 
 **With code block:**
+
 ```lavishscript
 if condition
 {
@@ -1584,19 +1761,34 @@ if condition
 
 Conditions evaluate to **zero or non-zero**:
 
-- **0**, **NULL**, **FALSE** → Condition NOT met (false)
-- **Non-zero**, **TRUE** → Condition met (true)
+- `0`, `NULL`, `FALSE` → condition NOT met.
+- non-zero, `TRUE` → condition met.
 
 ### Comparison Operators
 
+Numeric:
+
 | Operator | Meaning | Example |
-|----------|---------|---------|
+|---|---|---|
 | `<` | Less than | `${Value}<10` |
 | `>` | Greater than | `${Value}>100` |
 | `<=` | Less than or equal | `${Value}<=10` |
 | `>=` | Greater than or equal | `${Value}>=100` |
 | `==` | Equal to | `${Value}==5` |
 | `!=` | Not equal to | `${Value}!=0` |
+
+String members:
+
+| Member | Use |
+|---|---|
+| `.Equal[text]` | Case-insensitive equality. |
+| `.NotEqual[text]` | Case-insensitive inequality. |
+| `.EqualCS[text]` | Case-sensitive equality. |
+| `.NotEqualCS[text]` | Case-sensitive inequality. |
+| `.Find[substring]` | Returns 1-based position of substring or NULL. |
+| `.Compare[text]` | <0, 0, or >0 for case-insensitive lexicographic compare. |
+
+For complete operator and formula syntax, see [LavishScript:Mathematical Formulae](https://www.lavishsoft.com/wiki/index.php/LavishScript:Mathematical_Formulae).
 
 ### Simple if Example
 
@@ -1638,13 +1830,13 @@ function main(int Value=15)
 ```
 
 **How it works:**
-1. Check first `if` - if true, execute and skip rest
-2. If false, check first `elseif`
-3. Continue down the chain until a match is found
+1. Check the first `if`. If true, execute and skip the rest.
+2. If false, check the first `elseif`.
+3. Continue down the chain until a match is found.
 
 ### The else Statement
 
-Execute code when **no conditions match**:
+Execute code when no conditions match:
 
 ```lavishscript
 function main(int Value=150)
@@ -1688,16 +1880,20 @@ function main(int Health=100)
 
 ### Logical Operators
 
-Combine conditions with `&&` (AND) and `||` (OR):
+Combine conditions with `&&` (AND), `||` (OR), and `!` (NOT):
 
 ```lavishscript
-; AND - Both must be true
+; AND - both must be true
 if ${Health}<50 && ${Power}<20
     echo "Low on both!"
 
-; OR - Either can be true
+; OR - either can be true
 if ${Health}<20 || ${Power}<10
     echo "Emergency!"
+
+; NOT - prefix to negate
+if !${MyObject(exists)}
+    echo "MyObject does not exist"
 ```
 
 ### Checking Existence
@@ -1711,13 +1907,15 @@ else
     echo "No object"
 ```
 
+`(exists)` is the canonical NULL-check pattern. Use it before reaching into a member chain that might dereference NULL.
+
 ---
 
 ## Loops
 
 ### The while Loop
 
-Repeat code **while a condition is met**:
+Repeat code while a condition is met:
 
 ```lavishscript
 while condition
@@ -1761,16 +1959,16 @@ function main()
     while TRUE
     {
         echo "Running..."
-        waitframe  ; IMPORTANT - Prevents CPU overload
+        waitframe  ; IMPORTANT - prevents CPU overload
     }
 }
 ```
 
-**Remember:** Always use `waitframe` in infinite loops!
+Always use `waitframe` in infinite loops.
 
 ### The do-while Loop
 
-Execute code **at least once**, then check condition:
+Execute code at least once, then check condition:
 
 ```lavishscript
 do
@@ -1797,8 +1995,8 @@ function main()
 ```
 
 **Difference from `while`:**
-- `while` checks condition **before** executing
-- `do-while` checks condition **after** executing (guarantees at least one execution)
+- `while` checks condition before executing.
+- `do-while` checks condition after executing (guarantees at least one execution).
 
 ### The break Statement
 
@@ -1824,6 +2022,7 @@ function main()
 ```
 
 **Output:**
+
 ```
 1
 2
@@ -1835,7 +2034,7 @@ Loop exited
 
 ### The continue Statement
 
-Skip the rest of the loop and advance to the next iteration:
+Skip the rest of the iteration and advance to the next:
 
 ```lavishscript
 function main()
@@ -1846,7 +2045,7 @@ function main()
     {
         Count:Inc
 
-        ; Skip odd numbers
+        ; Modulo-2 is non-zero for ODD numbers, so continue triggers on odd
         if ${Math.Calc[${Count}%2]}
             continue
 
@@ -1855,14 +2054,14 @@ function main()
 }
 ```
 
-**Output:** `2 4 6 8 10` (only even numbers)
+**Output:** `2 4 6 8 10` (only even numbers, because the `continue` skips odd ones).
 
 ### The for Loop
 
 Compact loop syntax combining initialization, condition, and increment:
 
 ```lavishscript
-for (start ; condition ; advance)
+for ( start ; condition ; advance )
 {
     code
 }
@@ -1883,6 +2082,7 @@ function main()
 ```
 
 **Equivalent while loop:**
+
 ```lavishscript
 variable int Count
 Count:Set[1]
@@ -1895,12 +2095,12 @@ while ${Count}<=10
 
 ### int:Set Method
 
-Set an integer value (accepts math):
+Set an integer value (accepts a math formula):
 
 ```lavishscript
-Count:Set[1]        ; Set to 1
-Count:Set[5+5]      ; Set to 10
-Count:Set[${Count}*2]  ; Double the current value
+Count:Set[1]            ; Set to 1
+Count:Set[5+5]          ; Set to 10
+Count:Set[${Count}*2]   ; Double the current value
 ```
 
 ### for Loop with Step
@@ -1936,22 +2136,13 @@ function main()
 }
 ```
 
-**Output:**
-```
-I=1 J=1
-I=1 J=2
-I=1 J=3
-I=2 J=1
-...
-```
-
 ---
 
 ## Switch Statements
 
 ### The switch Statement
 
-Selectively execute one of several code branches based on a value:
+Select one of several code branches based on a value:
 
 ```lavishscript
 switch value
@@ -1993,15 +2184,15 @@ function main(string Color="Red")
 
 ### How switch Works
 
-1. Evaluate the `switch` value
-2. **Case-insensitive string compare** with each `case`
-3. If match found, execute code from that point **downward**
-4. `break` exits the switch block
-5. If no match, execute `default` (if provided)
+1. Evaluate the `switch` value.
+2. Case-insensitive string compare against each `case`.
+3. If match found, execute code from that point downward.
+4. `break` exits the switch block.
+5. If no match, execute `default` (if provided).
 
 ### Fall-through Behavior
 
-**Without `break`, execution continues to the next case:**
+Without `break`, execution continues to the next case:
 
 ```lavishscript
 switch ${Value}
@@ -2017,7 +2208,7 @@ switch ${Value}
 }
 ```
 
-This matches multiple values to the same code.
+This matches multiple values to the same code block.
 
 ### The default Branch
 
@@ -2043,7 +2234,7 @@ function main(string Input="Unknown")
 
 ### The variablecase Branch
 
-Use when branch values **cannot be hard-coded** (contain Data Sequences):
+Use when branch values cannot be hard-coded (contain data sequences):
 
 ```lavishscript
 function main()
@@ -2067,48 +2258,48 @@ function main()
 ```
 
 **How variablecase works:**
-1. Check all `case` branches first
-2. If no `case` matches, check `variablecase` branches in order
-3. Resolve Data Sequences in `variablecase` only when needed
-4. Execute first matching `variablecase`
+1. Check all `case` branches first.
+2. If no `case` matches, check `variablecase` branches in order.
+3. Resolve data sequences in `variablecase` only when needed.
+4. Execute the first matching `variablecase`.
 
 ### switch Best Practices
 
-1. **Always use `break`** (unless intentional fall-through)
-2. **Provide `default`** for unexpected values
-3. **Use `case` for constants**, `variablecase` for variables
-4. **Case values are verbatim text** (don't add `:` like in C/C++)
-5. ⚠️ **CRITICAL: Never use quotes around case values!**
+1. Always use `break` (unless intentional fall-through).
+2. Provide `default` for unexpected values.
+3. Use `case` for constants, `variablecase` for variables.
+4. Case values are verbatim text -- don't add `:` like in C/C++.
+5. **CRITICAL:** Never use quotes around case values.
 
 ### Important: No Quotes in Case Values
 
 **Case values MUST NOT be quoted, even for strings with spaces:**
 
 ```lavishscript
-; ❌ WRONG - This will NEVER match!
+; WRONG - this will NEVER match!
 switch ${textValue}
 {
-    case "Hello World"        ; Will NOT work!
+    case "Hello World"        ; Will NOT work
         echo "Matched"
         break
 }
 
-; ✅ CORRECT - No quotes!
+; CORRECT - no quotes!
 switch ${textValue}
 {
-    case Hello World          ; This works!
+    case Hello World          ; Works
         echo "Matched"
         break
 }
 ```
 
-This applies to **all** case values:
-- Strings with spaces: `case Service Fleet Members`
+This applies to all case values:
+- Strings with spaces: `case Some Phrase`
 - Negative numbers: `case -10`
 - Numbers: `case 42`
-- Any text: `case CorpTicker Time`
+- Any text: `case CategoryName`
 
-**Why this matters:** Adding quotes makes the switch look for the literal text including the quote characters, which will never match your actual values.
+**Why this matters:** adding quotes makes the switch look for the literal text including the quote characters, which will never match your actual values.
 
 ### Complete switch Example
 
@@ -2143,17 +2334,19 @@ function ProcessCommand(string Command)
 
 ---
 
-## Collections and Lists (index)
+## Collections and Lists
+
+LavishScript provides several container types. The two used most often are `index` (ordered list, 1-based) and `collection` (key-value map). Other containers -- `array`, `queue`, `stack`, `set`, `variablescope`, `objectcontainer` -- are documented in [01b §3.5 Containers](01b_LavishScript_Reference.md#35-containers).
 
 ### What is an Index?
 
-An **index** is a dynamic array (list) that can grow and shrink as needed. Unlike fixed arrays, indices automatically manage their size.
+An [`index`](https://www.lavishsoft.com/wiki/index.php/ObjectType:index) is a dynamically sized list of objects.
 
 **Key features:**
-- **Dynamic size** - Grows automatically as you add items
-- **Type-safe** - Specify element type like `index:int` or `index:string`
-- **1-based indexing** - First element is at position 1 (not 0!)
-- **JSON serialization** - Easy conversion to/from JSON arrays
+- Dynamic size -- grows automatically as you add items.
+- Type-safe -- specify element type like `index:int` or `index:string`.
+- 1-based indexing -- first element is at position 1, not 0.
+- JSON serialization built in.
 
 ### Creating an Index
 
@@ -2165,11 +2358,11 @@ variable index:string Names
 variable index:person People
 ```
 
-**Important:** You must specify the element type after the colon.
+You must specify the element type after the colon.
 
 ### Adding Items
 
-Use the `Insert` method to add items:
+Use the `Insert` method:
 
 ```lavishscript
 variable index:int Numbers
@@ -2191,7 +2384,7 @@ echo "First number: ${Numbers[1]}"   ; Output: 17
 echo "Third number: ${Numbers[3]}"   ; Output: 35
 ```
 
-**Remember:** Indices start at 1, not 0!
+Indices start at 1, not 0.
 
 ### Removing Items
 
@@ -2209,26 +2402,32 @@ Numbers:Remove[2]  ; Remove 42 (second item)
 echo "${Numbers[2]}"  ; Output: NULL (position 2 is now empty)
 ```
 
-**Important:** Removing creates a gap - the position becomes NULL.
+Removing creates a gap -- the position becomes NULL.
 
 ### Collapsing Gaps
 
 Use `Collapse` to remove gaps by shifting items:
 
 ```lavishscript
-variable index:int Numbers
-
-Numbers:Insert[17]
-Numbers:Insert[42]
-Numbers:Insert[35]
-
 Numbers:Remove[2]    ; Remove 42 - creates gap
 Numbers:Collapse     ; Shift items to fill gap
 
 echo "${Numbers[2]}"  ; Output: 35 (was at position 3)
 ```
 
-**After Collapse:** `[17, 35]` (no gaps)
+### Common Index Operations
+
+| Operation | Method or Member | Example |
+|---|---|---|
+| Add item | `Insert[value]` | `List:Insert[42]` |
+| Remove item | `Remove[position]` | `List:Remove[3]` |
+| Fill gaps | `Collapse` | `List:Collapse` |
+| Clear all | `Clear` | `List:Clear` |
+| Get count | `.Used` | `${List.Used}` |
+| To JSON | `.AsJSON` | `${List.AsJSON}` |
+| From JSON | `FromJSON[json]` | `List:FromJSON[...]` |
+
+For the full member/method surface (`Next`, `Get`, `Move`, `Swap`, `Shift`, `Resize`, `RemoveByQuery`, `ForEach`, etc.), see [01b §3.5 Containers](01b_LavishScript_Reference.md#35-containers) or the canonical [`ObjectType:index`](https://www.lavishsoft.com/wiki/index.php/ObjectType:index) wiki page.
 
 ### Index with Custom Objects
 
@@ -2268,14 +2467,41 @@ function main()
 }
 ```
 
-**Output:**
-```json
-[{"first_name":"John","last_name":"Doe"},{"first_name":"Jane","last_name":"Doe"},{"first_name":"John","last_name":"Public"}]
+### Iteration
+
+Walking a container without index-assumption fragility uses an [`iterator`](https://www.lavishsoft.com/wiki/index.php/ObjectType:iterator). Most containers expose a `GetIterator` method that initializes one:
+
+```lavishscript
+variable index:string Names
+variable iterator It
+
+Names:Insert["Alice"]
+Names:Insert["Bob"]
+Names:Insert["Charlie"]
+
+Names:GetIterator[It]
+
+if ${It:First(exists)}
+{
+    do
+    {
+        echo "Name: ${It.Value}"
+    }
+    while ${It:Next(exists)}
+}
 ```
+
+The compact alternative is the [`ForEach` Top-Level Object](https://www.lavishsoft.com/wiki/index.php/TLO:ForEach), which exposes `Key` and `Value` for the current iteration when you use a container's `ForEach` method:
+
+```lavishscript
+Names:ForEach[ "echo Name: \${ForEach.Value}" ]
+```
+
+For full iteration surface (`Last`, `Previous`, `Jump`, `SetValue`, `IsValid`, `Reversible`, `Constant`, `RandomAccess`), see [01b §3.7 Iteration](01b_LavishScript_Reference.md#37-iteration).
 
 ### JSON Serialization
 
-**AsJSON - Convert to JSON array:**
+**`AsJSON` -- convert to JSON array:**
 
 ```lavishscript
 variable index:int Numbers
@@ -2287,7 +2513,7 @@ Numbers:Insert[35]
 echo "${Numbers.AsJSON}"  ; Output: [17,42,35]
 ```
 
-**FromJSON - Load from JSON array:**
+**`FromJSON` -- load from JSON array:**
 
 ```lavishscript
 objectdef person
@@ -2295,7 +2521,7 @@ objectdef person
     variable string FirstName
     variable string LastName
 
-    ; Initialize accepts jsonvalue
+    ; Initialize accepts a jsonvalue
     method Initialize(jsonvalue jo)
     {
         FirstName:Set["${jo.Get[first_name]~}"]
@@ -2313,77 +2539,283 @@ People:FromJSON["$$>[
 ; FromJSON calls person:Initialize for each JSON object
 ```
 
-### Common Index Operations
+The `$$> ... <$$` heredoc syntax delimits a multi-line string literal that allows quotes and braces inline without backslash-escaping.
 
-| Operation | Method | Example |
-|-----------|--------|---------|
-| Add item | `Insert[value]` | `List:Insert[42]` |
-| Remove item | `Remove[position]` | `List:Remove[3]` |
-| Fill gaps | `Collapse` | `List:Collapse` |
-| Clear all | `Clear` | `List:Clear` |
-| Get count | `.Used` | `${List.Used}` |
-| To JSON | `.AsJSON` | `${List.AsJSON}` |
-| From JSON | `FromJSON[json]` | `List:FromJSON[...]` |
+### Index vs Collection
 
-### Index Example - Complete
+LavishScript also provides [`collection`](https://www.lavishsoft.com/wiki/index.php/ObjectType:collection) (case-insensitive key-value map). Use:
+
+- **`index`** when you need ordered lists.
+- **`collection`** when you need key-value lookups.
+
+For JSON-heavy work, see [13_JSON_Guide.md](13_JSON_Guide.md).
+
+---
+
+## Events
+
+LavishScript **events** are named hooks that any number of atoms can attach to. When an event executes, every attached atom runs (in arbitrary order) with the event's parameters. Events are how reactive code is wired up: instead of polling for a state change in a loop, you attach an atom to the relevant event and let the engine call you when the change happens.
+
+### Lifecycle
+
+1. **Register** the event by name (only needed for events you create -- built-in and extension-fired events are pre-registered).
+2. **Attach** one or more atoms to the event.
+3. **Execute** the event (yourself, or let the engine fire it).
+4. **Detach** atoms when you no longer want them to fire.
+
+### Register an Event
+
+The [`lavishscript` object type](https://www.lavishsoft.com/wiki/index.php/ObjectType:lavishscript) provides a `RegisterEvent` method on the `LavishScript` TLO:
+
+```lavishscript
+LavishScript:RegisterEvent["My Event"]
+```
+
+Registering an event twice is a no-op. There is also a variable-declaration form that auto-registers on declaration and unregisters on scope exit:
+
+```lavishscript
+declare MyEvent event "My Event"
+```
+
+### Attach an Atom
+
+The [`event` object type's](https://www.lavishsoft.com/wiki/index.php/ObjectType:event) `AttachAtom` method binds an atom to the event. The event is looked up via the [`Event` Top-Level Object](https://www.lavishsoft.com/wiki/index.php/TLO:Event):
+
+```lavishscript
+atom OnMyEvent(string Message)
+{
+    echo "Got event: ${Message}"
+}
+
+function main()
+{
+    Event[My Event]:AttachAtom[OnMyEvent]
+
+    ; ... later ...
+    Event[My Event]:Execute["hello"]
+}
+```
+
+Any number of atoms can attach to the same event. Atoms execute in arbitrary order; do not rely on attach order.
+
+### Execute an Event
+
+Two methods on the `event` object type:
+
+- `Execute[<arg1>,<arg2>,...]` -- fire the event with arguments.
+- `ThisExecute[<contextObject>,<arg1>,...]` -- fire the event with the first argument bound as `This` inside attached atoms.
+
+### Detach an Atom
+
+```lavishscript
+Event[My Event]:DetachAtom[OnMyEvent]
+```
+
+Detach in `atexit` or `Shutdown` to keep the event registry tidy when the script ends.
+
+### Built-in Events
+
+Some events are fired by the engine automatically. The simplest example is `Alias Added`, which fires whenever an alias is created:
+
+```lavishscript
+atom OnAliasAdded(string Name)
+{
+    echo "New alias registered: ${Name}"
+}
+
+function main()
+{
+    Event[Alias Added]:AttachAtom[OnAliasAdded]
+    while TRUE
+        waitframe
+}
+```
+
+Inner Space subsystems (input, audio, display, sessions) and the LavishMachine Tasks system fire their own events; consult the relevant wiki page or [Category:LavishScript Events](https://www.lavishsoft.com/wiki/index.php/Category:LavishScript_Events).
+
+For the canonical reference and the full lifecycle including the C-side API, see [LavishScript:Events](https://www.lavishsoft.com/wiki/index.php/LavishScript:Events) and [01b §5](01b_LavishScript_Reference.md#5-events).
+
+---
+
+## Triggers
+
+A **trigger** fires a command when a registered text pattern is seen in console output. Triggers are how scripts react to log lines, chat messages, or any other text stream that lands on the console.
+
+### Lifecycle
+
+- [`AddTrigger <pattern> <command>`](https://www.lavishsoft.com/wiki/index.php/Command:AddTrigger) -- register a pattern and the command to run when matched.
+- [`RemoveTrigger <pattern>`](https://www.lavishsoft.com/wiki/index.php/Command:RemoveTrigger) -- unregister.
+- [`WaitFor <pattern> [timeout]`](https://www.lavishsoft.com/wiki/index.php/Command:WaitFor) -- pause the calling script until the pattern is seen, or the optional timeout elapses.
+
+Triggers persist for the session until removed or until the session ends. For the canonical reference see [LavishScript:Triggers](https://www.lavishsoft.com/wiki/index.php/LavishScript:Triggers) and [01b §6](01b_LavishScript_Reference.md#6-triggers).
+
+### Trigger Example
 
 ```lavishscript
 function main()
 {
-    variable index:string Names
+    AddTrigger "Hello*" "echo Triggered on greeting"
 
-    ; Add some names
-    Names:Insert["Alice"]
-    Names:Insert["Bob"]
-    Names:Insert["Charlie"]
-    Names:Insert["Diana"]
-
-    echo "Count: ${Names.Used}"  ; Output: 4
-
-    ; Access by position
-    echo "First: ${Names[1]}"    ; Output: Alice
-    echo "Third: ${Names[3]}"    ; Output: Charlie
-
-    ; Remove Bob (position 2)
-    Names:Remove[2]
-
-    echo "After remove: ${Names.AsJSON}"  ; Output: ["Alice",null,"Charlie","Diana"]
-
-    ; Collapse to remove gap
-    Names:Collapse
-
-    echo "After collapse: ${Names.AsJSON}"  ; Output: ["Alice","Charlie","Diana"]
-    echo "New count: ${Names.Used}"         ; Output: 3
+    ; ... script keeps running and console output is monitored ...
+    while TRUE
+        waitframe
 }
 ```
 
-### Index vs Collection
+When any console line matches `Hello*`, the registered command runs.
 
-LavishScript also has `collection` (key-value pairs, like a dictionary/map). Use:
-- **index** - When you need ordered lists
-- **collection** - When you need key-value lookups
+### WaitFor Pattern
 
-See the JSON Guide for more on collections.
+```lavishscript
+function main()
+{
+    echo "Waiting for ready..."
+    WaitFor "Ready" 100   ; up to 10 seconds
+    echo "Got ready signal"
+}
+```
+
+---
+
+## Aliases
+
+An **alias** is a user-defined shortcut for one or more commands. Once registered, typing the alias name behaves like typing the underlying command(s). Aliases are session-wide and persist until removed.
+
+### Alias Command
+
+The [`Alias`](https://www.lavishsoft.com/wiki/index.php/Command:Alias) command has a few forms:
+
+- `Alias <name> <command>` -- register an alias.
+- `Alias -list` -- list current aliases.
+- `Alias -delete <name>` -- remove an alias.
+
+### Example
+
+```lavishscript
+Alias greet "echo Hello there"
+
+; Now typing
+greet
+; behaves like
+echo Hello there
+```
+
+### Hooking Alias Creation
+
+The engine fires the [built-in `Alias Added` event](#built-in-events) when a new alias is registered. Attach an atom if you need to react to alias creation.
+
+For the canonical reference see [LavishScript:Aliases](https://www.lavishsoft.com/wiki/index.php/LavishScript:Aliases).
+
+---
+
+## Modules
+
+A **module** is a compiled LavishScript library loaded with the [`Module`](https://www.lavishsoft.com/wiki/index.php/Command:Module) command. Modules can add commands, object types, TLOs, and atoms to the running session. They are session-wide and stay loaded until unloaded.
+
+### Module Command
+
+- `Module -load <name>` -- load a module by name.
+- `Module -unload <name>` -- unload.
+- `Module -list` -- list loaded modules.
+
+### First-Party Modules
+
+Lavish Software ships several optional modules:
+
+| Module | Purpose |
+|---|---|
+| [LSModule:Sound](https://www.lavishsoft.com/wiki/index.php/LSModule:Sound) | Sound effect playback (separate from the Inner Space audio object type). |
+| [LSModule:MySQL](https://www.lavishsoft.com/wiki/index.php/LSModule:MySQL) | MySQL client. |
+| [LSModule:Regex](https://www.lavishsoft.com/wiki/index.php/LSModule:Regex) | Regular-expression matching. |
+| [LSModule:Targz](https://www.lavishsoft.com/wiki/index.php/LSModule:Targz) | `.tar.gz` archive support (adds the `tar` command). |
+| [LSModule:Ventrilo](https://www.lavishsoft.com/wiki/index.php/LSModule:Ventrilo) | Ventrilo voice client control. |
+| [LSModule:Scheduler](https://www.lavishsoft.com/wiki/index.php/LSModule:Scheduler) | Job scheduler. |
+
+Load only what you need. For the canonical module reference and per-module surface (commands, object types), see [01b §7 Modules (LSModule)](01b_LavishScript_Reference.md#7-modules-lsmodule) and the [Category:LavishScript Modules](https://www.lavishsoft.com/wiki/index.php/Category:LavishScript_Modules) wiki index.
+
+---
+
+## Input Emulation
+
+Inner Space provides commands and object types for emulating keyboard, mouse, and hotkey input. These are Inner-Space-Kernel-side features (provided by the host platform), NOT LavishScript-core -- they are unavailable in any LavishScript host that lacks Inner Space.
+
+This section gives the conceptual onboarding. For the full per-command syntax and the input object types (`bind`, `keyboard`, `mouse`, `input`, `button`, `dpad`, `axis`), see [01b §2.2 Input Emulation](01b_LavishScript_Reference.md#22-inner-space-kernel-commands) and [01b §3.18](01b_LavishScript_Reference.md#318-inner-space-input).
+
+### Hotkeys (Bind / GlobalBind)
+
+[`Bind`](https://www.lavishsoft.com/wiki/index.php/ISKernel:Bind_(Command)) registers a session-level hotkey -- a key combination that runs a command when pressed (or released) while the session is in focus.
+
+```
+Bind <name> <combo> <command>
+Bind -press <name> <combo> <command>
+Bind -release <name> <combo> <command>
+Bind -list
+Bind -delete <name>
+Bind -clear
+```
+
+[`GlobalBind`](https://www.lavishsoft.com/wiki/index.php/ISKernel:GlobalBind_(Command)) is identical in form but the hotkey is Windows-global -- it fires no matter which window has focus.
+
+### Key Press Emulation (Press / Type)
+
+[`Press`](https://www.lavishsoft.com/wiki/index.php/ISKernel:Press_(Command)) emulates pressing keys:
+
+```
+Press <combo>              ; press, then release
+Press -hold <combo>        ; press and hold
+Press -release <combo>     ; release after a -hold
+Press -nomodifiers <combo> ; release modifiers for the duration
+Press -keylist             ; list valid key names
+```
+
+[`Type`](https://www.lavishsoft.com/wiki/index.php/ISKernel:Type_(Command)) emulates typing literal text (does not include Enter):
+
+```
+Type "Hello, how are you"
+```
+
+### Mouse Emulation (MouseTo / MouseClick)
+
+- [`MouseTo <x> <y>`](https://www.lavishsoft.com/wiki/index.php/ISKernel:MouseTo_(Command)) -- move the mouse cursor.
+- [`MouseClick -hold <left|right>`](https://www.lavishsoft.com/wiki/index.php/ISKernel:MouseClick_(Command)) -- press a mouse button.
+- `MouseClick -release <left|right>` -- release a mouse button.
+
+A complete mouse click typically wants a frame between press and release:
+
+```lavishscript
+MouseClick -hold left
+waitframe
+MouseClick -release left
+```
+
+### Macros
+
+[`Macro`](https://www.lavishsoft.com/wiki/index.php/ISKernel:Macro_(Command)) records and plays back keyboard and mouse sequences. Useful for recording a UI-interaction sequence once and replaying it programmatically.
+
+### Input Broadcasting Caveat
+
+Some input-emulation patterns (broadcasting one keystroke to multiple sessions for multi-boxing) may be restricted by host-game terms of service. Verify policy before designing scripts around input broadcasting.
 
 ---
 
 ## Web Requests
 
-> **Choose the right API:** This section documents the **LavishScript `webrequest` type** — an imperative API you use directly from LavishScript code (`variable webrequest WR`, `WR:Begin`, poll `${WR.State}`). LavishMachine also provides a **`webrequest` task type** (declarative JSON task with a callback method) documented in [14_LavishMachine_Guide.md](14_LavishMachine_Guide.md). Rule of thumb: use the type documented here for simple, script-driven requests where you poll or `wait` for completion; use the LMAC task type when you are already building task-based automation and want an event-style callback when the request finishes.
+Inner Space provides a [`webrequest`](https://www.lavishsoft.com/wiki/index.php/ISKernel:webrequest_(Object_Type)) object type for HTTP and HTTPS requests. This is an Inner-Space-Kernel-side feature, not LavishScript-core.
+
+> **Choose the right API.** This section covers the imperative `webrequest` object type -- you create the variable, configure it, call `Begin`, and poll `${WR.State}` (or `wait` on a state condition). LavishMachine also exposes a declarative **`webrequest` task type** with an event-style callback when the request finishes; that variant is documented in [14_LavishMachine_Guide.md](14_LavishMachine_Guide.md). Use the imperative form for simple script-driven fetches; use the LMAC task form when you are already structured around tasks.
 
 ### What is a Web Request?
 
-A **web request** allows scripts to fetch data from URLs using HTTP/HTTPS protocols.
+A web request fetches data from URLs over HTTP/HTTPS.
 
 **Common uses:**
-- Fetch JSON data from APIs
-- Download web pages
-- Submit form data (POST)
-- Check online resources
 
-### The webrequest Type
+- Fetch JSON from APIs.
+- Download web pages.
+- Submit form data (POST).
+- Check online resources.
 
-Create with `variable webrequest Name`:
+### Creating a Web Request
 
 ```lavishscript
 variable webrequest WR
@@ -2391,20 +2823,13 @@ variable webrequest WR
 
 ### Setting the URL
 
-Use `SetURL` method:
-
 ```lavishscript
 WR:SetURL["https://example.com/api/data"]
 ```
 
-**Supports:**
-- HTTP and HTTPS
-- GET and POST requests
-- Query parameters in URL
-
 ### Interpreting Results
 
-Tell LavishScript how to interpret the response:
+Tell the engine how to interpret the response:
 
 ```lavishscript
 WR:InterpretAs[json]     ; Parse as JSON
@@ -2412,36 +2837,31 @@ WR:InterpretAs[string]   ; Return as text
 WR:InterpretAs[binary]   ; Return as binary data
 ```
 
-**Default:** If not specified, result is returned as string.
-
 ### Beginning the Request
-
-Use `Begin` to start the request:
 
 ```lavishscript
 WR:Begin
 ```
 
-**Note:** This is asynchronous - the request happens in the background.
+`Begin` is asynchronous -- the request runs in the background.
 
 ### Checking Request State
-
-Monitor the request with `.State`:
 
 ```lavishscript
 echo "State: ${WR.State}"
 ```
 
-**Possible states:**
-- `Idle` - Not started
-- `Queued` - Waiting to start
-- `Working` - In progress
-- `Completed` - Finished successfully
-- `Aborted` - Failed or cancelled
+Possible states:
+
+- `Idle` -- not started.
+- `Queued` -- waiting to start.
+- `Working` -- in progress.
+- `Completed` -- finished successfully.
+- `Aborted` -- failed or cancelled.
 
 ### Accessing the Result
 
-Once completed, access via `.Result`:
+Once completed:
 
 ```lavishscript
 if ${WR.State.Equal[Completed]}
@@ -2450,64 +2870,22 @@ if ${WR.State.Equal[Completed]}
 }
 ```
 
-**Result type depends on `InterpretAs`:**
-- `json` → Returns jsonvalue object
-- `string` → Returns string
-- `binary` → Returns binary data
+The `Result` shape depends on `InterpretAs`:
 
-### Complete Web Request Example
+- `json` -- a `jsonobject` with response codes and data.
+- `string` -- a string.
+- `binary` -- a `binary` blob (also exposed via `WR.Binary`).
 
-```lavishscript
-variable webrequest WR
+### Web Request With Timeout
 
-function main()
-{
-    variable uint lastState
-
-    ; Set up the request
-    WR:SetURL["https://raw.githubusercontent.com/LavishSoftware/LERN/master/LGUI2/1.json"]
-    WR:InterpretAs[json]
-
-    ; Start the request
-    WR:Begin
-
-    echo "Request started..."
-
-    ; Wait for completion
-    while 1
-    {
-        ; Check if state changed
-        if ${WR.State.Value}!=${lastState}
-        {
-            lastState:Set[${WR.State.Value}]
-            echo "State: ${WR.State}"
-
-            ; Check for result
-            if ${WR.Result(exists)}
-                echo "Result: ${WR.Result}"
-
-            ; Exit when done
-            if ${WR.State.Equal[Completed]}
-                break
-        }
-
-        waitframe
-    }
-
-    echo "Request complete"
-}
-```
-
-### Web Request with Timeout
-
-Wait with a timeout:
+The cleanest pattern uses `wait` with a condition:
 
 ```lavishscript
 WR:SetURL["https://example.com/data"]
 WR:InterpretAs[string]
 WR:Begin
 
-; Wait up to 10 seconds
+; Wait up to 10 seconds for completion
 wait 100 ${WR.State.Equal[Completed]}
 
 if ${WR.State.Equal[Completed]}
@@ -2520,26 +2898,53 @@ else
 }
 ```
 
-### POST Requests
+### Polling Pattern
 
-Set POST data before calling Begin:
+If you want to react to every state change instead of just completion:
 
 ```lavishscript
-WR:SetURL["https://api.example.com/submit"]
-WR:SetPOSTData["key1=value1&key2=value2"]
-WR:InterpretAs[json]
-WR:Begin
+variable webrequest WR
+
+function main()
+{
+    variable uint lastState
+
+    WR:SetURL["https://example.com/api/data.json"]
+    WR:InterpretAs[json]
+    WR:Begin
+
+    while TRUE
+    {
+        if ${WR.State.Value}!=${lastState}
+        {
+            lastState:Set[${WR.State.Value}]
+            echo "State: ${WR.State}"
+
+            if ${WR.Result(exists)}
+                echo "Result: ${WR.Result}"
+
+            if ${WR.State.Equal[Completed]}
+                break
+        }
+
+        waitframe
+    }
+}
 ```
+
+### POST Requests
+
+Set POST data before calling `Begin`. The full method/member surface (including `FromJSON` initialization, `POST` jsonarray, file-output mode, abort/reset semantics) is in [01b §3.20 Inner Space Misc](01b_LavishScript_Reference.md#320-inner-space-misc) under `webrequest`.
 
 ### Best Practices
 
-1. **Always check state** before accessing Result
-2. **Use InterpretAs** to specify expected format
-3. **Handle timeouts** - Don't wait forever
-4. **Check for errors** - State could be Aborted
-5. **Escape URLs** if they contain parameters
+1. Always check state before accessing `Result`.
+2. Use `InterpretAs` to specify the expected format.
+3. Handle timeouts -- never wait forever.
+4. Check for `Aborted` -- not just `Completed`.
+5. Escape URLs that contain query parameters or user-supplied values.
 
-### Web Request Pattern
+### Reusable Web Request Helper
 
 ```lavishscript
 function FetchJSON(string url)
@@ -2549,7 +2954,6 @@ function FetchJSON(string url)
     WR:InterpretAs[json]
     WR:Begin
 
-    ; Wait up to 10 seconds
     wait 100 ${WR.State.Equal[Completed]}
 
     if ${WR.State.Equal[Completed]}
@@ -2561,94 +2965,73 @@ function FetchJSON(string url)
 }
 ```
 
-**Note:** For more advanced async web requests, see the LavishMachine Guide's webrequest task type.
+For more advanced async patterns, see the LavishMachine Guide's `webrequest` task type.
 
 ---
 
 ## Audio System
 
-### What is the Audio System?
+Inner Space provides an audio system for scripts to play sounds and music. This is an Inner-Space-Kernel-side feature, NOT LavishScript-core. The relevant object types are [`audio`](https://www.lavishsoft.com/wiki/index.php/ISKernel:audio_(Object_Type)), [`audiovoice`](https://www.lavishsoft.com/wiki/index.php/ISKernel:audiovoice_(Object_Type)), and [`audiostream`](https://www.lavishsoft.com/wiki/index.php/ISKernel:audiostream_(Object_Type)), accessed via the [`Audio` Top-Level Object](https://www.lavishsoft.com/wiki/index.php/ISKernel:Audio_(Top-Level_Object)).
 
-LavishScript's **audio system** allows scripts to play sounds and music through voices and streams.
+### Voices and Streams
 
-**Key concepts:**
-- **Voice** - A channel that plays sound (like a speaker)
-- **Stream** - An audio file that can be played
+Two key concepts:
 
-### Audio Voices
+- **Voice** (object type: `audiovoice`) -- a channel that plays sound. Each voice plays one sound at a time, but multiple voices can play simultaneously.
+- **Stream** (object type: `audiostream`) -- an audio file. Many formats supported (MP3, WAV, OGG, etc.).
 
-A **voice** is something that makes sound. Each voice can play one sound at a time, but multiple voices can play simultaneously.
-
-**Creating a voice:**
+### Creating a Voice
 
 ```lavishscript
 Audio:AddVoice[music]
 ```
 
-**Use cases:**
-- Background music voice
-- Sound effects voice
-- Alert voice
-- Separate voice for each character in multi-boxing
+Use distinct voices for distinct purposes (background music, sound effects, alerts) so they don't interrupt each other.
 
-### Audio Streams
-
-A **stream** is an audio file. Many formats are supported (MP3, WAV, OGG, etc.).
-
-**Adding a stream:**
+### Adding a Stream
 
 ```lavishscript
 Audio:AddStream[stream_name,"path/to/file.mp3"]
 ```
 
-**Path rules:**
-- Relative to script directory
-- Use forward slashes `/` or escaped backslashes `\\`
-- Can use `../` to go up directories
+Path rules:
+
+- Relative to script's current directory unless absolute.
+- Use forward slashes `/` or escaped backslashes `\\`.
+- Can use `../` to go up directories.
 
 ### Playing Audio
 
-Use `PlayStream` to play immediately:
+`PlayStream` plays immediately:
 
 ```lavishscript
 function main()
 {
-    ; Add a voice
     Audio:AddVoice[music]
-
-    ; Add a stream
     Audio:AddStream[tune,"../Assets/Audio/song.mp3"]
 
-    ; Play the sound
     Audio.Voice[music]:PlayStream[tune]
 
-    ; Wait 5 seconds
-    wait 50
+    wait 50  ; 5 seconds
 
-    ; Stop the music
     Audio.Voice[music]:Stop:ClearQueue
 }
 ```
 
 ### Queueing Audio
 
-Use `EnqueueStream` to queue after current sound:
+`EnqueueStream` queues a stream behind the current sound:
 
 ```lavishscript
-; Play immediately
 Audio.Voice[music]:PlayStream[song1]
-
-; Queue next (plays after song1 finishes)
-Audio.Voice[music]:EnqueueStream[song2]
+Audio.Voice[music]:EnqueueStream[song2]   ; plays after song1 finishes
 ```
 
-**Difference:**
-- `PlayStream` - Stops current sound, plays immediately
-- `EnqueueStream` - Waits for current sound to finish
+`PlayStream` interrupts and plays now. `EnqueueStream` waits for the current sound.
 
 ### Setting Volume
 
-Control volume per channel (stereo = 2 channels):
+Per-channel volume (stereo = 2 channels):
 
 ```lavishscript
 ; Same volume both channels
@@ -2658,76 +3041,17 @@ Audio.Voice[music]:SetVolume[1.0]
 Audio.Voice[music]:SetVolume[1.0,0.2]
 ```
 
-**Volume values:**
-- `0.0` - Silence
-- `1.0` - Normal/full volume
-- `>1.0` - Amplified (louder)
+Volume range: `0.0` is silence, `1.0` is normal/full, `>1.0` is amplified.
 
-**Channels:**
-- Stereo: 2 channels (left, right)
-- 5.1 Surround: 6 channels
-- 7.1 Surround: 8 channels
-
-### Stopping Audio
-
-Stop current sound:
+### Stopping and Clearing
 
 ```lavishscript
-Audio.Voice[music]:Stop
+Audio.Voice[music]:Stop          ; stop current sound (queue intact)
+Audio.Voice[music]:ClearQueue    ; clear queued sounds
+Audio.Voice[music]:Stop:ClearQueue  ; common flush pattern
 ```
 
-**Note:** This pauses the stream but keeps it queued.
-
-### Clearing the Queue
-
-Remove all queued sounds:
-
-```lavishscript
-Audio.Voice[music]:ClearQueue
-```
-
-**Common pattern (flush):**
-
-```lavishscript
-Audio.Voice[music]:Stop:ClearQueue
-```
-
-This stops current sound AND clears the queue.
-
-### Complete Audio Example
-
-```lavishscript
-function main()
-{
-    ; Setup
-    Audio:AddVoice[music]
-    Audio:AddVoice[sfx]
-
-    Audio:AddStream[song,"../Assets/Audio/music.mp3"]
-    Audio:AddStream[beep,"../Assets/Audio/beep.wav"]
-
-    ; Set volumes
-    Audio.Voice[music]:SetVolume[0.5]    ; Quiet music
-    Audio.Voice[sfx]:SetVolume[1.0]      ; Full volume effects
-
-    ; Play music
-    Audio.Voice[music]:PlayStream[song]
-
-    ; Play sound effect (different voice, plays simultaneously)
-    Audio.Voice[sfx]:PlayStream[beep]
-
-    ; Wait 10 seconds
-    wait 100
-
-    ; Stop everything
-    Audio.Voice[music]:Stop:ClearQueue
-    Audio.Voice[sfx]:Stop:ClearQueue
-}
-```
-
-### Audio for Alerts
-
-Common pattern for script alerts:
+### Audio Alerts Pattern
 
 ```lavishscript
 objectdef AlertSystem
@@ -2762,8 +3086,7 @@ function main()
 {
     Alerts:Initialize
 
-    ; Do some work...
-    if ${Success}
+    if ${SomeCondition}
         Alerts:PlaySuccess
     else
         Alerts:PlayError
@@ -2772,51 +3095,17 @@ function main()
 }
 ```
 
-### Panning Example
-
-Create stereo effects by adjusting left/right volume:
-
-```lavishscript
-function main()
-{
-    Audio:AddVoice[music]
-    Audio:AddStream[tune,"music.mp3"]
-
-    ; Start mostly on left
-    Audio.Voice[music]:SetVolume[1.0,0.2]
-    Audio.Voice[music]:PlayStream[tune]
-
-    wait 30  ; 3 seconds
-
-    ; Pan to right
-    Audio.Voice[music]:SetVolume[0.2,1.0]
-
-    wait 30
-
-    ; Back to center
-    Audio.Voice[music]:SetVolume[1.0,1.0]
-
-    wait 30
-
-    Audio.Voice[music]:Stop:ClearQueue
-}
-```
-
 ### Audio Best Practices
 
-1. **Always create voices before using them**
-2. **Use separate voices for different purposes** (music, effects, alerts)
-3. **Clean up on shutdown** - Remove voices when done
-4. **Check file paths** - Audio files must exist
-5. **Use appropriate volumes** - Don't deafen users!
+1. Always create voices before using them.
+2. Use separate voices for distinct purposes (music, effects, alerts).
+3. Clean up on shutdown -- remove voices when done.
+4. Verify file paths -- audio files must exist.
+5. Use moderate volumes; clipping/distortion happens above `1.0`.
 
 ### Advanced Audio
 
-For **time-based volume changes** and **async audio control**, see the **LavishMachine Guide** which covers:
-- `audio.playstream` task type
-- `audio.setvolume` task type with duration
-- Smooth volume transitions
-- Looping audio
+For time-based volume changes (smooth fades) and async audio control, see [14_LavishMachine_Guide.md](14_LavishMachine_Guide.md), which documents the `audio.playstream` and `audio.setvolume` task types with duration support.
 
 ---
 
@@ -2824,10 +3113,11 @@ For **time-based volume changes** and **async audio control**, see the **LavishM
 
 ### 1. Variable and Parameter Naming
 
-**Use descriptive names:**
+Use descriptive names:
+
 ```lavishscript
 ; GOOD
-variable int PlayerHealth
+variable int CurrentHealth
 variable string TargetName
 
 ; BAD
@@ -2837,18 +3127,20 @@ variable string tn
 
 ### 2. String Escaping
 
-**Always quote and escape strings:**
+Always quote and escape strings that will be re-parsed (the [Tilde Escape rule](#the-tilde-escape----required-for-re-parsed-output)):
+
 ```lavishscript
-; BEST PRACTICE
+; CORRECT
 call MyFunction "${StringVar~}"
 
-; RISKY
+; BAD - breaks on quotes / special chars in StringVar
 call MyFunction ${StringVar}
 ```
 
 ### 3. Code Block Braces
 
-**Always on separate lines:**
+Always on separate lines for control-flow and definition blocks:
+
 ```lavishscript
 ; CORRECT
 function main()
@@ -2862,34 +3154,39 @@ function main() {
 }
 ```
 
+(JSON literals inside data sequences are exempt -- see [Your First Script](#your-first-script).)
+
 ### 4. Comments
 
-**Use comments to explain why, not what:**
+Use comments to explain why, not what:
+
 ```lavishscript
-; GOOD - Explains reasoning
+; GOOD - explains reasoning
 ; Wait for data to load completely before proceeding
 wait 10 ${MyObject.IsLoaded}
 
-; BAD - States the obvious
+; BAD - states the obvious
 ; Wait for data
 wait 10 ${MyObject.IsLoaded}
 ```
 
 ### 5. NULL Checks
 
-**Always check object existence:**
+Always check object existence:
+
 ```lavishscript
 ; GOOD
 if ${MyObject(exists)}
     echo "${MyObject.Name}"
 
-; BAD - May error if object is NULL
+; BAD - may error if object is NULL
 echo "${MyObject.Name}"
 ```
 
 ### 6. Loop Safety
 
-**Always use waitframe in infinite loops:**
+Always use `waitframe` (or `wait`) in long-running or infinite loops:
+
 ```lavishscript
 ; GOOD
 while TRUE
@@ -2898,7 +3195,7 @@ while TRUE
     waitframe
 }
 
-; BAD - Freezes game
+; BAD - freezes the host
 while TRUE
 {
     ; Work here (no waitframe!)
@@ -2907,17 +3204,18 @@ while TRUE
 
 ### 7. Function Organization
 
-**One function, one purpose:**
+One function, one purpose:
+
 ```lavishscript
-; GOOD - Focused function
-function GetPlayerHealth()
+; GOOD - focused function
+function GetCurrentValue()
 {
-    if !${Health(exists)}
+    if !${SomeObject(exists)}
         return 0
-    return ${Health}
+    return ${SomeObject.Value}
 }
 
-; BAD - Does too many things
+; BAD - does too many things
 function DoEverything()
 {
     ; Checks state, performs action, cleans up, etc.
@@ -2926,7 +3224,8 @@ function DoEverything()
 
 ### 8. Error Handling
 
-**Check conditions before acting:**
+Check conditions before acting:
+
 ```lavishscript
 ; GOOD
 if ${MyObject(exists)} && ${MyObject.Distance}<10
@@ -2934,27 +3233,32 @@ if ${MyObject(exists)} && ${MyObject.Distance}<10
     MyObject:Activate
 }
 
-; BAD - May fail if object is NULL
+; BAD - may fail if object is NULL
 MyObject:Activate
 ```
 
 ### 9. Variable Scope
 
-**Use local variables when possible:**
+Use the narrowest scope that works -- function-local first, then `script`-scope, then `global` only when needed:
+
 ```lavishscript
 function main()
 {
-    ; Local variable (preferred)
+    ; Function-local (preferred)
     variable int Count
 
-    ; Global variable (use sparingly)
-    variable(global) int GlobalCount
+    ; Script-scope (when persistence across function calls is needed)
+    variable(script) int TotalProcessed
+
+    ; Global (use sparingly)
+    variable(global) bool SystemInitialized
 }
 ```
 
 ### 10. Initialization
 
-**Initialize objects properly:**
+Initialize objects properly using the `Initialize` method:
+
 ```lavishscript
 objectdef MyObject
 {
@@ -2973,88 +3277,97 @@ objectdef MyObject
 }
 ```
 
+### 11. Avoid Shadowing Built-in TLOs
+
+Don't name custom globals after built-in TLOs (`Script`, `Math`, `Time`, `System`, `Event`, `Audio`, `Display`, `Input`, `Mouse`, `Keyboard`, `InnerSpace`, etc.). A global named the same as a built-in TLO shadows the built-in for the rest of the script. See [Top-Level Objects](#top-level-objects) for the full list to avoid.
+
 ---
 
-## Type Inspection and Debugging Commands
+## Type Inspection and Debugging
 
-### Inspecting Object Types
+When working with LavishScript, you'll often need to inspect what members and methods an object has. The platform exposes five "information" commands for this. All five are LavishScript-core, documented under the `Command:` namespace and listed in [01b §2.1 Information](01b_LavishScript_Reference.md#21-lavishscript-core-commands).
 
-When working with LavishScript and InnerSpace, you'll often need to inspect what members and methods an object has. InnerSpace provides console commands for this:
+### The Five Information Commands
 
-**Get the type of any object:**
+| Command | Use |
+|---|---|
+| [`Commands`](https://www.lavishsoft.com/wiki/index.php/Command:Commands) | List every registered command in the current session. |
+| [`LSType`](https://www.lavishsoft.com/wiki/index.php/Command:LSType) | Inspect a registered object type, listing its members and methods. |
+| [`LSVersion`](https://www.lavishsoft.com/wiki/index.php/Command:LSVersion) | Print the LavishScript engine version. |
+| [`Scripts`](https://www.lavishsoft.com/wiki/index.php/Command:Scripts) | List currently running scripts. |
+| [`TopLevelObject`](https://www.lavishsoft.com/wiki/index.php/Command:TopLevelObject) | List, define, or remove Top-Level Objects. With no argument, enumerates every TLO in the session. |
+
+### Get the Type of Any Object
+
+The `(type)` cast yields the object's type name as a string:
+
 ```lavishscript
-echo ${Object(type)}
+echo ${SomeObject(type)}
 ```
 
-**Inspect a type's members and methods:**
+### Inspect a Type's Surface
+
 ```
 lstype <typename>
 ```
 
-**Example - Inspecting LGUI2 layer:**
-```
-echo ${LGUI2.Layer["base"](type)}
-```
-Output: `lgui2layer`
+Run with no `<typename>` to list every registered type in the session:
 
 ```
-lstype lgui2layer
+lstype
 ```
-Output shows:
-- **Members** - Properties you can access with `.` (dot) notation
-- **Methods** - Actions you can perform with `:` (colon) notation
-- **Static Members** - Type-level members accessed on the type name
-- **Static Methods** - Type-level methods called on the type name
 
-### Common Type Inspection Patterns
+`LSType` output shows:
 
-**1. Unknown object - find its type:**
+- **Members** -- properties accessible with `.` (dot) notation.
+- **Methods** -- actions accessible with `:` (colon) notation.
+- **Static Members** -- type-level members accessed on the type name.
+- **Static Methods** -- type-level methods called on the type name.
+
+### Common Inspection Patterns
+
+**Unknown object -- find its type:**
+
 ```lavishscript
 echo ${UnknownObject(type)}
 lstype <result>
 ```
 
-**2. Check if member exists:**
+**Check whether a member exists:**
+
 ```lavishscript
 if ${Object.SomeMember(exists)}
     echo "${Object.SomeMember}"
 ```
 
-**3. List available types:**
+**List every TLO registered in this session:**
+
 ```
-lstype
+TopLevelObject
 ```
-Shows all registered types in the current session.
 
-### Practical Example
-
-```lavishscript
-; What type is my ship?
-echo ${LGUI2(type)}
-; Output: lgui2
-
-; What can I do with this object?
-lstype lgui2
-
-; Access the members
-echo "Name: ${LGUI2.Name}"
-echo "CursorX: ${LGUI2.CursorX}"
-```
+The `TopLevelObject` output is the canonical answer to "is `${MyTLO}` registered, and what type does it return?". Useful for confirming an extension's TLOs are loaded.
 
 ### When to Use Type Inspection
 
-- **Learning the API** - Discover what's available on an object
-- **Debugging** - Verify object types and available members
-- **Documentation** - Understand undocumented or new types
-- **Development** - Find the right method or member for your task
+- **Learning the API** -- discover what's available on an object.
+- **Debugging** -- verify object types and available members.
+- **Documentation** -- understand undocumented or new types.
+- **Development** -- find the right method or member for your task.
 
 ---
 
-### Additional Resources
+## Additional Resources
 
-- **LavishScript Wiki:** http://www.lavishsoft.com/wiki/LavishScript
-- **LavishScript Math Operators:** http://www.lavishsoft.com/wiki/index.php/LavishScript:Mathematical_Formulae
-- **InnerSpace Documentation:** http://www.lavishsoft.com/wiki/
-- **LERN Examples:** https://github.com/LavishSoftware/LERN/tree/master
-- **LERN LavishScript Tutorials (19 lessons):** https://github.com/LavishSoftware/LERN/tree/master/LS
+- [LavishScript main page (Lavish Software wiki)](https://www.lavishsoft.com/wiki/index.php/LavishScript)
+- [LavishScript Mathematical Formulae](https://www.lavishsoft.com/wiki/index.php/LavishScript:Mathematical_Formulae)
+- [Inner Space main page](https://www.lavishsoft.com/wiki/index.php/Inner_Space)
+- [Lavish Software wiki main page](https://www.lavishsoft.com/wiki/index.php/Main_Page)
+- [01b_LavishScript_Reference.md](01b_LavishScript_Reference.md) -- exhaustive command/datatype/TLO inventory for this knowledge base, with one canonical entry per feature.
 
+<!-- CLAUDE_SKIP_START -->
+LERN is the official Lavish Software example/tutorial repository on GitHub:
+
+- [LERN repository (general)](https://github.com/LavishSoftware/LERN/tree/master)
+- [LERN LavishScript tutorials (19 lessons)](https://github.com/LavishSoftware/LERN/tree/master/LS)
+<!-- CLAUDE_SKIP_END -->
