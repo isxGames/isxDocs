@@ -7,7 +7,7 @@
 - InnerSpace installed
 - ISXEVE extension installed
 - EVE Online running
-- Basic LavishScript knowledge (if not, read [01_LavishScript_Fundamentals.md](01_LavishScript_Fundamentals.md) first)
+- Basic LavishScript knowledge (if not, read [01_LavishScript_Fundamentals.md](01_LavishScript_Fundamentals.md) first; the companion [01b_LavishScript_Reference.md](01b_LavishScript_Reference.md) provides an exhaustive command/datatype/TLO lookup table)
 
 ---
 

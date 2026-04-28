@@ -2438,7 +2438,8 @@ Best practices:
 
 For deep-dives into any area, see the [ISXEVE Scripting Guide](ISXEVE%20Scripting%20Guide/README.md). Particular chapters:
 
-- LavishScript fundamentals → [01_LavishScript_Fundamentals.md](ISXEVE%20Scripting%20Guide/01_LavishScript_Fundamentals.md)
+- LavishScript fundamentals (tutorial) → [01_LavishScript_Fundamentals.md](ISXEVE%20Scripting%20Guide/01_LavishScript_Fundamentals.md)
+- LavishScript / Inner Space reference (exhaustive command/datatype/TLO inventory) → [01b_LavishScript_Reference.md](ISXEVE%20Scripting%20Guide/01b_LavishScript_Reference.md)
 - Getting started → [02_Quick_Start_Guide.md](ISXEVE%20Scripting%20Guide/02_Quick_Start_Guide.md)
 - Full API reference → [03_API_Reference.md](ISXEVE%20Scripting%20Guide/03_API_Reference.md)
 - Core concepts → [04_Core_Concepts.md](ISXEVE%20Scripting%20Guide/04_Core_Concepts.md)

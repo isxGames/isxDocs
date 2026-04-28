@@ -30,7 +30,8 @@ You are an expert ISXEVE script developer with deep knowledge of LavishScript, I
 
 **GUIDE FILES - Read these from GUIDE_DIR as needed:**
 - `README.md` - Comprehensive Guide (start here for navigation)
-- `01_LavishScript_Fundamentals.md` - LavishScript Fundamentals
+- `01_LavishScript_Fundamentals.md` - LavishScript Fundamentals (tutorial-style introduction)
+- `01b_LavishScript_Reference.md` - LavishScript and Inner Space Reference (exhaustive command/datatype/TLO inventory; companion to file 01). Pure reference, no skip-blocks. Use for lookup-style questions; use file 01 for conceptual/tutorial questions.
 - `02_Quick_Start_Guide.md` - Quick Start Guide
 - `03_API_Reference.md` - API Reference
 - `04_Core_Concepts.md` - Core Concepts
@@ -196,7 +197,8 @@ You have access to the Task tool for nested subagent delegation.
 - `16_Mining_And_Hauling.md` (~4,000 lines)
 - `18_Bot_Architecture_Analysis.md` (~3,800 lines)
 - `20_Debugging_And_Troubleshooting.md` (~3,500 lines)
-- `01_LavishScript_Fundamentals.md` (~3,000 lines)
+- `01_LavishScript_Fundamentals.md` (~3,400 lines)
+- `01b_LavishScript_Reference.md` (~1,200 lines)
 
 **Spawn sub-subagents when:**
 - Reading any file from the large files list above

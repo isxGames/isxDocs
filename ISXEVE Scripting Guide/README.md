@@ -30,7 +30,10 @@ This comprehensive guide provides complete documentation for creating, debugging
    Complete overview of the ISXEVE API with organized links to all datatypes, commands, and events. **Start here for quick reference and navigation.**
 
 2. **[01_LavishScript_Fundamentals.md](01_LavishScript_Fundamentals.md)** - LavishScript Basics (For beginners!)
-   Complete introduction to LavishScript programming. Covers variables, functions, objects, loops, conditionals, and all language fundamentals. **If you're new to LavishScript, read this before the Quick Start Guide.**
+   Tutorial-style introduction to LavishScript programming. Concepts and intuition: variables, functions, objects, loops, conditionals, atoms, events, triggers, aliases, modules, input emulation, web requests, audio, and best practices. **If you're new to LavishScript, read this before the Quick Start Guide.** For the exhaustive reference inventory, see file 01b below.
+
+2b. **[01b_LavishScript_Reference.md](01b_LavishScript_Reference.md)** - LavishScript and Inner Space Reference
+   Pure-reference companion to file 01. Exhaustive inventory of every LavishScript-core and Inner-Space-core command, datatype, and Top-Level Object, with one canonical entry per feature linked to the Lavish Software wiki. Use this when you want a flat lookup table rather than tutorial prose.
 
 3. **[02_Quick_Start_Guide.md](02_Quick_Start_Guide.md)** - Your First ISXEVE Script
    Get up and running in 5-10 minutes with your first ISXEVE script. Includes installation verification and a simple working example. **Assumes basic LavishScript knowledge.**
@@ -114,7 +117,8 @@ This comprehensive guide provides complete documentation for creating, debugging
 
 | Task | Documentation |
 |------|---------------|
-| **Learn LavishScript basics** | [01_LavishScript_Fundamentals.md](01_LavishScript_Fundamentals.md) |
+| **Learn LavishScript basics (tutorial)** | [01_LavishScript_Fundamentals.md](01_LavishScript_Fundamentals.md) |
+| **Look up a LavishScript / Inner Space command, datatype, or TLO (reference)** | [01b_LavishScript_Reference.md](01b_LavishScript_Reference.md) |
 | **Write your first ISXEVE script** | [02_Quick_Start_Guide.md](02_Quick_Start_Guide.md) |
 | **Look up an API member** | [03_API_Reference.md](03_API_Reference.md) |
 | **Understand core concepts** | [04_Core_Concepts.md](04_Core_Concepts.md) |

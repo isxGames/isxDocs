@@ -40,7 +40,7 @@ The ISXEVE Claude Code integration uses a **coordinator/worker architecture** de
 
 **Benefits:**
 - **Context Conservation**: Large documentation files are read in isolated agent context, not your main conversation
-- **Thoroughness**: The agent has full access to all 22 numbered guides plus meta/index files
+- **Thoroughness**: The agent has full access to all 22 numbered guides (plus the `01b` reference companion to file 01) and meta/index files
 - **Efficiency**: Coordinator stays lightweight; only results return to main conversation
 - **Sub-subagent Support**: For very large research tasks, the agent can spawn additional subagents
 
@@ -145,7 +145,7 @@ It does NOT read documentation files directly, keeping your main conversation co
 ### The Worker Agent (ISXEVE-Expert)
 
 The agent runs in an isolated context and:
-- Reads documentation files (all 22 numbered guides plus meta/index files)
+- Reads documentation files (all 22 numbered guides plus the `01b_LavishScript_Reference.md` reference companion to file 01, plus meta/index files)
 - Analyzes existing scripts
 - Creates and edits script files
 - Debugs issues

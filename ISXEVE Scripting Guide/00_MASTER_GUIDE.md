@@ -349,7 +349,7 @@ Common `EVE:Execute[]` commands:
 | `CmdOpenMarket` | Open market |
 | `CmdDockOrJumpOrActivateGate` | Dock/jump/activate |
 
-**Documentation:** [01_LavishScript_Fundamentals.md#commands](01_LavishScript_Fundamentals.md#commands)
+**Documentation:** [01b_LavishScript_Reference.md#2-commands](01b_LavishScript_Reference.md#2-commands) (exhaustive command inventory) or [01_LavishScript_Fundamentals.md](01_LavishScript_Fundamentals.md) (tutorial-style introduction).
 
 ---
 
@@ -434,7 +434,8 @@ if ${Item:First(exists)}
 
 | Level | Start Here |
 |-------|------------|
-| **Complete Beginner** | [01_LavishScript_Fundamentals.md](01_LavishScript_Fundamentals.md) |
+| **Complete Beginner** | [01_LavishScript_Fundamentals.md](01_LavishScript_Fundamentals.md) (tutorial) |
+| **LavishScript / Inner Space lookup** | [01b_LavishScript_Reference.md](01b_LavishScript_Reference.md) (exhaustive command/datatype/TLO reference) |
 | **ISXEVE Beginner** | [02_Quick_Start_Guide.md](02_Quick_Start_Guide.md) |
 | **Intermediate** | [05_Patterns_And_Best_Practices.md](05_Patterns_And_Best_Practices.md) |
 | **Advanced** | [07_Advanced_Patterns_And_Examples.md](07_Advanced_Patterns_And_Examples.md) |

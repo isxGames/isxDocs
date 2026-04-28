@@ -75,6 +75,18 @@ This file does NOT cover any extension-provided content (game-specific TLOs, dat
 - **Provenance label convention:** Each section header notes the namespace (LavishScript core vs. Inner Space Kernel vs. subsystem package). Mixing these layers is what makes scripts non-portable to bare-LavishScript hosts (no Inner Space) or to other Inner Space sessions running different extensions.
 - **Wiki-verification gaps:** Some wiki pages are stubs, missing, or contain only inline-template content. Where surface detail is not on the wiki, this file says so and provides the canonical wiki link for future reference.
 
+### Command-Flag Syntax
+
+Many commands accept hyphenated flags (e.g., `wait -s 1.0`, `Press -hold X`, `Bind -list`, `Squelch -list`). The convention across LavishScript and Inner Space:
+
+- A flag is `-name` (lowercase, hyphen-prefixed).
+- Flag arguments come immediately after the flag, space-separated.
+- Multiple flags can usually be combined (`Bind -press <name> <combo> <command>`), or are mutually exclusive (`Bind -clear` vs `Bind -delete <name>`); the per-command page documents which.
+- Listing forms typically use `-list`. Clear-all forms use `-clear`. Delete-by-name typically uses `-delete <name>`.
+- Some flags express duration / mode rather than action (e.g., `Press -hold` to press-and-hold rather than press-and-release).
+
+Per-command flag tables live on each command's wiki page; entries below link directly there.
+
 ---
 
 ## 2. Commands

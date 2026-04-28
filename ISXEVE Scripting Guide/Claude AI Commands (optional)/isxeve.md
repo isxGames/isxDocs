@@ -113,7 +113,8 @@ When reviewing scripts over ~200 lines:
 - Mining And Hauling (~4,000 lines)
 - Bot Architecture Analysis (~3,800 lines)
 - Debugging And Troubleshooting (~3,500 lines)
-- LavishScript Fundamentals (~3,000 lines)
+- LavishScript Fundamentals (~3,400 lines) — `01_LavishScript_Fundamentals.md`, tutorial-style introduction
+- LavishScript Reference (~1,200 lines) — `01b_LavishScript_Reference.md`, exhaustive command/datatype/TLO inventory companion to file 01. Pure reference, no skip-blocks. Use for lookup-style questions.
 
 **CRITICAL RULES** (remind subagent when delegating):
 - Check `${ISXEVE.IsReady}` before first API access
