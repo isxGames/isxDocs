@@ -475,6 +475,8 @@ If you're new to LavishScript, read **[01_LavishScript_Fundamentals.md](01_Lavis
 - Collections (index type)
 - Web requests and audio
 
+For exhaustive command/datatype/TLO lookup tables (one canonical entry per feature, with links to the Lavish Software wiki), use the companion reference **[01b_LavishScript_Reference.md](01b_LavishScript_Reference.md)**.
+
 ### 2. Learn Core ISXEQ2 Concepts
 Read **[04_Core_Concepts.md](04_Core_Concepts.md)** to understand:
 - Datatypes and inheritance
@@ -582,7 +584,7 @@ if ${Object(exists)}
 - **Need an example?** Browse [06_Working_Examples.md](06_Working_Examples.md)
 - **API question?** Look up in [00_MASTER_GUIDE.md](00_MASTER_GUIDE.md) or [03_API_Reference.md](03_API_Reference.md)
 - **Need advanced patterns?** Check [07_Advanced_Patterns_And_Examples.md](07_Advanced_Patterns_And_Examples.md)
-- **New to LavishScript?** Read [01_LavishScript_Fundamentals.md](01_LavishScript_Fundamentals.md)
+- **New to LavishScript?** Read [01_LavishScript_Fundamentals.md](01_LavishScript_Fundamentals.md) (tutorial); use [01b_LavishScript_Reference.md](01b_LavishScript_Reference.md) for exhaustive command/datatype/TLO lookup
 <!-- CLAUDE_SKIP_END -->
 
 ---

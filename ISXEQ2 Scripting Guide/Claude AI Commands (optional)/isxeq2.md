@@ -105,7 +105,8 @@ When reviewing scripts over ~200 lines:
 
 **LARGE DOCUMENTATION FILES** (delegate reading to subagent):
 - API Reference (~3,600 lines)
-- LavishScript Fundamentals (~3,000 lines)
+- LavishScript Fundamentals (~3,400 lines) — `01_LavishScript_Fundamentals.md`, tutorial-style introduction
+- LavishScript Reference (~1,200 lines) — `01b_LavishScript_Reference.md`, exhaustive command/datatype/TLO inventory companion to file 01. Pure reference, no skip-blocks. Use for lookup-style questions.
 - LGUI2 UI Guide (~7,500 lines)
 - Advanced Scripting Patterns (~4,000 lines)
 - LGUI1 to LGUI2 Migration (~4,900 lines)

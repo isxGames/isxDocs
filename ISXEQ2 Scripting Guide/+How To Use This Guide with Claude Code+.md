@@ -152,7 +152,7 @@ It does NOT read documentation files directly, keeping your main conversation co
 ### The Worker Agent (ISXEQ2-Expert)
 
 The agent runs in an isolated context and:
-- Reads documentation files (all 21 guides + quick reference)
+- Reads documentation files (all 21 numbered guides plus the `01b_LavishScript_Reference.md` reference companion to file 01, plus the quick reference)
 - Analyzes existing scripts
 - Creates and edits script files
 - Debugs issues
@@ -161,6 +161,7 @@ The agent runs in an isolated context and:
 **Large File Handling:** The agent knows which documentation files are large and can spawn sub-subagents to read them if needed:
 - `ISXEQ2Changes.txt`
 - `01_LavishScript_Fundamentals.md`
+- `01b_LavishScript_Reference.md`
 - `03_API_Reference.md`
 - `10_LavishGUI2_UI_Guide.md`
 - `11_LavishGUI1_to_LavishGUI2_Migration.md`

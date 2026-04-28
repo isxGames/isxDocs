@@ -886,7 +886,7 @@ echo Loaded: ${loadedPerson.FirstName} ${loadedPerson.LastName}
 
 ## Collections and Indexes with JSON
 
-For the basic LavishScript `index` and `collection` API (declaration, `Insert`, `Remove`, `Collapse`, `.Used`, and a simpler `AsJSON`/`FromJSON` round-trip using `jsonvalue`), see [01_LavishScript_Fundamentals.md - Collections and Lists (index)](01_LavishScript_Fundamentals.md#collections-and-lists-index). This section focuses on the JSON-specific serialization patterns: how `index` and `collection` integrate with `jsonvalueref`, the `AsJSON`/`FromJSON` protocol that custom `objectdef` types implement for automatic (de)serialization, and how `collection` can serialize in both object and array formats.
+For the basic LavishScript `index` and `collection` API (declaration, `Insert`, `Remove`, `Collapse`, `.Used`, and a simpler `AsJSON`/`FromJSON` round-trip using `jsonvalue`), see [01_LavishScript_Fundamentals.md - Collections and Lists](01_LavishScript_Fundamentals.md#collections-and-lists). For the full container catalogue and JSON-related object types, see [01b §3.5 Containers](01b_LavishScript_Reference.md#35-containers) and [01b §3.6 JSON](01b_LavishScript_Reference.md#36-json). This section focuses on the JSON-specific serialization patterns: how `index` and `collection` integrate with `jsonvalueref`, the `AsJSON`/`FromJSON` protocol that custom `objectdef` types implement for automatic (de)serialization, and how `collection` can serialize in both object and array formats.
 
 ### Index with AsJSON/FromJSON
 

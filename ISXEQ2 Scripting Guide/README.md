@@ -29,9 +29,12 @@ This comprehensive guide provides complete documentation for creating, debugging
    Complete overview of the ISXEQ2 API with organized links to all datatypes, commands, and events. **Start here for quick reference and navigation.**
 
 2. **[01_LavishScript_Fundamentals.md](01_LavishScript_Fundamentals.md)** - LavishScript Basics (For beginners!)
-   Complete introduction to LavishScript programming. Covers variables, functions, objects, loops, conditionals, and all language fundamentals. **If you're new to LavishScript, read this before the Quick Start Guide.**
+   Tutorial-style introduction to LavishScript programming. Covers variables, functions, objects, loops, conditionals, and all language fundamentals. **If you're new to LavishScript, read this before the Quick Start Guide.**
 
-3. **[02_Quick_Start_Guide.md](02_Quick_Start_Guide.md)** - Your First ISXEQ2 Script
+3. **[01b_LavishScript_Reference.md](01b_LavishScript_Reference.md)** - LavishScript and Inner Space Reference
+   Exhaustive command, datatype, and Top-Level Object inventory for LavishScript core, Inner Space core, and bundled first-party subsystem packages (LavishGUI, LavishGUI 2, LavishNav, LavishSettings, LavishMachine). One canonical entry per feature with links to the authoritative Lavish Software wiki page. **Use this for lookup-style questions; use file 01 for conceptual/tutorial questions.**
+
+4. **[02_Quick_Start_Guide.md](02_Quick_Start_Guide.md)** - Your First ISXEQ2 Script
    Get up and running in 5-10 minutes with your first ISXEQ2 script. Includes installation verification and a simple working example. **Assumes basic LavishScript knowledge.**
 
 ### Core Documentation
@@ -101,7 +104,8 @@ This comprehensive guide provides complete documentation for creating, debugging
 
 | Task | Documentation |
 |------|---------------|
-| **Learn LavishScript basics** | [01_LavishScript_Fundamentals.md](01_LavishScript_Fundamentals.md) |
+| **Learn LavishScript basics (tutorial)** | [01_LavishScript_Fundamentals.md](01_LavishScript_Fundamentals.md) |
+| **Look up a LavishScript / Inner Space command, datatype, or TLO (reference)** | [01b_LavishScript_Reference.md](01b_LavishScript_Reference.md) |
 | **Write your first ISXEQ2 script** | [02_Quick_Start_Guide.md](02_Quick_Start_Guide.md) |
 | **Look up an API member** | [03_API_Reference.md](03_API_Reference.md) |
 | **Understand inheritance** | [04_Core_Concepts.md#datatype-inheritance](04_Core_Concepts.md#datatype-inheritance) |
@@ -210,7 +214,7 @@ This comprehensive guide provides complete documentation for creating, debugging
 
 ### Beginner (Never used LavishScript or ISXEQ2 before)
 
-1. **If new to LavishScript:** Read [01_LavishScript_Fundamentals.md](01_LavishScript_Fundamentals.md) to learn the language basics
+1. **If new to LavishScript:** Read [01_LavishScript_Fundamentals.md](01_LavishScript_Fundamentals.md) to learn the language basics; bookmark [01b_LavishScript_Reference.md](01b_LavishScript_Reference.md) for exhaustive command/datatype/TLO lookup
 2. Read the [02_Quick_Start_Guide.md](02_Quick_Start_Guide.md) and run the example script
 3. Read [04_Core_Concepts.md](04_Core_Concepts.md) sections 1-4 (Datatypes, TLOs, NULL Checks, Variables)
 4. Study the basic examples in [06_Working_Examples.md](06_Working_Examples.md#basic-information)
@@ -356,6 +360,15 @@ Found an error or have an improvement? This documentation was generated using ac
 
 <!-- CLAUDE_SKIP_START -->
 ## Version History
+
+- **4.3** (2026-04-28) — LavishScript Fundamentals restructure plus new sibling reference file
+  - **`01_LavishScript_Fundamentals.md` synced to the ISXEVE-tree version** (3,373 lines, 30 sections) — now restricted to LavishScript-core / Inner-Space-core / first-party subsystem packages only (no game/extension content)
+  - **New `01b_LavishScript_Reference.md`** (1,221 lines) — exhaustive command/datatype/Top-Level-Object inventory companion to file 01, with one canonical entry per feature linked to the Lavish Software wiki. Covers LavishScript core (`Command:`, `ObjectType:`, `TLO:` namespaces), Inner Space core (`ISKernel:`, `ISSession:`, `ISUplink:` namespaces), bundled first-party subsystems (LavishGUI, LavishGUI 2, LavishNav, LavishSettings, LavishMachine), and optional Lavish Software modules (`LSModule:*`)
+  - Both files are 100% platform-pure: no `${Me}`, `${EQ2}`, `${Actor}`, no `ISX*` content — extension-specific guidance lives in the other guide files (`03_API_Reference.md`, `04_Core_Concepts.md`, etc.)
+  - **Cross-references swept across 8 dependent guide files** to point to the new file 01b for reference-shape lookups while keeping file 01 for conceptual/tutorial questions: `02_Quick_Start_Guide.md`, `04_Core_Concepts.md`, `13_JSON_Guide.md`, `14_LavishMachine_Guide.md`, `README.md`, `+How To Use This Guide with Claude Code+.md`, `Claude AI Commands (optional)/ISXEQ2-Expert.md`, `Claude AI Commands (optional)/isxeq2.md`
+  - Fixed two broken anchors that stale `01_LavishScript_Fundamentals.md#collections-and-lists-index` references pointed to in `04_Core_Concepts.md` and `13_JSON_Guide.md` — the new file 01 heading is `## Collections and Lists`
+  - Added 01b §3.5 Containers, §3.6 JSON, §3.15 Inner Space Audio, §3.20 Inner Space Misc cross-links from `04_Core_Concepts.md`, `13_JSON_Guide.md`, and `14_LavishMachine_Guide.md` for exhaustive lookup
+  - Updated Claude AI command/agent files to surface 01b as a separate large-files-list entry so the agent treats it as a sibling reference rather than confusing it with file 01
 
 - **4.2** (2026-04-12) — Added Debugging and Troubleshooting capstone guide
   - Added [20_Debugging_And_Troubleshooting.md](20_Debugging_And_Troubleshooting.md) — diagnostic capstone

@@ -145,7 +145,7 @@ ${Me.Ability[1]}    ; only character has this
 
 ## Members and Methods
 
-Every ISXEQ2 datatype exposes two kinds of access: **members** (read values with `.`) and **methods** (perform actions with `:`). For the underlying LavishScript concepts and how to define your own members/methods on custom `objectdef` types, see [01_LavishScript_Fundamentals.md - Members](01_LavishScript_Fundamentals.md#members) and [01_LavishScript_Fundamentals.md - Methods](01_LavishScript_Fundamentals.md#methods).
+Every ISXEQ2 datatype exposes two kinds of access: **members** (read values with `.`) and **methods** (perform actions with `:`). For the underlying LavishScript concepts and how to define your own members/methods on custom `objectdef` types, see [01_LavishScript_Fundamentals.md - Members](01_LavishScript_Fundamentals.md#members) and [01_LavishScript_Fundamentals.md - Methods](01_LavishScript_Fundamentals.md#methods). For the exhaustive object-types catalogue (every built-in datatype with its members/methods and a link to the canonical wiki page), see [01b §3 Object Types](01b_LavishScript_Reference.md#3-object-types).
 
 This section focuses on how members and methods appear on ISXEQ2 datatypes.
 
@@ -432,7 +432,7 @@ For the full API reference including all filter types (`Range`, `Type`, `Zone`, 
 
 When queries return multiple results, they populate a **collection**. You iterate through collections using an **iterator**.
 
-For the core LavishScript `index` and `collection` types themselves - including `Insert`, `Remove`, `Collapse`, `Clear`, `.Used`, and `AsJSON`/`FromJSON` serialization - see [01_LavishScript_Fundamentals.md - Collections and Lists (index)](01_LavishScript_Fundamentals.md#collections-and-lists-index). This section focuses on how those collections are populated from ISXEQ2 `Query*`/`GetActors` calls and walked with an iterator to inspect ISXEQ2 datatypes.
+For the core LavishScript `index` and `collection` types themselves - including `Insert`, `Remove`, `Collapse`, `Clear`, `.Used`, and `AsJSON`/`FromJSON` serialization - see [01_LavishScript_Fundamentals.md - Collections and Lists](01_LavishScript_Fundamentals.md#collections-and-lists). The full container catalogue (`array`, `queue`, `stack`, `set`, `variablescope`, `objectcontainer`) is in [01b §3.5 Containers](01b_LavishScript_Reference.md#35-containers). This section focuses on how those collections are populated from ISXEQ2 `Query*`/`GetActors` calls and walked with an iterator to inspect ISXEQ2 datatypes.
 
 ### Standard Iterator Pattern
 
