@@ -119,6 +119,7 @@ When reviewing scripts over ~200 lines:
 - Verify API details against CHANGES_FILE — it is the definitive source
 - After adding/removing/renaming guide files: update ALL cross-references across all files
 - After substantive guide changes: check if `00_MASTER_GUIDE.md`, `README.md`, `+How To Use+.md`, `ISXEQ2_QuickReference.md`, and the Claude AI command/agent files need updating
+- KB content (guide files, API Reference, Quick Reference) MUST NOT reference dates or builds when describing features — strip all `(added X.X.YYYY, build NNNNNNNN.NNNN)` style callouts from TLO tables, datatype sections, and member descriptions. Version history sections are a separate exception with their own conventions (entry-level date kept, per-bullet build refs stripped).
 
 ## Workflow
 

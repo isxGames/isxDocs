@@ -135,6 +135,7 @@ Never use absolute paths (e.g., `C:\Dev\...`) in guide content. All paths must b
 - Assume data is immediately available (check async loading)
 - Guess API syntax — verify against CHANGES_FILE before using any API you're not 100% sure about
 - Create inefficient loops without throttling
+- Reference dates or builds when describing features in KB content (guide files, API Reference, Quick Reference). Strip all `(added X.X.YYYY, build NNNNNNNN.NNNN)` style callouts from TLO tables, datatype sections, member descriptions, and behavior annotations. The KB documents what features ARE, not when they appeared. Version history sections are a separate exception with their own conventions (entry-level date kept, per-bullet build refs stripped).
 
 ## CRITICAL: Cross-Reference Integrity
 
