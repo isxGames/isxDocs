@@ -1581,6 +1581,7 @@ Adornment attached to item.
 | Slot | string | Adornment slot name |
 | SlotIndex | int | Numeric slot index |
 | Description | string | Adornment description |
+| ToLink | string | Creates clickable chat link |
 
 **Example Usage:**
 ```lavishscript

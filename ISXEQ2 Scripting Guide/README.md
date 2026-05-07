@@ -365,6 +365,7 @@ Found an error or have an improvement? This documentation was generated using ac
   - Documented `HasAdornments` (bool) member on the `item` datatype — added to `03_API_Reference.md` Item Type Checks table and `ISXEQ2_QuickReference.md` item type-check list
   - Annotated the `iteminfo.PackagedItem[index]` behavior: now returns NULL when the iteminfo is not a package — annotated in both `03_API_Reference.md` and `ISXEQ2_QuickReference.md`
   - Added new TLO `InspectPlayerWindow` and new datatype `inspectplayerwindow` (inherits from `eq2window`), with `EquippedItem[index]` (1-27) and `AppearanceItem[index]` (1-26) members both returning `iteminfo` — added to `03_API_Reference.md` TLO table plus full datatype section, and `ISXEQ2_QuickReference.md` TLO table plus datatype block
+  - Documented `ToLink` (string) member on the `adornment` datatype — added to `03_API_Reference.md` adornment Members table and `ISXEQ2_QuickReference.md` adornment block
   - No new examples, no new commands, no removed APIs, no events
 
 - **4.3** (2026-04-28) — LavishScript Fundamentals restructure plus new sibling reference file

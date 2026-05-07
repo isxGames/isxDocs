@@ -1089,6 +1089,7 @@ Adornment attached to item.
 - `Slot` - string: Adornment slot
 - `SlotIndex` - int: Numeric slot index
 - `Description` - string: Description
+- `ToLink` - string: Chat link
 
 ---
 
