@@ -158,6 +158,7 @@ Top-Level Objects (TLOs) are the entry points for accessing game data. They can 
 | **MerchantWindow** | [merchantwindow](#merchantwindow) | Merchant window |
 | **ChannelerWindow** | [channelerwindow](#channelerwindow) | Channeler class window |
 | **BeastlordWindow** | [beastlordwindow](#beastlordwindow) | Beastlord class window |
+| **InspectPlayerWindow** | [inspectplayerwindow](#inspectplayerwindow) | Inspect Player window |
 
 ---
 
@@ -852,6 +853,7 @@ Item in inventory, equipment, or containers.
 - `IsFamiliar` - bool: Is familiar
 - `IsAgent` - bool: Is agent
 - `IsUsable` - bool: Is usable
+- `HasAdornments` - bool: Has adornments attached
 
 *Readiness:*
 - `IsReady` - bool: Ready (not on cooldown)
@@ -983,7 +985,7 @@ Detailed item examination data. Obtained via `Item.ToItemInfo`.
 
 *Packaging:*
 - `NumItemsPackaged` - int: Packaged items count
-- `PackagedItem[index]` - [packageditem](#packageditem): Packaged item
+- `PackagedItem[index]` - [packageditem](#packageditem): Packaged item. Returns NULL if iteminfo is not a package.
 
 *Recipe:*
 - `NumItemsCreated` - int: Items created by recipe
@@ -1986,6 +1988,19 @@ Beastlord class window. Inherits from [**eq2window**](#eq2window). **Access:** `
 
 **Additional Members:**
 - `IconBank` - [eq2iconbank](#eq2iconbank): Ability icon bank
+
+---
+
+#### **inspectplayerwindow**
+
+Inspect Player window (the window that shows another player's equipped/appearance items). Inherits from [**eq2window**](#eq2window). **Access:** `${InspectPlayerWindow}`.
+
+**Inheritance:**
+- All members and methods from [**eq2window**](#eq2window) are available
+
+**Additional Members:**
+- `EquippedItem[index]` - [iteminfo](#iteminfo): Equipped item by slot index (1-27)
+- `AppearanceItem[index]` - [iteminfo](#iteminfo): Appearance slot item by slot index (1-26)
 
 ---
 

@@ -361,6 +361,12 @@ Found an error or have an improvement? This documentation was generated using ac
 <!-- CLAUDE_SKIP_START -->
 ## Version History
 
+- **4.4** (2026-05-06) — ISXEQ2 changelog catch-up
+  - Documented `HasAdornments` (bool) member on the `item` datatype — added to `03_API_Reference.md` Item Type Checks table and `ISXEQ2_QuickReference.md` item type-check list
+  - Annotated the `iteminfo.PackagedItem[index]` behavior: now returns NULL when the iteminfo is not a package — annotated in both `03_API_Reference.md` and `ISXEQ2_QuickReference.md`
+  - Added new TLO `InspectPlayerWindow` and new datatype `inspectplayerwindow` (inherits from `eq2window`), with `EquippedItem[index]` (1-27) and `AppearanceItem[index]` (1-26) members both returning `iteminfo` — added to `03_API_Reference.md` TLO table plus full datatype section, and `ISXEQ2_QuickReference.md` TLO table plus datatype block
+  - No new examples, no new commands, no removed APIs, no events
+
 - **4.3** (2026-04-28) — LavishScript Fundamentals restructure plus new sibling reference file
   - **`01_LavishScript_Fundamentals.md` synced to the ISXEVE-tree version** (3,373 lines, 30 sections) — now restricted to LavishScript-core / Inner-Space-core / first-party subsystem packages only (no game/extension content)
   - **New `01b_LavishScript_Reference.md`** (1,221 lines) — exhaustive command/datatype/Top-Level-Object inventory companion to file 01, with one canonical entry per feature linked to the Lavish Software wiki. Covers LavishScript core (`Command:`, `ObjectType:`, `TLO:` namespaces), Inner Space core (`ISKernel:`, `ISSession:`, `ISUplink:` namespaces), bundled first-party subsystems (LavishGUI, LavishGUI 2, LavishNav, LavishSettings, LavishMachine), and optional Lavish Software modules (`LSModule:*`)

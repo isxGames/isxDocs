@@ -164,6 +164,7 @@ Top-Level Objects (TLOs) are the entry points for accessing game data. They can 
 | **MerchantWindow** | [merchantwindow](#merchantwindow) | Merchant window |
 | **ChannelerWindow** | [channelerwindow](#channelerwindow) | Channeler class window |
 | **BeastlordWindow** | [beastlordwindow](#beastlordwindow) | Beastlord class window |
+| **InspectPlayerWindow** | [inspectplayerwindow](#inspectplayerwindow) | Inspect Player window |
 
 ---
 
@@ -1207,6 +1208,7 @@ Item in inventory, equipment, or containers.
 | IsFamiliar | bool | TRUE if is familiar |
 | IsAgent | bool | TRUE if is agent |
 | IsUsable | bool | TRUE if is usable |
+| HasAdornments | bool | TRUE if item has adornments attached |
 
 #### Members - Readiness
 
@@ -1413,7 +1415,7 @@ Detailed item examination data. Obtained via `Item.ToItemInfo`.
 | Member | Type | Description |
 |--------|------|-------------|
 | NumItemsPackaged | int | Number of packaged items |
-| PackagedItem[index] | [packageditem](#packageditem) | Packaged item by index |
+| PackagedItem[index] | [packageditem](#packageditem) | Packaged item by index. Returns NULL if the iteminfo in question is not a package. |
 
 #### Members - Recipe
 
@@ -2733,6 +2735,31 @@ Travel map location (fast travel).
 ```lavishscript
 echo ${TravelMapWindow.TeleportLocation[1].ZoneName}
 echo ${TravelMapWindow.TeleportLocation[1].DestinationDescription}
+```
+
+---
+
+### inspectplayerwindow
+
+Inspect Player window (the EQ2 client window that shows another player's equipped/appearance items). Inherits from [eq2window](#eq2window).
+
+**Access:** `${InspectPlayerWindow}`
+
+**Inherits From:** [eq2window](#eq2window)
+
+#### Members
+
+| Member | Type | Description |
+|--------|------|-------------|
+| EquippedItem[index] | [iteminfo](#iteminfo) | Equipped item by slot index (1-27) |
+| AppearanceItem[index] | [iteminfo](#iteminfo) | Appearance slot item by slot index (1-26) |
+
+Plus all members from [eq2window](#eq2window).
+
+**Example Usage:**
+```lavishscript
+echo ${InspectPlayerWindow.EquippedItem[1].Name}
+echo ${InspectPlayerWindow.AppearanceItem[1].Name}
 ```
 
 ---
