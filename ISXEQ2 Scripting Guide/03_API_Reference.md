@@ -203,6 +203,7 @@ Datatypes for inventory, equipment, and item information.
 - [itemeffectstring](#itemeffectstring) - Item effect description string
 - [packageditem](#packageditem) - Packaged item in reward/examine
 - [adornment](#adornment) - Adornment attached to item
+- [createditem](#createditem) - Item created by a recipe
 
 ### Ability DataTypes
 
@@ -1422,7 +1423,7 @@ Detailed item examination data. Obtained via `Item.ToItemInfo`.
 | Member | Type | Description |
 |--------|------|-------------|
 | NumItemsCreated | int | Number of items created by recipe |
-| CreatesItem[index] | string | Created item name by index |
+| CreatesItem[index] | [createditem](#createditem) | Created item by index. Returns the item name as a string when no member is provided, so legacy scripts that read `CreatesItem[index]` directly continue to work. |
 
 #### Members - Restrictions & Flags
 
@@ -1500,7 +1501,7 @@ if ${MyItem.IsItemInfoAvailable}
 }
 ```
 
-**See Also:** [item](#item), [itemmodifier](#itemmodifier), [adornment](#adornment)
+**See Also:** [item](#item), [itemmodifier](#itemmodifier), [adornment](#adornment), [createditem](#createditem)
 
 ---
 
@@ -1588,6 +1589,41 @@ Adornment attached to item.
 echo ${MyItem.ToItemInfo.Adornment[1].Name}
 echo ${MyItem.ToItemInfo.Adornment[1].Slot}
 ```
+
+---
+
+### createditem
+
+Item created by a recipe. Returned by [iteminfo.CreatesItem[index]](#iteminfo).
+
+**Access:** `${ItemInfo.CreatesItem[index]}`
+
+#### Members
+
+| Member | Type | Description |
+|--------|------|-------------|
+| LinkID | int | Primary link ID for chat links |
+| LinkID2 | int | Secondary link ID |
+| ToLink | string | Creates clickable chat link |
+| IconID | int | Icon ID |
+| Quantity | int | Quantity created |
+| Name | string | Item name |
+
+**Notes:**
+- `CreatesItem[index]` without a member returns the item name as a string, so legacy scripts that referenced it as a plain string continue to work without modification.
+
+**Example Usage:**
+```lavishscript
+; Legacy form - still works, returns the name as a string
+echo ${MyItem.ToItemInfo.CreatesItem[1]}
+
+; New form - access full createditem datatype members
+echo ${MyItem.ToItemInfo.CreatesItem[1].Name}
+echo ${MyItem.ToItemInfo.CreatesItem[1].Quantity}
+echo ${MyItem.ToItemInfo.CreatesItem[1].ToLink}
+```
+
+**See Also:** [iteminfo](#iteminfo), [packageditem](#packageditem)
 
 ---
 

@@ -989,7 +989,7 @@ Detailed item examination data. Obtained via `Item.ToItemInfo`.
 
 *Recipe:*
 - `NumItemsCreated` - int: Items created by recipe
-- `CreatesItem[index]` - string: Created item name
+- `CreatesItem[index]` - [createditem](#createditem): Created item. Returns the item name as a string when no member is provided, so legacy scripts continue to work.
 
 *Restrictions & Flags:*
 - `RentStatusReduction` - int: Rent status reduction
@@ -1046,6 +1046,7 @@ Detailed item examination data. Obtained via `Item.ToItemInfo`.
 - [item](#item) - Basic item object (use `Item.ToItemInfo` to get detailed info)
 - [itemmodifier](#itemmodifier) - Item stat modifiers (accessed via `ItemInfo.Modifier[index]`)
 - [adornment](#adornment) - Adornment information (accessed via `ItemInfo.Adornment[index]`)
+- [createditem](#createditem) - Item created by a recipe (accessed via `ItemInfo.CreatesItem[index]`)
 
 ---
 
@@ -1090,6 +1091,23 @@ Adornment attached to item.
 - `SlotIndex` - int: Numeric slot index
 - `Description` - string: Description
 - `ToLink` - string: Chat link
+
+---
+
+#### **createditem**
+
+Item created by a recipe. Returned by [iteminfo.CreatesItem[index]](#iteminfo).
+
+**Members:**
+- `LinkID` - int: Primary link ID for chat links
+- `LinkID2` - int: Secondary link ID
+- `ToLink` - string: Creates clickable chat link
+- `IconID` - int: Icon ID
+- `Quantity` - int: Quantity created
+- `Name` - string: Item name
+
+**Notes:**
+- `CreatesItem[index]` without a member returns the item name as a string, so legacy scripts that referenced it as a plain string continue to work without modification.
 
 ---
 

@@ -361,6 +361,12 @@ Found an error or have an improvement? This documentation was generated using ac
 <!-- CLAUDE_SKIP_START -->
 ## Version History
 
+- **4.5** (2026-05-07) — ISXEQ2 changelog catch-up
+  - Added new datatype `createditem` with `LinkID` (int), `LinkID2` (int), `ToLink` (string), `IconID` (int), `Quantity` (int), `Name` (string) members — added full datatype section to `03_API_Reference.md` (added to Item DataTypes index list and as a new `### createditem` section after `adornment`) and `ISXEQ2_QuickReference.md` (added as a new `#### createditem` block after `adornment` and as an entry in the iteminfo See Also list)
+  - Updated `iteminfo.CreatesItem[index]` documentation: now returns a `createditem` datatype object instead of a string. Annotated the legacy-string fallback (CreatesItem[index] without a member still returns the item name as a string) in both `03_API_Reference.md` and `ISXEQ2_QuickReference.md`. Existing scripts that read `CreatesItem[index]` directly continue to work
+  - Bugfix-only changelog entry for `itemmodifier.Value` did not require KB changes — the datatype's documented int/float dual-return behavior was already accurate
+  - No new TLOs, no new commands, no removed APIs, no new events
+
 - **4.4** (2026-05-06) — ISXEQ2 changelog catch-up
   - Documented `HasAdornments` (bool) member on the `item` datatype — added to `03_API_Reference.md` Item Type Checks table and `ISXEQ2_QuickReference.md` item type-check list
   - Annotated the `iteminfo.PackagedItem[index]` behavior: now returns NULL when the iteminfo is not a package — annotated in both `03_API_Reference.md` and `ISXEQ2_QuickReference.md`
