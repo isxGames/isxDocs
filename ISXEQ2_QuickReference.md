@@ -1128,6 +1128,7 @@ Character ability/spell.
 - `BackDropIconID` - int: Backdrop icon ID
 - `HOIconID` - int: HO icon ID
 - `Level` - int: Ability level
+- `Tier` - string: Ability tier name
 - `IsConduit` - bool: Is Channeler conduit
 
 **Methods:**
@@ -2136,10 +2137,17 @@ Icon widget. Inherits from [**eq2widget**](#eq2widget).
 
 **Additional Members:**
 - `IconID` - int: Icon ID
-- `NodeID` - uint: Node ID
+- `ID` - uint: Node ID (canonical name; `NodeID` is a deprecated alias that still works but emits a deprecation warning)
 - `ToAbility` - [ability](#ability): Converts to ability
+- `IsAbility` - bool: This icon represents an ability
 - `IsReady` - bool: Ability is ready
 - `PercentUndimmed` - float: Percent undimmed
+- `IsItem` - bool: This icon represents an item
+- `IsItemInfoAvailable` - bool: Detailed item info is available for this icon
+- `ToItemInfo` - [iteminfo](#iteminfo): Returns detailed item information for this icon
+- `IsRecipe` - bool: This icon represents a recipe
+- `IsRecipeInfoAvailable` - bool: Detailed recipe info is available for this icon
+- `ToRecipeInfo` - [recipeinfo](#recipeinfo): Returns detailed recipe information for this icon
 
 ---
 
@@ -4869,6 +4877,7 @@ Some members are marked as deprecated and should not be used in new scripts:
 - `Item.IsInitialized` - Use `IsItemInfoAvailable` instead
 - `Ability.TimeRemaining` — `TimeUntilReady` is an alias; prefer `TimeUntilReady` for consistency with the item datatype (both still work)
 - `Actor.ToActor` / `character.ToActor` / `groupmember.ToActor` — No longer necessary; these types inherit from actor, so all actor members are directly accessible. `groupmember.ToActor` prints a deprecation warning
+- `eq2icon.NodeID` — Renamed to `eq2icon.ID`; the `NodeID` alias still works for backward compatibility but emits a deprecation warning. Migrate to `ID` for new code
 
 ### Case Sensitivity
 

@@ -361,6 +361,12 @@ Found an error or have an improvement? This documentation was generated using ac
 <!-- CLAUDE_SKIP_START -->
 ## Version History
 
+- **4.6** (2026-05-14) — ISXEQ2 changelog catch-up
+  - Documented `Tier` (string) member on the `ability` datatype — added to `03_API_Reference.md` ability Members table and `ISXEQ2_QuickReference.md` ability block
+  - Renamed `eq2icon.NodeID` to `eq2icon.ID` with deprecation-alias annotation: `NodeID` continues to work but emits a deprecation warning. Updated `03_API_Reference.md` eq2icon Members table and `ISXEQ2_QuickReference.md` eq2icon block; added a `eq2icon.NodeID` row to the Deprecated Members section of `ISXEQ2_QuickReference.md`
+  - Documented seven new `eq2icon` members: `IsItem` (bool), `IsItemInfoAvailable` (bool), `ToItemInfo` ([iteminfo](03_API_Reference.md#iteminfo)), `IsRecipe` (bool), `IsRecipeInfoAvailable` (bool), `ToRecipeInfo` ([recipeinfo](03_API_Reference.md#recipeinfo)), `IsAbility` (bool) — added to `03_API_Reference.md` eq2icon Members table and `ISXEQ2_QuickReference.md` eq2icon block
+  - No new TLOs, no new commands, no removed APIs, no new events
+
 - **4.5** (2026-05-07) — ISXEQ2 changelog catch-up
   - Added new datatype `createditem` with `LinkID` (int), `LinkID2` (int), `ToLink` (string), `IconID` (int), `Quantity` (int), `Name` (string) members — added full datatype section to `03_API_Reference.md` (added to Item DataTypes index list and as a new `### createditem` section after `adornment`) and `ISXEQ2_QuickReference.md` (added as a new `#### createditem` block after `adornment` and as an entry in the iteminfo See Also list)
   - Updated `iteminfo.CreatesItem[index]` documentation: now returns a `createditem` datatype object instead of a string. Annotated the legacy-string fallback (CreatesItem[index] without a member still returns the item name as a string) in both `03_API_Reference.md` and `ISXEQ2_QuickReference.md`. Existing scripts that read `CreatesItem[index]` directly continue to work

@@ -1647,6 +1647,7 @@ Character ability/spell.
 | BackDropIconID | int | Backdrop icon ID |
 | HOIconID | int | Heroic Opportunity icon ID |
 | Level | int | Ability level |
+| Tier | string | Ability tier name |
 | IsConduit | bool | TRUE if is Channeler conduit |
 
 #### Methods
@@ -3209,16 +3210,32 @@ Icon widget. Inherits from [eq2widget](#eq2widget) → [eq2baseobject](#eq2baseo
 | Member | Type | Description |
 |--------|------|-------------|
 | IconID | int | Icon ID |
-| NodeID | uint | Node ID |
+| ID | uint | Node ID (canonical name; the legacy `NodeID` alias still works but emits a deprecation warning) |
 | ToAbility | [ability](#ability) | Converts to ability datatype |
+| IsAbility | bool | TRUE if this icon represents an ability |
 | IsReady | bool | TRUE if ability is ready |
 | PercentUndimmed | float | Percent undimmed (cooldown indicator) |
+| IsItem | bool | TRUE if this icon represents an item |
+| IsItemInfoAvailable | bool | TRUE if detailed item info is available for this icon |
+| ToItemInfo | [iteminfo](#iteminfo) | Returns detailed item information for this icon |
+| IsRecipe | bool | TRUE if this icon represents a recipe |
+| IsRecipeInfoAvailable | bool | TRUE if detailed recipe info is available for this icon |
+| ToRecipeInfo | [recipeinfo](#recipeinfo) | Returns detailed recipe information for this icon |
 
 Plus all members from [eq2widget](#eq2widget) and [eq2baseobject](#eq2baseobject)
+
+**Note:** `NodeID` is a deprecated alias for `ID`. Existing scripts that reference `NodeID` continue to work but emit a deprecation warning; migrate to `ID` for new code.
 
 **Example Usage:**
 ```lavishscript
 echo ${EQ2UIPage[MainHUD].Child[icon,Ability1].IconID}
+echo ${EQ2UIPage[MainHUD].Child[icon,Ability1].ID}
+
+; Inspect what an icon represents and pull detailed info
+if ${SomeIcon.IsItem} && ${SomeIcon.IsItemInfoAvailable}
+    echo ${SomeIcon.ToItemInfo.Name}
+if ${SomeIcon.IsRecipe} && ${SomeIcon.IsRecipeInfoAvailable}
+    echo ${SomeIcon.ToRecipeInfo.Name}
 ```
 
 ---
