@@ -1,3 +1,8 @@
+---
+description: Coordinator for ISXEVE (InnerSpace EVE Online) scripting tasks — script creation/editing, documentation lookups, debugging, and code analysis. Delegates heavy work to the ISXEVE-Expert subagent.
+disable-model-invocation: true
+---
+
 ## User Configuration
 <!-- ============================================================
   EDIT THESE PATHS to match your system.

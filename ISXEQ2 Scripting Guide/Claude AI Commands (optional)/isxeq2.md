@@ -1,3 +1,8 @@
+---
+description: Coordinator for ISXEQ2 (InnerSpace EverQuest II) scripting tasks — script creation/editing, documentation lookups, debugging, and code analysis. Delegates heavy work to the ISXEQ2-Expert subagent.
+disable-model-invocation: true
+---
+
 ## User Configuration
 <!-- ============================================================
   EDIT THESE PATHS to match your system.
