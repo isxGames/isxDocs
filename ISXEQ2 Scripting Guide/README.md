@@ -361,6 +361,12 @@ Found an error or have an improvement? This documentation was generated using ac
 <!-- CLAUDE_SKIP_START -->
 ## Version History
 
+- **4.7** (2026-05-16) — ISXEQ2 changelog catch-up
+  - Added new datatype `accountrosterrecord` with `Name` (string), `CharacterID` (uint64), `DatabaseID` (uint), `SubClassID` (uint), `SubClass` (string), `TSSubClassID` (uint), `TSSubClass` (string), `Server` (string), `Zone` (string), `Level` (uint), `TSLevel` (uint) members — added full datatype section to `03_API_Reference.md` (added to Core Game DataTypes index list and as a new `### accountrosterrecord` section after `eq2`) and `ISXEQ2_QuickReference.md` (added as a new `#### accountrosterrecord` block after the `eq2` block)
+  - Documented three new `eq2` members: `CharacterID` (uint64), `AccountRosterCount` (uint64), and the indexed `AccountRoster[#]` ([accountrosterrecord](03_API_Reference.md#accountrosterrecord), # is 1 to `${EQ2.AccountRosterCount}`) — added to `03_API_Reference.md` eq2 Members table and `ISXEQ2_QuickReference.md` eq2 block, with an account-roster iteration example added to the eq2 Example Usage
+  - Renamed the `itemmodifier` datatype to `modifier` — updated the datatype section heading/anchor, the `iteminfo.Modifier[index]` return-type reference, the datatype index list, and all cross-reference links in `03_API_Reference.md` and `ISXEQ2_QuickReference.md`. No dangling `itemmodifier` references remain in distributable KB content
+  - No new TLOs, no new commands, no removed APIs, no new events
+
 - **4.6** (2026-05-14) — ISXEQ2 changelog catch-up
   - Documented `Tier` (string) member on the `ability` datatype — added to `03_API_Reference.md` ability Members table and `ISXEQ2_QuickReference.md` ability block
   - Renamed `eq2icon.NodeID` to `eq2icon.ID` with deprecation-alias annotation: `NodeID` continues to work but emits a deprecation warning. Updated `03_API_Reference.md` eq2icon Members table and `ISXEQ2_QuickReference.md` eq2icon block; added a `eq2icon.NodeID` row to the Deprecated Members section of `ISXEQ2_QuickReference.md`

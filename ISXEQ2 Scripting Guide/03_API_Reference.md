@@ -176,6 +176,7 @@ Core datatypes that provide fundamental game information and utilities.
 
 - [isxeq2](#isxeq2) - Extension information and utilities
 - [eq2](#eq2) - Main game information and utilities
+- [accountrosterrecord](#accountrosterrecord) - Single character entry from the account roster
 - [zone](#zone) - Zone information
 - [eq2location](#eq2location) - 3D location coordinate
 - [radar](#radar) - Radar functionality
@@ -199,7 +200,7 @@ Datatypes for inventory, equipment, and item information.
 
 - [item](#item) - Item in inventory, equipment, or containers
 - [iteminfo](#iteminfo) - Detailed item examination data
-- [itemmodifier](#itemmodifier) - Item stat modifier
+- [modifier](#modifier) - Item stat modifier
 - [itemeffectstring](#itemeffectstring) - Item effect description string
 - [packageditem](#packageditem) - Packaged item in reward/examine
 - [adornment](#adornment) - Adornment attached to item
@@ -408,6 +409,9 @@ Main game information and utilities.
 | AtCharSelect | bool | TRUE if at character select screen |
 | LoginState | string | Current login state |
 | ObjectBeingMoved | [moveableobject](#moveableobject) | Object currently being moved (housing) |
+| CharacterID | uint64 | Unique ID of the currently-logged-in character |
+| AccountRosterCount | uint64 | Number of characters on the account roster |
+| AccountRoster[#] | [accountrosterrecord](#accountrosterrecord) | Account roster character by index (# is 1 to ${EQ2.AccountRosterCount}) |
 
 #### Methods
 
@@ -439,7 +443,51 @@ EQ2:GetActors[Actors,Range,50,NPC]
 
 EQ2:AcceptPendingQuest
 EQ2:OpenTravelMapWindow
+
+; Account roster
+echo ${EQ2.CharacterID}
+variable int i
+for (i:Set[1] ; ${i} <= ${EQ2.AccountRosterCount} ; i:Inc)
+    echo ${EQ2.AccountRoster[${i}].Name} (${EQ2.AccountRoster[${i}].Server})
 ```
+
+**See Also:** [accountrosterrecord](#accountrosterrecord)
+
+---
+
+### accountrosterrecord
+
+A single character entry from the account roster. Iterate from 1 to `${EQ2.AccountRosterCount}`.
+
+**Access:** `${EQ2.AccountRoster[index]}`
+
+#### Members
+
+| Member | Type | Description |
+|--------|------|-------------|
+| Name | string | Character name |
+| CharacterID | uint64 | Unique character ID |
+| DatabaseID | uint | Character database ID |
+| SubClassID | uint | Adventure subclass ID |
+| SubClass | string | Adventure subclass name |
+| TSSubClassID | uint | Tradeskill subclass ID |
+| TSSubClass | string | Tradeskill subclass name |
+| Server | string | Server name |
+| Zone | string | Last zone name |
+| Level | uint | Adventure level |
+| TSLevel | uint | Tradeskill level |
+
+**Example Usage:**
+```lavishscript
+variable int i
+for (i:Set[1] ; ${i} <= ${EQ2.AccountRosterCount} ; i:Inc)
+{
+    echo ${EQ2.AccountRoster[${i}].Name} - Level ${EQ2.AccountRoster[${i}].Level} ${EQ2.AccountRoster[${i}].SubClass}
+    echo "  Server: ${EQ2.AccountRoster[${i}].Server}, Zone: ${EQ2.AccountRoster[${i}].Zone}"
+}
+```
+
+**See Also:** [eq2](#eq2)
 
 ---
 
@@ -1388,7 +1436,7 @@ Detailed item examination data. Obtained via `Item.ToItemInfo`.
 | Member | Type | Description |
 |--------|------|-------------|
 | NumModifiers | int | Number of stat modifiers |
-| Modifier[index] | [itemmodifier](#itemmodifier) | Stat modifier by index |
+| Modifier[index] | [modifier](#modifier) | Stat modifier by index |
 | ModFlag | int | Modifier flags |
 
 #### Members - Effects
@@ -1501,11 +1549,11 @@ if ${MyItem.IsItemInfoAvailable}
 }
 ```
 
-**See Also:** [item](#item), [itemmodifier](#itemmodifier), [adornment](#adornment), [createditem](#createditem)
+**See Also:** [item](#item), [modifier](#modifier), [adornment](#adornment), [createditem](#createditem)
 
 ---
 
-### itemmodifier
+### modifier
 
 Item stat modifier.
 

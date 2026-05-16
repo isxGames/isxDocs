@@ -242,6 +242,9 @@ Main game information and utilities.
 - `AtCharSelect` - bool: Whether at character select
 - `LoginState` - string: Current login state
 - `ObjectBeingMoved` - [moveableobject](#moveableobject): Object being moved
+- `CharacterID` - uint64: Unique ID of the currently-logged-in character
+- `AccountRosterCount` - uint64: Number of characters on the account roster
+- `AccountRoster[#]` - [accountrosterrecord](#accountrosterrecord): Account roster character by index (# is 1 to `${EQ2.AccountRosterCount}`)
 
 **Methods:**
 - `CreateCustomActorArray[sortby,range,type]` - Creates custom actor array (access via `CustomActor[index]` which returns [actor](#actor))
@@ -260,6 +263,25 @@ Main game information and utilities.
 - `OpenTravelMapWindow` - Opens travel map window (alias: `OpenFastTravelWindow`)
 - `ClearRecipesCache` - Clears recipes cache
 - `EnableAfflictionEvents` - Enables affliction events (required for `EQ2_onMeAfflicted`, `EQ2_onGroupMemberAfflicted`, `EQ2_OnRaidMemberAfflicted`)
+
+---
+
+#### **accountrosterrecord**
+
+A single character entry from the account roster. Access via `${EQ2.AccountRoster[index]}`, iterating 1 to `${EQ2.AccountRosterCount}`.
+
+**Members:**
+- `Name` - string: Character name
+- `CharacterID` - uint64: Unique character ID
+- `DatabaseID` - uint: Character database ID
+- `SubClassID` - uint: Adventure subclass ID
+- `SubClass` - string: Adventure subclass name
+- `TSSubClassID` - uint: Tradeskill subclass ID
+- `TSSubClass` - string: Tradeskill subclass name
+- `Server` - string: Server name
+- `Zone` - string: Last zone name
+- `Level` - uint: Adventure level
+- `TSLevel` - uint: Tradeskill level
 
 ---
 
@@ -966,7 +988,7 @@ Detailed item examination data. Obtained via `Item.ToItemInfo`.
 
 *Modifiers:*
 - `NumModifiers` - int: Number of stat modifiers
-- `Modifier[index]` - [itemmodifier](#itemmodifier): Stat modifier
+- `Modifier[index]` - [modifier](#modifier): Stat modifier
 - `ModFlag` - int: Modifier flags
 
 *Effects:*
@@ -1044,13 +1066,13 @@ Detailed item examination data. Obtained via `Item.ToItemInfo`.
 
 **See Also:**
 - [item](#item) - Basic item object (use `Item.ToItemInfo` to get detailed info)
-- [itemmodifier](#itemmodifier) - Item stat modifiers (accessed via `ItemInfo.Modifier[index]`)
+- [modifier](#modifier) - Item stat modifiers (accessed via `ItemInfo.Modifier[index]`)
 - [adornment](#adornment) - Adornment information (accessed via `ItemInfo.Adornment[index]`)
 - [createditem](#createditem) - Item created by a recipe (accessed via `ItemInfo.CreatesItem[index]`)
 
 ---
 
-#### **itemmodifier**
+#### **modifier**
 
 Item stat modifier.
 
