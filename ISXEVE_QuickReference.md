@@ -360,7 +360,7 @@ Access: `Me` TLO. Inherits from [pilot](#pilot) which inherits from [being](#bei
 **Methods**
 
 - Inventory: `GetHangarItems[index:item]`, `GetHangarShips[index:item]`, `GetCorpHangarItems[index:item, folder]`, `GetCorpHangarShips[index:item, folder]`, `GetStationsWithAssets[index:int64]`, `GetAssets[index:item, stationID]`.
-- UI: `OpenCorpHangar` — open the corp hangar window (must be docked in a station or structure). The 2012 changelog claims this method was removed from the `character` datatype, but source still registers and implements it (DataTypes.h:771, DT-Beings.cpp:928-939) by calling the EveCmd service's `OpenCorpHangar`. It works. `EVE:Execute[OpenHangarFloor]` is an equivalent alternative.
+- UI: `OpenCorpHangar` — open the corp hangar window (must be docked in a station or structure). The 2012 changelog claims this method was removed from the `character` datatype, but it is still registered and dispatchable, and works in practice. `EVE:Execute[OpenHangarFloor]` is an equivalent alternative.
 - Targeting: `GetTargets[index:entity]`, `GetTargeting[index:entity]`, `GetTargetedBy[index:entity]`.
 - Combat intel: `GetAttackers[index:attacker]`, `GetJammers[index:jammer]`.
 - Drones: `GetActiveDrones[index:activedrone]`, `GetActiveDroneIDs[index:int64]`.

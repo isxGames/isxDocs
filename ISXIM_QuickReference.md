@@ -996,10 +996,10 @@ These items are documented in `ISXIMChanges.txt` as available features, but insp
    ```
 
 2. **`channel.IsSet[mode]`, `channel.Limit`, `channel.Password` are not accessible.**
-   These members are defined in the enum and implemented in `ChannelType::GetMember`, but the `ChannelType` constructor does not register them via `TypeMember(...)`, so LavishScript does not expose them. To track channel modes, subscribe to [IRC_ChannelModeChange](#irc_channelmodechange) and maintain state in your script.
+   These members exist internally but are not registered with LavishScript, so they cannot be read from scripts. To track channel modes, subscribe to [IRC_ChannelModeChange](#irc_channelmodechange) and maintain state in your script.
 
 3. **`IRC:QuietMode[...]` is not functional.**
-   The global `IRC` datatype declares a `QuietMode` method in its enum but does not register it via `TypeMethod` and has no case in `GetMethod`. Use [`IM:QuietMode[on|off]`](#im) instead, which controls the same global `gQuietMode` flag.
+   The global `IRC` datatype declares a `QuietMode` method but it is not registered or implemented at runtime. Use [`IM:QuietMode[on|off]`](#im) instead, which controls the same global quiet-mode flag.
 
 4. **`ircuser:Join` channel-name prefix.**
    ISXIM enforces that channel names begin with `#` or `&` (standard IRC prefixes). Attempting to join a name without one of these prefixes is rejected with an error message.

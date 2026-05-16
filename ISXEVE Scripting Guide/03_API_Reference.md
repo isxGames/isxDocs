@@ -845,7 +845,7 @@ echo "Elapsed ms: ${Math.Calc[${Script.RunningTime} - ${startMs}]}"
 
 EVE "session changes" happen on dock, undock, jump, character log-in, etc. — any event that rebuilds the ship/location context and invalidates cached entity/item references. ISXEVE does NOT expose a session-change **counter** (there is no `${EVE.SessionChanges}` member) and does NOT register a LavishScript event for session changes. Two mechanisms are available:
 
-**1. `${EVE.NextSessionChange}` — countdown to next imminent change**. Returns int seconds until the next scheduled session change, clamped to 0 (verified against ISXEVE C++ source DT-Members.cpp case NextSessionChange, lines 254-268). Use this to detect that a session change is **about to fire** (value transitions from 0 to a positive countdown), so you can persist state before caches are invalidated:
+**1. `${EVE.NextSessionChange}` — countdown to next imminent change**. Returns int seconds until the next scheduled session change, clamped to 0. Use this to detect that a session change is **about to fire** (value transitions from 0 to a positive countdown), so you can persist state before caches are invalidated:
 
 ```lavish
 if ${EVE.NextSessionChange} > 0
@@ -883,9 +883,8 @@ Neither `${EVE.GetSystemName[id]}` nor `${EVE.GetItemTypeName[id]}` exists on th
 ```lavish
 ; Get solar-system name by ID via the Universe TLO.
 ; Universe[id] returns a solarsystem / region / constellation / planet
-; / interstellar object depending on the ID type (TopLevelObjects.cpp
-; TLO_Universe). For a solar-system ID, .Name is inherited from
-; InterstellarType (DataTypes.h InterstellarType line 2583/2592).
+; / interstellar object depending on the ID type. For a solar-system ID,
+; .Name is inherited from the interstellar object.
 variable int64 systemID = 30000142    ; Jita
 echo "System Name: ${Universe[${systemID}].Name}"
 
@@ -894,9 +893,8 @@ echo "System Name: ${Universe[${systemID}].Name}"
 echo "Jita ID: ${Universe["Jita"].ID}"
 
 ; Get item type name by TypeID via the EVE.ItemInfo member.
-; EVE.ItemInfo[typeID] returns an iteminfo object (DataTypes.h EVEType
-; line 3537/3619; ItemInfoType 871-924). .Name resolves via
-; GetTypeNameByID(m_TypeID). This is the canonical TypeID->Name lookup.
+; EVE.ItemInfo[typeID] returns an iteminfo object whose .Name field is
+; the type's display name. This is the canonical TypeID->Name lookup.
 variable int typeID = 34    ; Tritanium
 echo "Type Name: ${EVE.ItemInfo[${typeID}].Name}"
 
@@ -912,7 +910,7 @@ echo "Group: ${EVE.ItemInfo[${typeID}].Group} / Volume: ${EVE.ItemInfo[${typeID}
 
 ### Overview
 
-**${Local}** is a Top-Level Object that resolves directly to a `pilot` object. It takes either a numeric CharID or a pilot name as its single argument (verified against ISXEVE C++ source TopLevelObjects.cpp TLO_Local lines 468-485). There are no `.PilotCount`, `.Pilot[...]`, or other sub-members on Local -- every indexing form returns a pilot directly.
+**${Local}** is a Top-Level Object that resolves directly to a `pilot` object. It takes either a numeric CharID or a pilot name as its single argument. There are no `.PilotCount`, `.Pilot[...]`, or other sub-members on Local -- every indexing form returns a pilot directly.
 
 ```lavish
 ; Check if a specific pilot is in local. Local["Name"] returns a pilot
@@ -928,8 +926,7 @@ if ${Local[${enemyCharID}](exists)}
     echo "Enemy present by CharID"
 }
 
-; To enumerate ALL pilots in local, use the EVE:GetLocalPilots method
-; (DataTypes.h EVEType GetLocalPilots registered at line 3571/3626)
+; To enumerate ALL pilots in local, use the EVE:GetLocalPilots method,
 ; which populates an index:pilot. There is no ${Local.PilotCount} and
 ; no ${Local.Pilot[${i}]} numeric-index accessor.
 variable index:pilot Pilots
@@ -4649,7 +4646,7 @@ variable item lowModule = ${MyShip.Module[LoSlot1]}
 
 **By Module Type Name (canonical iterate-and-filter pattern)**:
 
-The `${MyShip.Module[...]}` member accepts only two index forms (verified against ISXEVE C++ source DT-Ship.cpp + EVERetrievalUtils.cpp `GetModuleIDBySlotName`): a numeric module ItemID, or a slot-flag name like `HiSlot0`, `MedSlot3`, `LoSlot1`, `RigSlot0`..`RigSlot7`. There is NO type-name/partial-name/equals-prefix indexing. To find a module by type or name, iterate and filter:
+The `${MyShip.Module[...]}` member accepts only two index forms: a numeric module ItemID, or a slot-flag name like `HiSlot0`, `MedSlot3`, `LoSlot1`, `RigSlot0`..`RigSlot7`. There is NO type-name/partial-name/equals-prefix indexing. To find a module by type or name, iterate and filter:
 
 ```lavish
 ; Find first module whose item name contains "Mining Laser"
@@ -5795,7 +5792,7 @@ if ${module.Charge(exists)}
 
 ### Legacy ShipType members (canonical for ship-cargo item iteration)
 
-The following ShipType members and methods are **current, not deprecated** (verified against DataTypes.h ShipType 1607-1651 and DT-Ship.cpp cases 108-754):
+The following ShipType members and methods are **current, not deprecated**:
 
 - `${MyShip.CargoCapacity}` — total cargo capacity, double (flagCargo)
 - `${MyShip.UsedCargoCapacity}` — used cargo capacity, double
@@ -5815,8 +5812,7 @@ if !${EVEWindow[Inventory](exists)}
 wait 10
 
 ; Access a specific hold via ChildWindow["<ShipCargoHoldName>"]
-; (Note: the member is ChildWindow, NOT Child -- verified against
-; DataTypes.h EVEInvWindowType line 2161 TypeMember(ChildWindow).)
+; (Note: the member is ChildWindow, NOT Child.)
 variable index:item CargoItems
 EVEWindow[Inventory].ChildWindow[ShipCargo]:GetItems[CargoItems]
 
@@ -5841,7 +5837,7 @@ echo "Ore Hold: ${EVEWindow[Inventory].ChildWindow[ShipOreHold].UsedCapacity} / 
 
 ### What is NOT on ShipType (and what to use instead)
 
-Some members documented in older materials do **not** exist on ShipType (verified absent from DataTypes.h ShipType registrations):
+Some members documented in older materials do **not** exist on ShipType:
 
 - `${MyShip.OreHoldCapacity}` / `${MyShip.UsedOreHoldCapacity}` → fabricated. Use `${EVEWindow[Inventory].ChildWindow[ShipOreHold].Capacity}` / `.UsedCapacity`. Only `MyShip.HasOreHold` (bool) exists as a direct ship-level ore-hold member.
 - `${MyShip.FleetHangarCapacity}` / `${MyShip.UsedFleetHangarCapacity}` → fabricated. Use `${EVEWindow[Inventory].ChildWindow[FleetHangar].Capacity}` / `.UsedCapacity`. Populate items via `MyShip:GetFleetHangarCargo[index:item]`.
@@ -5967,8 +5963,7 @@ echo "Total Volume: ${Math.Calc[${cargoItem.Quantity} * ${cargoItem.Volume}]}"
 
 **Location**:
 ```lavish
-; ItemType has LocationID (real, DataTypes.h ItemType line 935/999)
-; which returns the item ID of the container holding this item
+; ItemType has LocationID, which returns the item ID of the container holding this item
 ; (e.g., the ship ID for cargo, the station ID for hangar, the
 ; parent module ID for loaded charges). There is no .ContainerID
 ; member -- LocationID IS the container reference.
@@ -5977,16 +5972,15 @@ echo "Location ID: ${cargoItem.LocationID}"
 
 **Fitted-slot info** (when the item is a fitted module):
 ```lavish
-; ItemType.Slot / ItemType.SlotID are real members (DataTypes.h
-; ItemType lines 938-939 / 1002-1003). They return the slot-flag
-; string (e.g., "HiSlot0") and numeric slot-flag ID for fitted
+; ItemType.Slot / ItemType.SlotID are real members. They return the
+; slot-flag string (e.g., "HiSlot0") and numeric slot-flag ID for fitted
 ; modules. For un-fitted cargo items these may be empty/zero.
 echo "Slot: ${cargoItem.Slot}"
 echo "Slot ID: ${cargoItem.SlotID}"
 
 ; NOTE: ${cargoItem.IsActive} does NOT exist on ItemType -- IsActive
-; is a ModuleType member (DataTypes.h ModuleType line 1219). To check
-; activation state, fetch the fitted module via the slot flag:
+; is a ModuleType member. To check activation state, fetch the fitted
+; module via the slot flag:
 ; variable module m = ${MyShip.Module[${cargoItem.Slot}]}
 ; if ${m(exists)} && ${m.IsActive} ...
 ; See 06_Working_Examples.md for full module examples.
@@ -6891,8 +6885,8 @@ variable evewindow win = ${EVEWindow[invent]}
 **By Item ID** (2-arg ByItemID key form):
 ```lavish
 ; Single-arg ${EVEWindow[${numericID}]} does NOT work -- the EVEWindow
-; TLO's single-arg path only resolves by window name (EVERetrievalUtils.cpp
-; GetEVEWindowByName). Use the 2-arg ByItemID key form instead:
+; TLO's single-arg path only resolves by window name. Use the 2-arg
+; ByItemID key form instead:
 variable int64 windowID = 123456789
 variable evewindow win = ${EVEWindow[ByItemID, ${windowID}]}
 ```
@@ -6906,8 +6900,7 @@ variable evewindow win = ${EVEWindow[ByCaption, "Agent Conversation"]}
 ```lavish
 ; There is NO ${EVEWindow.Count} member and NO ${EVEWindow[${numeric_index}]}
 ; numeric-index accessor on the EVEWindow TLO. To enumerate all open
-; windows, use the EVE:GetEVEWindows method (verified against DataTypes.h
-; EVEType line 3590 enum and 3670 TypeMethod registration):
+; windows, use the EVE:GetEVEWindows method:
 
 variable index:evewindow Windows
 EVE:GetEVEWindows[Windows]
@@ -8840,9 +8833,8 @@ function ListLocalPilots()
 ```lavish
 function IsPilotInLocal(string pilotName)
 {
-    ; Local["name"] returns a pilot object directly (see TLO_Local at
-    ; TopLevelObjects.cpp line 468-485). The (exists) guard tells you
-    ; whether that pilot is present in local.
+    ; Local["name"] returns a pilot object directly. The (exists) guard
+    ; tells you whether that pilot is present in local.
     variable pilot p = ${Local["${pilotName}"]}
     return ${p(exists)}
 }
