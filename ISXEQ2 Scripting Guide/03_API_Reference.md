@@ -708,6 +708,7 @@ Base datatype for all actors (NPCs, PCs, objects) in the game world.
 |--------|------|-------------|
 | CollisionRadius | float | Collision radius |
 | CollisionScale | float | Collision scale |
+| VisualScale | float | Visual (model display) scale of the actor |
 | TargetRingRadius | float | Target ring radius |
 | CurrentAnimation | string | Current animation state |
 | Overlay | string | Overlay animation |
@@ -1113,7 +1114,6 @@ Group member datatype. Inherits all members and methods from [actor](#actor).
 |--------|------|-------------|
 | ID | int | Group member ID |
 | PetID | int | Pet ID |
-| ToActor | [actor](#actor) | Returns as actor datatype |
 | EffectiveLevel | int | Effective level |
 | Noxious | int | Noxious afflictions |
 | Cursed | int | Cursed afflictions |
@@ -1130,8 +1130,10 @@ Group member datatype. Inherits all members and methods from [actor](#actor).
 echo ${Me.Group[1].Name}
 echo ${Me.Group[1].EffectiveLevel}
 echo ${Me.Group[1].InZone}
-echo ${Me.Group[1].ToActor.Distance}
+echo ${Me.Group[1].Distance}
 ```
+
+> **Deprecated/removed:** The `ToActor` member has been removed. `groupmember` inherits from [actor](#actor), so all actor members are directly accessible on a group member (use `${Me.Group[1].Distance}` instead of `${Me.Group[1].ToActor.Distance}`). The legacy name still resolves for now but emits a deprecation warning; migrate away from it.
 
 ---
 
@@ -1437,7 +1439,8 @@ Detailed item examination data. Obtained via `Item.ToItemInfo`.
 |--------|------|-------------|
 | NumModifiers | int | Number of stat modifiers |
 | Modifier[index] | [modifier](#modifier) | Stat modifier by index |
-| ModFlag | int | Modifier flags |
+| NumModFlags | int | Number of mod flags set on the item (count of restriction/property flags such as Attuned, NoTrade, Heirloom, etc.) |
+| NoExchange | bool | TRUE if the item is no-exchange (cannot be traded or otherwise exchanged between players) |
 
 #### Members - Effects
 
@@ -1496,7 +1499,7 @@ Detailed item examination data. Obtained via `Item.ToItemInfo`.
 | NoExperiment | bool | TRUE if cannot experiment |
 | NoBroker | bool | TRUE if cannot broker |
 | NoMail | bool | TRUE if cannot mail |
-| Indestructable | bool | TRUE if indestructable |
+| Indestructible | bool | TRUE if the item is indestructible. The old spelling `Indestructable` still works as a deprecated alias but emits a deprecation warning; use `Indestructible` in new code |
 | Heirloom | bool | TRUE if heirloom |
 | HouseLore | bool | TRUE if house lore |
 | BuildingBlock | bool | TRUE if building block |
@@ -1535,6 +1538,7 @@ Detailed item examination data. Obtained via `Item.ToItemInfo`.
 |--------|-----------|-------------|
 | AttachAsAdornment | itemID | Attaches as adornment to specified item |
 | PrepAdornmentForUse | - | Prepares adornment for use |
+| GetModFlags[index:string] | string collection | Populates the passed string index/collection with one entry per mod flag set on the item (one human-readable flag name per set flag). Clears the index before populating it. Pair with `NumModFlags` for the count |
 
 **Example Usage:**
 ```lavishscript
@@ -1546,6 +1550,24 @@ if ${MyItem.IsItemInfoAvailable}
     echo ${MyItem.ToItemInfo.Type}
     echo ${MyItem.ToItemInfo.Mitigation}
     echo ${MyItem.ToItemInfo.NumModifiers}
+
+    ; Enumerate the item's mod flags
+    echo "Mod flags set: ${MyItem.ToItemInfo.NumModFlags}"
+    variable index:string ModFlags
+    MyItem.ToItemInfo:GetModFlags[ModFlags]
+    variable iterator ModFlagIterator
+    ModFlags:GetIterator[ModFlagIterator]
+    if ${ModFlagIterator:First(exists)}
+    {
+        do
+        {
+            echo "  ${ModFlagIterator.Value}"
+        }
+        while ${ModFlagIterator:Next(exists)}
+    }
+
+    if ${MyItem.ToItemInfo.NoExchange}
+        echo "This item is no-exchange"
 }
 ```
 

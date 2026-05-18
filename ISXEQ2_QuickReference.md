@@ -422,6 +422,7 @@ Base datatype for all actors (NPCs, PCs, objects) in the game world.
 *Appearance:*
 - `CollisionRadius` - float: Collision radius
 - `CollisionScale` - float: Collision scale
+- `VisualScale` - float: Visual (model display) scale of the actor
 - `TargetRingRadius` - float: Target ring radius
 - `CurrentAnimation` - string: Current animation
 - `Overlay` - string: Overlay animation
@@ -773,7 +774,6 @@ Group member. Inherits from [**actor**](#actor).
 - `CurrentPower` - int64: Current power
 - `MaxPower` - int64: Maximum power
 - `ZoneName` - string: Zone the member is in
-- `ToActor` - [actor](#actor): Returns actor datatype (**deprecated** — groupmember inherits from actor, access members directly)
 - `EffectiveLevel` - int: Effective level
 - `Noxious` - int: Noxious afflictions
 - `Cursed` - int: Cursed afflictions
@@ -989,7 +989,8 @@ Detailed item examination data. Obtained via `Item.ToItemInfo`.
 *Modifiers:*
 - `NumModifiers` - int: Number of stat modifiers
 - `Modifier[index]` - [modifier](#modifier): Stat modifier
-- `ModFlag` - int: Modifier flags
+- `NumModFlags` - int: Number of mod flags set on the item
+- `NoExchange` - bool: TRUE if the item is no-exchange (cannot be traded/exchanged between players)
 
 *Effects:*
 - `NumEffects` - int: Number of effects
@@ -1033,7 +1034,7 @@ Detailed item examination data. Obtained via `Item.ToItemInfo`.
 - `NoExperiment` - bool: Cannot experiment
 - `NoBroker` - bool: Cannot broker
 - `NoMail` - bool: Cannot mail
-- `Indestructable` - bool: Indestructable
+- `Indestructible` - bool: Is indestructible (old spelling `Indestructable` still works as a deprecated alias but warns)
 - `Heirloom` - bool: Is heirloom
 - `HouseLore` - bool: House lore
 - `BuildingBlock` - bool: Is building block
@@ -1063,6 +1064,7 @@ Detailed item examination data. Obtained via `Item.ToItemInfo`.
 **Methods:**
 - `AttachAsAdornment[itemID]` - Attaches as adornment
 - `PrepAdornmentForUse` - Prepares adornment
+- `GetModFlags[index:string]` - Populates the passed string index with one entry per set mod flag (clears it first); pair with `NumModFlags`
 
 **See Also:**
 - [item](#item) - Basic item object (use `Item.ToItemInfo` to get detailed info)
@@ -4898,8 +4900,10 @@ function CombatAlert()
 Some members are marked as deprecated and should not be used in new scripts:
 - `Item.IsInitialized` - Use `IsItemInfoAvailable` instead
 - `Ability.TimeRemaining` — `TimeUntilReady` is an alias; prefer `TimeUntilReady` for consistency with the item datatype (both still work)
-- `Actor.ToActor` / `character.ToActor` / `groupmember.ToActor` — No longer necessary; these types inherit from actor, so all actor members are directly accessible. `groupmember.ToActor` prints a deprecation warning
+- `Actor.ToActor` / `character.ToActor` / `groupmember.ToActor` — Removed. No longer necessary; these types inherit from actor, so all actor members are directly accessible (use `${Me.Group[#]}` instead of `${Me.Group[#].ToActor}`). The legacy name still resolves for now but prints a deprecation warning
 - `eq2icon.NodeID` — Renamed to `eq2icon.ID`; the `NodeID` alias still works for backward compatibility but emits a deprecation warning. Migrate to `ID` for new code
+- `iteminfo.ModFlag` — Removed. The combined modifier-flags member has been replaced by `iteminfo.NumModFlags` (count of set flags), `iteminfo.NoExchange` (the no-exchange flag), and the `iteminfo:GetModFlags[index]` method (enumerates the set flags by name). Rework scripts to use those instead
+- `iteminfo.Indestructable` — Renamed to `iteminfo.Indestructible` (correct spelling); the `Indestructable` alias still works for backward compatibility but emits a deprecation warning. Migrate to `Indestructible` for new code
 
 ### Case Sensitivity
 

@@ -612,7 +612,7 @@ function BuffGroup()
 function BuffGroupMember(int memberIndex)
 {
     variable actor Member
-    Member:Set[${Me.Group[${memberIndex}].ToActor}]
+    Member:Set[${Me.Group[${memberIndex}]}]
 
     if !${Member(exists)}
         return

@@ -361,6 +361,15 @@ Found an error or have an improvement? This documentation was generated using ac
 <!-- CLAUDE_SKIP_START -->
 ## Version History
 
+- **4.8** (2026-05-18) — ISXEQ2 changelog catch-up
+  - Added two new `iteminfo` members: `NumModFlags` (int, count of mod flags set on the item) and `NoExchange` (bool, TRUE if the item cannot be traded/exchanged between players) — added to `03_API_Reference.md` iteminfo Members - Modifiers table and `ISXEQ2_QuickReference.md` iteminfo block
+  - Added a new `iteminfo` method `GetModFlags[index:string]` that populates the passed string index with one entry per set mod flag (clears it before populating) — added to `03_API_Reference.md` iteminfo Methods table (with an enumeration example added to the iteminfo Example Usage) and `ISXEQ2_QuickReference.md` iteminfo Methods list
+  - Removed the `iteminfo.ModFlag` member — superseded by `NumModFlags` + `NoExchange` + the `GetModFlags` method. Removed from the iteminfo Members tables in `03_API_Reference.md` and `ISXEQ2_QuickReference.md`; added a `iteminfo.ModFlag` entry to the QuickReference Deprecated Members section
+  - Renamed `iteminfo.Indestructable` to `iteminfo.Indestructible` (correct spelling) with deprecation-alias annotation: `Indestructable` continues to work but emits a deprecation warning. Updated the iteminfo Members tables in `03_API_Reference.md` and `ISXEQ2_QuickReference.md`; added a `iteminfo.Indestructable` row to the QuickReference Deprecated Members section
+  - Added a new `actor` member `VisualScale` (float, the actor's visual/model display scale) — added to `03_API_Reference.md` actor Members - Appearance table and `ISXEQ2_QuickReference.md` actor Appearance block
+  - Removed the long-deprecated `ToActor` member from the `groupmember` datatype section in `03_API_Reference.md` (group members inherit from `actor`, so all actor members are directly accessible); updated the affected example in `03_API_Reference.md`, the group-buff example in `06_Working_Examples.md`, and the QuickReference Deprecated Members entry to reflect removal
+  - No new TLOs, no new commands, no removed events
+
 - **4.7** (2026-05-16) — ISXEQ2 changelog catch-up
   - Added new datatype `accountrosterrecord` with `Name` (string), `CharacterID` (uint64), `DatabaseID` (uint), `SubClassID` (uint), `SubClass` (string), `TSSubClassID` (uint), `TSSubClass` (string), `Server` (string), `Zone` (string), `Level` (uint), `TSLevel` (uint) members — added full datatype section to `03_API_Reference.md` (added to Core Game DataTypes index list and as a new `### accountrosterrecord` section after `eq2`) and `ISXEQ2_QuickReference.md` (added as a new `#### accountrosterrecord` block after the `eq2` block)
   - Documented three new `eq2` members: `CharacterID` (uint64), `AccountRosterCount` (uint64), and the indexed `AccountRoster[#]` ([accountrosterrecord](03_API_Reference.md#accountrosterrecord), # is 1 to `${EQ2.AccountRosterCount}`) — added to `03_API_Reference.md` eq2 Members table and `ISXEQ2_QuickReference.md` eq2 block, with an account-roster iteration example added to the eq2 Example Usage
