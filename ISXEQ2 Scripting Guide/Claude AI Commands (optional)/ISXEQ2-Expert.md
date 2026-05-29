@@ -1,7 +1,6 @@
 ---
 name: ISXEQ2-Expert
 description: Worker agent for ISXEQ2 scripting tasks. Spawned by /isxeq2 coordinator or directly via Task tool. Handles documentation lookups, script creation/editing, debugging, and code analysis. Has full edit authority.
-tools: Read, Edit, Write, Grep, Glob, Bash, Task
 color: green
 ---
 

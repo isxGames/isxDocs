@@ -1,7 +1,6 @@
 ---
 name: ISXEVE-Expert
 description: Worker agent for ISXEVE scripting tasks. Spawned by /isxeve coordinator or directly via Task tool. Handles documentation lookups, script creation/editing, debugging, and code analysis. Has full edit authority.
-tools: Read, Edit, Write, Grep, Glob, Bash, Task
 color: blue
 ---
 
