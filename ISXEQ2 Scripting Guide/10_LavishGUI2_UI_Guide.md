@@ -19,23 +19,27 @@
 9. [Styling and Visual Customization](#styling-and-visual-customization)
 10. [Templates](#templates)
 11. [Advanced Features](#advanced-features)
-    - Canvas Drawing API
-    - Audio System Integration
-    - Keyboard Input Handling
-    - Game Controller Pattern
     - Input Hooks
     - Event Hooks
     - Visibility Control
+    - Keyboard Focus and Tab Navigation
+    - Detecting Enter and Escape Keys in Textboxes
     - Triggers
     - Text Scanners
     - FilePicker
     - Animations
     - Item View Generators
+    - Canvas Drawing API
+    - Audio System Integration
+    - Keyboard Input Handling
+    - Game Controller Pattern
 12. [Element Lifecycle and Events](#element-lifecycle-and-events)
 13. [Script-to-UI Interaction](#script-to-ui-interaction)
 14. [Complete Working Examples](#complete-working-examples)
 15. [Best Practices](#best-practices)
 16. [Troubleshooting](#troubleshooting)
+17. [Quick Reference](#quick-reference)
+18. [Additional Resources](#additional-resources)
 
 ---
 
@@ -6921,7 +6925,7 @@ function main()
                         "height": 300,
                         "horizontalAlignment": "stretch",
                         "itemsBinding": {
-                            "pullFormat": "${TargetsController.GetNearbyActors}"
+                            "pullFormat": "${TargetsController.GetTargets}"
                         },
                         "eventHandlers": {
                             "onSelectionChanged": {
@@ -6965,17 +6969,19 @@ objectdef targets_controller
         LGUI2:UnloadPackageFile[targets.json]
     }
 
-    member:string GetNearbyActors()
+    member:string GetTargets()
     {
         variable string result = "["
         variable int count = 0
-        variable index:actor actorList
+        variable index:string targets
         variable iterator iter
 
-        ; Populate from script data
-        Script[MyScript]:QueueCommand[call GetNearbyItems[actorList]]
+        ; Populate from any source you like (file lines, computed values, query results, ...)
+        targets:Insert["First item"]
+        targets:Insert["Second item"]
+        targets:Insert["Third item"]
 
-        actorList:GetIterator[iter]
+        targets:GetIterator[iter]
         if ${iter:First(exists)}
         {
             do
@@ -6983,7 +6989,7 @@ objectdef targets_controller
                 if ${count} > 0
                     result:Concat[","]
 
-                result:Concat["{\"type\":\"textblock\",\"text\":\"${iter.Value.Name.Escape}\"}"]
+                result:Concat["{\"type\":\"textblock\",\"text\":\"${iter.Value.Escape}\"}"]
                 count:Inc
             }
             while ${iter:Next(exists)}
