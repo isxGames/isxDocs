@@ -382,6 +382,7 @@ Main game information and utilities.
 | Member | Type | Description |
 |--------|------|-------------|
 | ServerName | string | Server name |
+| AccountNumber | uint | The account number for the logged-in account |
 | Zoning | int | Non-zero if currently zoning |
 | CustomActorArraySize | int | **DEPRECATED** - Use EQ2:GetActors instead |
 | PendingQuestName | string | Name of pending quest offer |
@@ -3291,6 +3292,9 @@ Icon widget. Inherits from [eq2widget](#eq2widget) → [eq2baseobject](#eq2baseo
 | IsRecipe | bool | TRUE if this icon represents a recipe |
 | IsRecipeInfoAvailable | bool | TRUE if detailed recipe info is available for this icon |
 | ToRecipeInfo | [recipeinfo](#recipeinfo) | Returns detailed recipe information for this icon |
+| State | string | Current visual state of the icon ("Normal", "MouseOver", "Pressed", or "Disabled") |
+| Type | string | The icon's type |
+| Label[#] | string | The icon's label text for the given state (# is 1, 2, 3, or 4) |
 
 Plus all members from [eq2widget](#eq2widget) and [eq2baseobject](#eq2baseobject)
 

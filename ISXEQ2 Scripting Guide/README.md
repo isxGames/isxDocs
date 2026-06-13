@@ -361,6 +361,14 @@ Found an error or have an improvement? This documentation was generated using ac
 <!-- CLAUDE_SKIP_START -->
 ## Version History
 
+- **4.10** (2026-06-13) — ISXEQ2 changelog catch-up
+  - Documented three new `eq2icon` members: `State` (string, the icon's current visual state — `"Normal"`, `"MouseOver"`, `"Pressed"`, or `"Disabled"`), `Type` (string, the icon's type), and the indexed `Label[#]` (string, the icon's label text for the given state, # is 1, 2, 3, or 4) — added to `03_API_Reference.md` eq2icon Members table and `ISXEQ2_QuickReference.md` eq2icon block
+  - No new TLOs, no new commands, no removed APIs, no new events
+
+- **4.9** (2026-06-03) — ISXEQ2 changelog catch-up
+  - Documented a new `eq2` member `AccountNumber` (uint, the account number for the logged-in account) — added to `03_API_Reference.md` eq2 Members table and `ISXEQ2_QuickReference.md` eq2 block
+  - No new TLOs, no new commands, no removed APIs, no new events
+
 - **4.8** (2026-05-18) — ISXEQ2 changelog catch-up
   - Added two new `iteminfo` members: `NumModFlags` (int, count of mod flags set on the item) and `NoExchange` (bool, TRUE if the item cannot be traded/exchanged between players) — added to `03_API_Reference.md` iteminfo Members - Modifiers table and `ISXEQ2_QuickReference.md` iteminfo block
   - Added a new `iteminfo` method `GetModFlags[index:string]` that populates the passed string index with one entry per set mod flag (clears it before populating) — added to `03_API_Reference.md` iteminfo Methods table (with an enumeration example added to the iteminfo Example Usage) and `ISXEQ2_QuickReference.md` iteminfo Methods list

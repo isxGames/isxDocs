@@ -215,6 +215,7 @@ Main game information and utilities.
 
 **Members:**
 - `ServerName` - string: Server name
+- `AccountNumber` - uint: The account number for the logged-in account
 - `Zoning` - int: Whether currently zoning
 - `CustomActorArraySize` - int: Custom actor array size
 - `PendingQuestName` - string: Pending quest name
@@ -2172,6 +2173,9 @@ Icon widget. Inherits from [**eq2widget**](#eq2widget).
 - `IsRecipe` - bool: This icon represents a recipe
 - `IsRecipeInfoAvailable` - bool: Detailed recipe info is available for this icon
 - `ToRecipeInfo` - [recipeinfo](#recipeinfo): Returns detailed recipe information for this icon
+- `State` - string: Current visual state of the icon ("Normal", "MouseOver", "Pressed", or "Disabled")
+- `Type` - string: The icon's type
+- `Label[#]` - string: The icon's label text for the given state (# is 1, 2, 3, or 4)
 
 ---
 
