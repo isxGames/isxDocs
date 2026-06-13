@@ -123,6 +123,7 @@ When reviewing scripts over ~200 lines:
 - Use LavishGUI 2 (JSON) for new UIs, not LavishGUI 1 (XML)
 - Verify API details against CHANGES_FILE — it is the definitive source
 - After adding/removing/renaming guide files: update ALL cross-references across all files
+- EVERY KB API change (new/changed/removed TLO, datatype, member, method, event, or command — even a single new member) MUST also get a matching entry in the `## Version History` section of `README.md`, newest-first, using the semantic KB-doc version (4.x, NOT the ISXEQ2 build) translated from the changelog. A KB API change not reflected in the README Version History is an incomplete task — remind the subagent of this on every KB-update delegation.
 - After substantive guide changes: check if `00_MASTER_GUIDE.md`, `README.md`, `+How To Use+.md`, `ISXEQ2_QuickReference.md`, and the Claude AI command/agent files need updating
 - KB content (guide files, API Reference, Quick Reference) MUST NOT reference dates or builds when describing features — strip all `(added X.X.YYYY, build NNNNNNNN.NNNN)` style callouts from TLO tables, datatype sections, and member descriptions. Version history sections are a separate exception with their own conventions (entry-level date kept, per-bullet build refs stripped).
 

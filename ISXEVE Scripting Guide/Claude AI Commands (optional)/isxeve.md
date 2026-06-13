@@ -127,6 +127,7 @@ When reviewing scripts over ~200 lines:
 - Use LavishGUI 2 (JSON) for new UIs, not LavishGUI 1 (XML)
 - Verify API details against CHANGES_FILE — it is the definitive source
 - **Guide file changes**: When adding, removing, or reordering guide files, update ALL cross-references across ALL files. When making substantive changes to any numbered guide (01–22), also check/update the index files (ISXEVE_QuickReference.md, +How To Use This Guide with Claude Code+.md, 00_MASTER_GUIDE.md, README.md, isxeve.md, ISXEVE-Expert.md). See ISXEVE-Expert.md for the full list.
+- **KB API changes → README Version History**: Any significant KB API change (a new/changed/removed TLO, datatype, member, method, event, or command — even a single new member) MUST also get a matching entry in the `## Version History` section of README.md, matching that section's existing format (newest-first `- **vN.0 (YYYY-MM-DD)**` headings, indented sub-bullets naming the affected API in backticks AND where it changed, inside the `CLAUDE_SKIP` block). A KB change not reflected in the README Version History is an INCOMPLETE task. See ISXEVE-Expert.md for the full rule.
 
 ## Workflow
 

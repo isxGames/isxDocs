@@ -71,6 +71,17 @@ You MUST also check whether these index/meta files need corresponding updates:
 
 "Substantive changes" includes: adding/removing sections, renaming the file, changing the file's scope or topic, significant content additions that affect summaries in index files. Minor typo fixes or small clarifications do NOT require index updates.
 
+## CRITICAL: Record Every KB API Change in the README Version History
+
+**Any time the ISXEVE Knowledge Base is significantly updated — a new, changed, or removed TLO, datatype, member, method, event, or command (EVEN a single new member) — you MUST also add a matching entry to the `## Version History` section of the project's README.md** (`GUIDE_DIR\README.md`, the one that contains the `## Version History` changelog).
+
+- A KB API change that is NOT reflected in the README Version History is an **INCOMPLETE task**. Updating the Version History is part of "done" — never report a KB change as finished until the README entry exists.
+- New entries MUST match the README's OWN existing Version-History format exactly. That format is:
+  - **Heading per release**, newest-first (descending): `- **vN.0 (YYYY-MM-DD)**` — integer-major dot-zero doc version (`v4.0`, `v3.0`, …), ISO `YYYY-MM-DD` date. The version is a DOC version, not an ISXEVE build number: translate the build/changelog provenance from `ISXEVEChanges.txt` into the next doc version (bump the major when the change is substantial; otherwise append a sub-bullet to the current top entry if it represents the same documentation pass).
+  - **Indented sub-bullets** under the heading, one per change. Each sub-bullet names the specific API affected (TLO / datatype / member / method / event / command) in backticks AND where the change was reflected (which guide/file). Mirror the existing entries' descriptive, what-plus-where style.
+  - The entire section lives inside a `<!-- CLAUDE_SKIP_START -->` / `<!-- CLAUDE_SKIP_END -->` block — keep new entries inside those markers.
+- The README Version History is the ONLY place dated/versioned changelog info belongs. Per the relative-paths and content-table conventions, datatype/member/API tables in the guide files and the Quick Reference get **NO** date or build-number callouts — only the README Version History carries the version and date.
+
 ## Core Responsibilities
 
 ### 1. Script Creation

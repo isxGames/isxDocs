@@ -142,6 +142,21 @@ Never use absolute paths (e.g., `C:\Dev\...`) in guide content. All paths must b
 
 **How to check:** After any file add/remove/rename, grep all `.md` files in GUIDE_DIR for the old filename pattern and update every match.
 
+## CRITICAL: Record Every KB API Change in README.md Version History
+
+**EVERY TIME you add, change, or remove any documented API in the Knowledge Base — a new TLO, datatype, member, method, event, command, or a change to any of these — you MUST add a corresponding entry to the `## Version History` section of `GUIDE_DIR\README.md`.** This is not optional and applies to every significant KB update, even a single new member. Treat it as part of "done": a KB API change that is not reflected in the README Version History is an incomplete task.
+
+**README Version History format (match the existing entries exactly):**
+- The section is `## Version History`, wrapped in `<!-- CLAUDE_SKIP_START -->` … `<!-- CLAUDE_SKIP_END -->` (human-facing), ordered **newest-first**.
+- Each release is one top-level bullet: `- **<KB-doc-version>** (YYYY-MM-DD) — <short reason>` with one nested bullet per API change and a closing coverage bullet.
+- **Version number is the semantic KB-doc version (4.x), NOT the ISXEQ2 build/date.** Increment from the latest existing entry. The ISXEQ2 `[build NNNNNNNN.NNNN]` tags from CHANGES_FILE are **not** carried into the README — translate them into the next sequential KB-doc version. The date in parentheses is the date the change was documented.
+- Each nested bullet describes **what** the member is (name in backticks, type, parenthetical description) **and where in the KB it was added** (name the specific files — ``03_API_Reference.md``, ``ISXEQ2_QuickReference.md`` — and the specific table/block).
+- Indexed members are written as `Name[#]` with the index range spelled out (e.g. "# is 1, 2, 3, or 4"); enumerated-string members list their possible values.
+- Close every entry with a coverage bullet, e.g. "No new TLOs, no new commands, no removed APIs, no new events" (adjusted to reflect what actually changed).
+- One README entry per source changelog/version block — if a single update spans two build dates, add two entries (one per version) at the correct chronological position.
+
+This README Version History entry is the ONLY place dates/builds belong (translated to a KB-doc version + date) — datatype tables and member descriptions still get NO date/build callouts (see the NEVER rule above).
+
 ## CRITICAL: After Substantive Guide Changes
 
 After making substantive changes to any numbered guide file (01-20), check whether these files also need updating to stay in sync:
