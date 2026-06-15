@@ -1,0 +1,10 @@
+* The following files are game/extension agnostic.  In other words, these files should be exactly the same for all of the knowledgebase directories:
+	01_LavishScript_Fundamentals
+	01b_LavishScript_Reference
+	08_LavishGUI1_UI_Guide
+	10_LavishGUI2_UI_Guide
+	11_LavishGUI1_to_LavishGUI2_Migration
+	12_LGUI2_Scaling_System
+	13_JSON_Guide
+	14_LavishMachine_Guide
+

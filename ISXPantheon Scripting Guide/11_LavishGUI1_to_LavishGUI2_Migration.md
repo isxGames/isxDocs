@@ -1,0 +1,4488 @@
+# LavishGUI 1 to LavishGUI 2 Migration Guide
+
+**Purpose:** Convert existing LavishGUI 1 XML scripts to LavishGUI 2 JSON
+**Target Audience:** Script developers maintaining older LGUI1 scripts
+
+---
+
+## Table of Contents
+
+1. [Migration Overview](#migration-overview)
+2. [Key Differences Between LGUI1 and LGUI2](#key-differences-between-lgui1-and-lgui2)
+3. [File Format Conversion](#file-format-conversion)
+4. [Element Mapping](#element-mapping)
+5. [Event Handler Migration](#event-handler-migration)
+6. [Script Code Migration](#script-code-migration)
+7. [Data Binding Migration](#data-binding-migration)
+8. [Complete Migration Examples](#complete-migration-examples)
+9. [Migration Checklist](#migration-checklist)
+10. [Common Migration Issues](#common-migration-issues)
+11. [Advanced Migration Topics](#advanced-migration-topics)
+12. [Summary](#summary)
+13. [Known Limitations](#known-limitations)
+14. [LGUI2-Exclusive Features](#lgui2-exclusive-features)
+
+---
+
+## Migration Overview
+
+### Why Migrate?
+
+**LavishGUI 2** is the modern, supported UI framework with:
+
+- ✅ **Better tooling** - JSON schema provides IDE autocomplete
+- ✅ **Automatic data binding** - Reduces manual UI updates
+- ✅ **Cleaner syntax** - JSON is more readable than XML
+- ✅ **Active development** - LGUI1 is legacy, LGUI2 is the future
+- ✅ **More powerful** - Better event handling, templates, and features
+
+### Migration Process
+
+The migration requires:
+
+1. **Convert XML files to JSON** - New file format
+2. **Update element types and properties** - JSON structure differs from XML
+3. **Migrate event handlers** - Inline JSON instead of XML attributes
+4. **Update script code** - New loading methods and element access
+5. **Implement data binding** - Replace manual UI updates
+
+**Important:** This is **not** a simple find-replace. The paradigm shift from XML to JSON requires rethinking your UI structure.
+
+**CRITICAL: Always use 1x (baseline) sizing during migration. Never copy 2x scaled values from existing examples. Scaling is applied SEPARATELY after migration is complete.**
+
+### Authoritative LGUI2 Documentation Sources
+
+When working with LGUI2 and needing authoritative information, consult these sources **in this order**:
+
+1. **LavishSoft Wiki** - Official API documentation
+   - https://www.lavishsoft.com/wiki/
+   - Covers LavishScript, LGUI2 objects, methods, and members
+   - Search for specific objects like `lgui2checkbox`, `lgui2element`, etc.
+
+2. **DefaultSkin.json** - Reference implementation
+   - Location: `C:\Dev\InnerSpace\Interface\DefaultSkin.json`
+   - Shows how LavishSoft implements UI elements
+   - Contains templates, styles, and patterns used by InnerSpace itself
+   - Excellent for understanding element structure and styling
+
+3. **DefaultUplinkUI.json** - Real-world examples
+   - Location: `C:\Dev\InnerSpace\Interface\DefaultUplinkUI.json`
+   - InnerSpace's Uplink UI implementation
+   - Shows practical data binding, checkboxes, and modern patterns
+   - Use as a reference for proper LGUI2 patterns
+
+4. **JSON Schema** - Structure validation
+   - http://www.lavishsoft.com/schema/lgui2Package.json
+   - Defines valid package structure
+   - Does not document element-specific properties or events
+
+**IMPORTANT:** Do not assume behavior based on LGUI1 patterns or unverified sources. Always verify against these authoritative sources before documenting or implementing LGUI2 features.
+
+---
+
+## Key Differences Between LGUI1 and LGUI2
+
+### Side-by-Side Comparison
+
+| Aspect | LavishGUI 1 (Old) | LavishGUI 2 (New) |
+|--------|-------------------|-------------------|
+| **File Format** | XML (`.xml`) | JSON (`.json`) |
+| **Schema** | None | `$schema` for validation |
+| **Root Element** | `<LGUI>` or specific element | Package with `elements` array |
+| **Elements** | `<Window>`, `<Button>`, etc. | `"type": "window"`, etc. |
+| **Loading** | `ui -load filename.xml` | `LGUI2:LoadPackageFile[filename.json]` |
+| **Unloading** | `ui -unload filename` | `LGUI2:UnloadPackageFile[filename.json]` |
+| **Element Access** | `UIElement[name]` | `LGUI2.Element[name]` |
+| **Events** | XML attributes (`OnLeftClick=""`) | JSON `eventHandlers` object |
+| **Text Content** | `<Text>content</Text>` | `"text": "content"` |
+| **Nested Elements** | XML children | `"children"` or `"content"` arrays |
+| **Data Updates** | Manual (`SetText`, etc.) | Automatic data binding |
+| **Templates** | XML-based | JSON `templates` with `jsonTemplate` |
+
+### Conceptual Differences
+
+**LGUI1:** Element-centric with XML attributes
+```xml
+<Button Name="mybutton" OnLeftClick="echo Clicked!">
+    <Text>Click Me</Text>
+</Button>
+```
+
+**LGUI2:** Property-based with JSON structure
+```json
+{
+    "type": "button",
+    "name": "mybutton",
+    "content": "Click Me",
+    "eventHandlers": {
+        "onPress": {
+            "type": "code",
+            "code": "echo Clicked!"
+        }
+    }
+}
+```
+
+---
+
+## File Format Conversion
+
+### LGUI1 XML Structure
+
+```xml
+<?xml version='1.0'?>
+<LGUI>
+    <Window Name="mywindow" Width="300" Height="200">
+        <Title>My Window</Title>
+        <Text>Hello World</Text>
+    </Window>
+</LGUI>
+```
+
+### LGUI2 JSON Structure
+
+```json
+{
+    "$schema": "http://www.lavishsoft.com/schema/lgui2Package.json",
+    "elements": [
+        {
+            "type": "window",
+            "name": "mywindow",
+            "title": "My Window",
+            "x": 1480,
+            "y": 960,
+            "width": 800,
+            "height": 800,
+            "content": "Hello World"
+        }
+    ]
+}
+```
+
+**Default Window Size and Location:**
+
+When converting windows from LGUI1 to LGUI2, use these **standard defaults** for consistency:
+
+- `"x": 1480` - Default horizontal position (secondary monitor placement)
+- `"y": 960` - Default vertical position
+- `"width": 800` - Default window width (adequate space for most UIs)
+- `"height": 800` - Default window height
+
+These defaults place windows on a secondary monitor in typical multi-monitor setups. Users can move/resize windows as needed, and positions can be persisted via settings.
+
+### Conversion Steps
+
+1. **Add JSON schema** - Always start with `$schema`
+
+2. **Create `elements` array** - Root-level UI components
+
+3. **Convert element tags to objects** - `<Window>` → `{"type": "window"}`
+
+4. **Convert attributes to properties** - `Name="value"` → `"name": "value"`
+
+5. **Convert text content** - `<Text>content</Text>` → `"text": "content"`
+
+6. **Nest child elements** - Use `"content"` or `"children"` arrays
+
+### Property Name Changes
+
+| LGUI1 XML Attribute | LGUI2 JSON Property |
+|---------------------|---------------------|
+| `Name` | `name` |
+| `Width` | `width` |
+| `Height` | `height` |
+| `Location` | Position via `x`, `y` or `SetLocation` |
+| `OnLeftClick` | `eventHandlers.onPress` |
+| `OnRightClick` | `eventHandlers.onRightPress` |
+| `OnLoad` | `eventHandlers.onLoad` |
+| `OnUnload` | `eventHandlers.onCloseButtonClick` (see note below) |
+
+**CRITICAL: `onMouseClick` DOES NOT EXIST in LGUI2!**
+
+A common migration mistake is using `onMouseClick` instead of `onPress` for button clicks. **`onMouseClick` is NOT a valid LGUI2 event handler and will silently fail** (the button won't work).
+
+```json
+// ❌ WRONG - This will NOT work!
+"eventHandlers": {
+    "onMouseClick": {
+        "type": "code",
+        "code": "echo Clicked"
+    }
+}
+
+// ✅ CORRECT - Use onPress instead
+"eventHandlers": {
+    "onPress": {
+        "type": "code",
+        "code": "echo Clicked"
+    }
+}
+```
+
+**Note on OnUnload:** LGUI2 does not have an `onUnload` event. Use `onCloseButtonClick` to handle window close button clicks. See the "OnLoad / OnUnload Events" section for details.
+
+### Case Sensitivity
+
+**LGUI1:** Case-insensitive XML tags and attributes
+```xml
+<Window NAME="test" WIDTH="100">
+```
+
+**LGUI2:** Case-sensitive JSON properties
+```json
+{
+    "name": "test",    // Must be lowercase
+    "width": 100       // Must be lowercase
+}
+```
+
+---
+
+## Element Mapping
+
+### Window
+
+**LGUI1:**
+
+```xml
+<Window Name="mywindow" Width="400" Height="300">
+    <Title>My Window</Title>
+    <Text>Window content</Text>
+</Window>
+```
+
+**LGUI2 (Simple - No Scaling):**
+
+```json
+{
+    "type": "window",
+    "name": "mywindow",
+    "title": "My Window",
+    "x": 1480,
+    "y": 960,
+    "width": 800,
+    "height": 800,
+    "content": "Window content"
+}
+```
+
+**LGUI2 (Scalable - Recommended for New Scripts):**
+
+For scripts that use UI scaling (LGUI2Scaling.iss), the default title bar won't scale. Define a custom `titleBar` (a dockpanel containing close/shade buttons and a title textblock, with event forwarding to the parent window) and **remove** the `title` property to avoid duplication. A script-side `Shutdown` atom is invoked via `QueueCommand` from the `onCloseButtonClick` handler.
+
+The full JSON pattern, event-forwarding handlers, and `Shutdown` atom are documented in [10_LavishGUI2_UI_Guide.md](10_LavishGUI2_UI_Guide.md#window). For scaling-specific sizing guidance (2x/3x scale factors, font/padding values), see [12_LGUI2_Scaling_System.md](12_LGUI2_Scaling_System.md#creating-scalable-title-bars).
+
+### Button
+
+**LGUI1:**
+
+```xml
+<Button Name="mybutton" OnLeftClick="echo Clicked!">
+    <Text>Click Me</Text>
+</Button>
+```
+
+**LGUI2:**
+
+```json
+{
+    "type": "button",
+    "name": "mybutton",
+    "content": "Click Me",
+    "eventHandlers": {
+        "onPress": {
+            "type": "code",
+            "code": "echo Clicked!"
+        }
+    }
+}
+```
+
+### Checkbox
+
+**LGUI1:**
+
+```xml
+<Checkbox Name="mycheckbox" OnLeftClick="MyObject:OnCheckboxClicked">
+    <Text>Enable Feature</Text>
+</Checkbox>
+```
+
+**LGUI2:**
+
+```json
+{
+    "type": "checkbox",
+    "name": "mycheckbox",
+    "content": "Enable Feature",
+    "eventHandlers": {
+        "onChecked": {
+            "type": "method",
+            "object": "MyObject",
+            "method": "OnChecked"
+        },
+        "onUnchecked": {
+            "type": "method",
+            "object": "MyObject",
+            "method": "OnUnchecked"
+        }
+    }
+}
+```
+
+**Note:** LGUI2 has separate `onChecked` and `onUnchecked` events instead of a single click event.
+
+### ComboBox
+
+**LGUI1:**
+
+```xml
+<Combobox Name="mycombo" OnSelect="MyObject:OnSelection">
+    <Items>
+        <Text>Option 1</Text>
+        <Text>Option 2</Text>
+        <Text>Option 3</Text>
+    </Items>
+</Combobox>
+```
+
+**LGUI2 (Simple Pattern - Static Items):**
+
+```json
+{
+    "type": "combobox",
+    "name": "mycombo",
+    "items": [
+        {"type": "textblock", "text": "Option 1"},
+        {"type": "textblock", "text": "Option 2"},
+        {"type": "textblock", "text": "Option 3"}
+    ],
+    "eventHandlers": {
+        "onSelectionChanged": {
+            "type": "method",
+            "object": "MyObject",
+            "method": "OnSelection"
+        }
+    }
+}
+```
+
+**LGUI2 (Explicit Popup Pattern - For Custom Styling):**
+
+When migrating comboboxes that need custom fonts, precise sizing, or dynamic data binding, use the explicit popup pattern:
+
+```xml
+<!-- LGUI1 -->
+<combobox name='CurrentBehavior'>
+    <X>80</X>
+    <Y>10</Y>
+    <Width>250</Width>
+    <Height>15</Height>
+    <FullHeight>200</FullHeight>
+    <Items>
+        <Item Value='1'>Idle</Item>
+    </Items>
+    <OnSelect>
+        if ${This.SelectedItem.Text.NotNULLOrEmpty}
+        {
+            Logger:Log["Current behavior switched to ${This.SelectedItem.Text}"]
+            Config:SetBehavior[${This.SelectedItem.Text}]
+        }
+    </OnSelect>
+</combobox>
+```
+
+```json
+// LGUI2
+{
+    "type": "combobox",
+    "name": "CurrentBehavior",
+    "x": 150,
+    "y": 28,
+    "width": 250,
+    "height": 44,
+    "font": {
+        "height": 36,
+        "bold": true
+    },
+    "eventHandlers": {
+        "onSelectionChanged": {
+            "type": "code",
+            "code": "if ${This.SelectedItem.Data.Get[text].NotNULLOrEmpty}\n{\n\tLogger:Log[\"Current behavior switched to ${This.SelectedItem.Data.Get[text]}\"]\n\tConfig:SetBehavior[${This.SelectedItem.Data.Get[text]}]\n}"
+        }
+    },
+    "popup": {
+        "type": "popup",
+        "minSize": [0, 200],
+        "content": {
+            "type": "listbox",
+            "width": 250,
+            "height": 60,
+            "font": {
+                "height": 36
+            },
+            "minSize": [0, 200],
+            "itemsBinding": {
+                "pullFormat": "${MyController.GetBehaviors}"
+            },
+            "eventHandlers": {
+                "onItemSelected": {
+                    "type": "forward",
+                    "elementType": "combobox",
+                    "event": "onListBoxItemSelected"
+                },
+                "onItemDeselected": {
+                    "type": "forward",
+                    "elementType": "combobox",
+                    "event": "onListBoxItemDeselected"
+                },
+                "onSelectionChanged": {
+                    "type": "forward",
+                    "elementType": "combobox",
+                    "event": "onListBoxSelectionChanged"
+                }
+            }
+        },
+        "contentContainer": {
+            "jsonTemplate": "popup.panel",
+            "width": 250,
+            "height": 60,
+            "minSize": [0, 200],
+            "type": "anchor",
+            "anchorToElement": {
+                "elementType": "combobox",
+                "elementTree": "logical",
+                "flags": "ancestor"
+            },
+            "clipToParent": false,
+            "anchorLocationFactor": [0.0, 1.0]
+        }
+    }
+}
+```
+
+**Key Migration Points:**
+
+1. **Item Data Access**: Change `${This.SelectedItem.Text}` to `${This.SelectedItem.Data.Get[text]}` when using explicit popup pattern
+2. **Items Binding**: Move `itemsBinding` from combobox to the listbox inside `popup.content`
+3. **Font Styling**: Apply fonts to both the combobox and the listbox for consistent appearance
+4. **Event Forwarding**: The listbox must forward its events to the parent combobox
+5. **Popup Positioning**: Use `anchorToElement` and `anchorLocationFactor` to position dropdown below combobox
+6. **Programmatic Selection**: Use atom-safe flag-based pattern (see below)
+
+**Programmatically Setting ComboBox Selection (CRITICAL):**
+
+In LGUI1, you could set selection immediately. In LGUI2, `itemsBinding` loads asynchronously, so items won't exist immediately. You MUST use a flag-based pattern:
+
+```lavishscript
+// UI Object - Add state variables
+objectdef obj_MyUI
+{
+    variable bool NeedToSetComboBox = FALSE
+    variable string ComboBoxValueToSet = ""
+
+    // Queue the selection (atom-safe, no wait)
+    method SetComboBoxWhenReady(string searchFor)
+    {
+        This.NeedToSetComboBox:Set[TRUE]
+        This.ComboBoxValueToSet:Set["${searchFor}"]
+    }
+
+    // Check every frame in Pulse (atom)
+    method Pulse()
+    {
+        if ${This.NeedToSetComboBox}
+        {
+            if ${LGUI2.Element[MyListbox](exists)} && ${LGUI2.Element[MyListbox].ItemCount} > 0
+            {
+                This:SetComboBox["${This.ComboBoxValueToSet}"]
+                This.NeedToSetComboBox:Set[FALSE]
+            }
+        }
+        ; ... rest of pulse
+    }
+
+    // Actual selection logic
+    method SetComboBox(string searchFor)
+    {
+        variable jsonvalue ja="${This.GetItems}"
+        variable int i
+
+        for (i:Set[1]; ${i} <= ${ja.Size}; i:Inc)
+        {
+            if ${ja[${i}].Get[text].Equal[${searchFor}]}
+            {
+                LGUI2.Element[MyListbox]:SetItemSelected[${i},TRUE]
+                return
+            }
+        }
+    }
+}
+```
+
+**Why You Cannot Use Wait Commands:**
+- Pulse methods run as **atoms** (attached via `Event[EVENT_ONFRAME]:AttachAtom`)
+- Event handlers are **atoms**
+- Atoms **CANNOT** use `wait`, `waitframe`, or `waitfor`
+- Solution: Use flags checked in Pulse (runs every frame automatically)
+
+**Special Case: Migrating Numeric Value ComboBoxes**
+
+If your LGUI1 combobox stored numeric values (`<Item Value='1'>Text</Item>`), you need to map between numeric config values and LGUI2's text-based selection.
+
+**LGUI1 Pattern (numeric values):**
+```xml
+<combobox name='cbJetCanName'>
+    <Items>
+        <Item Value='1'>CorpTicker Time</Item>
+        <Item Value='2'>CorpTicker:Time</Item>
+        <Item Value='3'>CorpTicker_Time</Item>
+        ...
+        <Item Value='10'>Do Not Rename</Item>
+    </Items>
+    <OnLoad>This:SetSelection[${Config.JetCanNaming}]</OnLoad>
+    <OnSelect>Config:SetJetCanNaming[${This.SelectedItem.Value}]</OnSelect>
+</combobox>
+```
+
+**LGUI2 Migration (with numeric→text mapping):**
+
+**JSON (tabMiner.json):**
+```json
+{
+    "type": "combobox",
+    "name": "cbJetCanName",
+    "eventHandlers": {
+        "onSelectionChanged": {
+            "type": "code",
+            "code": "variable int Value\nswitch ${This.SelectedItem.Data.Get[text]}\n{\ncase CorpTicker Time\n\tValue:Set[1]\n\tbreak\ncase CorpTicker:Time\n\tValue:Set[2]\n\tbreak\ncase CorpTicker_Time\n\tValue:Set[3]\n\tbreak\n...\ncase Do Not Rename\n\tValue:Set[10]\n\tbreak\n}\nif ${Value}\n\tConfig:SetJetCanNaming[${Value}]"
+        }
+    },
+    "popup": {
+        "content": {
+            "type": "listbox",
+            "name": "cbJetCanNameList",
+            "items": [
+                {"type": "textblock", "text": "CorpTicker Time"},
+                {"type": "textblock", "text": "CorpTicker:Time"},
+                {"type": "textblock", "text": "CorpTicker_Time"},
+                ...
+                {"type": "textblock", "text": "Do Not Rename"}
+            ]
+        }
+    }
+}
+```
+
+**UI Object (obj_MyScriptUI.iss):**
+```lavishscript
+objectdef obj_MyScriptUI
+{
+    variable bool NeedToSetPresetComboBox = FALSE
+    variable int PresetComboBoxValueToSet = 0
+
+    method SetPresetComboBoxWhenReady(int numericValue)
+    {
+        This.NeedToSetPresetComboBox:Set[TRUE]
+        This.PresetComboBoxValueToSet:Set[${numericValue}]
+    }
+
+    method Pulse()
+    {
+        if ${This.NeedToSetPresetComboBox}
+        {
+            if ${LGUI2.Element[cbPresetNameList](exists)} && ${LGUI2.Element[cbPresetNameList].ItemCount} > 0
+            {
+                This:SetPresetComboBox[${This.PresetComboBoxValueToSet}]
+                This.NeedToSetPresetComboBox:Set[FALSE]
+            }
+        }
+    }
+
+    method SetPresetComboBox(int numericValue)
+    {
+        variable string SelectedText
+
+        switch ${numericValue}
+        {
+            case 1
+                SelectedText:Set["Option A"]
+                break
+            case 2
+                SelectedText:Set["Option B"]
+                break
+            ; ... remaining mappings
+            case 10
+                SelectedText:Set["Default"]
+                break
+        }
+
+        if ${SelectedText.NotNULLOrEmpty}
+        {
+            variable int i
+            for (i:Set[1]; ${i} <= ${LGUI2.Element[cbPresetNameList].ItemCount}; i:Inc)
+            {
+                if ${LGUI2.Element[cbPresetNameList].Item[${i}].Data.Get[text].Equal[${SelectedText}]}
+                {
+                    LGUI2.Element[cbPresetNameList]:SetItemSelected[${i},TRUE]
+                    return
+                }
+            }
+        }
+    }
+}
+```
+
+**Main Script (MyScript.iss):**
+```lavishscript
+function main()
+{
+    ; After UI loads
+    UI:SetPresetComboBoxWhenReady[${Config.Settings.PresetNaming}]
+}
+```
+
+**Migration Checklist for Numeric ComboBoxes:**
+1. ✅ Convert `<Item Value='N'>` to static items array in LGUI2
+2. ✅ Add `onSelectionChanged` with text→numeric switch mapping
+3. ✅ Create `SetComboBoxWhenReady()` method with numeric parameter
+4. ✅ Create `SetComboBox()` method with numeric→text switch mapping
+5. ✅ Add flag variables (`NeedToSet`, `ValueToSet`) to UI object
+6. ✅ Add check in `Pulse()` method
+7. ✅ Call `SetComboBoxWhenReady()` from main script after UI loads
+8. ✅ Remove `OnLoad` handler from JSON (initialization handled by Pulse)
+
+This pattern maintains backward compatibility with numeric configs while working correctly with LGUI2's text-based selection.
+
+### TabControl
+
+**CRITICAL:** LGUI2 has native tabcontrol support - use it!
+
+**LGUI1:**
+
+```xml
+<Tabcontrol Name="mytabs">
+    <Tabs>
+        <Tab Name="Main">
+            <Text>Main tab content</Text>
+        </Tab>
+        <Tab Name="Settings">
+            <Text>Settings tab content</Text>
+        </Tab>
+    </Tabs>
+</Tabcontrol>
+```
+
+**LGUI2:**
+
+```json
+{
+    "type": "tabcontrol",
+    "name": "mytabs",
+    "tabs": [
+        {
+            "type": "tab",
+            "header": "Main",
+            "content": {
+                "type": "textblock",
+                "text": "Main tab content"
+            }
+        },
+        {
+            "type": "tab",
+            "header": "Settings",
+            "content": {
+                "type": "textblock",
+                "text": "Settings tab content"
+            }
+        }
+    ]
+}
+```
+
+**Key Differences:**
+
+| LGUI1 | LGUI2 |
+|-------|-------|
+| `<Tabs>` container | `"tabs"` array property |
+| `<Tab Name="...">` | `"type": "tab"` + `"header": "..."` |
+| Child elements directly in `<Tab>` | `"content"` property (single element) |
+
+**Important Notes:**
+
+1. **Each tab MUST** have `"type": "tab"` (required)
+2. **Use `"header"`** for the tab label (NOT "title" or "name")
+3. **Wrap multiple elements** in tab content using a panel or stackpanel:
+
+   ```json
+   {
+       "type": "tab",
+       "header": "Complex Tab",
+       "content": {
+           "type": "stackpanel",
+           "orientation": "vertical",
+           "children": [
+               {"type": "button", "content": "Button 1"},
+               {"type": "button", "content": "Button 2"}
+           ]
+       }
+   }
+   ```
+
+4. **No manual visibility management** - tabcontrol handles everything automatically
+
+### Text / TextBlock
+
+**LGUI1:**
+
+```xml
+<Text Name="mytext">Hello World</Text>
+```
+
+**LGUI2:**
+
+```json
+{
+    "type": "textblock",
+    "name": "mytext",
+    "text": "Hello World"
+}
+```
+
+**Or use string shorthand:**
+
+```json
+"content": "Hello World"
+```
+
+### Frame / Panel
+
+**LGUI1:**
+
+```xml
+<Frame Name="myframe">
+    <Text>Child 1</Text>
+    <Text>Child 2</Text>
+</Frame>
+```
+
+**LGUI2:**
+
+```json
+{
+    "type": "panel",
+    "name": "myframe",
+    "children": [
+        {"type": "textblock", "text": "Child 1"},
+        {"type": "textblock", "text": "Child 2"}
+    ]
+}
+```
+
+### Listbox
+
+**LGUI1:**
+
+```xml
+<Listbox Name="mylist">
+    <Items>
+        <Text>Item 1</Text>
+        <Text>Item 2</Text>
+    </Items>
+</Listbox>
+```
+
+**LGUI2:**
+
+```json
+{
+    "type": "listbox",
+    "name": "mylist",
+    "items": [
+        {"type": "textblock", "text": "Item 1"},
+        {"type": "textblock", "text": "Item 2"}
+    ]
+}
+```
+
+**Or with data binding:**
+
+```json
+{
+    "type": "listbox",
+    "name": "mylist",
+    "itemsBinding": {
+        "pullFormat": "${MyController.GetItems}"
+    }
+}
+```
+
+### Tab Control
+
+**LGUI1:**
+
+```xml
+<TabControl>
+    <TabPage Name="tab1">
+        <Title>Page 1</Title>
+        <Text>Content 1</Text>
+    </TabPage>
+    <TabPage Name="tab2">
+        <Title>Page 2</Title>
+        <Text>Content 2</Text>
+    </TabPage>
+</TabControl>
+```
+
+**LGUI2:**
+
+Use a combination of buttons and panel visibility, or use advanced itemview with templates. Full tab control documentation coming soon.
+
+---
+
+## Event Handler Migration
+
+### CRITICAL: No Wait Commands in Event Handlers
+
+**IMPORTANT:** Event handlers in LGUI2 execute as **atoms** (atomic operations). You **CANNOT** use wait commands:
+
+- ❌ `wait`
+- ❌ `waitframe`
+- ❌ `waitfor`
+- ❌ Any blocking operation
+
+```json
+// BAD - This will fail!
+"eventHandlers": {
+    "onPress": {
+        "type": "code",
+        "code": "echo Starting...; wait 10; echo Done"
+    }
+}
+```
+
+**Solution:** Use method event handlers and call script methods that can use wait commands:
+
+```json
+// GOOD - Call a method instead
+"eventHandlers": {
+    "onPress": {
+        "type": "method",
+        "object": "MyController",
+        "method": "OnButtonPressed"
+    }
+}
+```
+
+```lavishscript
+objectdef mycontroller
+{
+    method OnButtonPressed()
+    {
+        ; Methods can use wait commands
+        echo Starting...
+        wait 10
+        echo Done
+    }
+}
+```
+
+### Click Events
+
+**LGUI1:**
+
+```xml
+<Button OnLeftClick="echo Left clicked!" OnRightClick="echo Right clicked!">
+    <Text>Click Me</Text>
+</Button>
+```
+
+**LGUI2:**
+
+```json
+{
+    "type": "button",
+    "content": "Click Me",
+    "eventHandlers": {
+        "onPress": {
+            "type": "code",
+            "code": "echo Left clicked!"
+        },
+        "onRightPress": {
+            "type": "code",
+            "code": "echo Right clicked!"
+        }
+    }
+}
+```
+
+### Calling Object Methods
+
+**LGUI1:**
+
+```xml
+<Button OnLeftClick="MyController:HandleClick">
+    <Text>Click</Text>
+</Button>
+```
+
+**LGUI2:**
+
+```json
+{
+    "type": "button",
+    "content": "Click",
+    "eventHandlers": {
+        "onPress": {
+            "type": "method",
+            "object": "MyController",
+            "method": "HandleClick"
+        }
+    }
+}
+```
+
+**Controller method signature stays the same:**
+
+```lavishscript
+method HandleClick()
+{
+    echo Button was clicked!
+}
+```
+
+### OnLoad / OnUnload Events
+
+**LGUI1:**
+
+```xml
+<Window OnLoad="MyController:OnWindowLoad" OnUnload="MyController:OnWindowUnload">
+    <Title>Window</Title>
+</Window>
+```
+
+**LGUI2:**
+
+```json
+{
+    "type": "window",
+    "title": "Window",
+    "name": "mywindow",
+    "x": 1480,
+    "y": 960,
+    "width": 800,
+    "height": 800,
+    "eventHandlers": {
+        "onLoad": {
+            "type": "method",
+            "object": "MyController",
+            "method": "OnWindowLoad"
+        },
+        "onCloseButtonClick": {
+            "type": "code",
+            "code": "Script[myscript]:QueueCommand[Shutdown]"
+        }
+    }
+}
+```
+
+**IMPORTANT:** LGUI2 does not have an `onUnload` event that fires when the window is closed. Instead, use `onCloseButtonClick` to handle the window close button.
+
+**Script Implementation:**
+
+```lavishscript
+atom(script) Shutdown()
+{
+    call SaveSettings
+    Script:End
+}
+```
+
+**Why the change?**
+- LGUI1's `OnUnload` fired when the window was destroyed
+- LGUI2's `onCloseButtonClick` fires when the user clicks the X button
+- This gives you explicit control over the shutdown sequence
+- Use `QueueCommand` to safely schedule shutdown in the script thread
+
+### Checkbox State Management
+
+**LGUI1:**
+
+```xml
+<Checkbox Name="enableFeature" OnLeftClick="MyController:ToggleFeature">
+    <Text>Enable</Text>
+</Checkbox>
+```
+
+In the controller, you had to check the checkbox state manually:
+
+```lavishscript
+method ToggleFeature()
+{
+    if ${UIElement[enableFeature].Checked}
+        echo Feature was enabled!
+    else
+        echo Feature was disabled!
+}
+```
+
+**LGUI2 (Recommended Pattern - Data Binding):**
+
+```json
+{
+    "type": "checkbox",
+    "name": "enableFeature",
+    "content": "Enable",
+    "checkedBinding": {
+        "pullFormat": "${Config.FeatureEnabled}",
+        "pushFormat": ["Config:SetFeatureEnabled[", "]"]
+    }
+}
+```
+
+**No controller code needed!** The checkbox automatically syncs with `${Config.FeatureEnabled}`.
+
+**LGUI2 (Alternative - Manual Management):**
+
+If you need custom logic when the checkbox changes:
+
+```json
+{
+    "type": "checkbox",
+    "name": "enableFeature",
+    "content": "Enable",
+    "eventHandlers": {
+        "onLoad": {
+            "type": "code",
+            "code": "if ${Config.FeatureEnabled}\n{\n\tThis:SetChecked[TRUE]\n}"
+        }
+    }
+}
+```
+
+Then poll the state in your script when needed:
+
+```lavishscript
+if ${LGUI2.Element[enableFeature].Checked}
+    Config:SetFeatureEnabled[TRUE]
+else
+    Config:SetFeatureEnabled[FALSE]
+```
+
+**Why Data Binding Is Better:**
+- ✅ Automatic two-way sync
+- ✅ No polling required
+- ✅ Less code
+- ✅ Standard LGUI2 pattern
+
+---
+
+## Script Code Migration
+
+### Loading UI Files
+
+**LGUI1:**
+
+```lavishscript
+ui -load myui.xml
+```
+
+**LGUI2:**
+
+```lavishscript
+LGUI2:LoadPackageFile[myui.json]
+```
+
+### Unloading UI Files
+
+**LGUI1:**
+
+```lavishscript
+ui -unload myui
+```
+
+**LGUI2:**
+
+```lavishscript
+LGUI2:UnloadPackageFile[myui.json]
+```
+
+### Accessing Elements
+
+**LGUI1:**
+
+```lavishscript
+UIElement[mywindow]
+UIElement[mywindow,mybutton]    ; Nested access
+```
+
+**LGUI2:**
+
+```lavishscript
+LGUI2.Element[mywindow]
+LGUI2.Element[mybutton]         ; Flat access by name
+```
+
+### Checking Element Existence
+
+**LGUI1:**
+
+```lavishscript
+if ${UIElement[mywindow](exists)}
+{
+    echo Window exists
+}
+```
+
+**LGUI2:**
+
+```lavishscript
+if ${LGUI2.Element[mywindow](exists)}
+{
+    echo Window exists
+}
+```
+
+### Showing/Hiding Elements
+
+**LGUI1:**
+
+```lavishscript
+UIElement[mywindow]:Show
+UIElement[mywindow]:Hide
+```
+
+**LGUI2:**
+
+```lavishscript
+; For windows - :Show and :Hide methods work
+LGUI2.Element[mywindow]:Show
+LGUI2.Element[mywindow]:Hide
+
+; For other element types (tabcontrol, panel, etc.) - use :SetVisibility with capitalized enum values
+LGUI2.Element[myTabControl]:SetVisibility[Visible]
+LGUI2.Element[myTabControl]:SetVisibility[Hidden]      ; Hidden but takes up layout space
+LGUI2.Element[myTabControl]:SetVisibility[Collapsed]   ; Hidden and no layout space
+```
+
+**Important Notes:**
+
+- **:Show** and **:Hide** methods work on **window elements only**
+- For other element types (panel, tabcontrol, stackpanel, etc.), use **:SetVisibility[]**
+- :SetVisibility requires **capitalized** enum values: `Visible`, `Hidden`, `Collapsed`
+- **Hidden** vs **Collapsed**: `Hidden` hides the element but reserves layout space, `Collapsed` removes it from layout entirely
+
+**Common Pattern - Window Minimize/Maximize:**
+
+When creating minimize/maximize functionality for windows:
+
+```json
+{
+    "customTitleBar": {
+        "type": "dockpanel",
+        "name": "MyTitleBar",
+        "height": 80,
+        "children": [
+            {
+                "type": "button",
+                "content": "-",
+                "eventHandlers": {
+                    "onPress": {
+                        "type": "code",
+                        "code": "Script[MyScript].VariableScope.UI:MinimizeWindow[]"
+                    }
+                }
+            },
+            {
+                "type": "button",
+                "content": "^",
+                "eventHandlers": {
+                    "onPress": {
+                        "type": "code",
+                        "code": "Script[MyScript].VariableScope.UI:MaximizeWindow[]"
+                    }
+                }
+            }
+        ]
+    }
+}
+```
+
+```lavishscript
+; In your UI object:
+variable int SavedWindowWidth = 800
+variable int SavedWindowHeight = 600
+
+method MinimizeWindow()
+{
+    ; Save current window size
+    This.SavedWindowWidth:Set[${LGUI2.Element[MyWindow].Width}]
+    This.SavedWindowHeight:Set[${LGUI2.Element[MyWindow].Height}]
+
+    ; Hide the main content
+    LGUI2.Element[MyMainContent]:SetVisibility[Collapsed]
+
+    ; Resize window to just the title bar height
+    variable int titleBarHeight = ${LGUI2.Element[MyTitleBar].Height}
+    LGUI2.Element[MyWindow]:SetSize[${LGUI2.Element[MyWindow].Width}, ${titleBarHeight}]
+}
+
+method MaximizeWindow()
+{
+    ; Show the main content
+    LGUI2.Element[MyMainContent]:SetVisibility[Visible]
+
+    ; Restore window to saved size
+    LGUI2.Element[MyWindow]:SetSize[${This.SavedWindowWidth}, ${This.SavedWindowHeight}]
+}
+```
+
+**Key Takeaways:**
+
+1. Define explicit `height` on your titleBar in JSON so you can read it from script
+2. Give your titleBar a `name` property so you can access it via `LGUI2.Element[]`
+3. Use `:SetVisibility[Collapsed]` to hide content without leaving empty space
+4. Save window dimensions before minimizing so you can restore them properly
+
+### Setting Text
+
+**LGUI1:**
+
+```lavishscript
+UIElement[mytext]:SetText["New text"]
+```
+
+**LGUI2:**
+
+```lavishscript
+LGUI2.Element[mytext]:SetText["New text"]
+```
+
+**Or use data binding (better):**
+
+```lavishscript
+; In controller
+variable string StatusText = "New text"
+
+; In JSON
+"textBinding": {"pullFormat": "${MyController.StatusText}"}
+```
+
+### Setting Checkbox State
+
+**LGUI1:**
+
+```lavishscript
+UIElement[mycheckbox]:SetChecked[TRUE]
+```
+
+**LGUI2:**
+
+```lavishscript
+LGUI2.Element[mycheckbox]:SetChecked[TRUE]
+```
+
+**Or use data binding (better):**
+
+```lavishscript
+; In controller
+variable bool FeatureEnabled = TRUE
+
+; In JSON
+"checkedBinding": "MyController.FeatureEnabled"
+```
+
+### Tab Navigation Between Form Controls
+
+**LGUI1:**
+
+LGUI1 did not have built-in tab navigation support. If implemented, it required manual keyboard event handling.
+
+**LGUI2:**
+
+LGUI2 supports tab navigation through the `onTabPress` event, but **requires manual implementation** - there is no automatic tab order like HTML's `tabIndex`.
+
+**Implementation Pattern:**
+
+Each textbox must:
+1. Enable keyboard focus with `acceptsKeyboardFocus: true`
+2. Handle the `onTabPress` event
+3. Manually set focus to the next element using `:KeyboardFocus`
+
+**Example - Form with 3 Textboxes:**
+
+```json
+{
+    "type": "panel",
+    "children": [
+        {
+            "type": "textbox",
+            "name": "firstName",
+            "acceptsKeyboardFocus": true,
+            "eventHandlers": {
+                "onTabPress": {
+                    "type": "code",
+                    "code": "LGUI2.Element[lastName]:KeyboardFocus"
+                }
+            }
+        },
+        {
+            "type": "textbox",
+            "name": "lastName",
+            "acceptsKeyboardFocus": true,
+            "eventHandlers": {
+                "onTabPress": {
+                    "type": "code",
+                    "code": "LGUI2.Element[email]:KeyboardFocus"
+                }
+            }
+        },
+        {
+            "type": "textbox",
+            "name": "email",
+            "acceptsKeyboardFocus": true,
+            "eventHandlers": {
+                "onTabPress": {
+                    "type": "code",
+                    "code": "LGUI2.Element[firstName]:KeyboardFocus"
+                }
+            }
+        }
+    ]
+}
+```
+
+**Setting Focus from Script:**
+
+```lavishscript
+; Give focus to a specific textbox
+LGUI2.Element[firstName]:KeyboardFocus
+
+; Remove focus (focus the screen)
+LGUI2.Element[screen]:KeyboardFocus
+```
+
+**Visual Feedback:**
+
+Use styles to highlight the focused element:
+
+```json
+{
+    "type": "textbox",
+    "name": "myTextbox",
+    "acceptsKeyboardFocus": true,
+    "styles": {
+        "gotKeyboardFocus": {
+            "borderBrush": { "color": "#00FF00" }
+        },
+        "lostKeyboardFocus": {
+            "borderBrush": { "color": "#FFFFFF" }
+        }
+    }
+}
+```
+
+**Key Points:**
+
+- **No automatic tab order** - each textbox must specify the next element
+- **Circular navigation** - the last textbox can loop back to the first
+- **Event name:** `onTabPress` (not `onTab` or `onKeyPress`)
+- **Method name:** `:KeyboardFocus` (no arguments needed)
+- **Checkbox support** - may work with checkboxes but needs testing
+
+### Detecting Enter and Escape Keys in Textboxes
+
+**LGUI1:**
+
+LGUI1 did not have a standard pattern for detecting Enter or Escape key presses in textboxes. If implemented, it required custom keyboard event handling.
+
+**LGUI2:**
+
+LGUI2 provides keyboard key detection through the `hooks` property using the `onButtonMove` event.
+
+**Important:** Must use `hooks`, not `eventHandlers` for keyboard key detection.
+
+**Pattern:**
+
+```json
+{
+    "type": "textbox",
+    "name": "myTextbox",
+    "hooks": {
+        "onButtonMove": {
+            "event": "onButtonMove",
+            "flags": "self",
+            "eventHandler": {
+                "type": "code",
+                "code": [
+                    "if ${Context.Args[controlName].Equals[ESC]} && !${Context.Args[position]}",
+                        "This:SetText[\"\"]",
+                    "if ${Context.Args[controlName].Equals[ENTER]} && !${Context.Args[position]}",
+                        "LGUI2.Element[screen]:KeyboardFocus"
+                ]
+            }
+        }
+    }
+}
+```
+
+**Example - Login Form with Enter to Submit:**
+
+```json
+{
+    "type": "textbox",
+    "name": "passwordBox",
+    "password": true,
+    "acceptsKeyboardFocus": true,
+    "textBinding": {
+        "pullFormat": "${LoginController.Password}",
+        "pushFormat": ["LoginController:SetPassword[", "]"]
+    },
+    "hooks": {
+        "onButtonMove": {
+            "event": "onButtonMove",
+            "flags": "self",
+            "eventHandler": {
+                "type": "code",
+                "code": [
+                    "if ${Context.Args[controlName].Equals[ENTER]} && !${Context.Args[position]}",
+                        "LoginController:SubmitLogin[]",
+                    "if ${Context.Args[controlName].Equals[ESC]} && !${Context.Args[position]}",
+                        "This:SetText[\"\"]"
+                ]
+            }
+        }
+    }
+}
+```
+
+**How It Works:**
+
+- **`Context.Args[controlName]`** - The name of the key pressed ("ENTER", "ESC", "TAB", "SPACE", etc.)
+- **`Context.Args[position]`** - True when key is pressed, false when released
+- **`!${Context.Args[position]}`** - Ensures action only happens on key release (prevents double-triggering)
+
+**Common Key Names:**
+
+| Key | controlName Value |
+|-----|-------------------|
+| Enter/Return | `ENTER` |
+| Escape | `ESC` |
+| Tab | `TAB` |
+| Space | `SPACE` |
+
+**Key Points:**
+
+- **Use `hooks`** - keyboard detection does not work with `eventHandlers`
+- **`flags: "self"`** - only listen to events from this specific textbox
+- **Check key release** - use `!${Context.Args[position]}` to prevent double execution
+- **Multiple keys** - handle multiple keys in the same hook
+- **Combine with other features** - works alongside `onTextChanged`, `onTabPress`, etc.
+
+### Moving Windows
+
+**LGUI1:**
+
+```lavishscript
+UIElement[mywindow]:SetX[100]
+UIElement[mywindow]:SetY[100]
+```
+
+**LGUI2:**
+
+```lavishscript
+LGUI2.Element[mywindow]:SetLocation[100, 100]
+```
+
+### Resizing Windows
+
+**LGUI1:**
+
+```lavishscript
+UIElement[mywindow]:SetWidth[400]
+UIElement[mywindow]:SetHeight[300]
+```
+
+**LGUI2:**
+
+```lavishscript
+LGUI2.Element[mywindow]:SetSize[400, 300]
+```
+
+### Controller Pattern
+
+**LGUI1:**
+
+```lavishscript
+function main()
+{
+    ui -load myui.xml
+
+    while 1
+        waitframe
+}
+
+function OnExit()
+{
+    ui -unload myui
+}
+```
+
+**LGUI2 (Recommended Pattern):**
+
+```lavishscript
+objectdef myui_controller
+{
+    method Initialize()
+    {
+        LGUI2:LoadPackageFile[myui.json]
+    }
+
+    method Shutdown()
+    {
+        LGUI2:UnloadPackageFile[myui.json]
+    }
+}
+
+variable(global) myui_controller MyUIController
+
+function main()
+{
+    while 1
+        waitframe
+}
+```
+
+### Textbox Operations
+
+#### Appending Text to Textboxes
+
+**LGUI1:**
+
+```lavishscript
+UIElement[Output]:AppendText["New line\n"]
+```
+
+**LGUI2:**
+
+LGUI2 textboxes don't have an `AppendText` method. You must get the current text, append to it, and set it back:
+
+```lavishscript
+variable string currentText
+variable string newLine = "New line\n"
+
+currentText:Set["${LGUI2.Element[Output].Text}"]
+currentText:Concat["${newLine}"]
+LGUI2.Element[Output]:SetText["${currentText.Escape}"]
+```
+
+**Complete Console Echo Example:**
+
+```lavishscript
+function ConsoleEcho(string textString)
+{
+    variable string currentText
+    variable string newLine = "[${Time.Time24}] ${textString.Escape}\n"
+
+    currentText:Set["${LGUI2.Element[Output].Text}"]
+    currentText:Concat["${newLine}"]
+    LGUI2.Element[Output]:SetText["${currentText.Escape}"]
+}
+```
+
+**Console Echo with Line Limiting (Production Pattern):**
+
+For long-running applications (bots, monitors, etc.), you should limit the number of lines in the console to prevent unbounded memory growth:
+
+```lavishscript
+function ConsoleEcho(string msg)
+{
+    variable string currentText = "${LGUI2.Element[StatusConsole].Text}"
+    variable int lineCount = ${currentText.Count["\n"]}
+
+    ; Limit to 100 lines - remove oldest line when limit is reached
+    if ${lineCount} > 100
+    {
+        ; Remove first line
+        variable int firstNewline = ${currentText.Find["\n"]}
+        currentText:Set["${currentText.Right[-${Math.Calc[${firstNewline}+1]}]}"]
+    }
+
+    LGUI2.Element[StatusConsole]:SetText["${currentText}\n${msg}"]
+}
+```
+
+**Key Points:**
+- Use `.Count["\n"]` to track number of lines in the textbox
+- Remove oldest line when threshold is exceeded (100 lines recommended)
+- Use `.Find["\n"]` to locate the first newline
+- Use `.Right[-${offset}]` to efficiently trim from the beginning
+- This prevents memory issues during extended bot sessions
+
+#### Getting Actual Element Dimensions
+
+**LGUI1:**
+
+```lavishscript
+variable int width = ${UIElement[mywindow].Width}
+variable int height = ${UIElement[mywindow].Height}
+```
+
+**LGUI2:**
+
+When elements use percentage-based sizes (`"width": "100%"`), the `Width` property returns `-1`. Use `ActualWidth.Precision[0]` to get the rendered pixel dimensions:
+
+```lavishscript
+variable int width = ${LGUI2.Element[mywindow].ActualWidth.Precision[0]}
+variable int height = ${LGUI2.Element[mywindow].ActualHeight.Precision[0]}
+```
+
+**Example - Calculate Max Characters Per Line:**
+
+```lavishscript
+function ConsoleEcho(string textString)
+{
+    variable string currentText
+    variable string newLine = "[${Time.Time24}] ${textString.Escape}"
+
+    ; Get actual rendered width
+    variable int textboxWidth
+    variable int fontSize
+    variable int maxChars
+    variable float charWidth
+
+    textboxWidth:Set[${LGUI2.Element[MyScript Console].ActualWidth.Precision[0]}]
+
+    ; If that didn't work, use a safe default
+    if ${textboxWidth} <= 0
+        textboxWidth:Set[1800]
+
+    fontSize:Set[${LGUI2.Element[Output].Font.Height}]
+    charWidth:Set[${Math.Calc[${fontSize} * 0.5]}]
+    ; Reduce usable width by 10% for padding/margins
+    maxChars:Set[${Math.Calc[(${textboxWidth} * 0.9) / ${charWidth}].Int}]
+
+    ; Trim the line if it's too long
+    if ${newLine.Length} > ${maxChars}
+    {
+        newLine:Set["${newLine.Left[${Math.Calc[${maxChars} - 3]}]}..."]
+    }
+
+    newLine:Concat["\n"]
+
+    currentText:Set["${LGUI2.Element[Output].Text}"]
+    currentText:Concat["${newLine}"]
+    LGUI2.Element[Output]:SetText["${currentText.Escape}"]
+}
+```
+
+**Key Points:**
+- Use `.ActualWidth.Precision[0]` and `.ActualHeight.Precision[0]` for rendered dimensions
+- These work even when JSON specifies percentage values
+- Always check if the value is valid (`> 0`) and provide a fallback
+- Character width estimation: `fontSize * 0.5` works well for Segoe UI
+
+---
+
+## Data Binding Migration
+
+### Manual Updates (LGUI1 Pattern)
+
+**LGUI1 XML:**
+
+```xml
+<Text Name="healthText">Health: 0</Text>
+```
+
+**LGUI1 Script:**
+
+```lavishscript
+; Manual update every frame
+function main()
+{
+    ui -load myui.xml
+
+    while 1
+    {
+        UIElement[healthText]:SetText["Status: ${Script[MyScript].Variable[StatusText]}"]
+        waitframe
+    }
+}
+```
+
+**Problems:**
+- ❌ Manual updates required every frame
+- ❌ More code to maintain
+- ❌ Performance overhead from SetText calls
+
+### Automatic Data Binding (LGUI2 Pattern)
+
+**LGUI2 JSON:**
+
+```json
+{
+    "type": "textblock",
+    "name": "statusText",
+    "textBinding": {
+        "pullFormat": "Status: ${Script[MyScript].Variable[StatusText]}"
+    }
+}
+```
+
+**LGUI2 Script:**
+
+```lavishscript
+; No manual updates needed!
+function main()
+{
+    LGUI2:LoadPackageFile[myui.json]
+
+    while 1
+        waitframe
+}
+```
+
+**Benefits:**
+- ✅ Automatic updates
+- ✅ Less code
+- ✅ Better performance
+
+### Checkbox State Persistence
+
+**LGUI1 Pattern:**
+
+```lavishscript
+; Save state manually
+variable bool AutoLootEnabled = FALSE
+
+function ToggleAutoLoot()
+{
+    This.AutoLootEnabled:Set[${UIElement[autoloot]:GetChecked}]
+}
+
+function UpdateCheckbox()
+{
+    UIElement[autoloot]:SetChecked[${This.AutoLootEnabled}]
+}
+```
+
+**LGUI2 Pattern:**
+
+```json
+{
+    "type": "checkbox",
+    "checkedBinding": "MyController.AutoLootEnabled",
+    "content": "Auto-Loot"
+}
+```
+
+```lavishscript
+; Automatic synchronization!
+variable bool AutoLootEnabled = FALSE
+```
+
+The checkbox state and variable are **automatically synchronized** both ways.
+
+### Dynamic List Updates
+
+**LGUI1 Pattern:**
+
+```lavishscript
+; Manually rebuild list
+method UpdateTargetList()
+{
+    UIElement[targetlist]:ClearItems
+
+    ; Add items manually
+    UIElement[targetlist]:AddItem["Target 1"]
+    UIElement[targetlist]:AddItem["Target 2"]
+}
+```
+
+**LGUI2 Pattern:**
+
+```json
+{
+    "type": "listbox",
+    "name": "targetlist",
+    "itemsBinding": {
+        "pullFormat": "${MyController.GetTargetList}"
+    }
+}
+```
+
+```lavishscript
+member:string GetTargetList()
+{
+    ; Return JSON array
+    return "$$>[
+        {\"type\":\"textblock\",\"text\":\"Target 1\"},
+        {\"type\":\"textblock\",\"text\":\"Target 2\"}
+    ]<$$"
+}
+```
+
+The list **automatically updates** whenever `GetTargetList` returns different data.
+
+---
+
+## Complete Migration Examples
+
+### Example 1: Simple Status Window
+
+#### LGUI1 Version
+
+**status_lgui1.xml:**
+
+```xml
+<?xml version='1.0'?>
+<LGUI>
+    <Window Name="statuswindow" Width="250" Height="150">
+        <Title>Character Status</Title>
+        <Text Name="nametext">Name: </Text>
+        <Text Name="healthtext">Health: 0</Text>
+        <Text Name="powertext">Power: 0</Text>
+        <Text Name="fpstext">FPS: 0</Text>
+    </Window>
+</LGUI>
+```
+
+**status_lgui1.iss:**
+
+```lavishscript
+function main()
+{
+    ui -load status_lgui1.xml
+
+    while 1
+    {
+        ; Manual updates every frame
+        UIElement[nametext]:SetText["Name: ${Script[MyScript].Variable[PlayerName]}"]
+        UIElement[healthtext]:SetText["Value: ${Script[MyScript].Variable[CurrentValue]}/${Script[MyScript].Variable[MaxValue]}"]
+        UIElement[powertext]:SetText["Progress: ${Script[MyScript].Variable[Progress]}/${Script[MyScript].Variable[MaxProgress]}"]
+        UIElement[fpstext]:SetText["FPS: ${Display.FPS.Centi}"]
+        waitframe
+    }
+}
+
+function OnExit()
+{
+    ui -unload status_lgui1
+}
+```
+
+#### LGUI2 Version
+
+**status_lgui2.json:**
+
+```json
+{
+    "$schema": "http://www.lavishsoft.com/schema/lgui2Package.json",
+    "elements": [
+        {
+            "type": "window",
+            "title": "Character Status",
+            "name": "status.window",
+            "x": 1480,
+            "y": 960,
+            "width": 800,
+            "height": 800,
+            "content": {
+                "type": "stackpanel",
+                "orientation": "vertical",
+                "children": [
+                    {
+                        "type": "textblock",
+                        "textBinding": {
+                            "pullFormat": "Name: ${Script[MyScript].Variable[PlayerName]}"
+                        }
+                    },
+                    {
+                        "type": "textblock",
+                        "textBinding": {
+                            "pullFormat": "Value: ${Script[MyScript].Variable[CurrentValue]}/${Script[MyScript].Variable[MaxValue]}"
+                        }
+                    },
+                    {
+                        "type": "textblock",
+                        "textBinding": {
+                            "pullFormat": "Progress: ${Script[MyScript].Variable[Progress]}/${Script[MyScript].Variable[MaxProgress]}"
+                        }
+                    },
+                    {
+                        "type": "textblock",
+                        "textBinding": {
+                            "pullFormat": "FPS: ${Display.FPS.Centi}"
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}
+```
+
+**status_lgui2.iss:**
+
+```lavishscript
+objectdef status_controller
+{
+    method Initialize()
+    {
+        LGUI2:LoadPackageFile[status_lgui2.json]
+    }
+
+    method Shutdown()
+    {
+        LGUI2:UnloadPackageFile[status_lgui2.json]
+    }
+}
+
+variable(global) status_controller StatusController
+
+function main()
+{
+    ; No manual updates needed!
+    while 1
+        waitframe
+}
+```
+
+**Improvements:**
+- ✅ No manual SetText calls
+- ✅ Automatic data binding
+- ✅ Cleaner code
+- ✅ Better performance
+
+---
+
+### Example 2: Combat Control Panel
+
+#### LGUI1 Version
+
+**combat_lgui1.xml:**
+
+```xml
+<?xml version='1.0'?>
+<LGUI>
+    <Window Name="combatwindow" Width="300" Height="200">
+        <Title>Combat Controls</Title>
+        <Checkbox Name="autoattack" OnLeftClick="CombatController:ToggleAutoAttack">
+            <Text>Auto-Attack</Text>
+        </Checkbox>
+        <Checkbox Name="autoloot" OnLeftClick="CombatController:ToggleAutoLoot">
+            <Text>Auto-Loot</Text>
+        </Checkbox>
+        <Button OnLeftClick="CombatController:Attack">
+            <Text>Attack Target</Text>
+        </Button>
+        <Button OnLeftClick="CombatController:Stop">
+            <Text>Stop Combat</Text>
+        </Button>
+        <Text Name="statustext">Status: Ready</Text>
+    </Window>
+</LGUI>
+```
+
+**combat_lgui1.iss:**
+
+```lavishscript
+objectdef combat_controller
+{
+    variable bool AutoAttackEnabled = FALSE
+    variable bool AutoLootEnabled = FALSE
+    variable string Status = "Ready"
+
+    method Initialize()
+    {
+        ui -load combat_lgui1.xml
+    }
+
+    method Shutdown()
+    {
+        ui -unload combat_lgui1
+    }
+
+    method ToggleAutoAttack()
+    {
+        This.AutoAttackEnabled:Set[${UIElement[autoattack]:GetChecked}]
+        echo Auto-Attack: ${This.AutoAttackEnabled}
+    }
+
+    method ToggleAutoLoot()
+    {
+        This.AutoLootEnabled:Set[${UIElement[autoloot]:GetChecked}]
+        echo Auto-Loot: ${This.AutoLootEnabled}
+    }
+
+    method Attack()
+    {
+        echo Attacking!
+        This.Status:Set["Processing..."]
+        This:UpdateStatus
+        Script[MyScript]:QueueCommand[call DoAction]
+    }
+
+    method Stop()
+    {
+        echo Stopping
+        This.Status:Set["Stopped"]
+        This:UpdateStatus
+    }
+
+    method UpdateStatus()
+    {
+        UIElement[statustext]:SetText["Status: ${This.Status}"]
+    }
+
+    method Pulse()
+    {
+        ; Update status text every frame
+        This:UpdateStatus
+    }
+}
+
+variable(global) combat_controller CombatController
+
+function main()
+{
+    while 1
+    {
+        CombatController:Pulse
+        waitframe
+    }
+}
+```
+
+#### LGUI2 Version
+
+**combat_lgui2.json:**
+
+```json
+{
+    "$schema": "http://www.lavishsoft.com/schema/lgui2Package.json",
+    "elements": [
+        {
+            "type": "window",
+            "title": "Combat Controls",
+            "name": "combat.window",
+            "x": 1480,
+            "y": 960,
+            "width": 800,
+            "height": 800,
+            "content": {
+                "type": "stackpanel",
+                "orientation": "vertical",
+                "children": [
+                    {
+                        "type": "checkbox",
+                        "checkedBinding": "CombatController.AutoAttackEnabled",
+                        "content": "Auto-Attack"
+                    },
+                    {
+                        "type": "checkbox",
+                        "checkedBinding": "CombatController.AutoLootEnabled",
+                        "content": "Auto-Loot"
+                    },
+                    {
+                        "type": "panel",
+                        "height": 10
+                    },
+                    {
+                        "type": "button",
+                        "content": "Attack Target",
+                        "eventHandlers": {
+                            "onPress": {
+                                "type": "method",
+                                "object": "CombatController",
+                                "method": "Attack"
+                            }
+                        }
+                    },
+                    {
+                        "type": "button",
+                        "content": "Stop Combat",
+                        "eventHandlers": {
+                            "onPress": {
+                                "type": "method",
+                                "object": "CombatController",
+                                "method": "Stop"
+                            }
+                        }
+                    },
+                    {
+                        "type": "panel",
+                        "height": 10
+                    },
+                    {
+                        "type": "textblock",
+                        "textBinding": {
+                            "pullFormat": "Status: ${CombatController.Status}"
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}
+```
+
+**combat_lgui2.iss:**
+
+```lavishscript
+objectdef combat_controller
+{
+    variable bool AutoAttackEnabled = FALSE
+    variable bool AutoLootEnabled = FALSE
+    variable string Status = "Ready"
+
+    method Initialize()
+    {
+        LGUI2:LoadPackageFile[combat_lgui2.json]
+    }
+
+    method Shutdown()
+    {
+        LGUI2:UnloadPackageFile[combat_lgui2.json]
+    }
+
+    ; No toggle methods needed - data binding handles it!
+
+    method Attack()
+    {
+        echo Attacking!
+        This.Status:Set["Processing..."]
+        ; No UpdateStatus call needed - automatic!
+        Script[MyScript]:QueueCommand[call DoAction]
+    }
+
+    method Stop()
+    {
+        echo Stopping
+        This.Status:Set["Stopped"]
+        ; No UpdateStatus call needed - automatic!
+    }
+
+    ; No Pulse method needed!
+}
+
+variable(global) combat_controller CombatController
+
+function main()
+{
+    while 1
+        waitframe
+}
+```
+
+**Code Reduction:**
+- ❌ Removed `ToggleAutoAttack` and `ToggleAutoLoot` methods
+- ❌ Removed `UpdateStatus` method
+- ❌ Removed `Pulse` method
+- ✅ **50% less code** with same functionality
+- ✅ Automatic checkbox synchronization
+- ✅ Automatic status text updates
+
+---
+
+## Migration Checklist
+
+### Before You Start
+
+- [ ] Back up all existing `.xml` and `.iss` files
+- [ ] Review the [LavishGUI 2 UI Guide](10_LavishGUI2_UI_Guide.md)
+- [ ] Install a JSON editor with schema support (VS Code recommended)
+- [ ] Test LGUI2 with a simple example first
+
+### For Each UI File
+
+- [ ] Create new `.json` file (don't delete `.xml` yet)
+- [ ] Add JSON schema reference
+- [ ] Convert XML structure to JSON `elements` array
+- [ ] Map element types (`<Window>` → `{"type": "window"}`)
+- [ ] Convert attributes to JSON properties
+- [ ] Migrate event handlers to `eventHandlers` objects
+- [ ] Test loading the JSON file
+- [ ] Verify all elements appear correctly
+
+### For Each Script File
+
+- [ ] Update `ui -load` to `LGUI2:LoadPackageFile`
+- [ ] Update `ui -unload` to `LGUI2:UnloadPackageFile`
+- [ ] Replace `UIElement[]` with `LGUI2.Element[]`
+- [ ] Implement controller objectdef pattern
+- [ ] Replace manual SetText calls with data binding
+- [ ] Replace manual checkbox state management with data binding
+- [ ] Remove unnecessary Pulse/Update methods
+- [ ] Test all functionality
+
+### Testing
+
+- [ ] Verify all windows load
+- [ ] Test all buttons
+- [ ] Test all checkboxes
+- [ ] Verify data binding updates
+- [ ] Test event handlers
+- [ ] Check window positioning
+- [ ] Verify settings persistence
+
+### Cleanup
+
+- [ ] Remove old `.xml` files (after confirming migration works)
+- [ ] Remove obsolete update methods from controllers
+- [ ] Update documentation/comments
+- [ ] Commit changes to version control
+
+---
+
+## Common Migration Issues
+
+### Issue 1: Buttons Not Working - Using `onMouseClick` Instead of `onPress`
+
+**Problem:**
+
+Buttons in your UI don't respond to clicks. No errors appear in the console.
+
+**Root Cause:**
+
+**`onMouseClick` is NOT a valid LGUI2 event handler.** It doesn't exist and will silently fail. This is a very common migration mistake.
+
+**Fix:**
+
+Use `onPress` for button clicks (equivalent to LGUI1's `OnLeftClick`):
+
+```json
+// ❌ WRONG - Button won't work!
+{
+    "type": "button",
+    "content": "Click Me",
+    "eventHandlers": {
+        "onMouseClick": {
+            "type": "code",
+            "code": "echo Clicked"
+        }
+    }
+}
+
+// ✅ CORRECT
+{
+    "type": "button",
+    "content": "Click Me",
+    "eventHandlers": {
+        "onPress": {
+            "type": "code",
+            "code": "echo Clicked"
+        }
+    }
+}
+```
+
+**Valid Button Event Handlers:**
+- `onPress` - Left mouse button click (most common)
+- `onRightPress` - Right mouse button click
+- `onMouseEnter` - Mouse cursor enters button
+- `onMouseLeave` - Mouse cursor leaves button
+
+**Remember:** There is NO `onMouseClick`, `onClick`, `onLeftClick`, or `onButtonClick` in LGUI2. Use `onPress`.
+
+---
+
+### Issue 2: JSON Syntax Errors
+
+**Problem:**
+
+```
+Parse error: Unexpected token
+```
+
+**Causes:**
+- Missing commas between properties
+- Trailing commas (JSON doesn't allow them)
+- Missing quotes around strings
+- Single quotes instead of double quotes
+
+**Fix:**
+
+Use a JSON validator or IDE with JSON schema support. VS Code will highlight errors automatically.
+
+```json
+// BAD
+{
+    "type": "window"
+    "title": "Test",    // Missing comma above
+}
+
+// GOOD
+{
+    "type": "window",
+    "title": "Test"
+}
+```
+
+### Issue 3: Element Not Found
+
+**Problem:**
+
+```lavishscript
+${LGUI2.Element[mywindow](exists)} returns FALSE
+```
+
+**Causes:**
+- Element name doesn't match JSON
+- Package not loaded yet
+- Typo in element name
+
+**Fix:**
+
+```lavishscript
+; Wait for load
+LGUI2:LoadPackageFile[myui.json]
+wait 5 ${LGUI2.Element[mywindow](exists)}
+
+if !${LGUI2.Element[mywindow](exists)}
+{
+    echo ERROR: Window failed to load!
+    return
+}
+```
+
+### Issue 4: Event Handler Not Firing
+
+**Problem:**
+
+Clicking button does nothing.
+
+**Causes:**
+- Controller object not global
+- Method name typo
+- Object name typo in JSON
+
+**Fix:**
+
+```lavishscript
+; Controller must be global!
+variable(global) mycontroller MyController
+
+; Not this:
+variable mycontroller MyController
+```
+
+```json
+// Names must match exactly
+"eventHandlers": {
+    "onPress": {
+        "type": "method",
+        "object": "MyController",    // Must match variable name
+        "method": "OnPressed"        // Must match method name exactly
+    }
+}
+```
+
+### Issue 5: Data Binding Not Updating
+
+**Problem:**
+
+Text doesn't update even though data changes.
+
+**Causes:**
+- Incorrect pullFormat syntax
+- Variable doesn't exist
+- Object not global
+
+**Fix:**
+
+```lavishscript
+; Controller must be global for data binding
+variable(global) mycontroller MyController
+
+objectdef mycontroller
+{
+    variable string StatusText = "Ready"
+}
+```
+
+```json
+{
+    "type": "textblock",
+    "textBinding": {
+        "pullFormat": "Status: ${MyController.StatusText}"
+    }
+}
+```
+
+### Issue 6: Checkbox State Not Syncing
+
+**Problem:**
+
+Checkbox state and variable out of sync.
+
+**Causes:**
+- Using `onPress` instead of data binding
+- Controller variable not updated
+
+**Fix:**
+
+**Don't do this:**
+
+```json
+// BAD - Manual toggle
+"eventHandlers": {
+    "onPress": {
+        "type": "method",
+        "object": "Controller",
+        "method": "Toggle"
+    }
+}
+```
+
+**Do this:**
+
+```json
+// GOOD - Automatic sync
+"checkedBinding": "Controller.Enabled"
+```
+
+```lavishscript
+variable bool Enabled = FALSE
+; Variable automatically syncs with checkbox!
+```
+
+### Issue 7: Window Position Lost
+
+**Problem:**
+
+Window appears at wrong position after reload.
+
+**Fix:**
+
+Implement position persistence:
+
+```lavishscript
+method SaveWindowPosition()
+{
+    variable jsonvalue pos
+    pos:SetInteger[x, ${LGUI2.Element[mywindow].X}]
+    pos:SetInteger[y, ${LGUI2.Element[mywindow].Y}]
+    ; Save pos to file or LavishSettings
+}
+
+method LoadWindowPosition()
+{
+    ; Load pos from file or LavishSettings
+    variable jsonvalue pos
+    LGUI2.Element[mywindow]:SetLocation[${pos.Get[x]}, ${pos.Get[y]}]
+}
+```
+
+### Issue 8: Dynamic Visual Property Changes Not Working
+
+**Problem:**
+
+Trying to change element appearance at runtime fails:
+
+```lavishscript
+; LGUI1 pattern - DOES NOT WORK in LGUI2
+LGUI2.Element[mytext]:SetAlpha[0.5]        ; ERROR: Method doesn't exist
+LGUI2.Element[mybutton]:Set[opacity,0.5]   ; ERROR: Only works for simple properties
+```
+
+**Root Cause:**
+
+LGUI2 has different limitations on dynamic property changes compared to LGUI1:
+
+1. **No `SetAlpha` method** - LGUI2 doesn't have direct methods for many visual properties
+2. **`:Set` limitations** - The `:Set[property,value]` method ONLY works for simple/top-level properties like `text` and `isOpen`
+3. **`:Set` does NOT work** for nested properties like `opacity`, `font.color`, `backgroundBrush.color`
+
+**The Solution: Style-Based Approach**
+
+LGUI2 uses **styles** for dynamic visual changes. This is a paradigm shift from LGUI1's direct property manipulation.
+
+**Pattern Overview:**
+
+1. Define **named styles** in JSON with desired visual states
+2. Create **custom event handlers** that apply styles
+3. Use **`FireEventHandler`** from script to trigger style changes
+
+#### Example 1: Textbox Opacity Changes
+
+**LGUI1 Pattern (Old):**
+
+```xml
+<Textbox Name="mytext">Content</Textbox>
+```
+
+```lavishscript
+; Direct property manipulation
+UIElement[mytext]:SetAlpha[1.0]    ; Bright
+UIElement[mytext]:SetAlpha[0.1]    ; Dimmed
+```
+
+**LGUI2 Pattern (New):**
+
+```json
+{
+    "type": "textbox",
+    "name": "mytext",
+    "text": "Content",
+    "styles": {
+        "enabled": {
+            "opacity": 1.0
+        },
+        "disabled": {
+            "opacity": 0.1
+        }
+    },
+    "eventHandlers": {
+        "setEnabled": {
+            "type": "style",
+            "styleName": "enabled"
+        },
+        "setDisabled": {
+            "type": "style",
+            "styleName": "disabled"
+        }
+    }
+}
+```
+
+```lavishscript
+; Style-based changes
+LGUI2.Element[mytext]:FireEventHandler[setEnabled]   ; Bright
+LGUI2.Element[mytext]:FireEventHandler[setDisabled]  ; Dimmed
+```
+
+**Key Concepts:**
+
+- **`styles`** - Object containing named style definitions
+- **`styleName`** - Reference to a named style
+- **`FireEventHandler`** - Triggers event handlers (including style application)
+- **Custom event names** - You choose the names (`setEnabled`, `setDisabled`, etc.)
+
+#### Example 2: Button Color Changes (Toggle State)
+
+**Problem:** Buttons need to change color to indicate active/inactive state.
+
+**Additional Challenge:** Buttons ignore `font.color` - use `backgroundBrush.color` instead.
+
+**LGUI1 Pattern (Old):**
+
+```xml
+<Button Name="mybutton">
+    <Text>Toggle Feature</Text>
+</Button>
+```
+
+```lavishscript
+; Change font color (worked in LGUI1)
+UIElement[mybutton].Font:SetColor[FF32CD32]  ; Green when active
+UIElement[mybutton].Font:SetColor[FFFF0000]  ; Red when inactive
+```
+
+**LGUI2 Pattern (New):**
+
+```json
+{
+    "type": "button",
+    "name": "mybutton",
+    "content": "Toggle Feature",
+    "backgroundBrush": {
+        "color": "#FF0000"
+    },
+    "styles": {
+        "green": {
+            "backgroundBrush": {"color": "#32CD32"}
+        },
+        "red": {
+            "backgroundBrush": {"color": "#FF0000"}
+        }
+    },
+    "eventHandlers": {
+        "onPress": {
+            "type": "code",
+            "code": "Script[MyScript]:QueueCommand[call ToggleFeature]"
+        },
+        "setGreen": {
+            "type": "style",
+            "styleName": "green"
+        },
+        "setRed": {
+            "type": "style",
+            "styleName": "red"
+        }
+    }
+}
+```
+
+```lavishscript
+variable bool FeatureActive = FALSE
+
+function ToggleFeature()
+{
+    if ${FeatureActive}
+    {
+        FeatureActive:Set[FALSE]
+        ; Color changes from GREEN to RED (button text stays "Toggle Feature")
+        LGUI2.Element[mybutton]:FireEventHandler[setRed]
+    }
+    else
+    {
+        FeatureActive:Set[TRUE]
+        ; Color changes from RED to GREEN (button text stays "Toggle Feature")
+        LGUI2.Element[mybutton]:FireEventHandler[setGreen]
+    }
+}
+```
+
+**Why `backgroundBrush.color` instead of `font.color`?**
+
+Buttons in LGUI2 **ignore** `font.color` and `foregroundBrush.color` for their content text. Use `backgroundBrush.color` to change button background color instead.
+
+#### Example 3: Persistent Button Colors (Hover State Issue)
+
+**Problem:** Button colors revert to default when mouse hovers over them.
+
+**Root Cause:** The skin's built-in hover state overrides custom styles.
+
+**Solution:** Define all brush states and re-apply on mouse events.
+
+**Complete Pattern:**
+
+```json
+{
+    "type": "button",
+    "name": "toggleButton",
+    "content": "Toggle Feature",
+    "styles": {
+        "green": {
+            "backgroundBrush": {"color": "#32CD32"},
+            "hoverBackgroundBrush": {"color": "#32CD32"},
+            "pressedBackgroundBrush": {"color": "#228B22"},
+            "disabledBackgroundBrush": {"color": "#90EE90"}
+        },
+        "red": {
+            "backgroundBrush": {"color": "#FF0000"},
+            "hoverBackgroundBrush": {"color": "#FF0000"},
+            "pressedBackgroundBrush": {"color": "#8B0000"},
+            "disabledBackgroundBrush": {"color": "#FF6666"}
+        }
+    },
+    "eventHandlers": {
+        "onPress": {
+            "type": "code",
+            "code": "Script[MyScript]:QueueCommand[call ToggleFeature]"
+        },
+        "setGreen": {
+            "type": "style",
+            "styleName": "green"
+        },
+        "setRed": {
+            "type": "style",
+            "styleName": "red"
+        },
+        "gotMouseOver": {
+            "type": "code",
+            "code": "Script[MyScript]:QueueCommand[call ReapplyButtonColor]"
+        },
+        "lostMouseOver": {
+            "type": "code",
+            "code": "Script[MyScript]:QueueCommand[call ReapplyButtonColor]"
+        }
+    }
+}
+```
+
+```lavishscript
+variable bool FeatureActive = FALSE
+variable string ButtonState = "red"
+
+function ToggleFeature()
+{
+    if ${FeatureActive}
+    {
+        FeatureActive:Set[FALSE]
+        ButtonState:Set["red"]
+        LGUI2.Element[toggleButton]:FireEventHandler[setRed]
+    }
+    else
+    {
+        FeatureActive:Set[TRUE]
+        ButtonState:Set["green"]
+        LGUI2.Element[toggleButton]:FireEventHandler[setGreen]
+    }
+}
+
+function ReapplyButtonColor()
+{
+    if ${ButtonState.Equal["green"]}
+        LGUI2.Element[toggleButton]:FireEventHandler[setGreen]
+    else
+        LGUI2.Element[toggleButton]:FireEventHandler[setRed]
+}
+```
+
+**Critical Requirements:**
+
+1. **Define all brush states** - `backgroundBrush`, `hoverBackgroundBrush`, `pressedBackgroundBrush`, `disabledBackgroundBrush`
+2. **Track state in variable** - Needed for reapply function
+3. **Handle mouse events** - `gotMouseOver` and `lostMouseOver` to re-apply styles
+4. **Reapply function** - Checks state variable and re-fires appropriate style event
+
+**Why This Pattern Works:**
+
+- Skin hover states try to override your custom styles
+- By handling `gotMouseOver`/`lostMouseOver`, you "fight back" and re-apply your custom colors
+- Defining all brush state variants prevents skin from having any defaults to fall back to
+- State tracking variable ensures reapply function knows which color to use
+
+#### Complete Working Example: Multi-Button UI
+
+**Multi-button toggle panel with color-coded state:**
+
+```json
+{
+    "$schema": "http://www.lavishsoft.com/schema/lgui2Package.json",
+    "elements": [
+        {
+            "type": "window",
+            "title": "Script Commander",
+            "content": {
+                "type": "stackpanel",
+                "orientation": "vertical",
+                "children": [
+                    {
+                        "type": "button",
+                        "name": "Main.ToggleProcess",
+                        "content": "Start Process",
+                        "styles": {
+                            "green": {
+                                "backgroundBrush": {"color": "#32CD32"},
+                                "hoverBackgroundBrush": {"color": "#32CD32"},
+                                "pressedBackgroundBrush": {"color": "#228B22"},
+                                "disabledBackgroundBrush": {"color": "#90EE90"}
+                            },
+                            "red": {
+                                "backgroundBrush": {"color": "#FF0000"},
+                                "hoverBackgroundBrush": {"color": "#FF0000"},
+                                "pressedBackgroundBrush": {"color": "#8B0000"},
+                                "disabledBackgroundBrush": {"color": "#FF6666"}
+                            }
+                        },
+                        "eventHandlers": {
+                            "onPress": {"type": "code", "code": "Script[MyScript]:QueueCommand[call ToggleProcess]"},
+                            "setGreen": {"type": "style", "styleName": "green"},
+                            "setRed": {"type": "style", "styleName": "red"},
+                            "gotMouseOver": {"type": "code", "code": "Script[MyScript]:QueueCommand[call ReapplyProcessButtonColor]"},
+                            "lostMouseOver": {"type": "code", "code": "Script[MyScript]:QueueCommand[call ReapplyProcessButtonColor]"}
+                        }
+                    },
+                    {
+                        "type": "button",
+                        "name": "Main.Monitor",
+                        "content": "Monitor",
+                        "styles": {
+                            "green": {
+                                "backgroundBrush": {"color": "#32CD32"},
+                                "hoverBackgroundBrush": {"color": "#32CD32"},
+                                "pressedBackgroundBrush": {"color": "#228B22"},
+                                "disabledBackgroundBrush": {"color": "#90EE90"}
+                            },
+                            "red": {
+                                "backgroundBrush": {"color": "#FF0000"},
+                                "hoverBackgroundBrush": {"color": "#FF0000"},
+                                "pressedBackgroundBrush": {"color": "#8B0000"},
+                                "disabledBackgroundBrush": {"color": "#FF6666"}
+                            }
+                        },
+                        "eventHandlers": {
+                            "onPress": {"type": "code", "code": "Script[MyScript]:QueueCommand[call MonitorToggle]"},
+                            "setGreen": {"type": "style", "styleName": "green"},
+                            "setRed": {"type": "style", "styleName": "red"},
+                            "gotMouseOver": {"type": "code", "code": "Script[MyScript]:QueueCommand[call ReapplyMonitorButtonColor]"},
+                            "lostMouseOver": {"type": "code", "code": "Script[MyScript]:QueueCommand[call ReapplyMonitorButtonColor]"}
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}
+```
+
+```lavishscript
+variable bool ProcessRunning = FALSE
+variable bool Monitoring = FALSE
+
+function ToggleProcess()
+{
+    if ${ProcessRunning} == FALSE
+    {
+        ProcessRunning:Set[TRUE]
+        LGUI2.Element[Main.ToggleProcess]:FireEventHandler[setGreen]
+        ; Start the process...
+    }
+    else
+    {
+        ProcessRunning:Set[FALSE]
+        LGUI2.Element[Main.ToggleProcess]:FireEventHandler[setRed]
+        ; Stop the process...
+    }
+}
+
+function ReapplyProcessButtonColor()
+{
+    if ${ProcessRunning}
+        LGUI2.Element[Main.ToggleProcess]:FireEventHandler[setGreen]
+    else
+        LGUI2.Element[Main.ToggleProcess]:FireEventHandler[setRed]
+}
+
+function MonitorToggle()
+{
+    if ${Monitoring} == FALSE
+    {
+        Monitoring:Set[TRUE]
+        LGUI2.Element[Main.Monitor]:FireEventHandler[setGreen]
+        ; Start monitoring...
+    }
+    else
+    {
+        Monitoring:Set[FALSE]
+        LGUI2.Element[Main.Monitor]:FireEventHandler[setRed]
+        ; Stop monitoring...
+    }
+}
+
+function ReapplyMonitorButtonColor()
+{
+    if ${Monitoring}
+        LGUI2.Element[Main.Monitor]:FireEventHandler[setGreen]
+    else
+        LGUI2.Element[Main.Monitor]:FireEventHandler[setRed]
+}
+```
+
+#### Summary: Style-Based Visual Changes
+
+**When to Use This Pattern:**
+
+- ✅ Changing element opacity
+- ✅ Changing button background colors
+- ✅ Changing any visual property not supported by direct methods
+- ✅ Toggle buttons that need visual state indication
+- ✅ Any dynamic visual change that worked via `SetAlpha` or `Font:SetColor` in LGUI1
+
+**Key Takeaways:**
+
+1. **LGUI2 does NOT support** direct property manipulation like LGUI1's `SetAlpha` or `Font:SetColor`
+2. **Use styles** for all dynamic visual changes
+3. **Use `FireEventHandler`** to apply styles from script
+4. **Buttons ignore font color** - use `backgroundBrush.color` instead
+5. **Define all brush states** to prevent skin hover override
+6. **Handle mouse events** to re-apply colors on hover
+7. **Track state in variables** for reapply functions
+
+**What Properties Need Styles?**
+
+Properties requiring styles (can't use `:Set`):
+- `opacity` - Element transparency
+- `backgroundBrush.color` - Background color
+- `foregroundBrush.color` - Foreground color (limited use)
+- `borderBrush.color` - Border color
+- `font.color` - Text color (limited use)
+- Any nested property with dot notation
+
+Properties that work with dedicated set methods:
+- `text` - Text content for textblocks (use `:SetText`)
+- `isOpen` - Open/closed state
+- `checked` - Checkbox state (use `:SetChecked`)
+- Other simple top-level boolean/string properties
+
+**CRITICAL LIMITATION:** Button `content` (text) **cannot be changed dynamically** in LGUI2. The `SetContent` method exists but is for setting **element content** (child elements), not text strings.
+
+**Workaround:** Use static button labels with color changes to indicate state:
+```json
+{
+    "type": "button",
+    "content": "Toggle Feature",
+    "tooltip": "Toggle feature (RED=Off, GREEN=On)"
+}
+```
+
+```lavishscript
+; Change only the color, not the text
+LGUI2.Element[myButton]:FireEventHandler[setGreen]  ; Active
+LGUI2.Element[myButton]:FireEventHandler[setRed]     ; Inactive
+```
+
+**Common Pitfall:**
+
+```lavishscript
+; DON'T DO THIS - Will fail!
+LGUI2.Element[myButton]:Set[opacity,0.5]
+LGUI2.Element[myButton]:Set[backgroundBrush.color,"#FF0000"]
+
+; DO THIS INSTEAD - Use styles!
+LGUI2.Element[myButton]:FireEventHandler[setDimmed]
+LGUI2.Element[myButton]:FireEventHandler[setRed]
+```
+
+### Issue 9: Window Position "Jumping" on Load
+
+**Problem:**
+
+Window briefly appears at default JSON position, then jumps to saved position.
+
+**Cause:**
+
+Window positions are applied AFTER the window is already visible:
+
+```lavishscript
+LGUI2:LoadPackageFile[myui.json]        ; Window loads and becomes visible
+call config_load                         ; Position applied here - too late!
+```
+
+**Fix:**
+
+Load window hidden, apply position, then show it:
+
+**JSON - Set window to start hidden:**
+
+```json
+{
+    "type": "window",
+    "name": "mywindow",
+    "visibility": "hidden",
+    ...
+}
+```
+
+**Script - Show window after positioning:**
+
+```lavishscript
+; Load UI (window starts hidden)
+LGUI2:LoadPackageFile[myui.json]
+
+; Wait for window to load
+wait 10 ${LGUI2.Element[mywindow](exists)}
+
+; Apply saved position
+call config_load
+
+; Now show the window
+LGUI2.Element[mywindow]:SetVisibility[visible]
+```
+
+**For dynamically loaded windows (like config dialogs):**
+
+Use an `onLoad` event handler to apply position and show:
+
+```json
+{
+    "type": "window",
+    "name": "ConfigWindow",
+    "visibility": "hidden",
+    "eventHandlers": {
+        "onLoad": {
+            "type": "code",
+            "code": "Script[myscript]:QueueCommand[call ApplyConfigWindowPosition]"
+        }
+    }
+}
+```
+
+```lavishscript
+function ApplyConfigWindowPosition()
+{
+    ; Load and apply position
+    variable int x = ${Settings.FindSetting[ConfigWindowX,-1]}
+    variable int y = ${Settings.FindSetting[ConfigWindowY,-1]}
+
+    if ${x} >= 0 && ${y} >= 0
+        LGUI2.Element[ConfigWindow]:SetLocation[${x}, ${y}]
+
+    ; Show window after positioning
+    LGUI2.Element[ConfigWindow]:SetVisibility[visible]
+}
+```
+
+### Issue 10: Textbox Content Doesn't Fill Window
+
+**Problem:**
+
+Textbox content area has gaps/doesn't fill the window completely.
+
+**Cause:**
+
+Textbox has explicit `x` and `y` positioning when it should fill the content area:
+
+```json
+{
+    "content": {
+        "type": "textbox",
+        "x": 0,
+        "y": 0,
+        "width": "100%",
+        "height": "100%"
+    }
+}
+```
+
+**Fix:**
+
+Remove `x` and `y` properties - content elements don't need positioning:
+
+```json
+{
+    "content": {
+        "type": "textbox",
+        "width": "100%",
+        "height": "100%"
+    }
+}
+```
+
+**Key Point:**
+When elements use `"width": "100%"` and `"height": "100%"` inside a `content` property, they should NOT have `x` or `y` positioning.
+
+### Issue 11: AppendText Method Not Found
+
+**Problem:**
+
+```
+Error: No such 'lgui2textbox' method 'AppendText'
+```
+
+**Cause:**
+
+LGUI2 textboxes don't have an `AppendText` method like LGUI1.
+
+**Fix:**
+
+Get current text, concatenate, and set it back:
+
+```lavishscript
+; LGUI1 (Old)
+UIElement[Output]:AppendText["New line\n"]
+
+; LGUI2 (New)
+variable string currentText
+variable string newLine = "New line\n"
+
+currentText:Set["${LGUI2.Element[Output].Text}"]
+currentText:Concat["${newLine}"]
+LGUI2.Element[Output]:SetText["${currentText.Escape}"]
+```
+
+See [Textbox Operations](#textbox-operations) section for complete examples.
+
+### Enhanced Feature: Custom Tooltip Styling
+
+**New Capability in LGUI2:**
+
+LGUI2 allows tooltips to be defined as either simple strings (like LGUI1) or as fully customizable element objects with complete styling control.
+
+**LGUI1 Approach:**
+
+```xml
+<Button Name="mybutton" Tooltip="Click to run">
+    <Text>Run</Text>
+</Button>
+```
+
+Tooltips in LGUI1 used system default styling with no customization options.
+
+**LGUI2 - Simple String Tooltip:**
+
+```json
+{
+    "type": "button",
+    "content": "Run",
+    "tooltip": "Click to run"
+}
+```
+
+**LGUI2 - Custom Styled Tooltip (New Feature):**
+
+```json
+{
+    "type": "button",
+    "content": "Start Process",
+    "tooltip": {
+        "type": "textblock",
+        "text": "Click to start the automated process",
+        "font": {
+            "face": "Segoe UI Italic",
+            "height": 36
+        },
+        "color": "#FFE4B5"
+    }
+}
+```
+
+**When to Use Custom Tooltips:**
+
+- **Large UIs with many tooltips**: Apply consistent styling across all tooltips
+- **Accessibility**: Use larger fonts for better readability
+- **Theming**: Match tooltip appearance to your UI's color scheme
+- **Multi-line tooltips**: Create complex tooltips with multiple text elements
+
+**Advanced Example - Multi-Element Tooltip:**
+
+```json
+{
+    "type": "checkbox",
+    "content": "Enable Advanced Mode",
+    "tooltip": {
+        "type": "stackpanel",
+        "backgroundColor": "#2D2D30",
+        "padding": 10,
+        "children": [
+            {
+                "type": "textblock",
+                "text": "Advanced Mode",
+                "font": {
+                    "face": "Segoe UI",
+                    "height": 32,
+                    "bold": true
+                },
+                "color": "#00FF00"
+            },
+            {
+                "type": "textblock",
+                "text": "Enables expert features with additional configuration options.",
+                "font": {
+                    "face": "Segoe UI",
+                    "height": 24
+                },
+                "color": "#CCCCCC",
+                "margin": [0, 5, 0, 0]
+            }
+        ]
+    }
+}
+```
+
+**Production Example:**
+
+Custom styled tooltips can be used extensively across production UIs for consistent appearance.
+
+For more tooltip customization options, see the [LGUI2 UI Guide - Tooltip Customization section](10_LavishGUI2_UI_Guide.md#tooltip-customization).
+
+### Issue 12: Checkbox State Not Persisting (QueueCommand Execution)
+
+**Problem:**
+
+Checkbox states don't save when closing configuration window. Checkboxes revert to their previous state when reopening.
+
+**Example Symptoms:**
+- Uncheck boxes, close window, reopen → boxes are checked again
+- Configuration file shows old values even after toggling checkboxes
+- Variables never change from their default values
+
+**Root Cause:**
+
+Inline variable assignments in `QueueCommand` are queued but **don't execute** before the config save runs:
+
+```json
+// BAD - Inline assignment doesn't execute immediately
+{
+    "type": "checkbox",
+    "eventHandlers": {
+        "onChecked": {
+            "type": "code",
+            "code": "Script[MyScript]:QueueCommand[MyVar:Set[TRUE]]"
+        }
+    }
+}
+```
+
+**What happens:**
+1. User clicks checkbox
+2. Command `MyVar:Set[TRUE]` gets added to queue
+3. Window close handler runs `config_save()` immediately
+4. Variable still has old value (queued command hasn't executed yet)
+5. Old value gets saved to file
+
+**The Fix: Use Handler Functions**
+
+Create dedicated handler functions that execute when `ExecuteQueued` runs:
+
+**JSON:**
+
+```json
+{
+    "type": "checkbox",
+    "name": "Options.AutoLoot",
+    "checked": "${Script[MyScript].Variable[AutoLootEnabled]}",
+    "eventHandlers": {
+        "onChecked": {
+            "type": "code",
+            "code": "Script[MyScript]:QueueCommand[call OnAutoLootChecked]"
+        },
+        "onUnchecked": {
+            "type": "code",
+            "code": "Script[MyScript]:QueueCommand[call OnAutoLootUnchecked]"
+        }
+    }
+}
+```
+
+**Script:**
+
+```lavishscript
+variable bool AutoLootEnabled = FALSE
+
+function OnAutoLootChecked()
+{
+    AutoLootEnabled:Set[TRUE]
+}
+
+function OnAutoLootUnchecked()
+{
+    AutoLootEnabled:Set[FALSE]
+}
+
+function CloseConfigWindow()
+{
+    ; Execute all queued checkbox commands BEFORE saving
+    ExecuteQueued
+
+    ; Now save config (variables have correct values)
+    call config_save
+
+    ; Unload UI
+    LGUI2:UnloadPackageFile["${Script.CurrentDirectory}/Interface/ConfigUI.json"]
+}
+
+function config_save()
+{
+    Settings:AddSetting[AutoLootEnabled,${AutoLootEnabled}]
+    LavishSettings[MyScript]:Export[${ConfigFile}]
+}
+```
+
+**Why This Works:**
+
+1. User clicks checkbox → `QueueCommand[call OnAutoLootChecked]` queues function call
+2. `CloseConfigWindow` runs `ExecuteQueued` → function call executes immediately
+3. `OnAutoLootChecked()` runs → `AutoLootEnabled:Set[TRUE]` executes
+4. `config_save()` runs → saves correct value
+
+**Complete Pattern for Persistent Checkboxes:**
+
+```lavishscript
+; 1. Declare variable
+variable bool MyFeature = FALSE
+
+; 2. Create handler functions
+function OnMyFeatureChecked()
+{
+    MyFeature:Set[TRUE]
+}
+
+function OnMyFeatureUnchecked()
+{
+    MyFeature:Set[FALSE]
+}
+
+; 3. Load setting from config file
+function config_load()
+{
+    MyFeature:Set[${Settings.FindSetting[MyFeature,FALSE]}]
+}
+
+; 4. Save setting to config file
+function config_save()
+{
+    ExecuteQueued  ; CRITICAL - Execute queued commands first
+    Settings:AddSetting[MyFeature,${MyFeature}]
+    LavishSettings[MyScript]:Export[${ConfigFile}]
+}
+
+; 5. Sync checkbox state when opening config window
+function SyncConfigCheckboxes()
+{
+    LGUI2.Element[Options.MyFeature]:SetChecked[${MyFeature}]
+}
+```
+
+**JSON Pattern:**
+
+```json
+{
+    "type": "checkbox",
+    "name": "Options.MyFeature",
+    "checked": "${Script[MyScript].Variable[MyFeature]}",
+    "eventHandlers": {
+        "onChecked": {
+            "type": "code",
+            "code": "Script[MyScript]:QueueCommand[call OnMyFeatureChecked]"
+        },
+        "onUnchecked": {
+            "type": "code",
+            "code": "Script[MyScript]:QueueCommand[call OnMyFeatureUnchecked]"
+        }
+    }
+}
+```
+
+**Key Differences from LGUI1:**
+
+| LGUI1 | LGUI2 |
+|-------|-------|
+| `OnLeftClick` fires immediately | Events queue via `QueueCommand` |
+| Direct variable access in handler | Must use handler functions |
+| No `ExecuteQueued` needed | **MUST** call `ExecuteQueued` before save |
+
+**Common Mistakes:**
+
+```lavishscript
+// DON'T DO THIS - Inline assignment won't execute
+"code": "Script[MyScript]:QueueCommand[MyVar:Set[TRUE]]"
+
+// DON'T DO THIS - Saving before ExecuteQueued
+function CloseWindow()
+{
+    call config_save    ; BAD - Queued commands haven't run yet
+    ExecuteQueued       ; Too late!
+}
+
+// DO THIS - Function call + ExecuteQueued before save
+"code": "Script[MyScript]:QueueCommand[call OnMyVarChecked]"
+
+function CloseWindow()
+{
+    ExecuteQueued       ; Execute queued commands first
+    call config_save    ; Now variables have correct values
+}
+```
+
+**Real-World Example:**
+
+A production implementation might include:
+- Multiple persistent checkboxes with handler function pairs
+- Proper `ExecuteQueued` usage in save function
+- Config window position persistence
+
+**Debug Tip:**
+
+Add debug output to verify execution order:
+
+```lavishscript
+function OnMyFeatureChecked()
+{
+    echo "OnMyFeatureChecked: Setting MyFeature to TRUE"
+    MyFeature:Set[TRUE]
+}
+
+function config_save()
+{
+    echo "config_save: MyFeature=${MyFeature}"
+    ExecuteQueued
+    echo "config_save: After ExecuteQueued, MyFeature=${MyFeature}"
+    Settings:AddSetting[MyFeature,${MyFeature}]
+}
+```
+
+If you see the old value in both echoes, the queued command didn't execute - you forgot `ExecuteQueued` or used inline assignment instead of a function call.
+
+### Issue 13: MessageBox Command Not Available
+
+**Problem:**
+
+LGUI1's `MessageBox` command creates an XML-based dialog window. This command does not exist in LGUI2.
+
+```lavishscript
+; LGUI1 (Old)
+MessageBox "Configuration version mismatch, resetting to defaults..."
+```
+
+**Error:**
+```
+Error: No such command 'MessageBox'
+```
+
+**The Fix: Create a Custom LGUI2 MessageBox**
+
+Create a reusable message box window that can be loaded dynamically when needed.
+
+**Step 1: Create MessageBox JSON (`Interface/MessageBox.json`):**
+
+```json
+{
+  "$schema":"http://www.lavishsoft.com/schema/lgui2Package.json",
+  "elements":[
+    {
+      "type":"window",
+      "name":"MyScript.MessageBox",
+      "x":800,
+      "y":500,
+      "width":1200,
+      "height":600,
+      "titleBar":{
+        "type":"dockpanel",
+        "children":[
+          {
+            "type":"textblock",
+            "name":"MessageBox.Title",
+            "text":"Message",
+            "verticalAlignment":"center",
+            "margin":[30, 0, 0, 0],
+            "font":{"face":"Segoe UI", "height":54, "bold":true},
+            "color":"#FFFFFF",
+            "_dock":"left"
+          }
+        ]
+      },
+      "content":{
+        "type":"stackpanel",
+        "orientation":"vertical",
+        "children":[
+          {
+            "type":"textblock",
+            "name":"MessageBox.Text",
+            "text":"Message text goes here",
+            "margin":60,
+            "wrapText":true,
+            "font":{"face":"Segoe UI", "height":42}
+          },
+          {
+            "type":"panel",
+            "height":30
+          },
+          {
+            "type":"button",
+            "name":"MessageBox.OKButton",
+            "content":"OK",
+            "width":300,
+            "height":120,
+            "horizontalAlignment":"center",
+            "font":{"height":48},
+            "eventHandlers":{
+              "onPress":{
+                "type":"code",
+                "code":"Script[MyScript]:QueueCommand[call CloseMessageBox]"
+              }
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
+```
+
+**Step 2: Create MessageBox Functions:**
+
+```lavishscript
+variable bool MessageBoxClosed = FALSE
+
+function ShowMessageBox(string title, string message)
+{
+    ; Load the message box UI
+    LGUI2:LoadPackageFile["${Script.CurrentDirectory}/Interface/MessageBox.json"]
+
+    ; Wait for it to load
+    wait 5 ${LGUI2.Element[MyScript.MessageBox](exists)}
+
+    ; Set the title and message
+    LGUI2.Element[MessageBox.Title]:SetText["${title.Escape}"]
+    LGUI2.Element[MessageBox.Text]:SetText["${message.Escape}"]
+
+    ; Reset the closed flag
+    MessageBoxClosed:Set[FALSE]
+
+    ; Wait for the user to close it (same pattern as checkbox persistence)
+    while !${MessageBoxClosed}
+    {
+        ExecuteQueued
+        waitframe
+    }
+}
+
+function CloseMessageBox()
+{
+    ; Set the flag to exit the wait loop
+    MessageBoxClosed:Set[TRUE]
+
+    ; Unload the message box UI
+    LGUI2:UnloadPackageFile["${Script.CurrentDirectory}/Interface/MessageBox.json"]
+}
+```
+
+**Step 3: Add Cleanup on Script Shutdown:**
+
+```lavishscript
+function main()
+{
+    ; ... main loop ...
+
+    echo MyScript shutting down...
+
+    ; Close message box if it's open
+    if ${LGUI2.Element[MyScript.MessageBox](exists)}
+    {
+        LGUI2:UnloadPackageFile["${Script.CurrentDirectory}/Interface/MessageBox.json"]
+    }
+
+    call config_save
+}
+```
+
+**Step 4: Usage:**
+
+```lavishscript
+; LGUI2 (New)
+call ShowMessageBox "Config Reset" "Configuration version mismatch.\n\nResetting to defaults..."
+```
+
+**Why the Wait Loop is Necessary:**
+
+The message box uses the same `QueueCommand` + `ExecuteQueued` pattern as persistent checkboxes:
+
+1. User clicks OK → `call CloseMessageBox` gets queued
+2. `ShowMessageBox` enters wait loop calling `ExecuteQueued` each frame
+3. `ExecuteQueued` executes the queued `CloseMessageBox` function
+4. `CloseMessageBox` sets `MessageBoxClosed:Set[TRUE]` and unloads UI
+5. Wait loop exits, allowing the calling code to continue
+
+**Common Mistakes:**
+
+```lavishscript
+// DON'T DO THIS - No wait loop
+function ShowMessageBox(string title, string message)
+{
+    LGUI2:LoadPackageFile["MessageBox.json"]
+    LGUI2.Element[MessageBox.Title]:SetText["${title}"]
+    LGUI2.Element[MessageBox.Text]:SetText["${message}"]
+    ; BAD - Returns immediately, message box stays open forever
+}
+
+// DO THIS - Wait for user to close it
+function ShowMessageBox(string title, string message)
+{
+    LGUI2:LoadPackageFile["MessageBox.json"]
+    LGUI2.Element[MessageBox.Title]:SetText["${title}"]
+    LGUI2.Element[MessageBox.Text]:SetText["${message}"]
+
+    MessageBoxClosed:Set[FALSE]
+    while !${MessageBoxClosed}
+    {
+        ExecuteQueued  ; Process the close command when OK is clicked
+        waitframe
+    }
+}
+```
+
+**Scaling the MessageBox:**
+
+The example above uses 3x scaling. For 1x (baseline), use these values:
+- Window: width:400, height:200
+- Title font: height:18
+- Message font: height:14
+- Button: width:100, height:40, font:16
+- Margins: 10-20 instead of 30-60
+
+**Real-World Example:**
+
+Production scripts typically implement this pattern with a custom MessageBox JSON package and corresponding script logic.
+
+**Key Differences from LGUI1:**
+
+| LGUI1 | LGUI2 |
+|-------|-------|
+| `MessageBox "text"` command | `ShowMessageBox()` function |
+| Automatic wait for user | Manual wait loop with `ExecuteQueued` |
+| No cleanup needed | Must unload on shutdown |
+| Fixed appearance | Fully customizable JSON |
+
+### Issue 14: ComboBox/ListBox Methods Not Available
+
+**Problem:**
+
+LGUI1 combobox and listbox methods like `:SelectItem`, `:AddItem`, `:ClearItems`, `.ItemByText`, `:SetSortType`, `:SetAutoSort`, and `:Sort` do not exist in LGUI2.
+
+```lavishscript
+; LGUI1 (Old) - These don't work in LGUI2!
+UIElement[mycombo]:SelectItem[5]
+UIElement[mycombo]:AddItem["New Item"]
+UIElement[mycombo].ItemByText["SomeValue"]:Select
+UIElement[mylist]:SetSortType[Text]
+UIElement[mylist]:Sort
+```
+
+**Errors:**
+```
+Error: No such 'lgui2combobox' method 'SelectItem'
+Error: No such 'lgui2combobox' method 'AddItem'
+Error: No such 'lgui2combobox' member 'ItemByText'
+Error: No such 'lgui2combobox' method 'SetSortType'
+Error: No such 'lgui2combobox' method 'Sort'
+```
+
+**Root Cause:**
+
+LGUI2 uses a fundamentally different API. The actual type is `lgui2combobox` (not `combobox`), which inherits from `lgui2itemlist`. See the official API documentation:
+
+- [lgui2combobox](https://www.lavishsoft.com/wiki/index.php/LGUI2:LS1:lgui2combobox)
+- [lgui2itemlist](https://www.lavishsoft.com/wiki/index.php/LGUI2:LS1:lgui2itemlist) (parent class with item methods)
+- [lgui2item](https://www.lavishsoft.com/wiki/index.php/LGUI2:LS1:lgui2item) (individual item object)
+
+**The Fix: Use LGUI2 Methods**
+
+#### Method Mapping Table
+
+| LGUI1 Method/Member | LGUI2 Replacement | Notes |
+|---------------------|-------------------|-------|
+| `:SelectItem[index]` | `:SetItemSelected[index,TRUE]` | Select item by index |
+| `:AddItem[text]` | `:InsertItem[json]` | Requires JSON format |
+| `:AddItem[text,data]` | `:InsertItem[json]` | Data goes in JSON |
+| `:ClearItems` | `:ClearItems` | ✅ Works the same |
+| `.ItemByText[text]` | Loop through items | No direct equivalent |
+| `.ItemByText[text]:Select` | Loop + SetItemSelected | See examples below |
+| `.SelectedItem.Value` | `.SelectedItem.Data.Get[text]` | Access via Data property |
+| `.SelectedItem.Text` | `.SelectedItem.Data.Get[text]` | Access via Data property |
+| `:SetSortType[type]` | ❌ Not available | Remove - no sorting API |
+| `:SetAutoSort[bool]` | ❌ Not available | Remove - no sorting API |
+| `:Sort` | ❌ Not available | Remove - no sorting API |
+
+#### Example 1: Select Item by Index
+
+**LGUI1:**
+```lavishscript
+; Select item at index 5
+UIElement[mycombo]:SelectItem[5]
+```
+
+**LGUI2:**
+```lavishscript
+; Select item at index 5
+LGUI2.Element[mycombo]:SetItemSelected[5,TRUE]
+```
+
+#### Example 2: Select Item by Text Value
+
+**LGUI1:**
+```lavishscript
+; Select item with text "Option B"
+UIElement[mycombo].ItemByText["Option B"]:Select
+```
+
+**LGUI2:**
+```lavishscript
+; Must loop through items to find matching text
+variable int i
+for (i:Set[1]; ${i} <= ${LGUI2.Element[mycombo].ItemCount}; i:Inc)
+{
+    if ${LGUI2.Element[mycombo].Item[${i}].Data.Get[text].Equal["Option B"]}
+    {
+        LGUI2.Element[mycombo]:SetItemSelected[${i},TRUE]
+        break
+    }
+}
+```
+
+**Why the loop?** LGUI2 has no `.ItemByText` member. You must iterate through `.Item[1]` to `.Item[ItemCount]` and check each item's `.Data.Get[text]` property.
+
+#### Example 3: Restore Saved Selection on Load
+
+**LGUI1:**
+```lavishscript
+; onLoad event handler
+This:SelectItem[${Config.MySetting}]
+```
+
+**LGUI2 (Method A - Direct Index):**
+
+If your config stores the item **index** (1-based):
+
+```json
+{
+    "type": "combobox",
+    "name": "mycombo",
+    "items": [...],
+    "eventHandlers": {
+        "onLoad": {
+            "type": "code",
+            "code": "variable int savedVal = ${Config.MySetting}\nif ${savedVal} > 0 && ${savedVal} <= ${This.ItemCount}\n{\n\tThis:SetItemSelected[${savedVal},TRUE]\n}"
+        }
+    }
+}
+```
+
+**LGUI2 (Method B - Text Value):**
+
+If your config stores the item **text**:
+
+```json
+{
+    "type": "combobox",
+    "name": "mycombo",
+    "items": [...],
+    "eventHandlers": {
+        "onLoad": {
+            "type": "code",
+            "code": "variable int i\nfor (i:Set[1]; ${i}<=${This.ItemCount}; i:Inc)\n{\n\tif ${This.Item[${i}].Data.Get[text].Equal[${Config.MySetting}]}\n\t{\n\t\tThis:SetItemSelected[${i},TRUE]\n\t\tbreak\n\t}\n}"
+        }
+    }
+}
+```
+
+#### Example 4: Add Items Dynamically
+
+**LGUI1:**
+```lavishscript
+; Clear and rebuild list
+UIElement[mylist]:ClearItems
+UIElement[mylist]:AddItem["Item 1"]
+UIElement[mylist]:AddItem["Item 2", "data123"]
+```
+
+**LGUI2:**
+```lavishscript
+; Clear items (this part is the same)
+LGUI2.Element[mylist]:ClearItems
+
+; Add items as JSON
+LGUI2.Element[mylist]:InsertItem["{\"type\":\"textblock\",\"text\":\"Item 1\"}"]
+LGUI2.Element[mylist]:InsertItem["{\"type\":\"textblock\",\"text\":\"Item 2\"}"]
+```
+
+**With a loop:**
+```lavishscript
+variable index:string item_index
+Script[MyScript]:QueueCommand[call GetItems[item_index]]
+
+variable iterator item_iterator
+item_index:GetIterator[item_iterator]
+
+LGUI2.Element[mylist]:ClearItems
+if ${item_iterator:First(exists)}
+{
+    do
+    {
+        LGUI2.Element[mylist]:InsertItem["{\"type\":\"textblock\",\"text\":\"${item_iterator.Value.Escape}\"}"]
+    }
+    while ${item_iterator:Next(exists)}
+}
+```
+
+**Important:** Use `.Escape` on any dynamic text that might contain quotes or special characters!
+
+#### Example 5: Access Selected Item Data
+
+**LGUI1:**
+```lavishscript
+; Save selected value
+Config:Set[${UIElement[mycombo].SelectedItem.Value}]
+
+; Log selected text
+echo Selected: ${UIElement[mycombo].SelectedItem.Text}
+```
+
+**LGUI2:**
+```lavishscript
+; lgui2item doesn't have .Value or .Text - use .Data.Get[text]
+Config:Set[${LGUI2.Element[mycombo].SelectedItem.Data.Get[text]}]
+
+; Log selected text
+echo Selected: ${LGUI2.Element[mycombo].SelectedItem.Data.Get[text]}
+```
+
+**In JSON event handlers:**
+```json
+{
+    "eventHandlers": {
+        "onSelectionChanged": {
+            "type": "code",
+            "code": "Config:SetValue[${This.SelectedItem.Data.Get[text]}]"
+        }
+    }
+}
+```
+
+#### Example 6: Sorting Not Available
+
+**LGUI1:**
+```lavishscript
+; Sort items alphabetically
+UIElement[mylist]:SetSortType[Text]
+UIElement[mylist]:SetAutoSort[TRUE]
+UIElement[mylist]:Sort
+```
+
+**LGUI2:**
+```lavishscript
+; LGUI2 has NO sorting API - you must sort BEFORE adding items
+
+; Sort in LavishScript before inserting
+variable collection:string items
+items:Set["Zebra"]
+items:Set["Apple"]
+items:Set["Banana"]
+
+; Manual sort (LavishScript has no built-in sort, so you'd need custom logic)
+; OR: Pre-sort data in your application logic before populating
+
+LGUI2.Element[mylist]:ClearItems
+; Insert already-sorted items
+LGUI2.Element[mylist]:InsertItem["{\"type\":\"textblock\",\"text\":\"Apple\"}"]
+LGUI2.Element[mylist]:InsertItem["{\"type\":\"textblock\",\"text\":\"Banana\"}"]
+LGUI2.Element[mylist]:InsertItem["{\"type\":\"textblock\",\"text\":\"Zebra\"}"]
+```
+
+**Alternative:** Use data binding with a member that returns pre-sorted JSON.
+
+#### Complete Real-World Example
+
+**LGUI1 Combobox:**
+```xml
+<Combobox Name="ModeSelector">
+    <Items>
+        <Text>Idle</Text>
+        <Text>Mining</Text>
+        <Text>Combat</Text>
+    </Items>
+    <OnLoad>This:SelectItem[${Config.Mode}]</OnLoad>
+    <OnSelect>Config:SetMode[${This.SelectedItem.Text}]</OnSelect>
+</Combobox>
+```
+
+```lavishscript
+; Script code
+UIElement[ModeSelector]:ClearItems
+UIElement[ModeSelector]:AddItem["Idle"]
+UIElement[ModeSelector]:AddItem["Mining"]
+UIElement[ModeSelector]:AddItem["Combat"]
+UIElement[ModeSelector].ItemByText[${Config.Mode}]:Select
+```
+
+**LGUI2 Combobox:**
+```json
+{
+    "type": "combobox",
+    "name": "ModeSelector",
+    "items": [
+        {"type": "textblock", "text": "Idle"},
+        {"type": "textblock", "text": "Mining"},
+        {"type": "textblock", "text": "Combat"}
+    ],
+    "eventHandlers": {
+        "onLoad": {
+            "type": "code",
+            "code": "variable int i\nfor (i:Set[1]; ${i}<=${This.ItemCount}; i:Inc)\n{\n\tif ${This.Item[${i}].Data.Get[text].Equal[${Config.Mode}]}\n\t{\n\t\tThis:SetItemSelected[${i},TRUE]\n\t\tbreak\n\t}\n}"
+        },
+        "onSelectionChanged": {
+            "type": "code",
+            "code": "Config:SetMode[${This.SelectedItem.Data.Get[text]}]"
+        }
+    }
+}
+```
+
+**Key Takeaways:**
+
+1. **No ItemByText** - Must loop through items manually
+2. **No SelectItem** - Use `SetItemSelected[index,TRUE]`
+3. **No .Value or .Text** - Use `.Data.Get[text]`
+4. **AddItem → InsertItem** - Requires JSON format
+5. **No sorting** - Pre-sort data before inserting
+6. **ClearItems still works** - Only method that's the same!
+
+### Issue 15: Checkbox State Management - Use Data Binding
+
+**Problem:**
+
+Manually managing checkbox state with event handlers or polling:
+
+```json
+{
+  "type": "checkbox",
+  "name": "myCheckbox",
+  "content": "Enable Feature"
+}
+```
+
+Then in script code:
+```lavishscript
+; Manual polling - inefficient
+if ${LGUI2.Element[myCheckbox].Checked}
+    Config:SetFeatureEnabled[TRUE]
+else
+    Config:SetFeatureEnabled[FALSE]
+```
+
+**Why This Is Suboptimal:**
+
+1. **Manual synchronization** - You must write code to sync state
+2. **One-way binding** - Changing the variable doesn't update the checkbox
+3. **Polling required** - Must check state repeatedly
+4. **More code** - Extra logic adds complexity
+
+**The Correct Pattern: Data Binding**
+
+LGUI2 checkboxes support **`checkedBinding`** for automatic two-way synchronization:
+
+```json
+{
+  "type": "checkbox",
+  "name": "myCheckbox",
+  "content": "Enable Feature",
+  "checkedBinding": {
+    "pullFormat": "${Config.FeatureEnabled}",
+    "pushFormat": ["Config:SetFeatureEnabled[", "]"]
+  }
+}
+```
+
+**Benefits of Data Binding:**
+
+- ✅ **Automatic two-way sync** - Variable changes update checkbox, checkbox changes update variable
+- ✅ **Less code** - No event handlers or polling needed
+- ✅ **Cleaner** - Declarative instead of imperative
+- ✅ **LGUI2 standard** - This is the recommended pattern
+
+**Alternative: Using onLoad with SetChecked**
+
+If you only need to initialize from a config value and handle changes manually:
+
+```json
+{
+  "type": "checkbox",
+  "name": "myCheckbox",
+  "content": "Enable Feature",
+  "eventHandlers": {
+    "onLoad": {
+      "type": "code",
+      "code": "if ${Config.FeatureEnabled}\n{\n\tThis:SetChecked[TRUE]\n}"
+    }
+  }
+}
+```
+
+Then handle changes in your script by reading `${LGUI2.Element[myCheckbox].Checked}` when needed.
+
+**Real-World Example:**
+
+From InnerSpace's DefaultUplinkUI.json:
+
+```json
+{
+  "type": "checkbox",
+  "content": "Notify about development (test) patches",
+  "checkedBinding": {
+    "pullFormat": "${SettingXML[InnerSpace.XML].Set[General].GetInt[Download Unstable Patches]}",
+    "pushFormat": ["SettingXML[InnerSpace.XML].Set[General]:Set[Download Unstable Patches,", "]:Save"]
+  }
+}
+```
+
+**Migration Pattern:**
+
+**Before:**
+```json
+"eventHandlers": {
+  "onLoad": {
+    "type": "code",
+    "code": "if ${Config.RunOnLowAmmo}\n{\n\tThis:SetChecked\n}"
+  }
+}
+```
+
+**After (with data binding):**
+```json
+"checkedBinding": {
+  "pullFormat": "${Config.Combat.RunOnLowAmmo}",
+  "pushFormat": ["Config.Combat:SetRunOnLowAmmo[", "]"]
+}
+```
+
+**Key Takeaway:**
+
+Use **`checkedBinding`** for checkbox state management in LGUI2. It's simpler, cleaner, and the standard LGUI2 pattern.
+
+### Issue 16: Slider Styling and Templates
+
+**Problem:**
+
+Sliders in LGUI2 don't have the same styling options as checkboxes. You might try to use `contentContainer` but it doesn't work:
+
+```json
+{
+  "type": "slider",
+  "name": "volumeSlider",
+  "contentContainer": {
+    "jsonTemplate": "mySliderContainer"
+  }
+}
+```
+
+**Why This Doesn't Work:**
+
+Unlike checkboxes which have a `contentContainer` property, sliders do NOT support this mechanism. Sliders are styled directly on the slider element itself.
+
+**The Correct Pattern: Direct Styling**
+
+Sliders use properties directly on the slider element:
+
+```json
+{
+  "type": "slider",
+  "name": "volumeSlider",
+  "width": 120,
+  "height": 28,
+  "borderThickness": 1,
+  "borderBrush": "slider.borderBrush",
+  "font": {
+    "height": 24
+  },
+  "handle": {
+    "jsonTemplate": "slider.handle",
+    "width": 24,
+    "height": 24
+  },
+  "minimum": 0,
+  "maximum": 100
+}
+```
+
+**Key Slider Styling Properties:**
+
+| Property | Purpose |
+|----------|---------|
+| `height` | Controls slider track thickness (horizontal sliders) |
+| `width` | Controls slider element width (horizontal sliders) |
+| `borderThickness` | Border around the slider track (makes it visible) |
+| `borderBrush` | Border color (e.g., "slider.borderBrush") |
+| `handle` | Nested object for handle configuration |
+
+**Creating a Reusable Slider Template:**
+
+To maintain consistency, create a template with common styling properties:
+
+```json
+{
+  "templates": {
+    "mySlider": {
+      "type": "slider",
+      "borderThickness": 1,
+      "borderBrush": "slider.borderBrush",
+      "handle": {
+        "jsonTemplate": "slider.handle",
+        "width": 24,
+        "height": 28
+      }
+    }
+  }
+}
+```
+
+Then use it with `jsonTemplate` (note that `width`, `height`, `minimum`, and `maximum` are set on the implementation):
+
+```json
+{
+  "jsonTemplate": "mySlider",
+  "name": "volumeSlider",
+  "x": 10,
+  "y": 30,
+  "width": 120,
+  "height": 28,
+  "minimum": 0,
+  "maximum": 100,
+  "valueBinding": {
+    "pullFormat": "${Script[MyBot].VariableScope.Config.Volume}",
+    "pushFormat": ["Script[MyBot].VariableScope.Config:SetVolume[", "]"]
+  }
+}
+```
+
+**Using Data Binding vs Event Handlers:**
+
+The recommended pattern for sliders is `valueBinding` (shown above), NOT event handlers:
+
+**Recommended (Data Binding):**
+```json
+"valueBinding": {
+  "pullFormat": "${Script[MyBot].VariableScope.Config.Volume}",
+  "pushFormat": ["Script[MyBot].VariableScope.Config:SetVolume[", "]"]
+}
+```
+
+**Legacy Pattern (Event Handlers):**
+```json
+"eventHandlers": {
+  "onLoad": {
+    "type": "code",
+    "code": "This:SetValue[${Script[MyBot].VariableScope.Config.Volume}]"
+  },
+  "onValueChanged": {
+    "type": "code",
+    "code": "Script[MyBot].VariableScope.Config:SetVolume[${Int[${This.Value}]}]"
+  }
+}
+```
+
+**Why Data Binding Is Better:**
+- ✅ Automatic two-way synchronization
+- ✅ No manual initialization needed
+- ✅ Avoids element ordering issues
+- ✅ Less verbose
+- ✅ Standard LGUI2 pattern
+
+**Handle Configuration:**
+
+The handle (draggable thumb) is configured via the `handle` property:
+
+```json
+"handle": {
+  "jsonTemplate": "slider.handle",  // Reference default handle template
+  "width": 24,                        // Handle width
+  "height": 24                        // Handle height
+}
+```
+
+The `slider.handle` template from DefaultSkin.json provides:
+- Border and background brushes
+- Event forwarding for mouse interactions
+- Standard handle appearance
+
+**Important Notes:**
+
+- **NO `contentContainer`** - Sliders don't support this property
+- **Direct styling only** - All styling properties go on the slider element
+- **Template at element level** - Use `jsonTemplate` on the slider itself, not in a container
+- **Height controls thickness** - For horizontal sliders, the `height` property controls track thickness
+- **Always set borders** - Without `borderThickness` and `borderBrush`, the track may be invisible
+
+**Migration Pattern:**
+
+**Before (LGUI1):**
+```xml
+<Slider Name='volumeSlider' Width='120' Height='20' />
+```
+
+**After (LGUI2 with template):**
+```json
+{
+  "jsonTemplate": "mySlider",
+  "name": "volumeSlider",
+  "x": 10,
+  "y": 30,
+  "width": 120,
+  "height": 28,
+  "minimum": 0,
+  "maximum": 100
+}
+```
+
+**Key Takeaway:**
+
+Sliders use **direct styling** and **templates at the element level**, NOT `contentContainer` like checkboxes. Always include `borderThickness` and `borderBrush` to make the slider track visible.
+
+---
+
+## Advanced Migration Topics
+
+### Migrating Templates
+
+**LGUI1 Templates:**
+
+```xml
+<Template Name="MyButton">
+    <Button>
+        <BackgroundColor>#0000ff</BackgroundColor>
+        <Text>Default Text</Text>
+    </Button>
+</Template>
+```
+
+**LGUI2 Templates:**
+
+```json
+{
+    "templates": {
+        "myButton": {
+            "backgroundBrush": {"color": "#0000ff"},
+            "padding": 5
+        }
+    },
+    "elements": [
+        {
+            "jsonTemplate": "myButton",
+            "type": "button",
+            "content": "Custom Text"
+        }
+    ]
+}
+```
+
+### Migrating Skins
+
+**LGUI1:**
+
+```lavishscript
+ui -loadskin myskin
+ui -load myui.xml
+```
+
+**LGUI2:**
+
+```lavishscript
+LGUI2:PushSkin[myskin]
+LGUI2:LoadPackageFile[myui.json]
+LGUI2:PopSkin[myskin]
+```
+
+### Migrating Complex Layouts
+
+For complex nested layouts, break them into logical sections:
+
+**LGUI2 Pattern:**
+
+```json
+{
+    "type": "dockpanel",
+    "children": [
+        {
+            "_dock": "top",
+            "type": "panel",
+            "height": 50,
+            "children": [/* Header content */]
+        },
+        {
+            "_dock": "left",
+            "type": "panel",
+            "width": 200,
+            "children": [/* Sidebar content */]
+        },
+        {
+            "type": "panel",
+            "children": [/* Main content fills remaining space */]
+        }
+    ]
+}
+```
+
+---
+
+## Summary
+
+### Key Takeaways
+
+1. **File Format:** XML → JSON
+2. **Loading:** `ui -load` → `LGUI2:LoadPackageFile`
+3. **Access:** `UIElement[]` → `LGUI2.Element[]`
+4. **Events:** XML attributes → JSON `eventHandlers` objects
+5. **Data Binding:** Manual updates → Automatic `textBinding`/`checkedBinding`
+6. **Controller Pattern:** Use objectdef with Initialize/Shutdown
+
+### Benefits of Migration
+
+- ✅ **Less code** - Data binding eliminates manual updates
+- ✅ **Better tooling** - JSON schema provides IDE support
+- ✅ **More powerful** - Advanced features like triggers, item view generators
+- ✅ **Future-proof** - LGUI2 is actively developed, LGUI1 is legacy
+- ✅ **Easier maintenance** - Cleaner, more readable JSON syntax
+
+### UI Scaling Enhancement
+
+After migrating to LGUI2, consider adding **dynamic UI scaling** to your script:
+
+**Why Add Scaling?**
+- Users have different screen resolutions and DPI settings
+- 4K displays benefit from 2x scaling
+- Compact mode (0.5x) useful for multi-boxing
+
+**How to Add Scaling:**
+
+See the comprehensive **[LGUI2 Scaling System Guide](12_LGUI2_Scaling_System.md)** for complete implementation details.
+
+**Quick Implementation:**
+
+```lavishscript
+#include ${LavishScript.HomeDirectory}/Scripts/LGUI2Scaling.iss
+
+function main()
+{
+    variable float uiScale = 1.0
+
+    if (!${uiScale.Equal[1.0]})
+    {
+        call ScaleUIJson "MyUI.json" "MyUI_Scaled.json" ${uiScale}
+        LGUI2:LoadPackageFile["MyUI_Scaled.json"]
+    }
+    else
+        LGUI2:LoadPackageFile["MyUI.json"]
+}
+```
+
+**Tip:** Production scripts can implement full UI scaling using this pattern.
+
+## Known Limitations
+
+### Custom C++ Element Types Not Supported
+
+**Critical Limitation:** LavishGUI 2 JSON packages **do not support custom C++ element types** registered via `LGUIFactory`.
+
+#### What This Means
+
+If your LGUI1 UI uses custom C++ elements (registered with `LGUIFactory<YourClass>`), you **cannot migrate** to LGUI2 JSON packages. These elements will produce errors like:
+
+```
+element type not found: yourelementtype
+```
+
+#### Examples of Affected Elements
+
+- **Custom radar elements** (e.g., `customradar`) - Custom display with 3D-to-2D coordinate conversion, dynamic blips, and interactive tooltips
+- **Custom HUD elements** - Game-specific overlays with custom rendering
+- **Advanced interactive displays** - Elements with complex mouse interaction and real-time updates
+
+#### Technical Details
+
+**LGUI1 Pattern (Works):**
+```cpp
+// C++ Extension Code
+LGUIFactory<LGUICustomRadar> RadarFactory("customradar");
+
+class LGUICustomRadar : public LGUIElement
+{
+    void Render() { /* custom rendering */ }
+    // ... custom behavior
+};
+```
+
+```xml
+<!-- LGUI1 XML (Works) -->
+<customradar Name="radar1">
+    <Width>100%</Width>
+    <Height>100%</Height>
+</customradar>
+```
+
+**LGUI2 Pattern (Does NOT Work):**
+```json
+{
+    "$schema": "http://www.lavishsoft.com/schema/lgui2Package.json",
+    "elements": [
+        {
+            "type": "customradar",
+            "name": "radar1"
+        }
+    ]
+}
+```
+
+**Error:**
+```
+element type not found: customradar
+```
+
+#### Why This Happens
+
+LavishGUI 2's JSON package system only recognizes built-in element types:
+- Layout: window, panel, dockpanel, stackpanel, etc.
+- Display: textblock, imagebox, progressbar, etc.
+- Interaction: button, checkbox, listbox, combobox, etc.
+
+Custom C++ element types registered with `LGUIFactory` are **not accessible** from JSON packages.
+
+#### Workarounds
+
+There are no perfect workarounds, but options include:
+
+1. **Keep Using LGUI1** - If your custom element is critical, continue using XML-based LGUI1
+   ```lavishscript
+   ui -reload -skin YourSkin x64\\extensions\\yourui
+   ```
+
+2. **Redesign Without Custom Elements** - If possible, rebuild functionality using standard LGUI2 elements
+   - Use `imagebox` with dynamically generated textures
+   - Use standard controls with data binding
+   - Note: This may lose interactivity and features
+
+3. **Wait for LGUI2 Support** - LavishSoft may add custom element support in the future
+   - No timeline or confirmation this will happen
+   - Monitor LavishSoft wiki and forums for updates
+
+#### Example: Extension-Specific Features
+
+**Note:** The following demonstrates features that **must remain on LGUI1**:
+
+- **Custom Radar** (`radar on`) - Uses custom `customradar` element type
+  - Cannot be converted to JSON
+  - Custom C++ rendering for 3D radar display
+
+#### Investigation Conducted
+
+Exhaustive research was performed to find LGUI2 custom element support:
+
+✅ **Searched:**
+- LavishSoft wiki (lavishsoft.com)
+- LavishGUI 2 documentation
+- LGUI2:Elements reference
+- InnerSpace extension documentation
+- InnerSpace extension forums and documentation
+- LERN example repository
+
+❌ **Not Found:**
+- Any mention of `LGUIFactory` in LGUI2
+- Documentation for registering custom element types in LGUI2
+- Migration path for custom LGUI1 elements
+- C++ API for LGUI2 custom elements
+
+**Conclusion:** As of October 2025, custom C++ element types are **not supported** in LavishGUI 2 JSON packages.
+
+#### When to Use LGUI1 vs LGUI2
+
+**Use LGUI1 (XML) when:**
+- ✅ You have custom C++ element types
+- ✅ You use `LGUIFactory<>` registered elements
+- ✅ Migration would break critical functionality
+
+**Use LGUI2 (JSON) when:**
+- ✅ You only use standard element types
+- ✅ You want data binding and modern UI features
+- ✅ You can rebuild custom elements with standard controls
+
+---
+
+## LGUI2-Exclusive Features
+
+LavishGUI 2 introduces a number of capabilities that have **no LGUI1 equivalent**. There is no migration path for these features — they simply did not exist in LGUI1. To use them, see [10_LavishGUI2_UI_Guide.md](10_LavishGUI2_UI_Guide.md) for complete documentation, JSON examples, and property tables.
+
+**New systems and capabilities:**
+
+- **Animations** — `fade`, `slide`, `value`, `chain`, `composite`, `delay`, and `repeat` animation types for smooth transitions and effects
+- **Event Hooks** — Attach handlers to events fired by other elements via the `hooks` property
+- **Advanced Brushes** — Image brushes, canvas rendering, image orientation/mirroring, pixel and vertex shaders, transparency keys
+- **Box Model Control** — Explicit `margin`, `padding`, and `borderThickness` properties
+- **Factor-Based Positioning** — Proportional sizing/placement via `widthFactor`, `heightFactor`, `xFactor`, `yFactor` (combine with offsets)
+- **Metadata System** — Store arbitrary custom data on elements via underscore properties (e.g., `_customData`), accessible from script
+- **Automatic Data Binding** — Two-way `pullFormat` / `pushFormat` bindings replace manual `SetText` / polling patterns; supports `pullHook` for event-driven updates
+
+**New element types (no LGUI1 equivalent):**
+
+- `slider`, `knob`, `popup`, `contextmenu`, `expander`, `progressbar`, `scrollviewer`, `radialgauge`, `dragger`, `commandbox`, `inputpicker`
+
+**New event handler types:**
+
+- `forward` (delegate events to another element), `animation` (trigger an animation), `task` (run a background task), plus the standard `code` and `method` handler types
+
+**Package-level features:**
+
+- Package dependencies (`includes`, `optionalIncludes`), audio voices and streams, pixel/vertex shader definitions, and `metaScripts` for bundled script auto-start
+
+For complete documentation of any of the above — including JSON examples, property tables, and best practices — refer to [10_LavishGUI2_UI_Guide.md](10_LavishGUI2_UI_Guide.md).
+
+<!-- CLAUDE_SKIP_START -->
+
+---
+## Additional Resources
+
+- **LavishGUI 2 UI Guide:** [10_LavishGUI2_UI_Guide.md](10_LavishGUI2_UI_Guide.md)
+- **LGUI2 Scaling System:** [12_LGUI2_Scaling_System.md](12_LGUI2_Scaling_System.md)
+- **Official LGUI2 Wiki:** https://www.lavishsoft.com/wiki/index.php/LavishGUI_2
+- **LERN Examples:** https://github.com/LavishSoftware/LERN/tree/master/LGUI2
+<!-- CLAUDE_SKIP_END -->
