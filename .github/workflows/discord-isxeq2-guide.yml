@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - 'ISXEQ2 Scripting Guide/**'
+  workflow_dispatch:
 
 jobs:
   notify:
@@ -15,8 +16,8 @@ jobs:
           REPO: ${{ github.repository }}
           BRANCH: ${{ github.ref_name }}
           ACTOR: ${{ github.actor }}
-          MSG: ${{ github.event.head_commit.message }}
-          URL: ${{ github.event.head_commit.url }}
+          MSG: ${{ github.event.head_commit.message || 'Manual test run' }}
+          URL: ${{ github.event.head_commit.url || format('https://github.com/{0}', github.repository) }}
           SHA: ${{ github.sha }}
         run: |
           payload=$(jq -n \
