@@ -285,7 +285,7 @@ Found an error or have an improvement? This documentation was generated using ac
 <!-- CLAUDE_SKIP_START -->
 ## Version History
 
-- **v4.0 (2026-04-28)**
+- **v4.1 (2026-04-28)**
 
   - Split `01_LavishScript_Fundamentals.md` into a tutorial-style file (now 30 sections, 3,373 lines, expanded from the original 23 sections / 3,060 lines) plus a new sibling reference file `01b_LavishScript_Reference.md` (1,221 lines) -- the reference is an exhaustive command/datatype/Top-Level-Object inventory with one canonical entry per feature linked to the Lavish Software wiki, while the tutorial keeps narrative onboarding for newcomers
   - Added six new sections to the tutorial (`01`): Top-Level Objects (introduces TLOs as a documented concept, lists the 22 LavishScript-core TLOs and the major Inner Space TLOs, covers the `TopLevelObject` runtime-enumeration command); Events (RegisterEvent / AttachAtom / DetachAtom / Unregister lifecycle plus built-in events); Triggers (AddTrigger / RemoveTrigger / WaitFor); Aliases (Alias command + the `Alias Added` event); Modules (Module command + the first-party LSModule:Sound / MySQL / Regex / Targz / Ventrilo / Scheduler packages); Input Emulation (Bind / GlobalBind / Press / Type / MouseTo / MouseClick / MouseCursor / DIMouse / Macro)
