@@ -265,14 +265,10 @@ echo "My fleet role: ${Me.ToFleetMember.Role}"
 ; Identity
 echo "Name: ${Me.Name}"
 echo "Char ID: ${Me.CharID}"
-echo "Corp: ${Me.Corp}"
-echo "CorpID: ${Me.CorpID}"
+echo "Corp: ${Me.Corp.Name}"
+echo "CorpID: ${Me.Corp.ID}"
 echo "Alliance: ${Me.Alliance}"
 echo "AllianceID: ${Me.AllianceID}"
-
-; Character sheet info
-echo "Security Status: ${Me.SecurityStatus}"
-echo "Bounty: ${Me.Bounty}"
 ```
 
 ### Location State
@@ -282,7 +278,7 @@ echo "Bounty: ${Me.Bounty}"
 echo "In Station: ${Me.InStation}"
 echo "In Space: ${Me.InSpace}"
 echo "System ID: ${Me.SolarSystemID}"
-echo "System Name: ${Me.SolarSystem.Name}"
+echo "System Name: ${Universe[${Me.SolarSystemID}].Name}"
 echo "Region ID: ${Me.RegionID}"
 
 ; Specific checks
@@ -318,15 +314,15 @@ if !${Me.InStation}
 
 ```lavish
 ; Fleet membership
-echo "In Fleet: ${Me.InFleet}"
-echo "Fleet ID: ${Me.FleetID}"
+echo "In Fleet: ${Me.Fleet.ID(exists)}"
+echo "Fleet ID: ${Me.Fleet.ID}"
 echo "Fleet Size: ${Me.Fleet.Size}"
 
 ; Fleet role
 echo "Is Fleet Commander: ${Me.Fleet.IsFleetCommander}"
 
 ; Usage
-if ${Me.InFleet}
+if ${Me.Fleet.ID(exists)}
 {
     echo "Fleet member count: ${Me.Fleet.Size}"
 }
@@ -338,7 +334,7 @@ if ${Me.InFleet}
 ; Target counts
 echo "Max Targets: ${Me.MaxLockedTargets}"
 echo "Current Targets: ${Me.TargetCount}"
-echo "Max Target Range: ${Me.MaxTargetRange}m"
+echo "Max Target Range: ${MyShip.MaxTargetRange}m"
 
 ; Accessing targets (1-indexed!)
 variable index:entity MyTargets
@@ -443,13 +439,13 @@ echo "AUR: ${Me.Wallet.BalanceAUR}"
 ```lavish
 ; Get standing toward entity
 variable int64 entityID = ${Entity[...].ID}
-echo "Standing: ${Me.GetStanding[${entityID}]}"
+echo "Standing: ${Me.StandingTo[${entityID}]}"
 
 ; Standing is a float from -10.0 to +10.0
 ; Negative = hostile, Positive = friendly
 
 ; Check if entity is hostile
-if ${Me.GetStanding[${entityID}]} < 0
+if ${Me.StandingTo[${entityID}]} < 0
 {
     echo "Entity is hostile"
 }
@@ -463,8 +459,8 @@ echo "Ship ID: ${Me.Ship.ID}"
 echo "Ship Name: ${Me.Ship.Name}"
 echo "Ship Type ID: ${Me.ToEntity.TypeID}"
 
-; Pod check
-if ${Me.InPod}
+; Pod check (a capsule has the ship group "Capsule" -- there is no Me.InPod member)
+if ${MyShip.ToEntity.Group.Equal[Capsule]}
 {
     echo "WARNING: In pod (ship was destroyed)"
 }
@@ -495,7 +491,7 @@ echo "Autopilot On: ${Me.AutoPilotOn}"
 ; Identity
 echo "Ship Name: ${MyShip.Name}"
 echo "Ship ID: ${MyShip.ID}"
-echo "Ship Type: ${MyShip.TypeID}"
+echo "Ship Type: ${MyShip.ToItem.TypeID}"
 echo "Ship Type Name: ${MyShip.ToEntity.Type}"
 echo "Ship Group: ${MyShip.ToEntity.Group}"
 
@@ -531,14 +527,14 @@ echo "Armor %: ${MyShip.ArmorPct}"
 
 **Hull** (structure):
 ```lavish
-echo "Hull HP: ${MyShip.Struct}"
-echo "Max Hull: ${MyShip.MaxStruct}"
-echo "Hull %: ${MyShip.StructPct}"
+echo "Hull HP: ${MyShip.Structure}"
+echo "Max Hull: ${MyShip.MaxStructure}"
+echo "Hull %: ${MyShip.StructurePct}"
 
 ; Critical damage check
-if ${MyShip.StructPct} < 100
+if ${MyShip.StructurePct} < 100
 {
-    echo "CRITICAL: Hull damage! (${MyShip.StructPct}%)"
+    echo "CRITICAL: Hull damage! (${MyShip.StructurePct}%)"
 }
 ```
 
@@ -562,7 +558,7 @@ function LogDefenseStatus()
     echo "=== Ship Status ==="
     echo "Shield: ${MyShip.ShieldPct}%"
     echo "Armor: ${MyShip.ArmorPct}%"
-    echo "Hull: ${MyShip.StructPct}%"
+    echo "Hull: ${MyShip.StructurePct}%"
     echo "Capacitor: ${MyShip.CapacitorPct}%"
 }
 ```
@@ -728,15 +724,25 @@ MyShip.Module[HiSlot0]:Click
 ### Drones
 
 ```lavish
-; Drone stats
-echo "Drones In Bay: ${MyShip.DronesInBay}"
-echo "Drones In Space: ${MyShip.DronesInSpace}"
-echo "Max Active Drones: ${MyShip.MaxActiveDrones}"
-echo "Drone Bandwidth: ${MyShip.UsedDroneBandwidth} / ${MyShip.DroneBandwidth}"
+; Drones currently in the drone bay (enumerate, then read the count via .Used)
+variable index:item DronesInBay
+MyShip:GetDrones[DronesInBay]
+echo "Drones In Bay: ${DronesInBay.Used}"
 
-; Drone capacity
-echo "Drone Bay Used: ${MyShip.UsedDroneBayCapacity}"
-echo "Drone Bay Max: ${MyShip.DroneBayCapacity}"
+; Active drones in space (this is a Me/character method, not a ship member)
+variable index:activedrone DronesInSpace
+Me:GetActiveDrones[DronesInSpace]
+echo "Drones In Space: ${DronesInSpace.Used}"
+
+; Max drones you can have active (character attribute, not a ship member)
+echo "Max Active Drones: ${Me.MaxActiveDrones}"
+
+; Drone bandwidth (the ship hull's total bandwidth)
+echo "Drone Bandwidth: ${MyShip.DroneBandwidth}"
+
+; Drone bay capacity (note the lowercase 'b' in Dronebay)
+echo "Drone Bay Used: ${MyShip.UsedDronebayCapacity}"
+echo "Drone Bay Max: ${MyShip.DronebayCapacity}"
 ```
 
 **Drone Methods** (covered in depth in combat file):
@@ -757,11 +763,11 @@ echo "Velocity: ${MyShip.ToEntity.Velocity} m/s"
 ; Max speed
 echo "Max Velocity: ${MyShip.MaxVelocity} m/s"
 
-; Ship mass
-echo "Mass: ${MyShip.Mass} kg"
+; Ship mass (mass lives on the entity, not directly on MyShip)
+echo "Mass: ${MyShip.ToEntity.Mass} kg"
 
-; Warp speed
-echo "Warp Speed: ${MyShip.WarpSpeed} AU/s"
+; Warp speed multiplier (the canonical member is WarpSpeedMultiplier, not WarpSpeed)
+echo "Warp Speed Multiplier: ${MyShip.WarpSpeedMultiplier} AU/s"
 ```
 
 **Movement State** (from ${MyShip.ToEntity}):
@@ -1330,7 +1336,7 @@ function ShouldRetreat()
     }
 
     ; Check hull (emergency)
-    if ${MyShip.StructPct} < 100
+    if ${MyShip.StructurePct} < 100
     {
         echo "RETREAT: HULL DAMAGE!"
         return TRUE
@@ -1409,7 +1415,7 @@ function IsMasterCharacter()
 
 function AmIInFleetWithMaster()
 {
-    if !${Me.InFleet}
+    if !${Me.Fleet.ID(exists)}
         return FALSE
 
     ; Check if master is in fleet
@@ -1441,7 +1447,7 @@ function AmIInFleetWithMaster()
 ```lavish
 ; Character state → use ${Me}
 if ${Me.InStation}
-if ${Me.InFleet}
+if ${Me.Fleet.ID(exists)}
 
 ; Ship defenses → use ${MyShip}
 if ${MyShip.ShieldPct} < 50
@@ -1614,7 +1620,7 @@ if ${MyShip.MaxShield} > 0
 ; State checks
 if ${Me.InSpace}
 if ${Me.InStation}
-if ${Me.InFleet}
+if ${Me.Fleet.ID(exists)}
 
 ; Ship status
 variable float shieldPct = ${MyShip.ShieldPct}
@@ -1787,7 +1793,7 @@ echo "Bounty: ${ent.Bounty}"
 ; Ship status (if entity is a ship)
 echo "Shield Pct: ${ent.ShieldPct}"
 echo "Armor Pct: ${ent.ArmorPct}"
-echo "Hull Pct: ${ent.StructPct}"
+echo "Hull Pct: ${ent.StructurePct}"
 ```
 
 **Astronomy**:
@@ -2475,13 +2481,13 @@ if ${Me.TargetCount} >= ${Me.MaxLockedTargets}
 
 **Check target range**:
 ```lavish
-echo "Max Target Range: ${Me.MaxTargetRange}m"
+echo "Max Target Range: ${MyShip.MaxTargetRange}m"
 
 variable entity target = ${Entity[${id}]}
 
-if ${target.Distance} > ${Me.MaxTargetRange}
+if ${target.Distance} > ${MyShip.MaxTargetRange}
 {
-    echo "Target out of range (${target.Distance}m > ${Me.MaxTargetRange}m)"
+    echo "Target out of range (${target.Distance}m > ${MyShip.MaxTargetRange}m)"
 }
 ```
 
@@ -2501,7 +2507,7 @@ if ${target.Distance} > ${Me.MaxTargetRange}
 function LockNearestNPC()
 {
     variable index:entity npcs
-    EVE:GetEntities[npcs, IsNPC = TRUE && Distance < ${Me.MaxTargetRange}]
+    EVE:GetEntities[npcs, IsNPC = TRUE && Distance < ${MyShip.MaxTargetRange}]
 
     if ${npcs.Used} == 0
     {
@@ -3373,7 +3379,7 @@ function StopShip()
 
 **Warp Speed**:
 ```lavish
-echo "Warp Speed: ${MyShip.WarpSpeed} AU/s"
+echo "Warp Speed Multiplier: ${MyShip.WarpSpeedMultiplier} AU/s"
 ```
 
 ### Warp to Entity
@@ -3908,7 +3914,7 @@ function JumpToNextSystem()
         return FALSE
     }
 
-    echo "Arrived in ${Me.SolarSystem.Name}"
+    echo "Arrived in ${Universe[${Me.SolarSystemID}].Name}"
     return TRUE
 }
 ```
@@ -3954,9 +3960,9 @@ function TravelToSystem(string destinationSystem)
 {
     echo "Traveling to ${destinationSystem}"
 
-    while !${Me.SolarSystem.Name.Equal["${destinationSystem}"]}
+    while !${Universe[${Me.SolarSystemID}].Name.Equal["${destinationSystem}"]}
     {
-        echo "Current system: ${Me.SolarSystem.Name}"
+        echo "Current system: ${Universe[${Me.SolarSystemID}].Name}"
 
         ; Find gate to next system
         ; (Requires route knowledge or external tool)
@@ -4079,7 +4085,7 @@ function IsGateCamped()
             continue
 
         ; Check if hostile (negative standing)
-        if ${Me.GetStanding[${ship.ID}]} < 0
+        if ${Me.StandingTo[${ship.ID}]} < 0
         {
             echo "ALERT: Hostile ${ship.Name} near gate!"
             return TRUE
@@ -8434,7 +8440,7 @@ Fleet (up to 256 members)
 ### Fleet in ISXEVE
 
 **Key TLOs**:
-- `${Me.InFleet}` - Am I in a fleet?
+- `${Me.Fleet.ID(exists)}` - Am I in a fleet?
 - `${Me.Fleet}` - Fleet object (if in fleet)
 - `${Me.Fleet.IsFleetCommander}` - Am I fleet commander?
 
@@ -8446,7 +8452,7 @@ Fleet (up to 256 members)
 
 ```lavish
 ; Am I in a fleet?
-if ${Me.InFleet}
+if ${Me.Fleet.ID(exists)}
 {
     echo "In fleet"
 }
@@ -8456,16 +8462,16 @@ else
 }
 
 ; Get fleet ID
-if ${Me.InFleet}
+if ${Me.Fleet.ID(exists)}
 {
-    echo "Fleet ID: ${Me.FleetID}"
+    echo "Fleet ID: ${Me.Fleet.ID}"
 }
 ```
 
 ### Fleet Size
 
 ```lavish
-if ${Me.InFleet}
+if ${Me.Fleet.ID(exists)}
 {
     echo "Fleet members: ${Me.Fleet.Size}"
 }
@@ -8484,7 +8490,7 @@ if ${Me.InFleet}
 ### Accessing Fleet Object
 
 ```lavish
-if !${Me.InFleet}
+if !${Me.Fleet.ID(exists)}
 {
     echo "ERROR: Not in fleet"
     return
@@ -8507,7 +8513,7 @@ echo "Fleet size: ${memberCount}"
 ```lavish
 function ListFleetMembers()
 {
-    if !${Me.InFleet}
+    if !${Me.Fleet.ID(exists)}
     {
         echo "Not in fleet"
         return
@@ -8733,7 +8739,7 @@ else
 **Get standing toward entity**:
 ```lavish
 variable int64 entityID = ${Entity[...].ID}
-variable float standing = ${Me.GetStanding[${entityID}]}
+variable float standing = ${Me.StandingTo[${entityID}]}
 
 echo "Standing: ${standing}"
 
@@ -8754,17 +8760,17 @@ if ${standing} > 0
 ```lavish
 function IsHostile(int64 entityID)
 {
-    return ${Math.Calc[${Me.GetStanding[${entityID}]} < 0]}
+    return ${Math.Calc[${Me.StandingTo[${entityID}]} < 0]}
 }
 
 function IsFriendly(int64 entityID)
 {
-    return ${Math.Calc[${Me.GetStanding[${entityID}]} > 0]}
+    return ${Math.Calc[${Me.StandingTo[${entityID}]} > 0]}
 }
 
 function IsNeutral(int64 entityID)
 {
-    variable float standing = ${Me.GetStanding[${entityID}]}
+    variable float standing = ${Me.StandingTo[${entityID}]}
     return ${Math.Calc[${standing} >= 0 && ${standing} <= 0]}
 }
 ```
@@ -8773,13 +8779,13 @@ function IsNeutral(int64 entityID)
 
 **Check corp/alliance membership**:
 ```lavish
-echo "My Corp: ${Me.Corp} (${Me.CorpID})"
+echo "My Corp: ${Me.Corp.Name} (${Me.Corp.ID})"
 echo "My Alliance: ${Me.Alliance} (${Me.AllianceID})"
 
 ; Check if entity is in same corp
 variable entity ship = ${Entity[...]}
 
-if ${ship.CorpID} == ${Me.CorpID}
+if ${ship.Corp.ID} == ${Me.Corp.ID}
 {
     echo "Same corp!"
 }
@@ -9253,7 +9259,7 @@ while TRUE
 ```lavish
 function CheckFleetOnGrid()
 {
-    if !${Me.InFleet}
+    if !${Me.Fleet.ID(exists)}
         return TRUE
 
     variable int membersOnGrid = 0
@@ -9515,7 +9521,7 @@ function atom atexit()
 
 ```lavish
 ; Am I in fleet?
-if ${Me.InFleet}
+if ${Me.Fleet.ID(exists)}
 
 ; Fleet size
 variable int members = ${Me.Fleet.Size}
