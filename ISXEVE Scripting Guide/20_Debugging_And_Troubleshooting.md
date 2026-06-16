@@ -788,13 +788,13 @@ if !${This:ValidateEntity[${targetID}]}
 ```lavishscript
 method ActivateModule(int64 moduleID)
 {
-    if !${Me.GetModule[${moduleID}](exists)}
+    if !${MyShip.Module[${moduleID}](exists)}
     {
         Logger:LogError["Module ${moduleID} not found"]
         return FALSE
     }
 
-    variable module M = ${Me.GetModule[${moduleID}]}
+    variable module M = ${MyShip.Module[${moduleID}]}
 
     ; Check if can activate
     if ${M.IsOnline} == FALSE
@@ -1099,7 +1099,7 @@ Use `ValidateEntity(entityID)` from [Entity Validation](#entity-validation) to c
 3. You warped away (left the grid)
 4. Grid changed (session change)
 
-**Solution:** Re-query for a new entity using `EVE:QueryEntities` or `EVE:GetEntities`.
+**Solution:** Re-query for a new entity using `EVE:QueryEntities`.
 
 #### Issue: Targeting Fails
 
@@ -1813,13 +1813,13 @@ method ValidateEntityDistance(int64 entityID, float maxDistance)
 ```lavishscript
 function DiagnoseModuleActivation(int64 moduleID)
 {
-    if !${Me.GetModule[${moduleID}](exists)}
+    if !${MyShip.Module[${moduleID}](exists)}
     {
         echo "FAIL: Module doesn't exist"
         return
     }
 
-    variable module M = ${Me.GetModule[${moduleID}]}
+    variable module M = ${MyShip.Module[${moduleID}]}
 
     echo "=== Module Diagnostic ==="
     echo "Name: ${M.ToItem.Name}"
@@ -2140,11 +2140,21 @@ function ApproachWithTimeout(int64 targetID, int range, int timeoutSeconds)
 ```lavishscript
 method SafeMoveTo(int64 itemID, string destination, int quantity)
 {
-    ; Locate the item by scanning the ship's cargo index.
+    ; Locate the item by scanning the ship cargo via the modern Inventory API
+    ; (legacy MyShip:GetCargo was removed July 2020).
     variable index:item cargo
     variable iterator ci
     variable int foundIdx = 0
-    MyShip:GetCargo[cargo]
+
+    if !${EVEWindow[Inventory](exists)}
+    {
+        EVE:Execute[OpenInventory]
+        wait 15 ${EVEWindow[Inventory](exists)}
+    }
+    EVEWindow[Inventory].ChildWindow[ShipCargo]:MakeActive
+    wait 10
+    EVEWindow[Inventory].ChildWindow[ShipCargo]:GetItems[cargo]
+
     cargo:GetIterator[ci]
     if ${ci:First(exists)}
     {
@@ -2171,7 +2181,7 @@ method SafeMoveTo(int64 itemID, string destination, int quantity)
     switch ${destination}
     {
         case MyHangar
-            variable float hangarFree = ${Math.Calc[${Me.Station.ItemHangar.Capacity} - ${Me.Station.ItemHangar.UsedCapacity}]}
+            variable float hangarFree = ${Math.Calc[${EVEWindow[Inventory].ChildWindow[StationItems].Capacity} - ${EVEWindow[Inventory].ChildWindow[StationItems].UsedCapacity}]}
 
             if ${TheItem.Volume} > ${hangarFree}
             {
@@ -2200,7 +2210,7 @@ method SafeMoveTo(int64 itemID, string destination, int quantity)
     ; Verify moved -- re-scan cargo for the ID; if the remaining quantity is
     ; below the requested move, consider it successful (partial stacks move OK).
     variable int remaining = 0
-    MyShip:GetCargo[cargo]
+    EVEWindow[Inventory].ChildWindow[ShipCargo]:GetItems[cargo]
     cargo:GetIterator[ci]
     if ${ci:First(exists)}
     {
@@ -2227,7 +2237,7 @@ method SafeMoveTo(int64 itemID, string destination, int quantity)
 
 ### Problem 12: Can't Access Station Hangar
 
-**Symptom:** `Me.Station.ItemHangar` returns NULL
+**Symptom:** `EVEWindow[Inventory].ChildWindow[StationItems]` is not available
 
 **Cause:** Not docked, or hangar not loaded yet
 
@@ -2244,8 +2254,12 @@ function WaitForHangar(int timeoutSeconds)
 
     variable float startTime = ${Time.Timestamp}
 
+    ; Open the inventory and wait for the station-hangar child to load
+    if !${EVEWindow[Inventory](exists)}
+        EVE:Execute[OpenInventory]
+
     ; Wait for hangar to load
-    while !${Me.Station.ItemHangar(exists)}
+    while !${EVEWindow[Inventory].ChildWindow[StationItems](exists)}
     {
         if ${Math.Calc[${Time.Timestamp} - ${startTime}]} > ${timeoutSeconds}
         {
@@ -3169,8 +3183,8 @@ function DetectEnvironment()
     variable int entityCount = ${Return}
 
     echo "=== Environment Detection ==="
-    echo "System: ${Me.SolarSystem.Name}"
-    echo "Security: ${Me.SolarSystem.Security}"
+    echo "System: ${Universe[${Me.SolarSystemID}].Name}"
+    echo "Security: ${Universe[${Me.SolarSystemID}].Security}"
     echo "Ship: ${MyShip.ToEntity.Name}"
     echo "Entities on Grid: ${entityCount}"
     echo "FPS: ${Display.FPS}"

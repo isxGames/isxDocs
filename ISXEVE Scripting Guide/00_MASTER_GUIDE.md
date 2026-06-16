@@ -43,14 +43,14 @@ Top-Level Objects are globally accessible entry points to game data.
 
 | TLO | Returns | Description | Documentation |
 |-----|---------|-------------|---------------|
-| **${Me}** | pilot | Your character/pilot | [03_API_Reference.md#me-object](03_API_Reference.md#me-object) |
+| **${Me}** | character | Your character (inherits pilot, being) | [03_API_Reference.md#me-object](03_API_Reference.md#me-object) |
 | **${MyShip}** | ship | Your current ship | [03_API_Reference.md#myship-object](03_API_Reference.md#myship-object) |
 | **${EVE}** | eve | Game universe/UI system | [03_API_Reference.md#eve-object](03_API_Reference.md#eve-object) |
-| **${Local}** | chatwindow | Local chat channel | [03_API_Reference.md#local-object](03_API_Reference.md#local-object) |
-| **${Station}** | station | Current station (if docked) | [03_API_Reference.md#station-object](03_API_Reference.md#station-object) |
+| **${Local[id]}** / **${Local[name]}** | pilot | A pilot in local chat (by CharID or name) | [03_API_Reference.md#local-object](03_API_Reference.md#local-object) |
+| **${Me.Station}** | station / structure | Current station (when docked) | [03_API_Reference.md#station-object](03_API_Reference.md#station-object) |
 | **${Entity[id]}** | entity | Entity by ID | [03_API_Reference.md#entity-datatypes](03_API_Reference.md#entity-datatypes) |
-| **${Config}** | isxeveconfig | ISXEVE configuration | [03_API_Reference.md#config-object](03_API_Reference.md#config-object) |
-| **${ISXEVE}** | extension | Extension info | [03_API_Reference.md#isxeve-object](03_API_Reference.md#isxeve-object) |
+| **${EVEWindow[name]}** | evewindow | A game window by name | [03_API_Reference.md#window-datatypes](03_API_Reference.md#window-datatypes) |
+| **${ISXEVE}** | isxeve | Extension status/info | [03_API_Reference.md#isxeve-object](03_API_Reference.md#isxeve-object) |
 
 **Key Pattern:**
 ```lavishscript
@@ -101,12 +101,11 @@ if ${Entity[${ID}](exists)}
 - `${MyShip.CapacitorPct}` - Capacitor percentage
 - `${MyShip.CargoCapacity}` - Cargo bay size
 - `${MyShip.UsedCargoCapacity}` - Cargo used
-- `${MyShip.Modules}` - Access modules
+- `MyShip:GetModules[index:module]` - Populate an index with all fitted modules
 
 **Common Methods:**
-- `MyShip:Dock[]` - Dock at station
-- `MyShip:Undock[]` - Undock from station
 - `MyShip:Open[]` - Open cargo hold
+- `EVE:Execute[CmdExitStation]` - Undock from station
 
 ---
 
@@ -176,23 +175,23 @@ if ${Entity[${ID}](exists)} && !${Entity[${ID}].IsLockedTarget}
 - `${Module.IsActive}` - Is active (bool)
 - `${Module.IsActivatable}` - Can activate (bool)
 - `${Module.IsReloadingAmmo}` - Is reloading (bool)
-- `${Module.ChargeQuantity}` - Ammo count
-- `${Module.ChargeTypeID}` - Ammo type ID
-- `${Module.ToEntity}` - Target entity (if targeted module)
+- `${Module.CurrentCharges}` - Ammo count
+- `${Module.Charge.TypeID}` - Ammo type ID
+- `${Module.Target}` - Target entity (if targeted module)
 
 **Module Methods:**
 - `Module:Activate[]` - Activate module
 - `Module:Deactivate[]` - Deactivate module
-- `Module:Online[]` - Online module
-- `Module:Offline[]` - Offline module
-- `Module:ChangeAmmo[typeID]` - Change ammo type
+- `Module:PutOnline[]` - Online module
+- `Module:PutOffline[]` - Offline module
+- `Module:ChangeAmmo[itemID]` - Change ammo type
 - `Module:Click[]` - Click module
 
 **Module Access Pattern:**
 ```lavishscript
 ; Get all modules
 variable index:module ModuleList
-EVE:QueryModules[ModuleList]
+MyShip:GetModules[ModuleList]
 
 ; Activate first weapon
 if ${MyShip.Module[1](exists)} && ${MyShip.Module[1].IsActivatable}
@@ -237,7 +236,7 @@ if ${Mod:First(exists)}
 - `${Item.GroupID}` - Group ID
 
 **Item Methods:**
-- `Item:MoveTo[locationID, quantity]` - Move item
+- `Item:MoveTo[toID, toDestination, quantity, folder]` - Move item (destination is a canonical slot/destination name)
 - `Item:Jettison[]` - Jettison to space
 
 **Cargo Pattern:**
@@ -248,7 +247,7 @@ wait 20
 
 ; Get cargo items
 variable index:item CargoItems
-EVE:QueryInventory[CargoItems]
+MyShip:GetCargo[CargoItems]
 
 ; Iterate cargo
 variable iterator Item
@@ -270,20 +269,21 @@ if ${Item:First(exists)}
 ### Navigation Methods
 
 **Ship Movement:**
-- `MyShip:Dock[]` - Dock at station
-- `MyShip:Undock[]` - Undock
+- `Entity[stationID]:Dock[]` - Dock at station/citadel
+- `EVE:Execute[CmdExitStation]` - Undock
 - `Entity:Approach[]` - Approach entity
 - `Entity:Orbit[distance]` - Orbit at distance
 - `Entity:KeepAtRange[distance]` - Keep at range
 - `EVE:Execute[CmdStopShip]` - Stop ship
 
 **Autopilot:**
-- `EVE:SetDestination[solarSystemID]` - Set destination
+- `Universe[${solarSystemID}]:SetDestination[]` - Set destination (also on `EVE.Station[id]` / `Bookmark[label]`)
+- `EVE:AddWaypoint[solarSystemID]` - Append a waypoint to the route
 - `EVE:Execute[CmdToggleAutopilot]` - Toggle autopilot
 
 **Warping:**
 - `Entity:WarpTo[distance]` - Warp to entity
-- `EVE:Execute[CmdWarpToLocation]` - Warp to location
+- `Bookmark[label]:WarpTo[distance]` - Warp to a bookmark location
 
 **Documentation:** [03_API_Reference.md#navigation](03_API_Reference.md#navigation)
 
@@ -299,10 +299,10 @@ if ${Item:First(exists)}
 | **chatwindow** | Chat window | [03_API_Reference.md#chatwindow-datatype](03_API_Reference.md#chatwindow-datatype) |
 
 **Common UI Operations:**
-- `EVE:Execute[CmdOpenCargoHold]` - Open cargo
+- `EVE:Execute[OpenCargoHoldOfActiveShip]` - Open cargo
 - `EVE:Execute[OpenInventory]` - Open inventory
-- `EVE:Execute[CmdOpenMarket]` - Open market
-- `EVE:CloseAllInventoryWindows[]` - Close all inventory windows
+- `EVE:Execute[OpenMarket]` - Open market
+- `EVEWindow[Inventory]:Close[]` - Close the inventory window
 
 **Documentation:** [03_API_Reference.md#ui-datatypes](03_API_Reference.md#ui-datatypes)
 
@@ -319,8 +319,8 @@ if ${Item:First(exists)}
 
 **Fleet Operations:**
 - `${Me.Fleet}` - Fleet object
-- `${Me.Fleet.Members}` - Get members
-- `${Me.Fleet.IsBoss}` - Is fleet boss
+- `Me.Fleet:GetMembers[index:fleetmember]` - Populate an index with all fleet members
+- `${Me.Fleet.IsFleetCommander}` - You are the fleet commander (bool)
 
 **Documentation:** [03_API_Reference.md#fleet-datatypes](03_API_Reference.md#fleet-datatypes)
 
@@ -344,10 +344,10 @@ Common `EVE:Execute[]` commands:
 |---------|-------------|
 | `CmdStopShip` | Stop ship |
 | `CmdToggleAutopilot` | Toggle autopilot |
-| `CmdOpenCargoHold` | Open cargo |
+| `OpenCargoHoldOfActiveShip` | Open cargo |
 | `OpenInventory` | Open inventory |
-| `CmdOpenMarket` | Open market |
-| `CmdDockOrJumpOrActivateGate` | Dock/jump/activate |
+| `OpenMarket` | Open market |
+| `CmdStargateJump` | Activate/jump stargate |
 
 **Documentation:** [01b_LavishScript_Reference.md#2-commands](01b_LavishScript_Reference.md#2-commands) (exhaustive command inventory) or [01_LavishScript_Fundamentals.md](01_LavishScript_Fundamentals.md) (tutorial-style introduction).
 
@@ -359,20 +359,20 @@ Common `EVE:Execute[]` commands:
 
 | Event | When Fired | Documentation |
 |-------|------------|---------------|
-| `OnFrame` | Every frame | [03_API_Reference.md#events](03_API_Reference.md#events) |
-| `OnActiveTargetChanged` | Active target changed | [03_API_Reference.md#events](03_API_Reference.md#events) |
-| `OnMyShipShieldsUpdate` | Shield HP changed | [03_API_Reference.md#events](03_API_Reference.md#events) |
-| `OnMyShipArmorUpdate` | Armor HP changed | [03_API_Reference.md#events](03_API_Reference.md#events) |
-| `OnMyShipCapacitorUpdate` | Capacitor changed | [03_API_Reference.md#events](03_API_Reference.md#events) |
+| `ISXEVE_onFrame` | Every ISXEVE pulse (canonical pulse event) | [03_API_Reference.md#events](03_API_Reference.md#events) |
+| `EVE_OnChannelMessage` | A chat-channel message is received | [03_API_Reference.md#events](03_API_Reference.md#events) |
+| `EVE_OnSurveyScanData` | Survey-scanner results are received | [03_API_Reference.md#events](03_API_Reference.md#events) |
+| `isxGames_onHTTPResponse` | An HTTP response is received (`GetURL`/`PostURL`) | [03_API_Reference.md#events](03_API_Reference.md#events) |
 
 **Event Usage:**
 ```lavishscript
-atom OnTargetChanged()
+atom OnISXEVEFrame()
 {
-    echo "Target changed"
+    if ${Me.ToEntity(exists)} && ${MyShip.ShieldPct} < 30
+        echo "Shield low: ${MyShip.ShieldPct.Int}%"
 }
 
-Event[OnActiveTargetChanged]:AttachAtom[OnTargetChanged]
+Event[ISXEVE_onFrame]:AttachAtom[OnISXEVEFrame]
 ```
 
 **Documentation:** [03_API_Reference.md#events](03_API_Reference.md#events)
@@ -394,9 +394,9 @@ Event[OnActiveTargetChanged]:AttachAtom[OnTargetChanged]
 | **Approach entity** | `Entity:Approach[]` | `Entity[${ID}]:Approach[]` |
 | **Orbit entity** | `Entity:Orbit[dist]` | `Entity[${ID}]:Orbit[5000]` |
 | **Open cargo** | `MyShip:Open[]` | `MyShip:Open[]` |
-| **Dock at station** | `MyShip:Dock[]` | `MyShip:Dock[]` |
+| **Dock at station** | `Entity:Dock[]` | `Entity[${StationID}]:Dock[]` |
 | **Stop ship** | `EVE:Execute[]` | `EVE:Execute[CmdStopShip]` |
-| **Set destination** | `EVE:SetDestination[]` | `EVE:SetDestination[${sysID}]` |
+| **Set destination** | `Universe[id]:SetDestination[]` | `Universe[${sysID}]:SetDestination[]` |
 
 ### Common Patterns
 

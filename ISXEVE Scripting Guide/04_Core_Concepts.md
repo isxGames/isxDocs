@@ -147,8 +147,8 @@ wait 10  ; Wait 1 second
 while ${Entity.Distance} > 2500
 {
     wait 10
-    ; Check if we're still approaching
-    if !${MyShip.ToEntity.IsApproaching}
+    ; Check if we're still approaching (Mode 2 = Approaching)
+    if ${Me.ToEntity.Mode} != 2
     {
         Entity:Approach[]
     }
@@ -704,7 +704,7 @@ variable float cargoFree
 ; Check cargo space before looting
 if ${EVEWindow[Inventory](exists)} && ${Entity[${WreckID}](exists)}
 {
-    cargoFree:Set[${EVEWindow[Inventory].Child[ShipCargo].FreeSpace}]
+    cargoFree:Set[${Math.Calc[${EVEWindow[Inventory].ChildWindow[ShipCargo].Capacity} - ${EVEWindow[Inventory].ChildWindow[ShipCargo].UsedCapacity}]}]
 
     if ${cargoFree} > 100
     {
@@ -857,7 +857,7 @@ function GetCargoFreeSpace()
 {
     if ${EVEWindow[Inventory](exists)}
     {
-        return ${EVEWindow[Inventory].Child[ShipCargo].FreeSpace}
+        return ${Math.Calc[${EVEWindow[Inventory].ChildWindow[ShipCargo].Capacity} - ${EVEWindow[Inventory].ChildWindow[ShipCargo].UsedCapacity}]}
     }
     return 0
 }
@@ -1016,11 +1016,11 @@ if ${NPCs.Used} == 0
 **Bot Tracking** (Optional):
 ```lavishscript
 ; Track wallet balance before/after
-variable int64 StartingBalance = ${Me.Wallet}
+variable int64 StartingBalance = ${Me.Wallet.Balance}
 
 ; Run anomaly...
 
-variable int64 EndingBalance = ${Me.Wallet}
+variable int64 EndingBalance = ${Me.Wallet.Balance}
 variable int64 Profit = ${Math.Calc[${EndingBalance} - ${StartingBalance}]}
 echo "Earned ${Profit} ISK in bounties"
 ```
@@ -2239,16 +2239,13 @@ variable string MyName = ${Me.ToEntity.Name}
 
 **Deep Chains**:
 ```lavishscript
-; Get active target's owner's alliance name
-${Me.ActiveTarget.ToEntity.Owner.Alliance.Name}
+; Get active target's alliance name
+${Me.ActiveTarget.Alliance}
 
 ; Breakdown:
 ; Me                       -> character object
-; .ActiveTarget            -> activetarget object (locked target reference)
-; .ToEntity                -> entity object
-; .Owner                   -> owner object
-; .Alliance                -> alliance object
-; .Name                    -> string
+; .ActiveTarget            -> entity object (your locked active target)
+; .Alliance                -> string (alliance name; entity also exposes .Owner, .Corp directly)
 ```
 
 ### Type System
@@ -2289,13 +2286,13 @@ if ${MyShip.Type.Equal["ship"]}
 ```lavishscript
 ${Me.Name}              ; Character name (string)
 ${Me.CharID}            ; Character ID (int64)
-${Me.CorporationID}     ; Corp ID (int)
+${Me.Corp.ID}           ; Corp ID (int64)
 ${Me.AllianceID}        ; Alliance ID (int)
 ${Me.InSpace}           ; In space? (bool)
 ${Me.InStation}         ; In station? (bool)
 ${Me.SolarSystemID}     ; Current system ID (int)
 ${Me.ToEntity}          ; Character as entity (entity)
-${Me.Wallet}            ; ISK balance (int64)
+${Me.Wallet.Balance}    ; ISK balance (double)
 ```
 
 **Methods**:
@@ -2339,20 +2336,19 @@ ${MyShip.MaxLockedTargets}      ; Max lockable targets (int)
 **Cargo Access** (⚠️ Modern API - use EVEWindow[Inventory]):
 ```lavishscript
 ; MODERN (July 2020+): Use inventory windows
-${EVEWindow[Inventory].Child[ShipCargo].FreeSpace}   ; Free cargo space
-${EVEWindow[Inventory].Child[ShipCargo].Capacity}    ; Total cargo capacity
-${EVEWindow[Inventory].Child[ShipCargo].UsedSpace}   ; Used cargo space
+${EVEWindow[Inventory].ChildWindow[ShipCargo].Capacity}      ; Total cargo capacity
+${EVEWindow[Inventory].ChildWindow[ShipCargo].UsedCapacity}  ; Used cargo space
+; Free space = Capacity - UsedCapacity (there is no FreeSpace member)
 
-; DEPRECATED (legacy reference only):
-; ${MyShip.CargoFreeSpace}, ${MyShip.CargoCapacity} removed July 2020
+; ${MyShip.CargoCapacity} / ${MyShip.UsedCargoCapacity} also work once the cargo
+; has been opened at least once this session; the inventory-window form above is preferred
 ; See File 13 for modern inventory API patterns
 ```
 
 **Module Access**:
 ```lavishscript
-${MyShip.Module[ID]}            ; Module by ID
-${MyShip.Module[Index]}         ; Module by slot index
-${MyShip.Module[TypeID,Group]}  ; Module by type and group
+${MyShip.Module[HiSlot0]}       ; Module by slot name (HiSlot#/MedSlot#/LoSlot#/RigSlot#)
+${MyShip.Module[123456789]}     ; Module by int64 module item ID
 ```
 
 **Methods**:
@@ -2370,8 +2366,7 @@ MyShip:LaunchAllDrones[]        ; Launch all drones
 
 **Critical Members**:
 ```lavishscript
-${EVE.Bookmark[ID]}             ; Bookmark by ID
-${EVE.Bookmark[Name]}           ; Bookmark by name
+${EVE.Bookmark[Label]}          ; Bookmark by label (label string only; no ID lookup)
 ${EVE.Station[ID]}              ; Station by ID
 ```
 
@@ -2656,24 +2651,23 @@ ${Entity.IsTargetingMe}     ; Is it targeting me? (bool)
 ${Entity.IsNPC}             ; Is this an NPC? (bool)
 ${Entity.IsPC}              ; Is this a player? (bool)
 ${Entity.IsMoribund}        ; Is it exploding/dead? (bool)
-${Entity.IsWarpingAway}     ; Is it warping away? (bool)
+${Entity.IsCloaked}         ; Is it cloaked? (bool)
 ```
 
 **Ownership**:
 ```lavishscript
-${Entity.Owner}             ; Owner object
-${Entity.OwnerID}           ; Owner ID (int)
-${Entity.Owner.Name}        ; Owner name (string)
-${Entity.Owner.CorpID}      ; Owner corp ID (int)
-${Entity.Owner.AllianceID}  ; Owner alliance ID (int)
+${Entity.Owner}             ; Owner name (string)
+${Entity.OwnerID}           ; Owner ID (int64)
+${Entity.CharID}            ; Pilot CharID, for player ships (int64)
+${Entity.Corp}              ; Owner corp name (string)
+${Entity.AllianceID}        ; Owner alliance ID (int)
 ```
 
 **Combat**:
 ```lavishscript
-${Entity.Shield}            ; Current shield (float)
 ${Entity.ShieldPct}         ; Shield % (float)
-${Entity.Armor}             ; Current armor (float)
 ${Entity.ArmorPct}          ; Armor % (float)
+${Entity.StructurePct}      ; Structure % (float)
 ```
 
 ### Entity Methods (Critical Actions)

@@ -105,7 +105,7 @@ function main()
 
     ; Character info
     echo "Name: ${Me.Name}"
-    echo "Corporation: ${Me.Corp}"
+    echo "Corporation: ${Me.Corp.Name}"
 
     ; Check if in alliance
     if ${Me.Alliance(exists)}
@@ -118,7 +118,7 @@ function main()
     }
 
     ; Wallet
-    echo "Wallet: ${Me.Wallet} ISK"
+    echo "Wallet: ${Me.Wallet.Balance} ISK"
 
     ; Location
     if ${Me.InSpace}
@@ -306,7 +306,7 @@ function main()
     }
 
     ; Get target as entity
-    variable entity Target = ${Me.ActiveTarget.ToEntity}
+    variable entity Target = ${Me.ActiveTarget}
 
     echo "====================================="
     echo "TARGET INFORMATION"
@@ -368,7 +368,7 @@ function main()
     }
 
     ; Get target entity
-    variable entity Target = ${Me.ActiveTarget.ToEntity}
+    variable entity Target = ${Me.ActiveTarget}
 
     echo "Locking target: ${Target.Name}"
 
@@ -696,8 +696,8 @@ variable int Samples = 0
 while ${Samples:Inc} <= 10 && ${Me.ActiveTarget(exists)}
 {
     wait 10
-    variable float CurrentDistance = ${Me.ActiveTarget.ToEntity.Distance}
-    echo "Velocity: ${Me.ActiveTarget.ToEntity.Velocity} / ${Me.ActiveTarget.ToEntity.MaxVelocity} m/s"
+    variable float CurrentDistance = ${Me.ActiveTarget.Distance}
+    echo "Velocity: ${Me.ActiveTarget.Velocity} / ${Me.ActiveTarget.MaxVelocity} m/s"
     if ${CurrentDistance} > ${LastDistance}
         echo "WARNING: target is receding (${LastDistance.Int}m -> ${CurrentDistance.Int}m)"
     LastDistance:Set[${CurrentDistance}]

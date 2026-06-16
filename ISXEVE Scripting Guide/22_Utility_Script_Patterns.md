@@ -208,7 +208,7 @@ function CheckISKThreshold()
 {
 	if ${Me.Wallet.Balance} >= ${ISKThreshold}
 	{
-		echo "ALERT: Wallet has reached ${Me.Wallet.Comma} ISK!"
+		echo "ALERT: Wallet has reached ${Me.Wallet.Balance.Comma} ISK!"
 		call AudioAlert
 	}
 }
@@ -636,7 +636,7 @@ function ValidateISKAmount(string Input)
 
 	if ${Amount} > ${Me.Wallet.Balance}
 	{
-		echo "ERROR: Insufficient ISK (${Amount.Comma} requested, ${Me.Wallet.Comma} available)"
+		echo "ERROR: Insufficient ISK (${Amount.Comma} requested, ${Me.Wallet.Balance.Comma} available)"
 		return FALSE
 	}
 

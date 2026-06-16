@@ -3,7 +3,7 @@
 **Purpose:** Main loop patterns, decision making, error handling, and performance optimization for EVE bots
 **Audience:** Developers building production-quality automation
 
-> **Note on Code Examples**: This file contains illustrative examples that may use `MyShip.CargoCapacity` / `MyShip.UsedCargoCapacity` directly. These members are current and documented, but carry an important caveat: the cargo hold must have been opened at least once in the session before these values reflect server-side state accurately (the same "IsCargoAccessible" prerequisite that applies to entity cargo members). Examples also reference `MyShip.CargoFreeSpace`, which is not present in the official changelog and should be treated as unsupported. For production code that needs reliable cargo totals regardless of window state, prefer the `EVEWindow[Inventory].ChildWindow[ShipCargo]` pattern — it triggers the cargo-open side effect implicitly and exposes `UsedSpace` / `Capacity` without the prerequisite. The complete working example at the end uses the modern window pattern where it matters.
+> **Note on Code Examples**: This file contains illustrative examples that may use `MyShip.CargoCapacity` / `MyShip.UsedCargoCapacity` directly. These members are current and documented, but carry an important caveat: the cargo hold must have been opened at least once in the session before these values reflect server-side state accurately (the same "IsCargoAccessible" prerequisite that applies to entity cargo members). Examples also reference `MyShip.CargoFreeSpace`, which is not present in the official changelog and should be treated as unsupported. For production code that needs reliable cargo totals regardless of window state, prefer the `EVEWindow[Inventory].ChildWindow[ShipCargo]` pattern — it triggers the cargo-open side effect implicitly and exposes `UsedCapacity` / `Capacity` without the prerequisite. The complete working example at the end uses the modern window pattern where it matters.
 
 ---
 
@@ -396,7 +396,7 @@ objectdef obj_MiningBehavior
     method State_Idle()
     {
         ; Check if we should start mining
-        if ${MyShip.CargoFreeSpace} > 1000 && ${Me.InSpace}
+        if ${Math.Calc[${MyShip.CargoCapacity} - ${MyShip.UsedCargoCapacity}]} > 1000 && ${Me.InSpace}
         {
             echo "Transitioning to MINING"
             This.CurrentState:Set["MINING"]
@@ -410,7 +410,7 @@ objectdef obj_MiningBehavior
         call ActivateMiners
 
         ; Check if cargo full
-        if ${MyShip.CargoFreeSpace} < 100
+        if ${Math.Calc[${MyShip.CargoCapacity} - ${MyShip.UsedCargoCapacity}]} < 100
         {
             echo "Cargo full, transitioning to HAULING"
             This.CurrentState:Set["HAULING"]
@@ -784,7 +784,7 @@ objectdef obj_Miner
         }
 
         ; Check if we can mine
-        if ${MyShip.CargoFreeSpace} > 1000 && ${Me.InSpace}
+        if ${Math.Calc[${MyShip.CargoCapacity} - ${MyShip.UsedCargoCapacity}]} > 1000 && ${Me.InSpace}
         {
             echo "Transitioning IDLE -> MINING"
             This.CurrentState:Set["MINING"]
@@ -814,7 +814,7 @@ objectdef obj_Miner
         call This.ActivateMiners
 
         ; Check if cargo full
-        if ${MyShip.CargoFreeSpace} < 100
+        if ${Math.Calc[${MyShip.CargoCapacity} - ${MyShip.UsedCargoCapacity}]} < 100
         {
             echo "Cargo full, transitioning MINING -> HAULING"
             EVE:Execute[CmdStopAllModules]
@@ -900,7 +900,7 @@ method ProcessState()
     }
 
     ; 2. ERROR CONDITIONS
-    if ${MyShip.CargoFreeSpace} < 0  ; Should never happen!
+    if ${Math.Calc[${MyShip.CargoCapacity} - ${MyShip.UsedCargoCapacity}]} < 0  ; Should never happen!
     {
         This.CurrentState:Set["ERROR"]
         return
@@ -927,7 +927,7 @@ method ProcessState()
 
 ```lavish
 ; BAD: No hysteresis
-if ${MyShip.CargoFreeSpace} < 100
+if ${Math.Calc[${MyShip.CargoCapacity} - ${MyShip.UsedCargoCapacity}]} < 100
 {
     This.CurrentState:Set["HAULING"]
 }
@@ -938,7 +938,7 @@ if ${MyShip.CargoFreeSpace} < 100
 
 method State_Mining()
 {
-    if ${MyShip.CargoFreeSpace} < 100  ; 90% full
+    if ${Math.Calc[${MyShip.CargoCapacity} - ${MyShip.UsedCargoCapacity}]} < 100  ; 90% full
     {
         This.CurrentState:Set["HAULING"]
     }
@@ -946,7 +946,7 @@ method State_Mining()
 
 method State_Hauling()
 {
-    if ${MyShip.CargoFreeSpace} >= ${MyShip.CargoCapacity}  ; 100% empty
+    if ${Math.Calc[${MyShip.CargoCapacity} - ${MyShip.UsedCargoCapacity}]} >= ${MyShip.CargoCapacity}  ; 100% empty
     {
         This.CurrentState:Set["IDLE"]
     }
@@ -970,7 +970,7 @@ method State_Mining()
     }
 
     ; Don't allow transition until minimum duration
-    if ${MyShip.CargoFreeSpace} < 100
+    if ${Math.Calc[${MyShip.CargoCapacity} - ${MyShip.UsedCargoCapacity}]} < 100
     {
         if ${Math.Calc[${LavishScript.RunningTime} - ${This.MiningStartTime}]} >= ${MIN_MINING_DURATION}
         {
@@ -996,7 +996,7 @@ method State_Idle()
 {
     ; Require ALL of these to start mining:
     if ${Me.InSpace} && \
-       ${MyShip.CargoFreeSpace} > 1000 && \
+       ${Math.Calc[${MyShip.CargoCapacity} - ${MyShip.UsedCargoCapacity}]} > 1000 && \
        !${CheckForHostiles} && \
        ${GetNearbyAsteroidCount} > 0 && \
        ${MyShip.ShieldPct} > 75
@@ -1242,7 +1242,7 @@ function LoadHostileList()
     if ${Pilot:First(exists)}
         do
         {
-            variable float standing = ${Me.GetStanding[${Pilot.Value.CharID}]}
+            variable float standing = ${Me.StandingTo[${Pilot.Value.CharID}]}
             if ${standing} < 0
             {
                 HostilePilots:Insert["${Pilot.Value.Name}"]
@@ -1281,7 +1281,7 @@ function CheckForHostilesOnGrid()
         {
             if ${Entity.Value.IsPC}
             {
-                variable float standing = ${Me.GetStanding[${Entity.Value.CharID}]}
+                variable float standing = ${Me.StandingTo[${Entity.Value.CharID}]}
                 if ${standing} < 0
                 {
                     echo "HOSTILE ON GRID: ${Entity.Value.Name}"
@@ -1518,9 +1518,9 @@ if ${cargoFree} < 100
 }
 
 ; BEST: Use built-in member
-if ${MyShip.CargoFreeSpace} < 100
+if ${Math.Calc[${MyShip.CargoCapacity} - ${MyShip.UsedCargoCapacity}]} < 100
 {
-    echo "Cargo free: ${MyShip.CargoFreeSpace}"
+    echo "Cargo free: ${Math.Calc[${MyShip.CargoCapacity} - ${MyShip.UsedCargoCapacity}]}"
 }
 ```
 
@@ -1574,43 +1574,45 @@ function main()
 
 ```lavish
 ; BAD: Rapid state changes
-if ${MyShip.CargoFreeSpace} < 100
+if ${Math.Calc[${MyShip.CargoCapacity} - ${MyShip.UsedCargoCapacity}]} < 100
     CurrentState:Set["HAULING"]
 
-if ${MyShip.CargoFreeSpace} > 90
+if ${Math.Calc[${MyShip.CargoCapacity} - ${MyShip.UsedCargoCapacity}]} > 90
     CurrentState:Set["MINING"]
 
 ; Result: MINING -> HAULING -> MINING -> HAULING (oscillates at ~95m³)
 
 ; GOOD: Wide hysteresis
-if ${MyShip.CargoFreeSpace} < 50
+if ${Math.Calc[${MyShip.CargoCapacity} - ${MyShip.UsedCargoCapacity}]} < 50
     CurrentState:Set["HAULING"]
 
-if ${MyShip.CargoFreeSpace} >= ${MyShip.CargoCapacity}
+if ${Math.Calc[${MyShip.CargoCapacity} - ${MyShip.UsedCargoCapacity}]} >= ${MyShip.CargoCapacity}
     CurrentState:Set["MINING"]
 ```
 
 ### Mistake 4: Not Snapshotting Collections
 
 ```lavish
-; BAD: Collection size changes during iteration
+; BAD: re-reading Fleet.Size every iteration; if a member leaves mid-loop the
+; count shrinks and the loop can skip members or break early
 variable int i
-for (i:Set[1]; ${i} <= ${Me.Fleet.MemberCount}; i:Inc)
+for (i:Set[1]; ${i} <= ${Me.Fleet.Size}; i:Inc)
 {
-    ; If member leaves, MemberCount decreases, loop breaks early!
-    echo "${Me.Fleet.Member[${i}].Name}"
+    ; Fleet.Member[] takes a CharID, not a 1-based index -- this is also wrong
+    echo "member ${i}"
 }
 
-; GOOD: Snapshot size first
-variable int memberCount = ${Me.Fleet.MemberCount}
-variable int i
-for (i:Set[1]; ${i} <= ${memberCount}; i:Inc)
-{
-    if ${Me.Fleet.Member[${i}](exists)}
+; GOOD: snapshot the membership into an index once, then iterate the snapshot
+variable index:fleetmember Members
+Me.Fleet:GetMembers[Members]
+variable iterator Member
+Members:GetIterator[Member]
+if ${Member:First(exists)}
+    do
     {
-        echo "${Me.Fleet.Member[${i}].Name}"
+        echo "${Member.Value.Name}"
     }
-}
+    while ${Member:Next(exists)}
 ```
 
 ### Mistake 5: Forgetting to Detach Events
@@ -1911,14 +1913,14 @@ function State_Idle()
     }
 
     ; If in space with cargo space, start mining
-    if ${Me.InSpace} && ${MyShip.CargoFreeSpace} > 1000
+    if ${Me.InSpace} && ${Math.Calc[${MyShip.CargoCapacity} - ${MyShip.UsedCargoCapacity}]} > 1000
     {
         CurrentState:Set["MINING"]
         return
     }
 
     ; If cargo full, haul
-    if ${MyShip.CargoFreeSpace} < 100
+    if ${Math.Calc[${MyShip.CargoCapacity} - ${MyShip.UsedCargoCapacity}]} < 100
     {
         CurrentState:Set["HAULING"]
         return
@@ -1980,7 +1982,7 @@ function State_Mining()
     echo "State: MINING (Cargo: ${MyShip.UsedCargoCapacity}/${MyShip.CargoCapacity})"
 
     ; Check if cargo full
-    if ${MyShip.CargoFreeSpace} < 50
+    if ${Math.Calc[${MyShip.CargoCapacity} - ${MyShip.UsedCargoCapacity}]} < 50
     {
         echo "Cargo full, hauling"
         EVE:Execute[CmdStopAllModules]
@@ -2697,7 +2699,7 @@ function GetNextAction()
     }
 
     ; LAYER 2: CRITICAL OPERATIONS
-    if ${MyShip.CargoFreeSpace} < 50
+    if ${Math.Calc[${MyShip.CargoCapacity} - ${MyShip.UsedCargoCapacity}]} < 50
     {
         echo "ACTION: Haul (cargo full)"
         return "HAUL"
@@ -2789,7 +2791,7 @@ function BotPulse()
         call AddTask "Dock" 900 "DOCK"
     }
 
-    if ${MyShip.CargoFreeSpace} < 50
+    if ${Math.Calc[${MyShip.CargoCapacity} - ${MyShip.UsedCargoCapacity}]} < 50
     {
         call AddTask "Haul" 500 "HAUL"
     }
@@ -2913,7 +2915,7 @@ function ProcessCombat()
         return
     }
 
-    if ${Me.InWarp}
+    if ${Me.ToEntity.Mode} == 3
     {
         echo "In warp, waiting"
         return
@@ -2940,7 +2942,7 @@ if ${Me.InSpace}
 {
     if ${ISXEVE.IsReady}
     {
-        if !${Me.InWarp}
+        if ${Me.ToEntity.Mode} != 3
         {
             if ${MyShip.ShieldPct} > 50
             {
@@ -2953,14 +2955,14 @@ if ${Me.InSpace}
 ; GOOD: Compound condition with AND operator
 if ${Me.InSpace} && \
    ${ISXEVE.IsReady} && \
-   !${Me.InWarp} && \
+   ${Me.ToEntity.Mode} != 3 && \
    ${MyShip.ShieldPct} > 50
 {
     call ProcessCombat
 }
 
 ; GOOD: Stored in boolean variable
-variable bool CanEngage = ${Me.InSpace} && ${ISXEVE.IsReady} && !${Me.InWarp} && ${MyShip.ShieldPct} > 50
+variable bool CanEngage = ${Me.InSpace} && ${ISXEVE.IsReady} && ${Me.ToEntity.Mode} != 3 && ${MyShip.ShieldPct} > 50
 
 if ${CanEngage}
 {
@@ -2988,7 +2990,7 @@ function IsSafeToOperate()
     if ${MyShip.ShieldPct} < 30
         return FALSE
 
-    if ${Me.InWarp}
+    if ${Me.ToEntity.Mode} == 3
         return FALSE
 
     return TRUE
@@ -3002,7 +3004,7 @@ function CanMine()
     if !${Me.InSpace}
         return FALSE
 
-    if ${MyShip.CargoFreeSpace} < 100
+    if ${Math.Calc[${MyShip.CargoCapacity} - ${MyShip.UsedCargoCapacity}]} < 100
         return FALSE
 
     if ${GetNearbyAsteroidCount} == 0
@@ -3110,7 +3112,7 @@ function MiningBotDecisionTree()
     }
 
     ; Level 3: Cargo status
-    if ${MyShip.CargoFreeSpace} < 50
+    if ${Math.Calc[${MyShip.CargoCapacity} - ${MyShip.UsedCargoCapacity}]} < 50
     {
         echo "Decision: HAUL (cargo full)"
         return "HAUL"
@@ -3465,7 +3467,7 @@ function ProcessMining()
     }
 
     ; Cargo check
-    if ${MyShip.CargoFreeSpace} < 100
+    if ${Math.Calc[${MyShip.CargoCapacity} - ${MyShip.UsedCargoCapacity}]} < 100
     {
         call ReturnToStation
         return
@@ -3483,7 +3485,9 @@ function ProcessMining()
     }
 
     ; Get current locked asteroid
-    variable int64 currentAsteroid = ${Me.GetTargets.Get[1].ID}
+    variable index:entity LockedTargets
+    Me:GetTargets[LockedTargets]
+    variable int64 currentAsteroid = ${LockedTargets.Get[1].ID}
 
     ; Check if depleted
     if !${Entity[${currentAsteroid}](exists)} || ${Entity[${currentAsteroid}].Distance} > 20000
@@ -3725,7 +3729,12 @@ function GetTarget()
 
     ; Try: Already locked target
     if ${Me.TargetCount} > 0
-        return ${Me.GetTargets.Get[1].ID}
+    {
+        variable index:entity LockedTargets
+        Me:GetTargets[LockedTargets]
+        if ${LockedTargets.Used} > 0
+            return ${LockedTargets.Get[1].ID}
+    }
 
     ; Try: Closest NPC
     target:Set[${GetClosestNPC}]
@@ -3760,7 +3769,7 @@ function ShouldReturnToStation()
     }
 
     ; Cargo full
-    if ${MyShip.CargoFreeSpace} < 50
+    if ${Math.Calc[${MyShip.CargoCapacity} - ${MyShip.UsedCargoCapacity}]} < 50
     {
         return TRUE
     }
@@ -4684,7 +4693,7 @@ function CheckCondition(string conditionName)
         case "InStation"
             return ${Me.InStation}
         case "NotInWarp"
-            return !${Me.InWarp}
+            return ${Me.ToEntity.Mode} != 3
         case "TargetLocked"
             return ${Me.TargetCount} > 0
         case "CargoOpen"
@@ -4794,7 +4803,7 @@ function ProcessCombat()
 
 function TryUseDrones()
 {
-    if ${MyShip.DroneCapacity} <= 0
+    if ${MyShip.DronebayCapacity} <= 0
     {
         return FALSE  ; Ship has no drone bay
     }
@@ -4804,7 +4813,7 @@ function TryUseDrones()
     Me:GetActiveDrones[MyDrones]
 
     ; Try to launch drones if bay has drones but none are deployed
-    if ${MyShip.UsedDroneBayCapacity} > 0 && ${MyDrones.Used} == 0
+    if ${MyShip.UsedDronebayCapacity} > 0 && ${MyDrones.Used} == 0
     {
         MyShip:LaunchAllDrones
 
@@ -4982,7 +4991,7 @@ function EmergencyDock()
     wait 5
 
     ; Recall drones if any
-    if ${MyShip.UsedDroneBayCapacity} > 0
+    if ${MyShip.UsedDronebayCapacity} > 0
     {
         EVE:Execute[CmdDronesReturnAndOrbit]
         wait 30  ; Wait for drones
@@ -5006,12 +5015,12 @@ function EmergencyDock()
 
         ; Wait for warp to complete
         variable int warpStart = ${LavishScript.RunningTime}
-        while ${Me.InWarp} && ${Math.Calc[${LavishScript.RunningTime} - ${warpStart}]} < 60000
+        while ${Me.ToEntity.Mode} == 3 && ${Math.Calc[${LavishScript.RunningTime} - ${warpStart}]} < 60000
         {
             wait 10
         }
 
-        if ${Me.InWarp}
+        if ${Me.ToEntity.Mode} == 3
         {
             call Log "ERROR" "Warp timeout, safe logoff"
             call EmergencySafeLogoff
@@ -5085,7 +5094,7 @@ function EmergencyWarp()
     ; Wait for warp
     wait 50
 
-    if ${Me.InWarp}
+    if ${Me.ToEntity.Mode} == 3
     {
         call Log "INFO" "EMERGENCY WARP SUCCESSFUL"
         return TRUE
@@ -5273,7 +5282,7 @@ function OpenCargoWithRetry(int maxAttempts)
 
 ### Error 4: Stuck in Warp
 
-**Symptoms**: Me.InWarp stays true indefinitely
+**Symptoms**: the warp state (`Me.ToEntity.Mode` == 3) stays true indefinitely
 
 **Solution**:
 
@@ -5290,13 +5299,13 @@ function WarpToWithTimeout(int64 entityID, int timeout)
     ; Wait for warp to complete
     variable int startTime = ${LavishScript.RunningTime}
 
-    while ${Me.InWarp} && ${Math.Calc[${LavishScript.RunningTime} - ${startTime}]} < ${timeout}
+    while ${Me.ToEntity.Mode} == 3 && ${Math.Calc[${LavishScript.RunningTime} - ${startTime}]} < ${timeout}
     {
         wait 10
     }
 
     ; Check if stuck
-    if ${Me.InWarp}
+    if ${Me.ToEntity.Mode} == 3
     {
         call Log "ERROR" "Stuck in warp after ${timeout}ms"
 
@@ -5304,7 +5313,7 @@ function WarpToWithTimeout(int64 entityID, int timeout)
         EVE:Execute[CmdStopShip]
         wait 50
 
-        if ${Me.InWarp}
+        if ${Me.ToEntity.Mode} == 3
         {
             call Log "ERROR" "Still stuck in warp, emergency reset"
             call ResetBotState
@@ -6925,7 +6934,7 @@ function BotPulse()
     echo "Target 1 distance: ${GetDistanceToTarget[123456]}"  ; Cached!
 
     ; Invalidate cache when position changes
-    if ${Me.InWarp}
+    if ${Me.ToEntity.Mode} == 3
     {
         call InvalidateDistanceCache
     }

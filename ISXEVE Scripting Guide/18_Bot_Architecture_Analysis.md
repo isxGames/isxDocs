@@ -1841,7 +1841,9 @@ objectdef obj_DroneControl inherits obj_StateQueue
         }
 
         ; Launch / redirect drones as needed
-        if !${Me.GetActiveDrones.Count}
+        variable index:activedrone activeDrones
+        Me:GetActiveDrones[activeDrones]
+        if !${activeDrones.Used}
             call This.LaunchDrones
         call This.SendDronesToTarget ${target}
 

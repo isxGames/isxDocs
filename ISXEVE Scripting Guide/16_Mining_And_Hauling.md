@@ -158,28 +158,33 @@ function IsMiningModule(item module)
 function GetOptimalMiningRange()
 {
     ; Check ship modules for mining range
-    variable int i
+    variable index:module Modules
+    variable iterator Mod
     variable float maxRange = 0
 
-    for (i:Set[1]; ${i} <= ${MyShip.ModuleCount}; i:Inc)
+    MyShip:GetModules[Modules]
+    Modules:GetIterator[Mod]
+    if ${Mod:First(exists)}
     {
-        variable module module = ${MyShip.Module[${i}]}
-
-        if ${IsMiningModule[module]}
+        do
         {
-            ; Get module optimal range (simplified - real check would use module.OptimalRange)
-            variable float moduleRange = 15000  ; Default mining laser range
-
-            if ${module.ToItem.Name.Find["Strip"]}
+            if ${IsMiningModule[${Mod.Value}]}
             {
-                moduleRange:Set[20000]  ; Strip miners longer range
-            }
+                ; Get module optimal range (simplified - real check would use Mod.Value.OptimalRange)
+                variable float moduleRange = 15000  ; Default mining laser range
 
-            if ${moduleRange} > ${maxRange}
-            {
-                maxRange:Set[${moduleRange}]
+                if ${Mod.Value.ToItem.Name.Find["Strip"]}
+                {
+                    moduleRange:Set[20000]  ; Strip miners longer range
+                }
+
+                if ${moduleRange} > ${maxRange}
+                {
+                    maxRange:Set[${moduleRange}]
+                }
             }
         }
+        while ${Mod:Next(exists)}
     }
 
     return ${maxRange}
@@ -305,7 +310,7 @@ function WarpToOreAnomaly()
 {
     ; Scan for system anomalies (requires probes/scanner data populated by the client)
     variable index:systemanomaly Anomalies
-    EVE:GetAnomalies[Anomalies]
+    MyShip.Scanners.System:GetAnomalies[Anomalies]
 
     variable iterator Site
     Anomalies:GetIterator[Site]
@@ -526,20 +531,26 @@ function GetGroupedAsteroid()
 
 function ActivateSurveyScanner()
 {
-    variable int i
-    for (i:Set[1]; ${i} <= ${MyShip.ModuleCount}; i:Inc)
-    {
-        variable module module = ${MyShip.Module[${i}]}
+    variable index:module Modules
+    variable iterator Mod
 
-        if ${module.ToItem.Group.Equal["Survey Scanner"]}
+    MyShip:GetModules[Modules]
+    Modules:GetIterator[Mod]
+    if ${Mod:First(exists)}
+    {
+        do
         {
-            if !${module.IsActive} && ${module.IsOnline}
+            if ${Mod.Value.ToItem.Group.Equal["Survey Scanner"]}
             {
-                echo "Activating survey scanner"
-                module:Activate
-                return TRUE
+                if !${Mod.Value.IsActive} && ${Mod.Value.IsOnline}
+                {
+                    echo "Activating survey scanner"
+                    Mod.Value:Activate
+                    return TRUE
+                }
             }
         }
+        while ${Mod:Next(exists)}
     }
 
     return FALSE
@@ -663,23 +674,28 @@ function ActivateMinersOnTarget(int64 asteroidID)
     }
 
     ; Activate all mining lasers
-    variable int i
+    variable index:module Modules
+    variable iterator Mod
     variable int activated = 0
 
-    for (i:Set[1]; ${i} <= ${MyShip.ModuleCount}; i:Inc)
+    MyShip:GetModules[Modules]
+    Modules:GetIterator[Mod]
+    if ${Mod:First(exists)}
     {
-        variable module module = ${MyShip.Module[${i}]}
-
-        if ${IsMiningModule[module]}
+        do
         {
-            if !${module.IsActive} && ${module.IsOnline}
+            if ${IsMiningModule[${Mod.Value}]}
             {
-                echo "Activating ${module.ToItem.Name} on ${Entity[${asteroidID}].Name}"
-                module:Activate[${asteroidID}]
-                activated:Inc
-                wait 5  ; Small delay between activations
+                if !${Mod.Value.IsActive} && ${Mod.Value.IsOnline}
+                {
+                    echo "Activating ${Mod.Value.ToItem.Name} on ${Entity[${asteroidID}].Name}"
+                    Mod.Value:Activate[${asteroidID}]
+                    activated:Inc
+                    wait 5  ; Small delay between activations
+                }
             }
         }
+        while ${Mod:Next(exists)}
     }
 
     echo "Activated ${activated} mining modules"
@@ -1028,15 +1044,22 @@ function MineIce()
 
         ; Check if have ice harvesters
         variable bool haveIceHarvesters = FALSE
-        variable int i
+        variable index:module Modules
+        variable iterator Mod
 
-        for (i:Set[1]; ${i} <= ${MyShip.ModuleCount}; i:Inc)
+        MyShip:GetModules[Modules]
+        Modules:GetIterator[Mod]
+        if ${Mod:First(exists)}
         {
-            if ${MyShip.Module[${i}].ToItem.Group.Equal["Ice Harvester"]}
+            do
             {
-                haveIceHarvesters:Set[TRUE]
-                break
+                if ${Mod.Value.ToItem.Group.Equal["Ice Harvester"]}
+                {
+                    haveIceHarvesters:Set[TRUE]
+                    break
+                }
             }
+            while ${Mod:Next(exists)}
         }
 
         if !${haveIceHarvesters}
@@ -1058,20 +1081,26 @@ function MineIce()
     }
 
     ; Activate ice harvesters
-    variable int i
-    for (i:Set[1]; ${i} <= ${MyShip.ModuleCount}; i:Inc)
-    {
-        variable module module = ${MyShip.Module[${i}]}
+    variable index:module Modules
+    variable iterator Mod
 
-        if ${module.ToItem.Group.Equal["Ice Harvester"]}
+    MyShip:GetModules[Modules]
+    Modules:GetIterator[Mod]
+    if ${Mod:First(exists)}
+    {
+        do
         {
-            if !${module.IsActive} && ${module.IsOnline}
+            if ${Mod.Value.ToItem.Group.Equal["Ice Harvester"]}
             {
-                echo "Activating ${module.ToItem.Name}"
-                module:Activate[${iceID}]
-                wait 5
+                if !${Mod.Value.IsActive} && ${Mod.Value.IsOnline}
+                {
+                    echo "Activating ${Mod.Value.ToItem.Name}"
+                    Mod.Value:Activate[${iceID}]
+                    wait 5
+                }
             }
         }
+        while ${Mod:Next(exists)}
     }
 
     return TRUE
@@ -1284,9 +1313,9 @@ function AdvancedMiningPulse()
 ### Problem 1: Miners Won't Activate
 
 ```lavishscript
-function DiagnoseMinerFailure(int moduleIndex, int64 asteroidID)
+function DiagnoseMinerFailure(int64 moduleID, int64 asteroidID)
 {
-    variable module module = ${MyShip.Module[${moduleIndex}]}
+    variable module module = ${MyShip.Module[${moduleID}]}
 
     ; Module offline
     if !${module.IsOnline}
@@ -1404,7 +1433,7 @@ Hauling is the process of transporting cargo from one location to another. This 
 #define GROUP_JUMP_FREIGHTER 902
 
 ; Check ship type
-if ${MyShip.GroupID} == GROUP_BLOCKADE_RUNNER
+if ${MyShip.ToItem.GroupID} == GROUP_BLOCKADE_RUNNER
 {
     echo "Using stealth hauling mode"
 }
@@ -1524,7 +1553,7 @@ function TravelToSystem(int64 solarSystemID)
         EVE:GetToDestinationPath[pathToDestination]
     }
 
-    echo "Arrived at ${Me.SolarSystem.Name}"
+    echo "Arrived at ${Universe[${Me.SolarSystemID}].Name}"
     return TRUE
 }
 ```
@@ -3007,7 +3036,7 @@ function CheckGankRisk()
     gankSystems:Set["Niarja", TRUE]
     gankSystems:Set["Sivala", TRUE]
 
-    if ${gankSystems.Element["${Me.SolarSystem.Name}"](exists)}
+    if ${gankSystems.Element["${Universe[${Me.SolarSystemID}].Name}"](exists)}
     {
         echo "WARNING: You are in a known gank system!"
 
@@ -3551,7 +3580,7 @@ if ${WP:First(exists)}
 ```lavishscript
 ; NOTE: Ship.ModuleList_Tractor and Ship.OptimalTractorRange are EVEBot wrapper
 ; members (obj_Ship.iss), NOT vanilla ISXEVE. For pure ISXEVE, iterate
-; ${MyShip.Module[${i}]} and check GroupID for tractor modules directly.
+; MyShip:GetModules[index:module] and check each module's ToItem.Group for tractor modules directly.
 echo "Has tractor: ${Ship.ModuleList_Tractor.Used}"
 echo "Tractor range: ${Ship.OptimalTractorRange}"
 echo "Target locked: ${Entity[${TargetID}].IsLockedTarget}"
@@ -3611,7 +3640,7 @@ while ${Me.InStation} && ${timeout} < 300
 function DiagnosticReport()
 {
     echo "==== HAULER DIAGNOSTIC REPORT ===="
-    echo "Location: ${Me.SolarSystem.Name} (${Me.SolarSystem.Security.Precision[2]})"
+    echo "Location: ${Universe[${Me.SolarSystemID}].Name} (${Universe[${Me.SolarSystemID}].Security.Precision[2]})"
     echo "In Station: ${Me.InStation}"
     if ${Me.InStation}
     {
@@ -3625,7 +3654,7 @@ function DiagnosticReport()
     echo "State: ${This.CurrentState}"
     echo "Navigator busy: ${Navigator.Busy}"
 
-    echo "Fleet members: ${Me.Fleet.MemberCount}"
+    echo "Fleet members: ${Me.Fleet.Size}"
     echo "Local count: ${Local.Count}"
     echo "Hostiles: ${Social.PossibleHostiles}"
 

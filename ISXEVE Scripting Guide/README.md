@@ -192,16 +192,16 @@ TLOs are your entry points into the game's data. The most important ones are:
 - `${Me}` - Your character (wallet, skills, standing, etc.)
 - `${MyShip}` - Your current ship (health, capacitor, modules, cargo)
 - `${EVE}` - Game state and utilities
-- `${Local}` - Local chat channel
-- `${Station}` - Current station (if docked)
+- `${Local[id]}` / `${Local[name]}` - A pilot in local chat (by CharID or name)
+- `${Me.Station}` - Current station/structure (when docked)
 - `${Entity[...]}` - Access any entity by ID or query
 
 ### Datatypes
 
 ISXEVE uses a strongly-typed system where each object has a specific datatype:
 
-- `${Me}` returns a **pilot** datatype
-- `${MyShip.Cargo[0]}` returns a **item** datatype
+- `${Me}` returns a **character** datatype (which inherits **pilot** and **being**)
+- `${MyShip.Cargo[1]}` returns a **item** datatype
 - `${MyShip.Module[1]}` returns a **module** datatype
 
 Each datatype has **members** (properties) and **methods** (actions).
@@ -243,9 +243,9 @@ This guide was created by analyzing:
 Always check if an object exists before accessing its members:
 
 ```lavishscript
-if ${Target(exists)}
+if ${Me.ActiveTarget(exists)}
 {
-    echo ${Target.Name}
+    echo ${Me.ActiveTarget.Name}
 }
 ```
 
@@ -254,9 +254,9 @@ if ${Target(exists)}
 Many ISXEVE members can return NULL. Always validate:
 
 ```lavishscript
-if ${MyShip.Modules.Get[1](exists)}
+if ${MyShip.Module[HiSlot0](exists)}
 {
-    MyShip.Modules.Get[1]:Activate
+    MyShip.Module[HiSlot0]:Activate
 }
 ```
 
@@ -265,7 +265,7 @@ if ${MyShip.Modules.Get[1](exists)}
 LavishScript is case-insensitive for member and method names:
 
 - `${Me.Name}` = `${Me.name}` = `${Me.NAME}`
-- `MyShip:Dock` = `MyShip:dock` = `MyShip:DOCK`
+- `MyShip:Open` = `MyShip:open` = `MyShip:OPEN`
 
 ---
 

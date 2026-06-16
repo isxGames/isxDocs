@@ -245,7 +245,7 @@ objectdef obj_SimpleCombat
         }
 
         ; Recall drones
-        if ${MyShip.UsedDroneBayCapacity} > 0
+        if ${MyShip.UsedDronebayCapacity} > 0
         {
             EVE:Execute[DroneReturnAndOrbit]
         }
@@ -923,7 +923,7 @@ function MoveAwayFromTarget(int64 targetID)
     if ${Celestial:First(exists)}
         do
         {
-            variable float dist = ${Entity[${targetID}].DistanceTo[${Celestial.Value.ID}]}
+            variable float dist = ${EVE.DistanceBetween[${targetID}, ${Celestial.Value.ID}]}
 
             if ${dist} > ${maxDistance}
             {
@@ -1119,7 +1119,7 @@ function ActivateArmorRepairers()
 function ManageDrones()
 {
     ; No drone bay
-    if ${MyShip.DroneBayCapacity} == 0
+    if ${MyShip.DronebayCapacity} == 0
         return
 
     variable index:activedrone MyDrones
@@ -2063,14 +2063,14 @@ function DiagnoseWeaponFailure(string moduleSlot, int64 targetID)
 function DiagnoseDroneProblem()
 {
     ; No drone bay
-    if ${MyShip.DroneBayCapacity} == 0
+    if ${MyShip.DronebayCapacity} == 0
     {
         echo "ERROR: No drone bay"
         return
     }
 
     ; No drones
-    if ${MyShip.UsedDroneBayCapacity} == 0
+    if ${MyShip.UsedDronebayCapacity} == 0
     {
         echo "ERROR: No drones in bay"
         return

@@ -1167,8 +1167,8 @@ The exact XML block above is quoted verbatim from EVEBot's production UI file `S
 |-----|---------|----------|
 | `EVE:GetBookmarks[index:bookmark]` | All bookmarks | Destination/location selectors |
 | `EVE:GetLocalPilots[index:pilot]` | Local pilots | Fleet member selection |
-| `Me:GetStations[index:station]` | Known stations | Station selectors |
-| `Me:GetJournalEntries[index:journalentry]` | Journal entries | Entry browsers |
+| `Me:GetStationsWithAssets[index:int64]` | Station IDs holding your assets | Station selectors |
+| `EVE:GetAgents[index:eveagent]` | Known agents | Agent/entry browsers |
 
 Each API follows the same pattern: populate an index, iterate with an iterator, add items via `AddItem[displayText, ID]`.
 

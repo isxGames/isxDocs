@@ -397,7 +397,7 @@ method ReportPosition()
     }
     elseif ${Me.InSpace}
     {
-        locationDesc:Set["Space: ${Me.SolarSystem.Name}"]
+        locationDesc:Set["Space: ${Universe[${Me.SolarSystemID}].Name}"]
 
         // Add specific location if near bookmark
         variable index:bookmark nearbyBookmarks
@@ -2313,11 +2313,11 @@ method RelayMySkills(string Destination="all")
 {
     relay "${Destination}" -noredirect \
         "UplinkManager:UpdatePeerSkills[${Session}, \
-            ${If[${Me.Skill[Leadership](exists)}, ${Me.Skill[Leadership].Level}, 0]}, \
-            ${If[${Me.Skill["Wing Command"](exists)}, ${Me.Skill["Wing Command"].Level}, 0]}, \
-            ${If[${Me.Skill["Fleet Command"](exists)}, ${Me.Skill["Fleet Command"].Level}, 0]}, \
-            ${If[${Me.Skill["Mining Foreman"](exists)}, ${Me.Skill["Mining Foreman"].Level}, 0]}, \
-            ${If[${Me.Skill["Armored Warfare"](exists)}, ${Me.Skill["Armored Warfare"].Level}, 0]}]"
+            ${If[${Me.Skill[Leadership](exists)}, ${Me.Skill[Leadership].TrainedLevel}, 0]}, \
+            ${If[${Me.Skill["Wing Command"](exists)}, ${Me.Skill["Wing Command"].TrainedLevel}, 0]}, \
+            ${If[${Me.Skill["Fleet Command"](exists)}, ${Me.Skill["Fleet Command"].TrainedLevel}, 0]}, \
+            ${If[${Me.Skill["Mining Foreman"](exists)}, ${Me.Skill["Mining Foreman"].TrainedLevel}, 0]}, \
+            ${If[${Me.Skill["Armored Warfare"](exists)}, ${Me.Skill["Armored Warfare"].TrainedLevel}, 0]}]"
 }
 
 ; Receive and store peer skills
@@ -3394,7 +3394,7 @@ atom OnFleetCommand(string command, string params)
 atom OnRemoteBookmark(string bookmarkName)
 {
     ; DANGER - arbitrary bookmark warp!
-    EVE.ExecuteCommand["/warp ${bookmarkName}"]
+    EVE:DoCommand["/warp ${bookmarkName}"]
 
     ; SAFER - validate bookmark exists and is safe
     if ${EVE.Bookmark[${bookmarkName}](exists)}
@@ -3780,7 +3780,7 @@ objectdef obj_MiningFleet
 
     method Initialize()
     {
-        This.IsOrca:Set[${MyShip.Group.Equal["Industrial Command Ship"]}]
+        This.IsOrca:Set[${MyShip.ToItem.Group.Equal["Industrial Command Ship"]}]
         This.OrcaName:Set["${Config.Mining.OrcaName}"]
 
         ; Register events

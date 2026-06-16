@@ -491,7 +491,7 @@ method ReportPosition()
     }
     elseif ${Me.InSpace}
     {
-        locationDesc:Set["Space: ${Me.SolarSystem.Name}"]
+        locationDesc:Set["Space: ${Universe[${Me.SolarSystemID}].Name}"]
 
         // Add specific location if near bookmark
         variable index:bookmark nearbyBookmarks
@@ -1848,7 +1848,7 @@ if !${Uplink.IsConnected}
 **Diagnosis**:
 ```lavishscript
 echo "In fleet: ${Me.Fleet.IsMember[${Me.CharID}]}"
-echo "Fleet members: ${Me.Fleet.MemberCount}"
+echo "Fleet members: ${Me.Fleet.Size}"
 ```
 
 **Solution**:
@@ -1884,7 +1884,7 @@ function FleetStatusReport()
 
     if ${Me.Fleet.IsMember[${Me.CharID}]}
     {
-        echo "Fleet members: ${Me.Fleet.MemberCount}"
+        echo "Fleet members: ${Me.Fleet.Size}"
 
         variable queue:fleetmember members
         Me.Fleet:GetMembers[members]
@@ -2353,11 +2353,11 @@ method RelayMySkills(string Destination="all")
 {
     relay "${Destination}" -noredirect \
         "UplinkManager:UpdatePeerSkills[${Session}, \
-            ${If[${Me.Skill[Leadership](exists)}, ${Me.Skill[Leadership].Level}, 0]}, \
-            ${If[${Me.Skill[Wing Command](exists)}, ${Me.Skill[Wing Command].Level}, 0]}, \
-            ${If[${Me.Skill[Fleet Command](exists)}, ${Me.Skill[Fleet Command].Level}, 0]}, \
-            ${If[${Me.Skill[Mining Foreman](exists)}, ${Me.Skill[Mining Foreman].Level}, 0]}, \
-            ${If[${Me.Skill[Armored Warfare](exists)}, ${Me.Skill[Armored Warfare].Level}, 0]}]"
+            ${If[${Me.Skill[Leadership](exists)}, ${Me.Skill[Leadership].TrainedLevel}, 0]}, \
+            ${If[${Me.Skill[Wing Command](exists)}, ${Me.Skill[Wing Command].TrainedLevel}, 0]}, \
+            ${If[${Me.Skill[Fleet Command](exists)}, ${Me.Skill[Fleet Command].TrainedLevel}, 0]}, \
+            ${If[${Me.Skill[Mining Foreman](exists)}, ${Me.Skill[Mining Foreman].TrainedLevel}, 0]}, \
+            ${If[${Me.Skill[Armored Warfare](exists)}, ${Me.Skill[Armored Warfare].TrainedLevel}, 0]}]"
 }
 
 ; Receive and store peer skills
@@ -3833,7 +3833,7 @@ objectdef obj_MiningFleet
     method Initialize()
     {
         ; GroupID 941 = Industrial Command Ship (Orca) per EVE SDE
-        This.IsOrca:Set[${MyShip.GroupID} == 941]
+        This.IsOrca:Set[${MyShip.ToEntity.GroupID} == 941]
         This.OrcaName:Set["${Config.Mining.OrcaName}"]
 
         ; Register events

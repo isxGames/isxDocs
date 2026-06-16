@@ -679,7 +679,7 @@ function IsCargoFull()
     }
 
     ; Check ship cargo
-    variable eveinvchildwindow Cargo = EVEWindow[Inventory].Child[ShipCargo]
+    variable eveinvchildwindow Cargo = EVEWindow[Inventory].ChildWindow[ShipCargo]
 
     if ${Cargo(exists)} && ${Cargo.Capacity} > 0
     {
@@ -710,7 +710,7 @@ function IsOreHoldFull()
     }
 
     ; Check ore hold
-    variable eveinvchildwindow OreHold = EVEWindow[Inventory].Child[ShipOreHold]
+    variable eveinvchildwindow OreHold = EVEWindow[Inventory].ChildWindow[ShipOreHold]
 
     if ${OreHold(exists)} && ${OreHold.Capacity} > 0
     {
@@ -736,7 +736,7 @@ function HasCargoSpace(float RequiredSpace)
 
     if ${EVEWindow[Inventory](exists)}
     {
-        variable eveinvchildwindow Cargo = EVEWindow[Inventory].Child[ShipCargo]
+        variable eveinvchildwindow Cargo = EVEWindow[Inventory].ChildWindow[ShipCargo]
         if ${Cargo(exists)}
         {
             variable float FreeSpace = ${Math.Calc[${Cargo.Capacity} - ${Cargo.UsedCapacity}]}
@@ -818,7 +818,7 @@ public class MiningModule
     private bool IsOreHoldFull()
     {
         // DEPRECATED: UsedOreHoldCapacity / OreHoldCapacity
-        // Modern approach: Access EVEWindow[Inventory].Child[ShipOreHold].UsedCapacity
+        // Modern approach: Access EVEWindow[Inventory].ChildWindow[ShipOreHold].UsedCapacity
 
         // Simplified example (deprecated API):
         var percentUsed = (_ship.UsedOreHoldCapacity / _ship.OreHoldCapacity) * 100;
@@ -845,7 +845,7 @@ function SalvageWreck(int64 WreckID)
     }
 
     ; Check if empty
-    if ${Entity[${WreckID}].IsEmpty}
+    if ${Entity[${WreckID}].IsWreckEmpty}
     {
         echo "Wreck is empty"
         return FALSE
@@ -994,7 +994,7 @@ function GetCargoItems()
     variable index:item CargoItems
     if ${EVEWindow[Inventory](exists)}
     {
-        EVEWindow[Inventory].Child[ShipCargo]:GetItems[CargoItems]
+        EVEWindow[Inventory].ChildWindow[ShipCargo]:GetItems[CargoItems]
 
         ; Iterate using iterator
         variable iterator Item
@@ -1030,7 +1030,7 @@ function StackAllCargo()
     ; Stack cargo via inventory child window
     if ${EVEWindow[Inventory](exists)}
     {
-        EVEWindow[Inventory].Child[ShipCargo]:StackAll
+        EVEWindow[Inventory].ChildWindow[ShipCargo]:StackAll
         echo "Stacking all cargo items"
         wait 20
         return TRUE
@@ -1055,7 +1055,7 @@ function GetCargoPercentUsed()
 
     if ${EVEWindow[Inventory](exists)}
     {
-        variable eveinvchildwindow Cargo = EVEWindow[Inventory].Child[ShipCargo]
+        variable eveinvchildwindow Cargo = EVEWindow[Inventory].ChildWindow[ShipCargo]
         if ${Cargo(exists)} && ${Cargo.Capacity} > 0
         {
             variable float PercentUsed = ${Math.Calc[${Cargo.UsedCapacity} / ${Cargo.Capacity} * 100]}
@@ -1082,7 +1082,7 @@ function GetCargoPercentUsed()
 ; }
 
 ; MODERN REPLACEMENT:
-; Use EVEWindow[Inventory].Child[ShipCargo] as shown above
+; Use EVEWindow[Inventory].ChildWindow[ShipCargo] as shown above
 ```
 
 ---
