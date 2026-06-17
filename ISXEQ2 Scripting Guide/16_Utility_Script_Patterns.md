@@ -17,7 +17,7 @@
 7. [Dynamic File Loading](#dynamic-file-loading)
 8. [Prioritized Item Lists](#prioritized-item-lists)
 9. [Event-Based Text Parsing](#event-based-text-parsing)
-10. [EQ2DataSourceContainer Usage](#eq2datasourcecontainer-usage)
+10. [GetGameData Usage](#getgamedata-usage)
 11. [Randomized Movement](#randomized-movement)
 12. [Item Usage Verification](#item-usage-verification)
 13. [ApplyVerb for Object Interaction](#applyverb-for-object-interaction)
@@ -622,7 +622,7 @@ function UseNextAvailableItem()
 		if ${Me.Inventory[${UIElement[PriorityListBox@Settings].OrderedItem[${ItemPriority}]}](exists)}
 		{
 			echo Using: ${UIElement[PriorityListBox@Settings].OrderedItem[${ItemPriority}]}
-			Me.Inventory[exactitem,${UIElement[PriorityListBox@Settings].OrderedItem[${ItemPriority}]}]:Use
+			Me.Inventory[exactname,${UIElement[PriorityListBox@Settings].OrderedItem[${ItemPriority}]}]:Use
 		}
 		else
 		{
@@ -681,7 +681,7 @@ function UseNextPotion()
 			echo Found priority ${PotionPriority} potion: ${CurrentPotion}
 			echo Using potion...
 
-			Me.Inventory[exactitem,${CurrentPotion}]:Use
+			Me.Inventory[exactname,${CurrentPotion}]:Use
 			wait 10
 
 			; Verify it was used
@@ -724,7 +724,7 @@ function TryUseItem()
 	if ${Me.Inventory[${ItemName}](exists)} && ${Me.Inventory[${ItemName}].IsReady}
 	{
 		echo Attempting to use: ${ItemName}
-		Me.Inventory[exactitem,${ItemName}]:Use
+		Me.Inventory[exactname,${ItemName}]:Use
 		wait 5
 
 		; Check if successful
@@ -840,7 +840,7 @@ function TryUsePotion()
 	if ${Me.Inventory[Potion of Adventure](exists)}
 	{
 		echo Attempting to use potion...
-		Me.Inventory[exactitem,Potion of Adventure]:Use
+		Me.Inventory[exactname,Potion of Adventure]:Use
 
 		; Set timer for next attempt
 		PotionTimer:Set[${PotionCooldown}]
@@ -909,16 +909,16 @@ function main()
 
 ---
 
-## EQ2DataSourceContainer Usage
+## GetGameData Usage
 
-Access dynamic game data that isn't available through standard TLOs, especially useful for getting currently casting spell information.
+Access dynamic game data that isn't available through standard members, especially useful for getting currently casting spell information. Use the `character` datatype's `GetGameData` member, which returns an `eq2dynamicdata` object (`.Label`, `.Tooltip`, `.Percent`, `.IsSet`).
 
 ### Pattern
 
 ```lavishscript
 ; Get currently casting spell name
 variable string CastingSpellName
-CastingSpellName:Set[${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel}]
+CastingSpellName:Set[${Me.GetGameData[Spells.Casting].Label}]
 
 ; Get buff duration immediately after casting
 variable float BuffDuration
@@ -940,14 +940,14 @@ function UseXPPotion()
 		echo Using XP potion...
 
 		; Use the potion
-		Me.Inventory[exactitem,Distillate of Alacrity XIII]:Use
+		Me.Inventory[exactname,Distillate of Alacrity XIII]:Use
 		wait 10
 
 		; Check if casting started
 		if ${Me.CastingSpell}
 		{
 			; Get the spell name from what's being cast
-			PotionSpellName:Set[${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel}]
+			PotionSpellName:Set[${Me.GetGameData[Spells.Casting].Label}]
 			echo Casting: ${PotionSpellName}
 
 			; Wait for cast to complete
@@ -995,7 +995,7 @@ function CastAndTrackBuff(string BuffName)
 	if ${Me.CastingSpell}
 	{
 		; Get exact spell name being cast (may differ from ability name)
-		LastBuffCast:Set[${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel}]
+		LastBuffCast:Set[${Me.GetGameData[Spells.Casting].Label}]
 		echo Actually casting: ${LastBuffCast}
 
 		; Wait for cast to complete
@@ -1178,7 +1178,7 @@ function UseItemWithVerification(string ItemName)
 
 		; Use the item
 		ItemToUse:Set[${ItemName}]
-		Me.Inventory[exactitem,${ItemToUse}]:Use
+		Me.Inventory[exactname,${ItemToUse}]:Use
 		wait 10
 
 		; Verify casting started
@@ -1211,7 +1211,7 @@ function UseVitalityPotion()
 {
 	wait !${Me.InCombat} && !${Me.CastingSpell}
 
-	if ${Me.Inventory[Orb of Concentrated Memories](exists)} && ${Me.Inventory[Orb of Concentrated Memories].IsReady} && ${Me.Vitality} == 0
+	if ${Me.Inventory[Orb of Concentrated Memories](exists)} && ${Me.Inventory[Orb of Concentrated Memories].IsReady} && ${Me.GetGameData[Self.Vitality].Percent} == 0
 	{
 		echo Orb of Concentrated Memories detected
 
@@ -1219,11 +1219,11 @@ function UseVitalityPotion()
 		ExpectedEffect:Set[Orb of Concentrated Memories]
 
 		; Use the orb
-		Me.Inventory[exactitem,${ItemToUse}]:Use
+		Me.Inventory[exactname,${ItemToUse}]:Use
 		wait 10
 
 		; Verify it's casting and check for expected effect name
-		if ${Me.CastingSpell} && ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel.Find[${ExpectedEffect}](exists)}
+		if ${Me.CastingSpell} && ${Me.GetGameData[Spells.Casting].Label.Find[${ExpectedEffect}](exists)}
 		{
 			echo Successfully used: ${ItemToUse}
 			return TRUE
@@ -1234,7 +1234,7 @@ function UseVitalityPotion()
 			return FALSE
 		}
 	}
-	elseif ${Me.Inventory[Potion of Vitality](exists)} && ${Me.Vitality} == 0
+	elseif ${Me.Inventory[Potion of Vitality](exists)} && ${Me.GetGameData[Self.Vitality].Percent} == 0
 	{
 		echo Potion of Vitality detected
 
@@ -1242,11 +1242,11 @@ function UseVitalityPotion()
 		ExpectedEffect:Set[Rested Mind and Body]
 
 		; Use the potion
-		Me.Inventory[exactitem,${ItemToUse}]:Use
+		Me.Inventory[exactname,${ItemToUse}]:Use
 		wait 10
 
 		; Verify casting and check for "Rested Mind and Body" effect
-		if ${Me.CastingSpell} && ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel.Find[${ExpectedEffect}](exists)}
+		if ${Me.CastingSpell} && ${Me.GetGameData[Spells.Casting].Label.Find[${ExpectedEffect}](exists)}
 		{
 			echo Successfully used: ${ItemToUse}
 			return TRUE
@@ -1288,7 +1288,7 @@ function UseItemSafely(string ItemName, string ExpectedBuff)
 
 	; Use item
 	echo Using ${ItemName}...
-	Me.Inventory[exactitem,${ItemName}]:Use
+	Me.Inventory[exactname,${ItemName}]:Use
 	wait 10
 
 	; Verify cast started
@@ -1320,7 +1320,7 @@ function UseItemSafely(string ItemName, string ExpectedBuff)
 
 - **Reliability**: Know if item actually worked
 - **Error detection**: Catch failures immediately
-- **Exact matching**: `exactitem` prevents partial matches
+- **Exact matching**: `exactname` prevents partial matches
 - **Ready check**: Verify item is off cooldown
 
 **Source**: bjxpbot.iss:560-572,627
@@ -2025,13 +2025,13 @@ variable float TotalXP
 function InitializeTracking()
 {
 	StartLevel:Set[${Me.Level}]
-	StartXP:Set[${Me.Exp}]
+	StartXP:Set[${Me.GetGameData[Self.ExperienceCurrent].Percent}]
 }
 
 function CalculateGainedXP()
 {
 	CurrentLevel:Set[${Me.Level}]
-	CurrentXP:Set[${Me.Exp}]
+	CurrentXP:Set[${Me.GetGameData[Self.ExperienceCurrent].Percent}]
 
 	if ${StartLevel} < ${CurrentLevel}
 	{
@@ -2085,15 +2085,15 @@ function main()
 function InitializeTracking()
 {
 	StartLevel:Set[${Me.Level}]
-	StartXP:Set[${Me.Exp}]
+	StartXP:Set[${Me.GetGameData[Self.ExperienceCurrent].Percent}]
 	CurrentLevel:Set[${Me.Level}]
-	CurrentXP:Set[${Me.Exp}]
+	CurrentXP:Set[${Me.GetGameData[Self.ExperienceCurrent].Percent}]
 }
 
 function UpdateXPCalculations()
 {
 	CurrentLevel:Set[${Me.Level}]
-	CurrentXP:Set[${Me.Exp}]
+	CurrentXP:Set[${Me.GetGameData[Self.ExperienceCurrent].Percent}]
 
 	; Calculate hours running
 	TimeRunningHours:Set[${Math.Calc[(((${Script.RunningTime}/1000)/60/60))].Milli}]
@@ -2151,10 +2151,8 @@ function DisplayProgress()
 
 ```lavishscript
 variable int StartAA
-variable float StartAAXP
 variable int CurrentAA
-variable float CurrentAAXP
-variable float TotalAAXPGained
+variable int TotalAAGained
 
 variable int StartTS
 variable float StartTSXP
@@ -2166,45 +2164,33 @@ function InitializeAllTracking()
 {
 	; Adventure XP
 	StartLevel:Set[${Me.Level}]
-	StartXP:Set[${Me.Exp}]
+	StartXP:Set[${Me.GetGameData[Self.ExperienceCurrent].Percent}]
 
-	; AA XP
+	; AA points (no in-level AA% is exposed by the API, so track point count only)
 	StartAA:Set[${Me.TotalEarnedAPs}]
-	StartAAXP:Set[${Me.APExp}]
 
 	; Tradeskill XP
 	StartTS:Set[${Me.TSLevel}]
-	StartTSXP:Set[${Me.TSExp}]
+	StartTSXP:Set[${Me.GetGameData[Self.TradeskillExperienceCurrent].Percent}]
 
 	echo Tracking initialized:
 	echo   ADV: Level ${StartLevel} (${StartXP}%)
-	echo   AA: ${StartAA} points (${StartAAXP}%)
+	echo   AA: ${StartAA} points
 	echo   TS: Level ${StartTS} (${StartTSXP}%)
 }
 
 function UpdateAATracking()
 {
 	CurrentAA:Set[${Me.TotalEarnedAPs}]
-	CurrentAAXP:Set[${Me.APExp}]
 
-	if ${StartAA} < ${CurrentAA}
-	{
-		; Gained AA points
-		variable int GainedAA
-		GainedAA:Set[${Math.Calc[${CurrentAA}-${StartAA}]}]
-		TotalAAXPGained:Set[${Math.Calc[(${GainedAA}*100)-100+${CurrentAAXP}+(100-${StartAAXP})]}]
-	}
-	else
-	{
-		; Same AA level
-		TotalAAXPGained:Set[${Math.Calc[${CurrentAAXP}-${StartAAXP}]}]
-	}
+	; AA progress is tracked by earned-point delta (no in-level AA% member exists)
+	TotalAAGained:Set[${Math.Calc[${CurrentAA}-${StartAA}]}]
 }
 
 function UpdateTSTracking()
 {
 	CurrentTS:Set[${Me.TSLevel}]
-	CurrentTSXP:Set[${Me.TSExp}]
+	CurrentTSXP:Set[${Me.GetGameData[Self.TradeskillExperienceCurrent].Percent}]
 
 	if ${StartTS} < ${CurrentTS}
 	{
@@ -2698,14 +2684,14 @@ function UseNextPotion()
 			echo Using priority ${PotionPriority}: ${CurrentPotion}
 
 			; Use the potion
-			Me.Inventory[exactitem,${CurrentPotion}]:Use
+			Me.Inventory[exactname,${CurrentPotion}]:Use
 			wait 10
 
 			; Verify casting started
 			if ${Me.CastingSpell}
 			{
 				; Get spell name being cast
-				PotionSpellName:Set[${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel}]
+				PotionSpellName:Set[${Me.GetGameData[Spells.Casting].Label}]
 				echo Casting: ${PotionSpellName}
 
 				; Wait for cast
@@ -2919,19 +2905,17 @@ function atexit()
 variable int StartADVLevel
 variable float StartADVXP
 variable int StartAA
-variable float StartAAXP
 variable int StartTS
 variable float StartTSXP
 
 variable int CurrentADVLevel
 variable float CurrentADVXP
 variable int CurrentAA
-variable float CurrentAAXP
 variable int CurrentTS
 variable float CurrentTSXP
 
 variable float TotalADVXP
-variable float TotalAAXP
+variable int TotalAAGained
 variable float TotalTSXP
 
 variable float TimeRunningHours
@@ -2939,7 +2923,6 @@ variable float TimeRunningHours
 variable int DisplayADVLevels
 variable float DisplayADVPercent
 variable int DisplayAAPoints
-variable float DisplayAAPercent
 variable int DisplayTSLevels
 variable float DisplayTSPercent
 
@@ -2958,7 +2941,7 @@ function main()
 	echo Multi-Type XP Tracker Started
 	echo ========================================
 	echo ADV: Level ${StartADVLevel} (${StartADVXP.Centi}%)
-	echo AA: ${StartAA} points (${StartAAXP.Centi}%)
+	echo AA: ${StartAA} points
 	echo TS: Level ${StartTS} (${StartTSXP.Centi}%)
 	echo ========================================
 
@@ -2976,17 +2959,16 @@ function main()
 function InitializeTracking()
 {
 	StartADVLevel:Set[${Me.Level}]
-	StartADVXP:Set[${Me.Exp}]
+	StartADVXP:Set[${Me.GetGameData[Self.ExperienceCurrent].Percent}]
 	StartAA:Set[${Me.TotalEarnedAPs}]
-	StartAAXP:Set[${Me.APExp}]
 	StartTS:Set[${Me.TSLevel}]
-	StartTSXP:Set[${Me.TSExp}]
+	StartTSXP:Set[${Me.GetGameData[Self.TradeskillExperienceCurrent].Percent}]
 }
 
 function UpdateADVTracking()
 {
 	CurrentADVLevel:Set[${Me.Level}]
-	CurrentADVXP:Set[${Me.Exp}]
+	CurrentADVXP:Set[${Me.GetGameData[Self.ExperienceCurrent].Percent}]
 
 	TimeRunningHours:Set[${Math.Calc[(((${Script.RunningTime}/1000)/60/60))].Milli}]
 
@@ -3010,31 +2992,19 @@ function UpdateADVTracking()
 
 function UpdateAATracking()
 {
+	; AA progress is tracked by earned-point delta (no in-level AA% member exists)
 	CurrentAA:Set[${Me.TotalEarnedAPs}]
-	CurrentAAXP:Set[${Me.APExp}]
-
-	if ${StartAA} < ${CurrentAA}
-	{
-		variable int GainedAA
-		GainedAA:Set[${Math.Calc[${CurrentAA}-${StartAA}]}]
-		TotalAAXP:Set[${Math.Calc[(${GainedAA}*100)-100+${CurrentAAXP}+(100-${StartAAXP})]}]
-	}
-	else
-	{
-		TotalAAXP:Set[${Math.Calc[${CurrentAAXP}-${StartAAXP}]}]
-	}
-
-	DisplayAAPoints:Set[${Math.Calc[${TotalAAXP}/100].Int}]
-	DisplayAAPercent:Set[${Math.Calc[${TotalAAXP}%100]}]
+	TotalAAGained:Set[${Math.Calc[${CurrentAA}-${StartAA}]}]
+	DisplayAAPoints:Set[${TotalAAGained}]
 
 	if ${TimeRunningHours} > 0
-		AAPerHour:Set[${Math.Calc[${TotalAAXP}/${TimeRunningHours}]}]
+		AAPerHour:Set[${Math.Calc[${TotalAAGained}/${TimeRunningHours}]}]
 }
 
 function UpdateTSTracking()
 {
 	CurrentTS:Set[${Me.TSLevel}]
-	CurrentTSXP:Set[${Me.TSExp}]
+	CurrentTSXP:Set[${Me.GetGameData[Self.TradeskillExperienceCurrent].Percent}]
 
 	if ${StartTS} < ${CurrentTS}
 	{
@@ -3073,9 +3043,9 @@ function DisplayProgress()
 	echo ADV: ${DisplayADVLevels} levels, ${DisplayADVPercent.Centi}%
 	if ${TimeRunningHours} > 0
 		echo     Rate: ${ADVPerHour.Centi}% per hour
-	echo AA:  ${DisplayAAPoints} points, ${DisplayAAPercent.Centi}%
+	echo AA:  ${DisplayAAPoints} points
 	if ${TimeRunningHours} > 0
-		echo     Rate: ${AAPerHour.Centi}% per hour
+		echo     Rate: ${AAPerHour.Centi} points per hour
 	echo TS:  ${DisplayTSLevels} levels, ${DisplayTSPercent.Centi}%
 	if ${TimeRunningHours} > 0
 		echo     Rate: ${TSPerHour.Centi}% per hour
@@ -3103,7 +3073,7 @@ The EQ2BJCommon scripts demonstrate 18 essential utility patterns:
 6. **Dynamic File Loading** - Enumerate and load user-created presets
 7. **Prioritized Item Lists** - Auto-fallback to next available item
 8. **Event Text Parsing** - React to game messages automatically
-9. **EQ2DataSourceContainer** - Access dynamic game data for buffs/casts
+9. **GetGameData** - Access dynamic game data for buffs/casts
 10. **Randomized Movement** - Natural-looking, class-based positioning
 11. **Item Usage Verification** - Confirm items actually worked
 12. **ApplyVerb Interaction** - Open chests, loot corpses, inspect objects

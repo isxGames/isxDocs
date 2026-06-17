@@ -262,7 +262,7 @@ function CheckHeals()
 **Reduce repetitive typing:**
 ```lavishscript
 ; Instead of:
-echo ${Me.Equipment[primary].ToItemInfo.DamageRating}
+echo ${Me.Equipment[primary].ToItemInfo.DamageType}
 echo ${Me.Equipment[primary].ToItemInfo.Delay}
 echo ${Me.Equipment[primary].ToItemInfo.Range}
 
@@ -272,7 +272,7 @@ MyWeapon:Set[${Me.Equipment[primary]}]
 
 if ${MyWeapon.IsItemInfoAvailable}
 {
-    echo ${MyWeapon.ToItemInfo.DamageRating}
+    echo ${MyWeapon.ToItemInfo.DamageType}
     echo ${MyWeapon.ToItemInfo.Delay}
     echo ${MyWeapon.ToItemInfo.Range}
 }
@@ -817,9 +817,9 @@ while ${Running}
 
 ```lavishscript
 ; WRONG - Repeats same lookup
-if ${Me.Equipment[primary].ToItemInfo.DamageRating} > 500
+if ${Me.Equipment[primary].ToItemInfo.Mitigation} > 500
 {
-    echo ${Me.Equipment[primary].ToItemInfo.DamageRating}
+    echo ${Me.Equipment[primary].ToItemInfo.Mitigation}
     echo ${Me.Equipment[primary].ToItemInfo.Delay}
 }
 
@@ -827,9 +827,9 @@ if ${Me.Equipment[primary].ToItemInfo.DamageRating} > 500
 variable item PrimaryWeapon
 PrimaryWeapon:Set[${Me.Equipment[primary]}]
 
-if ${PrimaryWeapon.IsItemInfoAvailable} && ${PrimaryWeapon.ToItemInfo.DamageRating} > 500
+if ${PrimaryWeapon.IsItemInfoAvailable} && ${PrimaryWeapon.ToItemInfo.Mitigation} > 500
 {
-    echo ${PrimaryWeapon.ToItemInfo.DamageRating}
+    echo ${PrimaryWeapon.ToItemInfo.Mitigation}
     echo ${PrimaryWeapon.ToItemInfo.Delay}
 }
 ```

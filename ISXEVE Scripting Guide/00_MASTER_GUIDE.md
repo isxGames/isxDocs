@@ -241,9 +241,15 @@ if ${Mod:First(exists)}
 
 **Cargo Pattern:**
 ```lavishscript
-; Open cargo
-MyShip:Open[]
-wait 20
+; Open the inventory (cargo) window first -- GetCargo only returns
+; data while the ship cargo window is open.
+if !${EVEWindow[Inventory](exists)}
+{
+    EVE:Execute[OpenInventory]
+    wait 15 ${EVEWindow[Inventory](exists)}
+}
+EVEWindow[Inventory].ChildWindow[ShipCargo]:MakeActive
+wait 10
 
 ; Get cargo items
 variable index:item CargoItems

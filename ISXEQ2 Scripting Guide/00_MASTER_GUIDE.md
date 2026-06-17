@@ -168,7 +168,7 @@ ${Item.IsItemInfoAvailable}              ; Check if detailed info loaded
 ${Item.ToItemInfo.Description}           ; Description
 ${Item.ToItemInfo.Type}                  ; Item type
 ${Item.ToItemInfo.Level}                 ; Required level
-${Item.ToItemInfo.DamageRating}          ; Weapon damage
+${Item.ToItemInfo.Delay}                 ; Weapon delay (seconds)
 ```
 
 ### State

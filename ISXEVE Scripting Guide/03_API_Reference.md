@@ -590,8 +590,17 @@ if ${EVEWindow[Inventory](exists)}
     echo "Cargo Max: ${EVEWindow[Inventory].ChildWindow[ShipCargo].Capacity}"
 }
 
-; Access cargo items -- legacy ShipType form (concise, current):
+; Access cargo items -- legacy ShipType form (concise, current).
+; GetCargo only returns data while the ship inventory (cargo) window is
+; open, so make sure it is open and active first.
 variable index:item CargoItems
+if !${EVEWindow[Inventory](exists)}
+{
+    EVE:Execute[OpenInventory]
+    wait 15 ${EVEWindow[Inventory](exists)}
+}
+EVEWindow[Inventory].ChildWindow[ShipCargo]:MakeActive
+wait 10
 MyShip:GetCargo[CargoItems]
 echo "Cargo has ${CargoItems.Used} item stacks"
 
@@ -5803,7 +5812,7 @@ The following ShipType members and methods are **current, not deprecated**:
 - `${MyShip.CargoCapacity}` — total cargo capacity, double (flagCargo)
 - `${MyShip.UsedCargoCapacity}` — used cargo capacity, double
 - `${MyShip.Cargo[<index>]}` — item by 1-based numeric index, or `${MyShip.Cargo["<name>"]}` by name
-- `MyShip:GetCargo[<index:item>]` — method populating an `index:item` with all cargo items
+- `MyShip:GetCargo[<index:item>]` — method populating an `index:item` with all cargo items. Requires the ship inventory (cargo) window to be open — open it first (see the cargo example earlier in this chapter).
 
 These are the **canonical ship-cargo item-iteration API** and are used by EVEBot and all other production scripts. The ~40 examples throughout this chapter use these members; they remain correct.
 
@@ -5852,7 +5861,7 @@ Some members documented in older materials do **not** exist on ShipType:
 
 ### Recommendation
 
-- **For ship cargo item iteration**, prefer the legacy ShipType API (`MyShip.Cargo[#]` / `MyShip:GetCargo[...]`) — it is concise, current, and widely used.
+- **For ship cargo item iteration**, prefer the legacy ShipType API (`MyShip.Cargo[#]` / `MyShip:GetCargo[...]`) — it is concise, current, and widely used. Note that `MyShip:GetCargo[...]` only returns data while the inventory (cargo) window is open, so open it first.
 - **For ore hold, fleet hangar, and any non-cargo specialized hold**, use the `EVEWindow[Inventory].ChildWindow[...]` API.
 - **For unified code paths** that treat any hold the same way (e.g., a mining bot that fills ore hold when present and cargo otherwise), use `EVEWindow[Inventory].ChildWindow[...]` for both to keep one iteration idiom.
 

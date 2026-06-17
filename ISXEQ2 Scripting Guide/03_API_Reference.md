@@ -1410,13 +1410,6 @@ Detailed item examination data. Obtained via `Item.ToItemInfo`.
 
 | Member | Type | Description |
 |--------|------|-------------|
-| DamageRating | int | Damage rating |
-| MyMinDamage | int | Player's min damage with this weapon |
-| MyMaxDamage | int | Player's max damage with this weapon |
-| BaseMinDamage | int | Base min damage |
-| BaseMaxDamage | int | Base max damage |
-| MasteryMinDamage | int | Mastery min damage |
-| MasteryMaxDamage | int | Mastery max damage |
 | Delay | float | Weapon delay in seconds |
 | Range / MaxRange | float | Maximum weapon range |
 | MinRange | float | Minimum weapon range |
@@ -1429,10 +1422,6 @@ Detailed item examination data. Obtained via `Item.ToItemInfo`.
 |--------|------|-------------|
 | Mitigation | int | Mitigation value |
 | MaxMitigation | int | Maximum mitigation |
-| ShieldFactor | int | Shield factor |
-| MaxShieldFactor | int | Maximum shield factor |
-| Protection | int | Protection value |
-| MaxProtection | int | Maximum protection |
 
 #### Members - Modifiers
 
@@ -2063,7 +2052,7 @@ echo ${QuestJournalWindow.CurrentQuest.Level}
 
 Item for sale from merchant.
 
-**Access:** `${MerchantWindow.Item[index/name]}`
+**Access:** `${MerchantWindow.MerchantInventory[index]}` (items for sale) or `${MerchantWindow.MyInventory[index]}` (your sellback items)
 
 #### Members
 
@@ -2095,9 +2084,9 @@ Item for sale from merchant.
 
 **Example Usage:**
 ```lavishscript
-echo ${MerchantWindow.Item[1].Name}
-echo ${MerchantWindow.Item[1].Price}
-MerchantWindow.Item[1]:Buy[1]
+echo ${MerchantWindow.MerchantInventory[1].Name}
+echo ${MerchantWindow.MerchantInventory[1].Price}
+MerchantWindow.MerchantInventory[1]:Buy[1]
 ```
 
 ---
@@ -2186,7 +2175,7 @@ echo ${VendingContainer[1].NumItems}
 
 Mail message in inbox.
 
-**Access:** `${MailWindow.Message[index]}`
+**Access:** `${MailWindow.Inbox[index]}`
 
 #### Members
 
@@ -2212,9 +2201,9 @@ Mail message in inbox.
 
 **Example Usage:**
 ```lavishscript
-echo ${MailWindow.Message[1].Author}
-echo ${MailWindow.Message[1].Subject}
-MailWindow.Message[1]:Open
+echo ${MailWindow.Inbox[1].Author}
+echo ${MailWindow.Inbox[1].Subject}
+MailWindow.Inbox[1]:Open
 ```
 
 ---
@@ -2691,7 +2680,7 @@ Plus all methods from [eq2clonewindow](#eq2clonewindow) and [eq2window](#eq2wind
 **Example Usage:**
 ```lavishscript
 echo ${RewardWindow.NumRewards}
-echo ${RewardWindow.Reward[1].Name}
+echo ${RewardWindow.Reward[1].LinkID}
 RewardWindow:AcceptReward[${RewardWindow.Reward[1].LinkID}]
 ```
 
@@ -2937,13 +2926,15 @@ Broker search window. Inherits from [eq2window](#eq2window).
 
 | Member | Type | Description |
 |--------|------|-------------|
-| NumItems | int | Number of items in search results |
+| NumSearchResults | int | Number of items in search results |
+| SearchResult[index] | [consignment](#consignment) | Get search result by index |
 
 Plus all members from [eq2window](#eq2window)
 
 **Example Usage:**
 ```lavishscript
-echo ${BrokerWindow.NumItems}
+echo ${BrokerWindow.NumSearchResults}
+echo ${BrokerWindow.SearchResult[1].Name}
 ```
 
 ---
@@ -2960,15 +2951,17 @@ Merchant window. Inherits from [eq2window](#eq2window).
 
 | Member | Type | Description |
 |--------|------|-------------|
-| NumItems | int | Number of items |
-| Item[index/name] | [merchandise](#merchandise) | Get merchandise by index or name |
+| NumMerchantItemsForSale | int | Number of merchant items for sale |
+| NumMyItemsForSale | int | Number of your items for sale (buyback) |
+| MerchantInventory[index] | [merchandise](#merchandise) | Get merchant item by index |
+| MyInventory[index] | [merchandise](#merchandise) | Get your sellback item by index |
 
 Plus all members from [eq2window](#eq2window)
 
 **Example Usage:**
 ```lavishscript
-echo ${MerchantWindow.NumItems}
-echo ${MerchantWindow.Item[1].Name}
+echo ${MerchantWindow.NumMerchantItemsForSale}
+echo ${MerchantWindow.MerchantInventory[1].Name}
 ```
 
 ---
@@ -2985,15 +2978,15 @@ Mail inbox window. Inherits from [eq2window](#eq2window).
 
 | Member | Type | Description |
 |--------|------|-------------|
-| NumMessages | int | Number of messages in inbox |
-| Message[index] | [inboxmailmessage](#inboxmailmessage) | Get message by index |
+| NumInbox | int | Number of messages in inbox |
+| Inbox[index] | [inboxmailmessage](#inboxmailmessage) | Get inbox message by index |
 
 Plus all members from [eq2window](#eq2window)
 
 **Example Usage:**
 ```lavishscript
-echo ${MailWindow.NumMessages}
-echo ${MailWindow.Message[1].Author}
+echo ${MailWindow.NumInbox}
+echo ${MailWindow.Inbox[1].Author}
 ```
 
 ---
@@ -3186,7 +3179,8 @@ UI dynamic data. Inherits from [eq2baseobject](#eq2baseobject).
 | Member | Type | Description |
 |--------|------|-------------|
 | Label | string | Full label text |
-| ShortLabel | string | Short label text |
+| Tooltip | string | Tooltip text |
+| IsSet | bool | Whether the data value is set |
 | Percent | float | Percentage value |
 
 Plus all members from [eq2baseobject](#eq2baseobject)

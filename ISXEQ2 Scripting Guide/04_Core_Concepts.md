@@ -287,14 +287,14 @@ Assigning an ISXEQ2 object to a variable avoids repeating long member paths and,
 
 ```lavishscript
 ; Instead of repeatedly typing long paths:
-echo ${Me.Equipment[primary].ToItemInfo.DamageRating}
+echo ${Me.Equipment[primary].ToItemInfo.DamageType}
 echo ${Me.Equipment[primary].ToItemInfo.Delay}
 
 ; Use a variable:
 variable item MyWeapon
 MyWeapon:Set[${Me.Equipment[primary]}]
 
-echo ${MyWeapon.ToItemInfo.DamageRating}
+echo ${MyWeapon.ToItemInfo.DamageType}
 echo ${MyWeapon.ToItemInfo.Delay}
 ```
 

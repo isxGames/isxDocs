@@ -300,25 +300,82 @@ Zone information.
 
 #### **eq2location**
 
-3D location coordinate.
+A saved location entry (accessed via the `EQ2Loc` TLO).
 
 **Members:**
+- `Label` - string: Location label
+- `Notes` - string: Location notes
+- `Zone` - string: Zone the location belongs to
 - `X` - float: X coordinate
 - `Y` - float: Y coordinate
 - `Z` - float: Z coordinate
 - `RoomID` - uint: Room ID
-- `Distance[x,y,z]` - float: Distance to specified coordinates
-- `Distance2D[x,z]` - float: 2D distance to coordinates
+
+**Methods:**
+- `Delete` - Deletes this saved location
+- `WaypointTo` - Creates a waypoint to this location
+- `Face` - Faces toward this location
 
 ---
 
 #### **radar**
 
-Radar functionality.
+Radar configuration object (accessed via the `Radar` TLO). Controls what the radar displays and how.
 
 **Members:**
-- `NumActors` - int: Number of actors on radar
-- `Actor[index]` - [actor](#actor): Actor by index
+- `Name` - string: Radar name
+- `Size` - int: Radar size
+- `ShowingMe` - bool: Showing the player
+- `ShowingNPCs` - bool: Showing NPCs
+- `ShowingPCs` - bool: Showing PCs
+- `ShowingSpecials` - bool: Showing special actors
+- `ShowingResources` - bool: Showing harvestable resources
+- `ShowingNoKillNPCs` - bool: Showing no-kill NPCs
+- `ShowingCorpses` - bool: Showing corpses
+- `ShowingTSUnits` - bool: Showing tradeskill units
+- `ShowingAggroNPCs` - bool: Showing aggro NPCs
+- `ShowingNamedNPCs` - bool: Showing named NPCs
+- `ShowingPets` - bool: Showing pets
+- `ShowingMyPet` - bool: Showing the player's pet
+- `ShowingChests` - bool: Showing chests
+- `ShowingDoors` - bool: Showing doors
+- `ShowingUnknowns` - bool: Showing unknown actors
+- `ShowingMercenaries` - bool: Showing mercenaries
+- `ShowingLabels` - bool: Showing labels
+- `ColorizingLabels` - bool: Colorizing labels
+- `NumCustomFilters` - int: Number of custom filters
+- `CustomFilter[index]` - string: Custom filter by index
+- `CustomFiltersList` - string: List of custom filters
+- `YAxisClippingOn` - bool: Y-axis clipping enabled
+- `ClipRadiusOn` - bool: Clip radius enabled
+- `ClippingTextOn` - bool: Clipping text enabled
+- `RotationOn` - bool: Rotation enabled
+
+**Methods:**
+- `SetSize[size]` - Sets radar size
+- `SetCustomFilter[filter]` - Sets a custom filter
+- `FilterMe` - Toggles showing the player
+- `FilterNPCs` - Toggles showing NPCs
+- `FilterPCs` - Toggles showing PCs
+- `FilterSpecials` - Toggles showing specials
+- `FilterResources` - Toggles showing resources
+- `FilterNoKillNPCs` - Toggles showing no-kill NPCs
+- `FilterCorpses` - Toggles showing corpses
+- `FilterTSUnits` - Toggles showing tradeskill units
+- `FilterAggroNPCs` - Toggles showing aggro NPCs
+- `FilterNamedNPCs` - Toggles showing named NPCs
+- `FilterPets` - Toggles showing pets
+- `FilterMyPet` - Toggles showing the player's pet
+- `FilterChests` - Toggles showing chests
+- `FilterDoors` - Toggles showing doors
+- `FilterUnknowns` - Toggles showing unknowns
+- `FilterMercenaries` - Toggles showing mercenaries
+- `ShowLabels` - Toggles labels
+- `ColorizeLabels` - Toggles label colorizing
+- `YAxisClipping` - Toggles Y-axis clipping
+- `ClipText` - Toggles clipping text
+- `ClipRadius` - Toggles clip radius
+- `Rotation` - Toggles rotation
 
 ---
 
@@ -727,25 +784,25 @@ ${Me.GetGameData[Self.AscensionExperienceBubble].Label}
 ```lavishscript
 ; Pet data (replaces deprecated PetName, PetHealth, PetPower members)
 ${Me.GetGameData[Pet.Name].Label}
-${Me.GetGameData[Pet.ActualHealth].ShortLabel.Left[-1]}
-${Me.GetGameData[Pet.Health].ShortLabel.Left[-1]}
-${Me.GetGameData[Pet.ActualPower].ShortLabel.Left[-1]}
-${Me.GetGameData[Pet.Power].ShortLabel.Left[-1]}
+${Me.GetGameData[Pet.ActualHealth].Label.Left[-1]}
+${Me.GetGameData[Pet.Health].Label.Left[-1]}
+${Me.GetGameData[Pet.ActualPower].Label.Left[-1]}
+${Me.GetGameData[Pet.Power].Label.Left[-1]}
 ```
 
 *Bank Coin Information:*
 ```lavishscript
 ; Bank coin values
-${Me.GetGameData[Coins.BankCoin_0].ShortLabel}     ; Bank copper
-${Me.GetGameData[Coins.BankCoin_1].ShortLabel}     ; Bank silver
-${Me.GetGameData[Coins.BankCoin_2].ShortLabel}     ; Bank gold
-${Me.GetGameData[Coins.BankCoin_3].ShortLabel}     ; Bank platinum
+${Me.GetGameData[Coins.BankCoin_0].Label}     ; Bank copper
+${Me.GetGameData[Coins.BankCoin_1].Label}     ; Bank silver
+${Me.GetGameData[Coins.BankCoin_2].Label}     ; Bank gold
+${Me.GetGameData[Coins.BankCoin_3].Label}     ; Bank platinum
 
 ; Shared bank coin values
-${Me.GetGameData[Coins.SharedCoin_0].ShortLabel}   ; Shared Bank copper
-${Me.GetGameData[Coins.SharedCoin_1].ShortLabel}   ; Shared Bank silver
-${Me.GetGameData[Coins.SharedCoin_2].ShortLabel}   ; Shared Bank gold
-${Me.GetGameData[Coins.SharedCoin_3].ShortLabel}   ; Shared Bank platinum
+${Me.GetGameData[Coins.SharedCoin_0].Label}   ; Shared Bank copper
+${Me.GetGameData[Coins.SharedCoin_1].Label}   ; Shared Bank silver
+${Me.GetGameData[Coins.SharedCoin_2].Label}   ; Shared Bank gold
+${Me.GetGameData[Coins.SharedCoin_3].Label}   ; Shared Bank platinum
 ```
 
 *Target Information:*
@@ -1091,7 +1148,8 @@ Item stat modifier.
 Item effect description string.
 
 **Members:**
-- `Description` - string: Effect description
+- `Text` - string: Effect description text
+- `IndentLevel` - int: Indentation level of this line
 
 ---
 
@@ -1112,9 +1170,9 @@ Adornment attached to item.
 
 **Members:**
 - `Name` - string: Adornment name
-- `Slot` - string: Adornment slot
+- `LinkID` - int: Link ID for chat links
+- `IconID` - int: Icon ID
 - `SlotIndex` - int: Numeric slot index
-- `Description` - string: Description
 - `ToLink` - string: Chat link
 
 ---
@@ -3852,8 +3910,8 @@ The following experience and vitality members were removed from the `character` 
 
 **Pet Information:**
 - ~~`PetName`~~ → Use `${Me.GetGameData[Pet.Name].Label}`
-- ~~`PetHealth`~~ → Use `${Me.GetGameData[Pet.ActualHealth].ShortLabel.Left[-1]}`
-- ~~`PetPower`~~ → Use `${Me.GetGameData[Pet.ActualPower].ShortLabel.Left[-1]}`
+- ~~`PetHealth`~~ → Use `${Me.GetGameData[Pet.ActualHealth].Label.Left[-1]}`
+- ~~`PetPower`~~ → Use `${Me.GetGameData[Pet.ActualPower].Label.Left[-1]}`
 
 ### Removed Actor Members (July 2020)
 
@@ -4425,7 +4483,7 @@ atom OnItemAddedToAltar(int ItemIndex)
     ; Confirm if dialog appears
     if ${ReplyDialog(exists)}
     {
-        ReplyDialog:ChooseReply[0]
+        ReplyDialog:Choose[0]
     }
 }
 
@@ -4463,8 +4521,7 @@ function DumpWidgets(string WidgetPath, int Depth)
         Padding:Concat[" "]
 
     ; Get widget properties
-    DumpText:Set["${Padding}Label: ${EQ2UIPage[${WidgetPath}].Label}"]
-    DumpText:Concat["\n${Padding}ShortLabel: ${EQ2UIPage[${WidgetPath}].ShortLabel}"]
+    DumpText:Set["${Padding}Type: ${EQ2UIPage[${WidgetPath}].Type}"]
     DumpText:Concat["\n${Padding}NumChildren: ${EQ2UIPage[${WidgetPath}].NumChildren}"]
 
     echo "${DumpText}"
@@ -4510,7 +4567,7 @@ function main()
     ; List all rewards
     do
     {
-        echo "- [${RewardWindow.Reward[${Counter}].LinkID}] ${RewardWindow.Reward[${Counter}].Name}"
+        echo "- LinkID: ${RewardWindow.Reward[${Counter}].LinkID}"
     }
     while ${Counter:Inc} <= ${RewardWindow.NumRewards}
 
@@ -4531,19 +4588,21 @@ function UseReforgeWindow()
 
     echo "Item: ${ReforgeWindow.ItemName}"
     echo "Stats: ${ReforgeWindow.StatsText}"
-    echo "Currency: ${ReforgeWindow.CurrencyAmount}"
+    echo "Cost: ${ReforgeWindow.Platinum}p ${ReforgeWindow.Gold}g ${ReforgeWindow.Silver}s ${ReforgeWindow.Copper}c"
 
-    ; Set attribute slider to position 5
-    ReforgeWindow:SetAttributeSlider[5]
+    ; The attribute slider is exposed as a widget member (eq2sliderbar)
+    echo "Slider widget: ${ReforgeWindow.AttributeSlider.Type}"
 
-    ; Get dropdown options
+    ; Get dropdown options from the source-attribute dropdown (eq2dropdownbox)
+    variable index:collection:string Options
     variable iterator OptionsIt
-    ReforgeWindow:GetDropdownOptions[OptionsIt]
+    ReforgeWindow.SourceDropdown:GetOptions[Options]
+    Options:GetIterator[OptionsIt]
     if ${OptionsIt:First(exists)}
     {
         do
         {
-            echo "Option: ${OptionsIt.Value}"
+            echo "Option: ${OptionsIt.Value.CurrentValue}"
         }
         while ${OptionsIt:Next(exists)}
     }
@@ -4591,10 +4650,12 @@ function HandleReplyDialog()
 
     echo "Dialog Text: ${ReplyDialog.Text}"
 
+    ; ReplyDialog.Replies returns the underlying list widget (eq2list), which
+    ; exposes a GetOptions method to enumerate the available reply rows.
     variable index:collection:string Options
     variable iterator OptionsIterator
 
-    ReplyDialog:GetOptions[Options]
+    ReplyDialog.Replies:GetOptions[Options]
     Options:GetIterator[OptionsIterator]
 
     if ${OptionsIterator:First(exists)}
@@ -4613,8 +4674,8 @@ function HandleReplyDialog()
         while ${OptionsIterator:Next(exists)}
     }
 
-    ; Choose a specific reply
-    ReplyDialog:ChooseReply[0]
+    ; Choose a specific reply (1-based row index)
+    ReplyDialog:Choose[1]
 }
 
 ; NPC conversation interaction
@@ -4622,7 +4683,7 @@ function InteractWithNPC()
 {
     ; Get last NPC statement
     variable string NPCText
-    NPCText:Set[${EQ2UIPage[ProxyActor,Conversation].Child[Text,ChatPage.MessageText].Label}]
+    NPCText:Set[${EQ2UIPage[ProxyActor,Conversation].Child[Text,ChatPage.MessageText].GetProperty[Text]}]
     echo "NPC said: ${NPCText}"
 
     ; Count available responses
@@ -4634,7 +4695,7 @@ function InteractWithNPC()
     variable int i
     for (i:Set[1]; ${i} <= ${NumResponses}; i:Inc)
     {
-        echo "${i}. ${EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[button,${i}].Label}"
+        echo "${i}. ${EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[button,${i}].GetProperty[Text]}"
     }
 
     ; Click a specific response (button 1)

@@ -741,6 +741,14 @@ function ProcessCargoQueued()
 	variable index:item CargoItems
 	variable iterator CargoItem
 
+	; GetCargo only returns data while the ship cargo window is open.
+	if !${EVEWindow[Inventory](exists)}
+	{
+		EVE:Execute[OpenInventory]
+		wait 15 ${EVEWindow[Inventory](exists)}
+	}
+	EVEWindow[Inventory].ChildWindow[ShipCargo]:MakeActive
+	wait 10
 	MyShip:GetCargo[CargoItems]
 	CargoItems:GetIterator[CargoItem]
 

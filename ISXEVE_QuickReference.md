@@ -210,10 +210,10 @@ Access: `ISXEVE` TLO.
 
 **Methods**
 
-- `Flush` — Release dangling ISXEVE-managed objects. Recommended every 20-30 minutes for long-running scripts (especially .NET apps).
-- `Unload` — Cleanly unload the extension.
 - `InstallBeta`, `InstallTest`, `InstallLive` — Switch channel.
 - `Debug_SetTypeValidation[bool]`, `Debug_SetEntityCacheEnabled`, `Debug_SetEntityCacheDisabled`, `Debug_SetHighPerfLogging[bool]`, `Debug_LogMsg[text]`, `Debug_PrintCacheInfo`, `Debug_DumpEntityCache` — Debug hooks.
+
+(To unload the extension, use the registered `UnloadISXEVE` command — see [Commands](#commands). There is no `isxeve:Flush` or `isxeve:Unload` method on the datatype.)
 
 ### eve
 
@@ -452,7 +452,7 @@ Access: `MyShip` TLO or `Me.Ship`. Not inherited.
 
 **Cargo and Bay Access**
 
-Note: `CargoCapacity` / `UsedCargoCapacity` require the cargo to have been opened this session (see [Bootstrap and Safety Checks](#bootstrap-and-safety-checks)). For reliable totals, prefer `EVEWindow[Inventory].ChildWindow[ShipCargo].Capacity` / `.UsedSpace`.
+Note: `CargoCapacity` / `UsedCargoCapacity` require the cargo to have been opened this session (see [Bootstrap and Safety Checks](#bootstrap-and-safety-checks)). For reliable totals, prefer `EVEWindow[Inventory].ChildWindow[ShipCargo].Capacity` / `.UsedCapacity`.
 
 | Member | Type | Notes |
 |---|---|---|
@@ -1010,7 +1010,7 @@ Inherits from [entity](#entity). Represents POS modules and player-structures.
 
 | Member | Type |
 |---|---|
-| `Anchored` / `CanAnchorAt` / `CanUnanchor` | bool |
+| `Anchored` / `CanUnanchor` | bool |
 | `CanAssumeControl` | bool |
 | `CanOffline` / `CanOnline` | bool |
 | `ControllerID` / `ControllerName` | int64 / string |
@@ -1018,6 +1018,8 @@ Inherits from [entity](#entity). Represents POS modules and player-structures.
 | `Online` / `Orphaned` | bool |
 | `State` | string |
 | `ToTower` | [entity](#entity) |
+
+Note: there is NO callable `CanAnchorAt` member. Source registers the `AddMember` name `CanAssumeControl` twice — the second binding shadows the first, so the `CanAnchorAt` callback is never exposed under any name.
 
 **Methods:** `Anchor`, `AssumeControl`, `ReleaseControl`, `UnlockTarget`.
 
@@ -1049,7 +1051,7 @@ Inherits from [attacker](#attacker). Returned by `character:GetJammers`.
 |---|---|
 | `ID` | int64 |
 
-**Methods:** `GetJams[index:???]` — populate index with jam events from this jammer.
+**Methods:** `GetJams[index:string]` — populate index with the jam-type names this jammer is applying.
 
 ### overview
 
@@ -2244,7 +2246,7 @@ EVE:CreateBookmark["Corp Safe", "Fleet rally", "corp"]
 EVE:CreateBookmark["Temp", "Short-lived", "Personal", 1]
 
 ; At an entity's location
-${Entity[${ID}]}:CreateBookmark["Mission Spot", "Where the pocket starts"]
+Entity[${ID}]:CreateBookmark["Mission Spot", "Where the pocket starts"]
 ```
 
 For deeper patterns see [05_Patterns_And_Best_Practices.md](ISXEVE%20Scripting%20Guide/05_Patterns_And_Best_Practices.md), [15_Combat_Automation.md](ISXEVE%20Scripting%20Guide/15_Combat_Automation.md), [16_Mining_And_Hauling.md](ISXEVE%20Scripting%20Guide/16_Mining_And_Hauling.md), [17_Fleet_Operations.md](ISXEVE%20Scripting%20Guide/17_Fleet_Operations.md).

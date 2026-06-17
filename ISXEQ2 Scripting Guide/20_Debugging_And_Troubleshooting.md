@@ -748,13 +748,13 @@ function DiagnoseCast(string AbilityName)
     echo "      IsReady:        ${Me.Ability[${AbilityName}].IsReady}"
     echo "      IsQueued:       ${Me.Ability[${AbilityName}].IsQueued}"
     echo "      TimeUntilReady: ${Me.Ability[${AbilityName}].TimeUntilReady}ms"
-    echo "      PowerCost:      ${Me.Ability[${AbilityName}].PowerCost}"
+    echo "      PowerCost:      ${Me.Ability[${AbilityName}].ToAbilityInfo.PowerCost}"
     echo "      Me.CurrentPower:${Me.CurrentPower}"
     echo "      Me.CastingSpell:${Me.CastingSpell}"
     echo "      EQ2.Zoning:     ${EQ2.Zoning}"
     echo "      Target:         ${If[${Target(exists)}, ${Target.Name}, (none)]}"
 
-    if ${Me.Ability[${AbilityName}].PowerCost} > ${Me.CurrentPower}
+    if ${Me.Ability[${AbilityName}].ToAbilityInfo.PowerCost} > ${Me.CurrentPower}
         echo "FAIL: insufficient power"
 
     if !${Me.Ability[${AbilityName}].IsReady} && !${Me.Ability[${AbilityName}].IsQueued}
@@ -793,9 +793,9 @@ function bool SafeCast(string AbilityName)
         return FALSE
     }
 
-    if ${Me.Ability[${AbilityName}].PowerCost} > ${Me.CurrentPower}
+    if ${Me.Ability[${AbilityName}].ToAbilityInfo.PowerCost} > ${Me.CurrentPower}
     {
-        Debug:Echo["SafeCast: ${AbilityName} needs ${Me.Ability[${AbilityName}].PowerCost} power, have ${Me.CurrentPower}"]
+        Debug:Echo["SafeCast: ${AbilityName} needs ${Me.Ability[${AbilityName}].ToAbilityInfo.PowerCost} power, have ${Me.CurrentPower}"]
         return FALSE
     }
 
@@ -877,7 +877,7 @@ If you inherited a script with `CreateCustomActorArray` + `${CustomActor[...]}`,
 ; DEPRECATED
 EQ2:CreateCustomActorArray[Range,50]
 i:Set[1]
-while ${i} <= ${CustomActor.Count}
+while ${i} <= ${EQ2.CustomActorArraySize}
 {
     echo ${CustomActor[${i}].Name}
     i:Inc
@@ -1028,7 +1028,7 @@ See [03_API_Reference.md → effect](03_API_Reference.md#effect) for the full da
 variable item MyPotion
 MyPotion:Set[${Me.Inventory[ExactName,"Minor Healing Potion"]}]
 
-Me:MoveItem[...]                                                   ; or drag-drop, or vendor interaction
+MyPotion:Move[Inventory,12]                                        ; or drag-drop, or vendor interaction
 
 echo ${MyPotion.Name}                                              ; may be wrong item now
 ```
@@ -1038,7 +1038,7 @@ echo ${MyPotion.Name}                                              ; may be wron
 ### Mitigation
 
 - Re-query with `ExactName` immediately before each use, not once at the top of the script.
-- For repeated use in a tight loop where you know the inventory is stable, cache briefly — but invalidate after any `Me:MoveItem`, `Item:Use`, merchant transaction, or loot event.
+- For repeated use in a tight loop where you know the inventory is stable, cache briefly — but invalidate after any `Item:Move`, `Item:Use`, merchant transaction, or loot event.
 
 ```lavishscript
 function bool UsePotion(string PotionName)

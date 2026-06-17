@@ -708,7 +708,7 @@ Leave the rest of the implementation (existence checks, NPC/PC branch, lock stat
 
 ### Exercise 3: Cargo Space Checker
 
-The quick one-line cargo summary (`${MyShip.UsedCargoCapacity}/${MyShip.CargoCapacity}`) already appeared in your first script. For this exercise, go a level deeper: **enumerate the actual items in your cargo hold** by filling an `index:item` collection via `MyShip:GetCargo[index:item]` and iterating it.
+The quick one-line cargo summary (`${MyShip.UsedCargoCapacity}/${MyShip.CargoCapacity}`) already appeared in your first script. For this exercise, go a level deeper: **enumerate the actual items in your cargo hold** by filling an `index:item` collection via `MyShip:GetCargo[index:item]` (requires the inventory/cargo window open) and iterating it.
 
 Write a script that:
 
@@ -725,6 +725,8 @@ variable iterator CargoItem
 variable float Total = 0
 variable float LineVol
 
+; Note: open your inventory (cargo) window in EVE first -- GetCargo
+; only returns data while the ship cargo window is open (see note below).
 MyShip:GetCargo[CargoItems]
 
 if ${CargoItems.Used} == 0

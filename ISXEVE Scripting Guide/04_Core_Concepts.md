@@ -739,9 +739,15 @@ if ${EVEWindow[Inventory](exists)} && ${Entity[${WreckID}](exists)}
 ; Move ore from ship cargo to station hangar
 ; MUST be docked for this
 
-; Open cargo hold
-MyShip:Open[]
-wait 20  ; CRITICAL WAIT
+; Open the inventory (cargo) window first -- GetCargo only returns
+; data while the ship cargo window is open.
+if !${EVEWindow[Inventory](exists)}
+{
+    EVE:Execute[OpenInventory]
+    wait 15 ${EVEWindow[Inventory](exists)}
+}
+EVEWindow[Inventory].ChildWindow[ShipCargo]:MakeActive
+wait 10  ; CRITICAL WAIT
 
 ; Get items of type "Veldspar"
 variable index:item CargoItems
@@ -2355,7 +2361,7 @@ ${MyShip.Module[123456789]}     ; Module by int64 module item ID
 ```lavishscript
 MyShip:Open[]                   ; Open cargo
 MyShip:GetModules[index:module]  ; Get index of modules
-MyShip:GetCargo[index:item]     ; Get index of cargo items
+MyShip:GetCargo[index:item]     ; Get index of cargo items (inventory window must be open)
 MyShip:SetActiveTarget[]        ; Set active target
 MyShip:LaunchAllDrones[]        ; Launch all drones
 ```
