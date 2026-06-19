@@ -113,7 +113,7 @@ When reviewing scripts over ~200 lines:
 
 **CRITICAL RULES** (remind subagent when delegating):
 - Check `${ISXPantheon.IsReady}` before first API access; load with `extension isxpantheon` and confirm `${ISXPantheon(exists)}`
-- The live ISXPantheon surface is small: only the `${ISXPantheon}` TLO has working members/methods. `${Pantheon}` and the `pantheon`/`entity`/`ability`/`quest` datatypes are registered but currently empty. `${Me}` and `${Radar}` exist only as reserved (commented-out) top-level objects; a `Where` command, a `Radar` command, and a `Crafting` TLO/datatype are named on the roadmap. All game-data features are PLANNED, not implemented — there is no `Target` top-level object in the source; never invent members or TLOs and never write production scripts against planned surface.
+- Live ISXPantheon surface: the `${ISXPantheon}` TLO; the `${Login}` UI family (`login`, `realm`, `uibutton`, `uitext`, `uiinputfield`, `uicolor`); the `${CharSelect}` / `${CharCreate}` families (`charselect`, `charselect-character`, `charcreate`, `uislider`, `uitoggle`, `uiattributeselection`, `uiattributeselector`); and the `${Pantheon}` render/camera surface (`pantheon` members/methods plus `uicamera`). `${CharSelect}` / `${CharCreate}` are NULL unless at the matching scene. Still PLANNED (not implemented): the in-world game-data surface — `entity`/`ability`/`quest` datatypes are registered but empty; `${Me}` and `${Radar}` exist only as reserved (commented-out) top-level objects; a `Where` command, a `Radar` command, and a `Crafting` TLO/datatype are named on the roadmap. There is no `Target` top-level object in the source; never invent members or TLOs and never write production scripts against planned surface.
 - Always validate existence with `(exists)` before accessing members
 - Use LavishGUI 2 (JSON) for new UIs, not LavishGUI 1 (XML)
 - Verify API details against the guide files — they are the definitive source
@@ -146,7 +146,7 @@ You:
    ```
 3. Summarize: "I've created the script at [path]. It waits for the extension to be ready, fetches [endpoint], and stores [value]. Want me to explain how it works or make any changes?"
 
-Note: only the `${ISXPantheon}` TLO, the `GetURL`/`PostURL` commands, and the `isxGames_onHTTPResponse` event are live today. If the user asks for game-data automation (character, targets, abilities, quests, crafting, navigation), tell them that surface is planned but not yet implemented, and delegate accordingly.
+Note: live today are the `${ISXPantheon}` TLO, the `${Login}` / `${CharSelect}` / `${CharCreate}` / `${Pantheon}` TLOs and their datatype families, the `GetURL`/`PostURL` commands, and the `isxGames_onHTTPResponse` event. If the user asks for in-world game-data automation (entities, targets, abilities, quests, crafting, navigation), tell them that surface is planned but not yet implemented, and delegate accordingly.
 
 ---
 

@@ -602,7 +602,9 @@ The single most common "bug" report against ISXPantheon today is **trying to use
 Most likely you referenced surface that exists only as a planned stub. Today the real surface is:
 
 - **TLO `${ISXPantheon}`** — fully working (`Version`, `APIVersion`, `IsReady`, `GetCustomVariable[...]`, `GetCurrencyString[...]`, `Round[...]`, plus the custom-variable / install / reload methods).
-- **TLO `${Pantheon}`** — registered but an **empty shell**: it exists, but has no members or methods.
+- **TLO `${Login}`** — working at the login / realm-selection screen (login state, realm enumeration, login-screen buttons/input fields). Most members are blank away from the login screen.
+- **TLOs `${CharSelect}` / `${CharCreate}`** — working, but **only at the matching scene**. They return **NULL** anywhere else, so guard with `${CharSelect(exists)}` / `${CharCreate(exists)}` before reading members. A blank read here usually means you are simply not at that scene yet.
+- **TLO `${Pantheon}`** — working render/camera surface (`ResolutionWidth`/`ResolutionHeight`, `RenderQuality`, `FPSLimit`, `VSyncCount`, `FullScreenMode`, `FrameCount`, `NumCameras`, `Camera[#]`, plus `RestoreCameras` / `SetFPSLimit`). Its **in-world game-data** members are still planned.
 - **Datatypes `entity`, `ability`, `quest`** — registered but **expose no members**. A variable of these types holds an id, but every member you try to read is unimplemented.
 - **Commands `GetURL`, `PostURL`** — working.
 - **No game events fire yet.**

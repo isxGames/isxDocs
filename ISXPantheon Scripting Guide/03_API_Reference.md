@@ -2,10 +2,12 @@
 
 Complete API reference for the **ISXPantheon** extension (InnerSpace / ISXDK35) for **Pantheon: Rise of the Fallen**. This guide documents the datatypes, members, methods, and commands that the extension currently exposes to LavishScript, plus a clearly labeled roadmap of planned game-data APIs.
 
-> **IMPORTANT — READ THIS FIRST.** ISXPantheon is in early development, but its live surface has grown beyond extension control. Two areas work today:
+> **IMPORTANT — READ THIS FIRST.** ISXPantheon is in early development, but its live surface has grown beyond extension control. Several areas work today:
 >
 > - **Extension control and utility helpers** via `${ISXPantheon}`.
 > - **Login / realm-selection / login-UI automation** via the `${Login}` TLO and its supporting datatypes (`login`, `realm`, `uibutton`, `uitext`, `uiinputfield`, `uicolor`, and the base `object` type they derive from). These let a script inspect login state, enumerate realms, read and drive the login screen's buttons and input fields, and enter the world.
+> - **Character-selection and character-creation automation** via the `${CharSelect}` and `${CharCreate}` TLOs and their supporting datatypes (`charselect`, `charselect-character`, `charcreate`, `uislider`, `uitoggle`, `uiattributeselection`, `uiattributeselector`). These let a script enumerate and choose characters, enter the world, and drive the character-creation screen (name, race, class, gender, appearance sliders, and attribute spending).
+> - **Render / camera control** via members and methods on the `${Pantheon}` datatype (`uicamera`), including resolution, render quality, FPS limit, VSync, and full-screen mode.
 >
 > The **in-world game-data surface** (the local player, entities, abilities, quests, crafting, navigation, radar, and game events) is still **planned but not yet implemented**. Anything below marked **(planned — not yet implemented)** describes the intended future API; its names and signatures are provisional and WILL change. Do not write production scripts against planned features.
 
@@ -29,6 +31,14 @@ Complete API reference for the **ISXPantheon** extension (InnerSpace / ISXDK35) 
   - [uibutton](#uibutton)
   - [uitext](#uitext)
   - [uiinputfield](#uiinputfield)
+  - [uislider](#uislider)
+  - [uitoggle](#uitoggle)
+  - [uicamera](#uicamera)
+  - [uiattributeselector](#uiattributeselector)
+  - [uiattributeselection](#uiattributeselection)
+  - [charselect](#charselect)
+  - [charselect-character](#charselect-character)
+  - [charcreate](#charcreate)
   - [pantheon](#pantheon)
 - [Registered but Stubbed DataTypes](#registered-but-stubbed-datatypes)
   - [entity](#entity)
@@ -96,7 +106,9 @@ Top-Level Objects (TLOs) are the entry points for accessing extension and game d
 |-----|----------|--------|-------------|
 | **ISXPantheon** | [isxpantheon](#isxpantheon) | REAL | Extension information, control, and utility helpers. Available regardless of game/login state. |
 | **Login** | [login](#login) | REAL | The login / realm-selection screen. Inspect login state, enumerate realms, read and drive the login UI, and enter the world. Most members are only meaningful while you are sitting at the login/realm-selection screen. |
-| **Pantheon** | [pantheon](#pantheon) | Registered (empty shell) | Reserved game TLO. Registered, but the `pantheon` datatype currently exposes no members or methods. |
+| **CharSelect** | [charselect](#charselect) | REAL | The character-selection screen. Enumerate and choose characters, enter the world, delete a character, or move on to character creation. Only valid while at the character-selection scene; returns NULL otherwise. |
+| **CharCreate** | [charcreate](#charcreate) | REAL | The character-creation screen. Set name, race, class, gender, and appearance, spend attribute points, and create or cancel. Only valid while at the character-creation scene; returns NULL otherwise. |
+| **Pantheon** | [pantheon](#pantheon) | REAL | Game-wide information and render/camera control: camera enumeration, resolution, render quality, FPS limit, VSync, and full-screen mode. |
 
 `${Me}` and `${Radar}` exist in the source only as reserved (commented-out) top-level objects and return nothing today. Additional game-data TLOs are planned — see [Planned API](#planned-api).
 
@@ -173,7 +185,7 @@ echo ${ISXPantheon.Round[int,47,5]}
 
 ### object
 
-The base datatype for the login / UI object family. `login`, `realm`, `uibutton`, `uitext`, and `uiinputfield` all **inherit from `object`**, so any member or method defined on `object` is also available on those derived types.
+The base datatype for the login / UI / character-screen object family. `login`, `realm`, `uibutton`, `uitext`, `uiinputfield`, `uislider`, `uitoggle`, `uicamera`, `uiattributeselector`, `uiattributeselection`, `charselect`, `charselect-character`, and `charcreate` all **inherit from `object`**, so any member or method defined on `object` is also available on those derived types.
 
 `object` is the generic handle for an underlying game/UI object. It exposes no members or methods of its own today — it exists as the common base of the inheritance chain. You will rarely reference `object` directly; you work with the derived types below and gain `object`'s (currently empty) surface automatically through inheritance.
 
@@ -309,7 +321,7 @@ A clickable UI button. *(inherits `object`)*
 |--------|------|-------------|
 | IsInteractable | bool | TRUE if the button can currently be pressed. |
 | IsActive | bool | TRUE if the button is active/visible. |
-| Label | string | The button's text label. |
+| Label | [uitext](#uitext) | The button's text label, as a `uitext` object. (Use `${...Label.Text}` to read the label string.) |
 
 #### Methods
 
@@ -319,7 +331,7 @@ A clickable UI button. *(inherits `object`)*
 
 **Example Usage:**
 ```lavishscript
-echo "Login button: interactable=${Login.LoginButton.IsInteractable} label=${Login.LoginButton.Label}"
+echo "Login button: interactable=${Login.LoginButton.IsInteractable} label=${Login.LoginButton.Label.Text}"
 
 ; Press it (action method — only call deliberately):
 ; Login.LoginButton:Press
@@ -400,15 +412,354 @@ echo "  limit=${Login.AccountNameInputField.CharacterLimit} type=${Login.Account
 
 ---
 
+### uislider
+
+A UI slider control (for example, the appearance sliders on the character-creation screen). *(inherits `object`)*
+
+**Access:** returned by UI members that expose a slider (e.g. `${CharCreate.HairStyle}`).
+
+> **Slider minimum is always -1.** For anything manipulated in the GUI with a slider, the minimum value (slider all the way to the left) is **always -1**, by the game engine's design.
+
+#### Members
+
+| Member | Type | Description |
+|--------|------|-------------|
+| Value | float | The slider's current value. |
+| Max | float | The slider's maximum value. |
+| Min | float | The slider's minimum value (always -1 — see note above). |
+
+#### Methods
+
+| Method | Parameters | Description |
+|--------|-----------|-------------|
+| SetValue | # | Sets the slider's value to the given number. |
+
+**Example Usage:**
+```lavishscript
+echo "Hair style: ${CharCreate.HairStyle.Value} (min ${CharCreate.HairStyle.Min}, max ${CharCreate.HairStyle.Max})"
+
+; Set the value (action method — only call deliberately):
+; CharCreate.HairStyle:SetValue[3]
+```
+
+---
+
+### uitoggle
+
+A UI toggle / checkbox control. *(inherits `object`)*
+
+**Access:** returned by UI members that expose a toggle (e.g. `${CharCreate.MaleToggle}`).
+
+#### Members
+
+| Member | Type | Description |
+|--------|------|-------------|
+| IsOn | bool | TRUE if the toggle is currently on. |
+
+#### Methods
+
+| Method | Parameters | Description |
+|--------|-----------|-------------|
+| SetOn | - | Turns the toggle on. |
+| SetOff | - | Turns the toggle off. |
+| Toggle | - | Flips the toggle's current state. |
+
+**Example Usage:**
+```lavishscript
+echo "Male toggle on: ${CharCreate.MaleToggle.IsOn}"
+
+; Drive the toggle (action methods — only call deliberately):
+; CharCreate.MaleToggle:SetOn
+; CharCreate.FemaleToggle:SetOff
+```
+
+---
+
+### uicamera
+
+A render camera. *(inherits `object`)*
+
+**Access:** returned by `${Pantheon.Camera[#]}`.
+
+#### Members
+
+| Member | Type | Description |
+|--------|------|-------------|
+| Enabled | bool | TRUE if the camera is currently enabled. |
+
+#### Methods
+
+| Method | Parameters | Description |
+|--------|-----------|-------------|
+| Enable | - | Enables the camera. |
+| Disable | - | Disables the camera. |
+
+**Example Usage:**
+```lavishscript
+variable int i
+for (i:Set[1] ; ${i} <= ${Pantheon.NumCameras} ; i:Inc)
+{
+    echo "Camera ${i}: enabled=${Pantheon.Camera[${i}].Enabled}"
+}
+
+; Drive a camera (action methods — only call deliberately):
+; Pantheon.Camera[1]:Disable
+; Pantheon.Camera[1]:Enable
+```
+
+---
+
+### uiattributeselector
+
+A single attribute row on the character-creation attribute-spending screen — a named attribute with its current and base values and its plus/minus buttons. *(inherits `object`)*
+
+**Access:** `${CharCreate.Attributes.Selector[#]}` (1-based).
+
+#### Members
+
+| Member | Type | Description |
+|--------|------|-------------|
+| Name | string | The attribute's name. |
+| Value | string | The attribute's current value. |
+| BaseValue | int | The attribute's base value. |
+| Type | string | The attribute's type. |
+| MinusButton | [uibutton](#uibutton) | The "-" button that lowers the attribute. |
+| PlusButton | [uibutton](#uibutton) | The "+" button that raises the attribute. |
+
+#### Methods
+
+| Method | Parameters | Description |
+|--------|-----------|-------------|
+| SetValue | # | Sets the attribute to the given value. |
+
+**Example Usage:**
+```lavishscript
+echo "Attribute 1: ${CharCreate.Attributes.Selector[1].Name} = ${CharCreate.Attributes.Selector[1].Value} (base ${CharCreate.Attributes.Selector[1].BaseValue})"
+
+; Adjust an attribute (action methods — only call deliberately):
+; CharCreate.Attributes.Selector[1]:SetValue[15]
+; CharCreate.Attributes.Selector[1].PlusButton:Press
+```
+
+---
+
+### uiattributeselection
+
+The attribute-spending panel on the character-creation screen. Tracks remaining points and enumerates the per-attribute selectors. *(inherits `object`)*
+
+**Access:** `${CharCreate.Attributes}`.
+
+#### Members
+
+| Member | Type | Description |
+|--------|------|-------------|
+| PointsLeft | int | Number of attribute points still available to spend. |
+| ResetPointsButton | [uibutton](#uibutton) | The button that resets spent points. |
+| AutoSpendPointsButton | [uibutton](#uibutton) | The button that auto-spends remaining points. |
+| NumSelectors | int | Number of attribute selectors. |
+| Selector[#] | [uiattributeselector](#uiattributeselector) | The attribute selector at index `#` (1-based). |
+
+#### Methods
+
+| Method | Parameters | Description |
+|--------|-----------|-------------|
+| Reset | - | Resets all spent attribute points. |
+
+**Example Usage:**
+```lavishscript
+echo "Points left: ${CharCreate.Attributes.PointsLeft}"
+
+variable int i
+for (i:Set[1] ; ${i} <= ${CharCreate.Attributes.NumSelectors} ; i:Inc)
+{
+    echo "  ${CharCreate.Attributes.Selector[${i}].Name}: ${CharCreate.Attributes.Selector[${i}].Value}"
+}
+
+; Reset spending (action method — only call deliberately):
+; CharCreate.Attributes:Reset
+```
+
+---
+
+### charselect
+
+The character-selection screen. *(inherits `object`)*
+
+**Access:** `${CharSelect}` (only valid while at the character-selection scene; returns NULL otherwise).
+
+#### Members
+
+| Member | Type | Description |
+|--------|------|-------------|
+| EnterWorldButton | [uibutton](#uibutton) | The "Enter World" button. |
+| DeleteCharacterButton | [uibutton](#uibutton) | The "Delete Character" button. |
+| ChangeModelButton | [uibutton](#uibutton) | The "Change Model" button. |
+| DisplayTutorials | [uitoggle](#uitoggle) | The "Display Tutorials" toggle. |
+| NumCharacters | int | Number of characters on the account. |
+| Character[#] | [charselect-character](#charselect-character) | The character at index `#` (1-based). |
+| CurrentSelectedCharacter | [charselect-character](#charselect-character) | The character currently selected. |
+
+#### Methods
+
+| Method | Parameters | Description |
+|--------|-----------|-------------|
+| ChooseCharacter | # | Selects the character at index `#` (1 to `NumCharacters`). |
+| EnterWorld | - | Enters the world with the selected character. |
+| DeleteSelectedCharacter | - | Deletes the currently selected character. |
+| EnterCharacterCreation | - | Moves to the character-creation screen. |
+| ReturnToLogin | - | Returns to the login screen. |
+
+**Example Usage:**
+```lavishscript
+if ${CharSelect(exists)}
+{
+    echo "Characters: ${CharSelect.NumCharacters}"
+
+    variable int i
+    for (i:Set[1] ; ${i} <= ${CharSelect.NumCharacters} ; i:Inc)
+    {
+        echo "  ${i}: ${CharSelect.Character[${i}].Name} - Level ${CharSelect.Character[${i}].Level} ${CharSelect.Character[${i}].Race} ${CharSelect.Character[${i}].Class}"
+    }
+
+    echo "Selected: ${CharSelect.CurrentSelectedCharacter.Name}"
+}
+
+; Drive character select (action methods — only call deliberately):
+; CharSelect:ChooseCharacter[1]
+; CharSelect:EnterWorld
+```
+
+---
+
+### charselect-character
+
+A single character entry on the character-selection screen. *(inherits `object`)*
+
+**Access:** `${CharSelect.Character[#]}` or `${CharSelect.CurrentSelectedCharacter}`.
+
+#### Members
+
+| Member | Type | Description |
+|--------|------|-------------|
+| Name | string | Character name. |
+| CharacterID | int64 | Unique character id. |
+| Level | int | Character level. |
+| Race | string | Character race. |
+| Class | string | Character class. |
+| Gender | string | Character gender. |
+| Zone | string | The zone the character is in / will load into. |
+
+This datatype has no methods.
+
+**Example Usage:**
+```lavishscript
+echo "${CharSelect.Character[1].Name} (ID ${CharSelect.Character[1].CharacterID})"
+echo "  Level ${CharSelect.Character[1].Level} ${CharSelect.Character[1].Gender} ${CharSelect.Character[1].Race} ${CharSelect.Character[1].Class} in ${CharSelect.Character[1].Zone}"
+```
+
+---
+
+### charcreate
+
+The character-creation screen. *(inherits `object`)*
+
+**Access:** `${CharCreate}` (only valid while at the character-creation scene; returns NULL otherwise).
+
+#### Members
+
+| Member | Type | Description |
+|--------|------|-------------|
+| Name | string | The name currently entered. |
+| Race | string | The race currently selected. |
+| RaceDescription | string | Description text for the selected race. |
+| Class | string | The class currently selected. |
+| ClassDescription | string | Description text for the selected class. |
+| Gender | string | The gender currently selected. |
+| CreateButton | [uibutton](#uibutton) | The "Create" button. |
+| CancelButton | [uibutton](#uibutton) | The "Cancel" button. |
+| AppearanceButton | [uibutton](#uibutton) | The button that opens the appearance-customization screen. |
+| AppearanceConfirmButton | [uibutton](#uibutton) | The button that confirms appearance customization. |
+| MaleToggle | [uitoggle](#uitoggle) | The "Male" gender toggle. |
+| FemaleToggle | [uitoggle](#uitoggle) | The "Female" gender toggle. |
+| HairStyle | [uislider](#uislider) | The hair-style slider. |
+| HairColor | [uislider](#uislider) | The hair-color slider. |
+| FacialHair | [uislider](#uislider) | The facial-hair slider. |
+| FacialHairColor | [uislider](#uislider) | The facial-hair-color slider. |
+| Attributes | [uiattributeselection](#uiattributeselection) | The attribute-spending panel. |
+
+#### Methods
+
+| Method | Parameters | Description |
+|--------|-----------|-------------|
+| Create | - | Creates the character with the current settings. |
+| Cancel | - | Cancels character creation. |
+| SetName | STRING | Sets the character name. |
+| SetRace | STRING | Sets the character race. |
+| SetClass | STRING | Sets the character class. |
+| SetGender | STRING | Sets the character gender. |
+| RandomizeAppearance | - | Randomizes the appearance settings. |
+
+**Example Usage:**
+```lavishscript
+if ${CharCreate(exists)}
+{
+    echo "Name:  ${CharCreate.Name}"
+    echo "Race:  ${CharCreate.Race} - ${CharCreate.RaceDescription}"
+    echo "Class: ${CharCreate.Class} - ${CharCreate.ClassDescription}"
+    echo "Gender:${CharCreate.Gender}"
+    echo "Points left: ${CharCreate.Attributes.PointsLeft}"
+}
+
+; Drive character creation (action methods — only call deliberately):
+; CharCreate:SetName["Aelorean"]
+; CharCreate:SetRace["Human"]
+; CharCreate:SetClass["Warrior"]
+; CharCreate:SetGender["Male"]
+; CharCreate:RandomizeAppearance
+; CharCreate:Create
+```
+
+---
+
 ### pantheon
 
-Reserved game datatype, returned by the `${Pantheon}` TLO.
+Game-wide information and render/camera control, returned by the `${Pantheon}` TLO.
 
 **Access:** `${Pantheon}`
 
-This datatype is **registered but empty** — it currently exposes no members or methods. It exists as a placeholder for future game-wide information and utilities. Its `ToText` value is `Pantheon`.
+#### Members
 
-> **PLANNED — NOT YET IMPLEMENTED.** Members and methods for `${Pantheon}` are on the roadmap but are not available in the current build. Do not write scripts that depend on this datatype having any members yet.
+| Member | Type | Description |
+|--------|------|-------------|
+| NumCameras | int | Number of render cameras. |
+| Camera[#] | [uicamera](#uicamera) | The render camera at index `#` (1-based). |
+| FrameCount | int | The current frame count. |
+| ResolutionWidth | int | The current render resolution width, in pixels. |
+| ResolutionHeight | int | The current render resolution height, in pixels. |
+| RenderQuality | int | The current render-quality level. |
+| FPSLimit | int | The current frame-rate limit. |
+| VSyncCount | int | The current VSync count (0 = VSync off). |
+| FullScreenMode | string | The current full-screen mode. |
+
+#### Methods
+
+| Method | Parameters | Description |
+|--------|-----------|-------------|
+| RestoreCameras | - | Restores all cameras to their default state. |
+| SetFPSLimit | # | Sets the frame-rate limit. See the VSync note below. |
+
+> **FPS limit and VSync.** Unity ignores the FPS limit while VSync is on (that is, while `VSyncCount` is greater than 0). So when you call `SetFPSLimit`, ISXPantheon also disables VSync so the limit takes effect.
+
+**Example Usage:**
+```lavishscript
+echo "Resolution: ${Pantheon.ResolutionWidth}x${Pantheon.ResolutionHeight}"
+echo "Render quality: ${Pantheon.RenderQuality}  FPS limit: ${Pantheon.FPSLimit}  VSync: ${Pantheon.VSyncCount}"
+echo "Full-screen mode: ${Pantheon.FullScreenMode}  Cameras: ${Pantheon.NumCameras}"
+
+; Drive render settings (action methods — only call deliberately):
+; Pantheon:SetFPSLimit[60]          ; also disables VSync
+; Pantheon:RestoreCameras
+```
 
 ---
 

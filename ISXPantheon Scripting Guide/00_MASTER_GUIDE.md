@@ -47,7 +47,9 @@ Complete quick reference for ISXPantheon scripting. For detailed information, se
 |-----|------|--------|--------------|
 | `${ISXPantheon}` | isxpantheon | REAL | `${ISXPantheon.IsReady}`, `${ISXPantheon.Version}` |
 | `${Login}` | login | REAL | `${Login.State}`, `${Login.NumRealms}`, `${Login.Realm[1].Name}`, `${Login.AccountName}` |
-| `${Pantheon}` | pantheon | Registered (empty shell) | No members yet |
+| `${CharSelect}` | charselect | REAL | `${CharSelect.NumCharacters}`, `${CharSelect.Character[1].Name}`, `:ChooseCharacter[1]`, `:EnterWorld` (NULL unless at char-select scene) |
+| `${CharCreate}` | charcreate | REAL | `${CharCreate.Race}`, `:SetName[...]`, `:SetClass[...]`, `:Create` (NULL unless at char-create scene) |
+| `${Pantheon}` | pantheon | REAL | `${Pantheon.ResolutionWidth}`, `${Pantheon.FPSLimit}`, `${Pantheon.NumCameras}`, `:SetFPSLimit[60]` |
 
 `${Me}` and `${Radar}` exist in the source only as reserved (commented-out) top-level objects — they are not registered and return nothing today. The game-data surface is planned; see [03_API_Reference.md](03_API_Reference.md#top-level-objects-tlos).
 
@@ -98,9 +100,9 @@ ${Login.Realm[1].Name}          ; realm fields: Name, Address, Location, Version
 ```
 
 ```lavishscript
-; Buttons (uibutton): IsInteractable, IsActive, Label  +  :Press
+; Buttons (uibutton): IsInteractable, IsActive, Label (uitext)  +  :Press
 ${Login.LoginButton.IsInteractable}
-${Login.QuitButton.Label}
+${Login.QuitButton.Label.Text}
 ; Login.LoginButton:Press
 
 ; Input fields (uiinputfield): IsInteractable, IsActive, IsFocused, IsReadOnly, CharacterLimit, Text, ContentType  +  :SetText[...]
@@ -116,6 +118,41 @@ ${Login.AccountPasswordInputField.ContentType}
 ; Login action methods (drive the flow — call deliberately):
 ; Login:SetAccountName["acct"] ; Login:SetAccountPassword["pw"] ; Login:Login
 ; Login:SetRealm["Realm Name"] ; Login:EnterWorld
+```
+
+---
+
+## Character Select / Create Surface
+
+`${CharSelect}` and `${CharCreate}` are only valid at the matching scene (NULL otherwise). Datatypes inherit from `object`. Full reference: [03_API_Reference.md - charselect](03_API_Reference.md#charselect).
+
+```lavishscript
+; charselect: NumCharacters, Character[#] (charselect-character), CurrentSelectedCharacter,
+;             EnterWorldButton/DeleteCharacterButton/ChangeModelButton (uibutton), DisplayTutorials (uitoggle)
+${CharSelect.NumCharacters}
+${CharSelect.Character[1].Name}            ; charselect-character: Name, CharacterID (int64), Level, Race, Class, Gender, Zone
+${CharSelect.CurrentSelectedCharacter.Name}
+; CharSelect:ChooseCharacter[1] ; :EnterWorld ; :DeleteSelectedCharacter ; :EnterCharacterCreation ; :ReturnToLogin
+
+; charcreate: Name, Race, RaceDescription, Class, ClassDescription, Gender, *Button (uibutton),
+;             Male/FemaleToggle (uitoggle), HairStyle/HairColor/FacialHair/FacialHairColor (uislider), Attributes
+${CharCreate.Race}
+${CharCreate.HairStyle.Value}              ; uislider: Value, Max, Min (Min is ALWAYS -1)  +  :SetValue[#]
+${CharCreate.Attributes.PointsLeft}        ; uiattributeselection: PointsLeft, NumSelectors, Selector[#], *Button  +  :Reset
+${CharCreate.Attributes.Selector[1].Name}  ; uiattributeselector: Name, Value, BaseValue, Type, Minus/PlusButton  +  :SetValue[#]
+; CharCreate:SetName["X"] ; :SetRace["Human"] ; :SetClass["Warrior"] ; :SetGender["Male"] ; :RandomizeAppearance ; :Create ; :Cancel
+```
+
+---
+
+## Render / Camera Surface (${Pantheon})
+
+```lavishscript
+${Pantheon.ResolutionWidth}     ; ResolutionWidth, ResolutionHeight, RenderQuality, FrameCount
+${Pantheon.FPSLimit}            ; FPSLimit, VSyncCount (0 = off), FullScreenMode (string)
+${Pantheon.NumCameras}          ; Camera[#] returns uicamera: Enabled  +  :Enable / :Disable
+; Pantheon:SetFPSLimit[60]      ; NOTE: also disables VSync (Unity ignores the FPS limit while VSync is on)
+; Pantheon:RestoreCameras
 ```
 
 ---

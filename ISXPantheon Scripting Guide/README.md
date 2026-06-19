@@ -219,9 +219,11 @@ TLOs are your entry points into the extension's data. Today the live ones are:
 
 - `${ISXPantheon}` - The extension itself: version, readiness, custom variables, currency formatting, rounding, and lifecycle methods
 - `${Login}` - The login / realm-selection screen: login state, realm enumeration, and the login screen's buttons and input fields (via the `login`, `realm`, `uibutton`, `uitext`, `uiinputfield`, and `uicolor` datatypes, which inherit from the base `object` type)
-- `${Pantheon}` - Registered but currently an empty shell (no members yet)
+- `${CharSelect}` - The character-selection screen: enumerate and choose characters, enter the world, delete a character, or move to character creation (via `charselect`, `charselect-character`, and `uitoggle`). NULL unless at the character-selection scene
+- `${CharCreate}` - The character-creation screen: set name, race, class, gender, appearance (sliders), and spend attribute points (via `charcreate`, `uislider`, `uitoggle`, `uiattributeselection`, and `uiattributeselector`). NULL unless at the character-creation scene
+- `${Pantheon}` - Game-wide info and render/camera control: resolution, render quality, FPS limit, VSync, full-screen mode, and camera enumeration (via the `uicamera` datatype)
 
-The `pantheon`, `entity`, `ability`, and `quest` datatypes are registered by name but have no working members yet. `${Me}` and `${Radar}` exist in the source only as reserved (commented-out) top-level objects. Additional in-world game-data TLOs are **planned** — see the Planned API section of [03_API_Reference.md](03_API_Reference.md).
+The `entity`, `ability`, and `quest` datatypes are registered by name but have no working members yet. `${Me}` and `${Radar}` exist in the source only as reserved (commented-out) top-level objects. Additional in-world game-data TLOs are **planned** — see the Planned API section of [03_API_Reference.md](03_API_Reference.md).
 
 ### Datatypes
 
@@ -295,6 +297,13 @@ Found an error or have an improvement? This documentation will need updates as I
 
 <!-- CLAUDE_SKIP_START -->
 ## Version History
+
+- **0.3** — Character select / create and render-camera surface documented
+  - Documents the now-live `${CharSelect}` and `${CharCreate}` TLOs and their supporting datatypes (`charselect`, `charselect-character`, `charcreate`, `uislider`, `uitoggle`, `uiattributeselection`, `uiattributeselector`): enumerating and choosing characters, entering the world, and driving the character-creation screen (name, race, class, gender, appearance sliders, and attribute spending) — all in [03_API_Reference.md](03_API_Reference.md)
+  - Documents the now-live render/camera surface on the `${Pantheon}` datatype (camera enumeration via the new `uicamera` datatype, plus `ResolutionWidth`/`ResolutionHeight`, `RenderQuality`, `FPSLimit`, `VSyncCount`, `FullScreenMode`, `FrameCount`, `NumCameras`, and the `RestoreCameras` / `SetFPSLimit` methods); `SetFPSLimit` also disables VSync because Unity ignores the FPS limit while VSync is on
+  - Notes that GUI sliders always have a minimum value of -1 by engine design
+  - Changes the `uibutton` `Label` member's return type from `string` to a `uitext` object
+  - In-world game-data features (entities, abilities, quests, crafting, navigation, radar, `${Me}`, `${Radar}`) remain planned
 
 - **0.2** — Login / realm / login-UI surface documented
   - Documents the now-live `${Login}` TLO and its supporting datatypes (`login`, `realm`, `uibutton`, `uitext`, `uiinputfield`, `uicolor`, and the base `object` they inherit from): login state, realm enumeration, and reading/driving the login screen's buttons and input fields

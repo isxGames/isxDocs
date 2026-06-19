@@ -342,7 +342,10 @@ Explore specialized guides:
 | TLO | Returns | Status | Description |
 |-----|---------|--------|-------------|
 | `${ISXPantheon}` | isxpantheon | REAL | Extension info, control, utilities |
-| `${Pantheon}` | pantheon | Registered (empty) | Reserved game TLO (no members yet) |
+| `${Login}` | login | REAL | Login / realm-selection screen |
+| `${CharSelect}` | charselect | REAL | Character-selection screen (NULL unless at that scene) |
+| `${CharCreate}` | charcreate | REAL | Character-creation screen (NULL unless at that scene) |
+| `${Pantheon}` | pantheon | REAL | Game-wide info + render/camera control (resolution, FPS limit, VSync, cameras) |
 
 `${Me}` and `${Radar}` exist in the source only as reserved (commented-out) top-level objects; they are not registered and return nothing today. Additional game-data TLOs are planned.
 
