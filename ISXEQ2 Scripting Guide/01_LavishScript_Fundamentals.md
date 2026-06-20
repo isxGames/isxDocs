@@ -1785,7 +1785,7 @@ String members:
 | `.NotEqual[text]` | Case-insensitive inequality. |
 | `.EqualCS[text]` | Case-sensitive equality. |
 | `.NotEqualCS[text]` | Case-sensitive inequality. |
-| `.Find[substring]` | Returns 1-based position of substring or NULL. |
+| `.Find[substring]` | Returns 1-based position of substring or NULL. Case-insensitive (there is no `.FindCS`). |
 | `.Compare[text]` | <0, 0, or >0 for case-insensitive lexicographic compare. |
 
 For complete operator and formula syntax, see [LavishScript:Mathematical Formulae](https://www.lavishsoft.com/wiki/index.php/LavishScript:Mathematical_Formulae).
