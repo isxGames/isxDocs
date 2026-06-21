@@ -135,7 +135,7 @@ Main SQLite datatype providing database management functionality. Accessed via t
 |--------|-------------|-------------|
 | `OpenDB[name,path]` | [sqlitedb](#sqlitedb) | Opens or creates a database. `name` is a session-unique identifier; `path` is the file path. Use `":Memory:"` as the path to create an in-memory database. The base directory is `innerspace/Extensions`. If the file does not exist it will be created with the default PRAGMA settings (see [Database Defaults](#database-defaults)). |
 | `GetQueryByID[id]` | [sqlitequery](#sqlitequery) | Retrieves a live query object by its numeric ID |
-| `Escape_String[text]` | string | Returns an escaped string suitable for SQL use (equivalent to `sqlite3_mprintf("%q", text)` or PHP's `sqlite_escape_string()`). Example: `test` becomes `''test''`. |
+| `Escape_String[text]` | string | Returns a SQL-escaped copy of `text`: every single-quote (`'`) is doubled (`''`). It does **not** add surrounding quotes, so you must still wrap the result in single quotes inside your SQL. Example: `O'Brien` becomes `O''Brien`; `test` (no quotes) is returned unchanged. |
 
 **Methods:** *(none)*
 
@@ -157,9 +157,9 @@ Represents an open SQLite database connection. Obtained from [sqlite](#sqlite)'s
 | Member | Return Type | Description |
 |--------|-------------|-------------|
 | `ID` | string | The unique session identifier for this database |
-| `ExecQuery[statement]` | [sqlitequery](#sqlitequery) | Executes a SQL statement (typically SELECT) and returns a query object for stepping through results. Queries that return no results, or that encounter an error, finalize automatically. |
+| `ExecQuery[statement]` | [sqlitequery](#sqlitequery) | Executes a SQL statement (typically SELECT) and returns a query object for stepping through results. A query that returns **no rows** is treated as a failure: it returns a NULL query (finalized automatically) **and** fires [isxSQLite_onErrorMsg](#isxsqlite_onerrormsg) with `"Query returned no results"` (`ErrorNum` `-1`). Always guard with `${Query.NumRows} > 0` before iterating. |
 | `TableExists[tablename]` | bool | Returns TRUE if the named table exists in the database |
-| `GetTable[tablename]` | [sqlitetable](#sqlitetable) | Retrieves an entire table. If `tablename` exactly matches an existing table, the hardcoded statement `SELECT * from <TableName> order by 1;` is used. Otherwise `GetTable` treats the argument as a custom DML statement. |
+| `GetTable[tablename]` | [sqlitetable](#sqlitetable) | Retrieves an entire table. If `tablename` exactly matches an existing table, the statement `SELECT * from <TableName> order by 1;` is run (rows ordered by the first column). Otherwise `GetTable` treats the argument as a custom DML statement. |
 | `GetTable[statement]` | [sqlitetable](#sqlitetable) | Same member as above, used with a custom DML statement when the argument does not match an existing table name. Note: `GetTable` allocates space for the entire result set — memory-intensive for large queries. Always `Finalize` the result. |
 
 **Methods:**
@@ -194,7 +194,7 @@ Represents the results of a SQL query, obtained from `sqlitedb.ExecQuery`. Allow
 | `GetFieldName[fieldnum]` | string | Name of the specified field (0-based index from SQLite) |
 | `GetFieldIndex[fieldname]` | int | Numeric index of the named field (`-1` on error) |
 | `GetFieldDeclType[fieldnum]` | string | Declared SQL type of the specified field |
-| `GetFieldType[fieldnum]` | int | SQLite type code of the specified field (`-1` on error) |
+| `GetFieldType[fieldnum]` | int | SQLite runtime type code of the field's current-row value: `1` = INTEGER, `2` = FLOAT, `3` = TEXT, `4` = BLOB, `5` = NULL (`-1` on error) |
 | `GetFieldValue[field]` | string | Current-row value as a string (default) |
 | `GetFieldValue[field, type]` | varies | Current-row value cast to `type`. `field` may be an index or name. See type list below. |
 | `FieldIsNULL[field]` | bool | TRUE if the specified field in the current row is NULL |
@@ -662,11 +662,12 @@ MyDB:Set[${SQLite.OpenDB["MyDB","MyDB.sqlite3"]}]
 ; Escape user input to defeat SQL injection
 SafeInput:Set[${SQLite.Escape_String[${UserInput}]}]
 
-; SafeInput now contains ''O''Brien'' — safe to embed in SQL
-MyDB:ExecDML["INSERT INTO users (name) VALUES (${SafeInput})"]
+; SafeInput now contains  O''Brien  (the inner ' is doubled; NO surrounding quotes are added).
+; You must still wrap the value in single quotes yourself in the SQL statement:
+MyDB:ExecDML["INSERT INTO users (name) VALUES ('${SafeInput}')"]
 
-; Example: "test" becomes ''test''
-echo "Escaped 'test': ${SQLite.Escape_String["test"]}"
+; Escape_String only doubles single quotes, so a value with none is returned unchanged:
+echo "Escaped O'Brien: ${SQLite.Escape_String["O'Brien"]}"   ; -> O''Brien
 ```
 
 ### Complete Production Script Example
@@ -1014,14 +1015,12 @@ DB2:Set[${SQLite.OpenDB["MyDB2","./file2.db"]}]   ; OK
 
 ### sqlitetable.GetFieldValue Typed-Read Caveat
 
-The typed form `GetFieldValue[field, type]` is reliable on [sqlitequery](#sqlitequery) but has a known implementation quirk on [sqlitetable](#sqlitetable):
+The typed form `GetFieldValue[field, type]` does not behave consistently across the two datatypes:
 
-- On `sqlitequery`, the second argument (`argv[1]`) is correctly parsed as the type selector.
-- On `sqlitetable`, the type-selector parsing reads `argv[0]` rather than `argv[1]`, which means the field-selector and the type-selector compete for the same argument slot. In addition, the cast branches in the table implementation fall through without `break` statements.
+- On [sqlitetable](#sqlitetable), the `type` argument is effectively ignored — the value comes back as a **string** regardless of the type you request.
+- On [sqlitequery](#sqlitequery), the `double`/`float` and `int64` selectors return properly typed values, but the `int` selector may also come back as a string.
 
 **Practical guidance:**
-- Prefer `sqlitetable.GetFieldValue[field]` (no type) and cast on the LavishScript side: `${Table.GetFieldValue[amount].Int}`, `${Table.GetFieldValue[price].Float}`, etc.
-- When you need typed numeric access to a large result set, use [sqlitequery](#sqlitequery) rather than [sqlitetable](#sqlitetable) — the typed form is well-behaved there.
-- If you do need typed table reads, test thoroughly against your specific isxSQLite build before relying on the result.
-
-This caveat is based on direct source review; the behavior has not been formally documented in [isxSQLiteChanges.txt](https://github.com/isxGames/isxSQLite/blob/master/isxSQLiteChanges.txt).
+- The most portable approach is to read **untyped** and cast on the LavishScript side: `${Table.GetFieldValue[amount].Int}`, `${Query.GetFieldValue[price].Float}`, etc. This works the same on both datatypes.
+- When you specifically need a 64-bit integer or a guaranteed numeric type, use the built-in typed form on [sqlitequery](#sqlitequery) with `double`/`float` or `int64` — those are the dependable typed reads.
+- Avoid relying on the typed form of `sqlitetable.GetFieldValue[field, type]`; treat `sqlitetable` reads as strings and cast in LavishScript.

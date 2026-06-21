@@ -283,8 +283,14 @@ Found an error or have an improvement? This documentation was generated using ac
 ---
 
 <!-- CLAUDE_SKIP_START -->
+
 ## Version History
 
+- **4.2 (2026-06-20)**
+
+  - Updated ../ISXSQLite_QuickReference.md 
+  - Updated ../ISXIM_QuickReference.md
+  
 - **v4.1 (2026-04-28)**
 
   - Split `01_LavishScript_Fundamentals.md` into a tutorial-style file (now 30 sections, 3,373 lines, expanded from the original 23 sections / 3,060 lines) plus a new sibling reference file `01b_LavishScript_Reference.md` (1,221 lines) -- the reference is an exhaustive command/datatype/Top-Level-Object inventory with one canonical entry per feature linked to the Lavish Software wiki, while the tutorial keeps narrative onboarding for newcomers

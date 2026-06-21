@@ -361,6 +361,10 @@ Found an error or have an improvement? This documentation was generated using ac
 <!-- CLAUDE_SKIP_START -->
 ## Version History
 
+- **4.11** (2026-06-20) — Update Misc. Quick Reference Guides
+  - Updated ../ISXSQLite_QuickReference.md 
+  - Updated ../ISXIM_QuickReference.md
+
 - **4.10** (2026-06-13) — ISXEQ2 changelog catch-up
   - Documented three new `eq2icon` members: `State` (string, the icon's current visual state — `"Normal"`, `"MouseOver"`, `"Pressed"`, or `"Disabled"`), `Type` (string, the icon's type), and the indexed `Label[#]` (string, the icon's label text for the given state, # is 1, 2, 3, or 4) — added to `03_API_Reference.md` eq2icon Members table and `ISXEQ2_QuickReference.md` eq2icon block
   - No new TLOs, no new commands, no removed APIs, no new events
