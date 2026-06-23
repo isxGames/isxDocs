@@ -852,6 +852,12 @@ Player character datatype. Inherits all members and methods from [actor](#actor)
 | BaseAgility | int | Base agility (no buffs) |
 | BaseWisdom | int | Base wisdom (no buffs) |
 | BaseIntelligence | int | Base intelligence (no buffs) |
+| CritBonus | float | Crit Bonus stat (percentage) |
+| CritBonusMax | float | Crit Bonus cap (live value is clamped to <= this) |
+| WeaponDamage | float | Weapon Damage (Bonus) stat (percentage) |
+| WeaponDamageMax | float | Weapon Damage cap (live value is clamped to <= this) |
+| Fervor | float | Fervor stat (percentage) |
+| FervorMax | float | Fervor cap (live value is clamped to <= this) |
 
 > **Note A:** `CurrentHealth` and `CurrentPower` (character members) return the **actual value** as int64. Do not confuse with `Health` and `Power` (inherited from actor), which return **percentages** (0-100) as int. For example, `Me.Health` returns `85` (percent) while `Me.CurrentHealth` returns `142857` (actual HP).
 

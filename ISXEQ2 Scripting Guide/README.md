@@ -361,6 +361,10 @@ Found an error or have an improvement? This documentation was generated using ac
 <!-- CLAUDE_SKIP_START -->
 ## Version History
 
+- **4.12** (2026-06-23) — ISXEQ2 changelog catch-up
+  - Documented six new `character` members, all `float` combat-stat percentages with paired value/cap members (the live value is clamped to <= its `*Max`): `CritBonus` and `CritBonusMax` (Crit Bonus stat and cap), `WeaponDamage` and `WeaponDamageMax` (Weapon Damage (Bonus) stat and cap), `Fervor` and `FervorMax` (Fervor stat and cap) — added to `03_API_Reference.md` character Members - Stats table
+  - No new TLOs, no new commands, no removed APIs, no new events
+
 - **4.11** (2026-06-20) — Update Misc. Quick Reference Guides
   - Updated ../ISXSQLite_QuickReference.md 
   - Updated ../ISXIM_QuickReference.md
