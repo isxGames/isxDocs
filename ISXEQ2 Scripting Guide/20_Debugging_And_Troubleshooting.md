@@ -1091,7 +1091,7 @@ if ${it:First(exists)}
 
 ## ExactName Case Sensitivity and String Comparison
 
-LavishScript **member names** are case-insensitive (`${Me.Name}` = `${Me.NAME}`). But **string comparisons and string-parameter lookups** are case-sensitive:
+LavishScript **member names** are case-insensitive (`${Me.Name}` = `${Me.NAME}`). LavishScript **string comparisons** (`.Equal`, `.NotEqual`, `.Find`, `.Compare`) are **also case-insensitive** — use the `CS` variants (`.EqualCS`, `.NotEqualCS`, `.CompareCS`) when you need a case-sensitive match. There is no `.FindCS`. Note that some ISXEQ2 **string-parameter lookups** (e.g. `Inventory[ExactName,...]`) *are* case-sensitive — that is a different mechanism, not a `.Equal` comparison:
 
 ```lavishscript
 ; Member names: case-insensitive
@@ -1099,9 +1099,9 @@ ${Me.Name}           ; works
 ${Me.NAME}           ; works
 ${me.name}           ; works
 
-; String comparisons: case-sensitive
-${Me.Name.Equal["Bob"]}    ; only matches "Bob"
-${Me.Name.Equal["bob"]}    ; only matches "bob"
+; String comparisons: case-INsensitive
+${Me.Name.Equal["Bob"]}    ; TRUE for "Bob", "bob", "BOB", ...
+${Me.Name.EqualCS["Bob"]}  ; case-sensitive variant: only "Bob"
 
 ; Inventory lookups with ExactName: case-sensitive
 ${Me.Inventory[ExactName,"Health Potion"]}    ; exact match
@@ -1110,17 +1110,12 @@ ${Me.Inventory[ExactName,"health potion"]}    ; WILL NOT FIND IT
 
 ### Mitigation
 
-For case-insensitive string comparison, use `.EqualCS` variants sparingly (they exist for comparison), or normalize to a canonical case first:
+`.Equal`/`.Find` are already case-insensitive, so ordinary string comparison needs no normalization — reach for `.EqualCS` only when you specifically need case sensitivity. For the lookups that *are* case-sensitive (like `ExactName`), use fuzzy-match query operators:
 
 ```lavishscript
-; Normalize before compare
-variable string lname = "${Me.Name.Lower}"
-if ${lname.Equal["bob"]}
-    echo "It's Bob"
-
 ; For inventory, use fuzzy-match operators in a query
 variable index:item results
-Me:QueryInventory[results, "Name =- \"potion\""]                   ; case-sensitive substring
+Me:QueryInventory[results, "Name =- \"potion\""]                   ; substring match
 Me:QueryInventory[results, "Name =~ \"(?i)potion\""]               ; regex with case-insensitive flag (if supported)
 ```
 

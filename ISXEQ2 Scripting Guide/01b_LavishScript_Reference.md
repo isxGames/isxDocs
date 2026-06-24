@@ -411,7 +411,7 @@ Members:
 | `Mid[pos,len]` | string | Substring of `len` chars starting at 1-based `pos`. |
 | `Left[#]` | string | Leftmost `#` chars. Negative `#` = leftmost (Length-#). |
 | `Right[#]` | string | Rightmost `#` chars. Negative `#` = rightmost (Length-#). |
-| `Find[text]` | int | 1-based position of substring, or NULL. |
+| `Find[text]` | int | 1-based position of substring, or NULL. Case-insensitive (no `FindCS` variant). |
 | `Count[char]` | int | Number of occurrences of a single character. |
 | `Token[#,sep]` | string | The #th token after splitting on `sep`. |
 | `Compare[text]` | int | Case-insensitive dictionary compare. |

@@ -451,8 +451,8 @@ ${String.Left[5]}              ; First 5 characters
 ${String.Right[3]}             ; Last 3 characters
 ${String.Upper}                ; UPPERCASE
 ${String.Lower}                ; lowercase
-${String.Find["text"]}         ; Position of "text" (0 if not found)
-${String.Equal["text"]}        ; TRUE if equal (case-sensitive)
+${String.Find["text"]}         ; Position of "text" (0 if not found; case-insensitive)
+${String.Equal["text"]}        ; TRUE if equal (case-insensitive; .EqualCS for case-sensitive)
 ${String.Replace["old","new"]} ; Replace text
 ${String.Token[2,:]}           ; Second token separated by ':'
 ```
