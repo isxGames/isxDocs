@@ -540,8 +540,11 @@ Base datatype for all actors (NPCs, PCs, objects) in the game world.
 - `IsFD` - bool: Feign death
 - `Interactable` - bool: Highlights on hover
 - `HighlightOnMouseHover` - bool: Highlights on hover
-- `FlyingUsingMount` - bool: Flying with mount
+- `FlyingUsingMount` - bool: Flying in air with a visible flying mount (returns proper FALSE, never NULL, for non-predicted actors; unaffected by unrelated movement flags)
 - `OnFlyingMount` - bool: On flying mount
+- `OnMount` - bool: On any mount (stays TRUE even when mount model is hidden)
+- `OnGriffon` - bool: On a griffon or other flight-path transport
+- `OnControllableMount` - bool: On a mount you steer yourself (mounted and not a griffon)
 - `UpdatesMyQuest` - bool: Updates player's quest
 - `UpdatesGroupMemberQuest` - bool: Updates group quest
 - `ActiveStateExists` - bool: Has active states
@@ -561,6 +564,8 @@ Base datatype for all actors (NPCs, PCs, objects) in the game world.
 - `Resize[scale]` - Resizes actor (visual)
 - `Move` - Picks up a moveable housing object for repositioning (no parameters)
 - `Set[actorID]` - Sets actor reference
+
+**Note (mount detection):** `OnTransport` is unreliable for your own character -- use `${Me.OnMount}` for a self-facing mount check. `${Me.OnControllableMount}` is TRUE only on a mount you steer yourself; `${Me.OnGriffon}` is TRUE on a griffon or other flight-path transport.
 
 ---
 

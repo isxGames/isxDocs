@@ -778,8 +778,11 @@ Base datatype for all actors (NPCs, PCs, objects) in the game world.
 | IsFD | bool | TRUE if feign death |
 | Interactable | bool | TRUE if highlights on mouse hover |
 | HighlightOnMouseHover | bool | TRUE if highlights on mouse hover |
-| FlyingUsingMount | bool | TRUE if flying using mount |
+| FlyingUsingMount | bool | TRUE if flying in the air using a flying mount (the mount is visible). Returns a proper FALSE (never NULL) for non-predicted actors and is not affected by unrelated movement flags |
 | OnFlyingMount | bool | TRUE if on flying mount |
+| OnMount | bool | TRUE while physically on any mount -- stays TRUE even when the mount model is hidden |
+| OnGriffon | bool | TRUE while on a griffon or other flight-path transport |
+| OnControllableMount | bool | TRUE while on a mount you steer yourself (i.e. mounted and not a griffon) |
 | UpdatesMyQuest | bool | TRUE if updates player's quest |
 | UpdatesGroupMemberQuest | bool | TRUE if updates group member quest |
 | ActiveStateExists["state"] | bool | TRUE if actor has the specified active state |
@@ -821,6 +824,8 @@ if ${Target.Type.Equal["NamedNPC"]}
 if ${Target.Distance} < 5
     Target:DoubleClick
 ```
+
+**Note (mount detection):** The `OnTransport` member is unreliable for your own character. Use `${Me.OnMount}` for a self-facing mount check (it stays TRUE even when the mount model is hidden). For finer-grained detection, `${Me.OnControllableMount}` is TRUE only on a mount you steer yourself, and `${Me.OnGriffon}` is TRUE on a griffon or other flight-path transport.
 
 ---
 

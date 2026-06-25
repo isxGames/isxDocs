@@ -361,6 +361,12 @@ Found an error or have an improvement? This documentation was generated using ac
 <!-- CLAUDE_SKIP_START -->
 ## Version History
 
+- **4.13** (2026-06-24) — ISXEQ2 changelog catch-up
+  - Documented three new `actor` members, all `bool`: `OnMount` (TRUE while physically on any mount -- stays TRUE even when the mount model is hidden), `OnGriffon` (TRUE while on a griffon or other flight-path transport), and `OnControllableMount` (TRUE while on a mount you steer yourself, i.e. mounted and not a griffon) — added to `03_API_Reference.md` actor Members table and `ISXEQ2_QuickReference.md` actor block
+  - Updated the `actor.FlyingUsingMount` member description to reflect improved reliability (now returns a proper FALSE instead of NULL for non-predicted actors, and no longer misreads when unrelated movement flags are set) — updated in `03_API_Reference.md` actor Members table and `ISXEQ2_QuickReference.md` actor block
+  - Added a mount-detection usage note (the `OnTransport` member is unreliable for your own character; use `${Me.OnMount}` for a self-facing mount check) after the actor Example Usage in `03_API_Reference.md` and the actor Methods list in `ISXEQ2_QuickReference.md`
+  - No new TLOs, no new commands, no removed APIs, no new events
+
 - **4.12** (2026-06-23) — ISXEQ2 changelog catch-up
   - Documented six new `character` members, all `float` combat-stat percentages with paired value/cap members (the live value is clamped to <= its `*Max`): `CritBonus` and `CritBonusMax` (Crit Bonus stat and cap), `WeaponDamage` and `WeaponDamageMax` (Weapon Damage (Bonus) stat and cap), `Fervor` and `FervorMax` (Fervor stat and cap) — added to `03_API_Reference.md` character Members - Stats table
   - No new TLOs, no new commands, no removed APIs, no new events
