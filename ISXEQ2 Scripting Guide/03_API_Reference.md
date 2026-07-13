@@ -420,7 +420,7 @@ Main game information and utilities.
 |--------|-----------|-------------|
 | CreateCustomActorArray | sortby, range, type | **DEPRECATED** - Use EQ2:GetActors instead |
 | GetActors | index, searchparams | **MODERN METHOD** - Populates index with actors using keyword search params (e.g., `Range,50,NPC`) |
-| QueryActors | index, query | Populates index with actors matching a LavishScript query expression (e.g., `Type =- "NPC" && Distance <= 50`) |
+| QueryActors | index, query, [sortmode] | Populates index with actors matching a LavishScript query expression (e.g., `Type =- "NPC" && Distance <= 50`). Optional `sortmode` controls result ordering (see below) |
 | SetMasterVolume | volume | Sets master volume (0-100) |
 | AcceptPendingQuest | - | Accepts pending quest offer |
 | DeclinePendingQuest | - | Declines pending quest offer |
@@ -442,6 +442,10 @@ echo ${EQ2.Zoning}
 variable index:actor Actors
 EQ2:GetActors[Actors,Range,50,NPC]
 
+; QueryActors with an optional sort mode (third argument)
+EQ2:QueryActors[Actors, Type =- "NPC" && Distance <= 50, "ByLevel"]
+EQ2:QueryActors[Actors, IsNPC == 1 && Distance <= 15, "NoSort"]
+
 EQ2:AcceptPendingQuest
 EQ2:OpenTravelMapWindow
 
@@ -451,6 +455,17 @@ variable int i
 for (i:Set[1] ; ${i} <= ${EQ2.AccountRosterCount} ; i:Inc)
     echo ${EQ2.AccountRoster[${i}].Name} (${EQ2.AccountRoster[${i}].Server})
 ```
+
+**QueryActors Sort Modes:** `QueryActors` accepts an optional third argument that controls how the resulting index is ordered:
+
+| Value | Ordering |
+|-------|----------|
+| `"ByDist"` | Sort by distance (the default) |
+| `"ByLevel"` | Sort by actor level |
+| `"ByName"` | Sort by actor name |
+| `"NoSort"` | Do not sort at all |
+
+The value is case-insensitive; an unrecognized value falls back to `"ByDist"`. Omitting the argument entirely keeps the previous behavior (sorted by distance), so existing scripts are unaffected. `"NoSort"` is a worthwhile optimization when you only need to test or iterate the matches and do not care about their order — otherwise `QueryActors` sorts the ENTIRE actor list by distance on every call.
 
 **See Also:** [accountrosterrecord](#accountrosterrecord)
 
@@ -751,6 +766,7 @@ Base datatype for all actors (NPCs, PCs, objects) in the game world.
 | IsAPet | bool | TRUE if is a pet |
 | IsMyPet | bool | TRUE if is player's pet |
 | IsNamed | bool | TRUE if named NPC |
+| IsNPC | int | 1 if the actor is an NPC or NamedNPC, otherwise 0. A cheaper `QueryActors` filter than `(Type =- "NPC" \|\| Type =- "NamedNPC")` |
 | IsSwimming | bool | TRUE if swimming |
 | SwimmingSpeedMod | float | Swimming speed modifier |
 | InCombatMode | bool | TRUE if in combat stance |
@@ -1655,10 +1671,17 @@ Adornment attached to item.
 | Description | string | Adornment description |
 | ToLink | string | Creates clickable chat link |
 
+#### Methods
+
+| Method | Parameters | Description |
+|--------|-----------|-------------|
+| Examine | - | Opens the examine window for the adornment |
+
 **Example Usage:**
 ```lavishscript
 echo ${MyItem.ToItemInfo.Adornment[1].Name}
 echo ${MyItem.ToItemInfo.Adornment[1].Slot}
+MyItem.ToItemInfo.Adornment[1]:Examine
 ```
 
 ---

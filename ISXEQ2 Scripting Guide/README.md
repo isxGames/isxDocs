@@ -361,6 +361,15 @@ Found an error or have an improvement? This documentation was generated using ac
 <!-- CLAUDE_SKIP_START -->
 ## Version History
 
+- **4.15** (2026-07-12) — ISXEQ2 changelog catch-up
+  - Documented the new optional third argument to the `eq2` datatype's `QueryActors` method — a `sortmode` string controlling result ordering: `"ByDist"` (sort by distance, the default), `"ByLevel"` (sort by actor level), `"ByName"` (sort by actor name), or `"NoSort"` (do not sort). Case-insensitive; an unrecognized value falls back to `"ByDist"`; omitting the argument keeps the legacy distance-sorted behavior. `"NoSort"` skips the full distance-sort of the actor list when order does not matter — added to `03_API_Reference.md` (eq2 QueryActors Methods-table row, a new "QueryActors Sort Modes" table after the eq2 Example Usage, and QueryActors examples in the eq2 Example Usage block), `ISXEQ2_QuickReference.md` (eq2 `QueryActors` method entry), `04_Core_Concepts.md` (new "QueryActors Sort Modes" table plus query examples), and a cheat-sheet example in `00_MASTER_GUIDE.md`
+  - Documented a new `actor` member `IsNPC` (int, `1` if the actor is an NPC or NamedNPC, otherwise `0`) — a cheaper `QueryActors` filter than `(Type =- "NPC" || Type =- "NamedNPC")` — added to `03_API_Reference.md` actor Members - State Checks table and `ISXEQ2_QuickReference.md` actor state-checks block, with usage examples in `04_Core_Concepts.md` and `00_MASTER_GUIDE.md`
+  - No new TLOs, no new commands, no removed APIs, no new events
+
+- **4.14** (2026-07-09) — ISXEQ2 changelog catch-up
+  - Documented a new `adornment` method `Examine` (opens the examine window for the adornment) — added to `03_API_Reference.md` (new Methods table in the adornment datatype section, with an `:Examine` example in the adornment Example Usage) and `ISXEQ2_QuickReference.md` (new Methods list in the adornment block)
+  - No new TLOs, no new commands, no removed APIs, no new events
+
 - **4.13** (2026-06-24) — ISXEQ2 changelog catch-up
   - Documented three new `actor` members, all `bool`: `OnMount` (TRUE while physically on any mount -- stays TRUE even when the mount model is hidden), `OnGriffon` (TRUE while on a griffon or other flight-path transport), and `OnControllableMount` (TRUE while on a mount you steer yourself, i.e. mounted and not a griffon) — added to `03_API_Reference.md` actor Members table and `ISXEQ2_QuickReference.md` actor block
   - Updated the `actor.FlyingUsingMount` member description to reflect improved reliability (now returns a proper FALSE instead of NULL for non-predicted actors, and no longer misreads when unrelated movement flags are set) — updated in `03_API_Reference.md` actor Members table and `ISXEQ2_QuickReference.md` actor block

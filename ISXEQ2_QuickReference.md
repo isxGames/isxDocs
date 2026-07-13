@@ -250,7 +250,7 @@ Main game information and utilities.
 **Methods:**
 - `CreateCustomActorArray[sortby,range,type]` - Creates custom actor array (access via `CustomActor[index]` which returns [actor](#actor))
 - `GetActors[index,searchparams]` - Populates index with [actor](#actor) objects
-- `QueryActors[index,query]` - Populates index with [actor](#actor) objects matching query
+- `QueryActors[index,query,sortmode]` - Populates index with [actor](#actor) objects matching query. Optional `sortmode`: `"ByDist"` (default, sort by distance), `"ByLevel"` (sort by level), `"ByName"` (sort by name), or `"NoSort"` (no sorting). Case-insensitive; unrecognized value falls back to `"ByDist"`; omitting it keeps the legacy distance-sorted behavior. `"NoSort"` avoids a full distance-sort of the actor list when order does not matter. Example: `EQ2:QueryActors[Actors, IsNPC == 1 && Distance <= 15, "NoSort"]`
 - `SetMasterVolume[volume]` - Sets master volume
 - `AcceptPendingQuest` - Accepts pending quest
 - `DeclinePendingQuest` - Declines pending quest
@@ -513,6 +513,7 @@ Base datatype for all actors (NPCs, PCs, objects) in the game world.
 - `IsAPet` - bool: Is a pet
 - `IsMyPet` - bool: Is player's pet
 - `IsNamed` - bool: Is named NPC
+- `IsNPC` - int: 1 if actor is an NPC or NamedNPC, else 0 (cheaper `QueryActors` filter than `(Type =- "NPC" || Type =- "NamedNPC")`)
 - `IsSwimming` - bool: Swimming
 - `SwimmingSpeedMod` - float: Swimming speed mod
 - `InCombatMode` - bool: Combat stance
@@ -1179,6 +1180,9 @@ Adornment attached to item.
 - `IconID` - int: Icon ID
 - `SlotIndex` - int: Numeric slot index
 - `ToLink` - string: Chat link
+
+**Methods:**
+- `Examine` - Opens the examine window for the adornment
 
 ---
 

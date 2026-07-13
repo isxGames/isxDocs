@@ -260,6 +260,9 @@ Radar                       ; Show all actors on radar
 ; Find actors
 EQ2:QueryActors[Index, Distance < 50 && Level == 120]
 
+; Cheap NPC filter, unsorted for speed (optional 3rd arg: ByDist/ByLevel/ByName/NoSort)
+EQ2:QueryActors[Index, IsNPC == 1 && Distance <= 15, "NoSort"]
+
 ; Find inventory items
 Me:QueryInventory[Items,"Name =- \"Potion\" && Quantity > 1"]
 

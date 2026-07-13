@@ -396,6 +396,10 @@ ISXEQ2 provides powerful query capabilities to filter and search collections.
 variable index:actor NearbyActors
 EQ2:QueryActors[NearbyActors, Distance < 50 && Level == 120]
 
+; Find nearby NPCs with the cheap IsNPC filter, unsorted for speed
+variable index:actor Enemies
+EQ2:QueryActors[Enemies, IsNPC == 1 && Distance <= 15, "NoSort"]
+
 ; Find inventory items containing "Potion"
 variable index:item Potions
 Me:QueryInventory[Potions,"Name =- Potion"]
@@ -412,6 +416,19 @@ Me:QueryEffects[Detriments,"!IsBeneficial"]
 variable index:item Weapons
 Me:QueryInventory[Weapons,"Type =- \"Weapon\" && ToItemInfo.Level >= 100"]
 ```
+
+### QueryActors Sort Modes
+
+`EQ2:QueryActors` accepts an optional third argument that controls how the resulting index is ordered:
+
+| Value | Ordering |
+|-------|----------|
+| `"ByDist"` | Sort by distance (the default) |
+| `"ByLevel"` | Sort by actor level |
+| `"ByName"` | Sort by actor name |
+| `"NoSort"` | Do not sort at all |
+
+The value is case-insensitive and an unrecognized value falls back to `"ByDist"`. Omitting the argument keeps the legacy behavior (sorted by distance), so existing scripts are unaffected. Prefer `"NoSort"` when you only need to test or iterate the matches and do not care about their order — otherwise `QueryActors` sorts the ENTIRE actor list by distance on every call. Pair it with the `actor.IsNPC` member (`1` if the actor is an NPC or NamedNPC, else `0`) for a cheaper NPC filter than `(Type =- "NPC" || Type =- "NamedNPC")`.
 
 ### Modern Actor Collection (EQ2:GetActors)
 
