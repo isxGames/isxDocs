@@ -2594,8 +2594,8 @@ Plus all members from [eq2window](#eq2window)
 |--------|-----------|-------------|
 | GetActiveQuests | index | Populates index with active quests |
 | GetCompletedQuests | index | Populates index with completed quests |
-| GetActiveQuestIDs | index:uint | Fast bulk retrieval of active quest IDs -- populates the passed uint index with the ID of every active quest |
-| GetCompletedQuestIDs | index:uint | Fast bulk retrieval of completed quest IDs -- populates the passed uint index with the ID of every completed quest |
+| GetActiveQuestIDs | index:uint | Populates the passed `index:uint` container (declared by the caller) with the raw ID of every active quest -- same idiom as `EQ2:GetActors`. Clears the container first, then fills it. `index:uint` is the parameter's datatype (an `index` of `uint`), not a position. Element type is `uint` because EQ2 quest IDs routinely exceed 2^31. Returns bool: TRUE on success (the container is simply left empty when there are no active quests), FALSE if no argument (or one of the wrong type) is passed or the quest-journal data is not yet available. Read the count with `${MyIndex.Used}` and enumerate the IDs 1-based (`${MyIndex[1]}`, ...) |
+| GetCompletedQuestIDs | index:uint | Populates the passed `index:uint` container (declared by the caller) with the raw ID of every completed quest -- identical contract to `GetActiveQuestIDs` (clears then fills the container, `index:uint` is the parameter datatype, `uint` elements, returns bool TRUE on success / FALSE on missing-or-wrong-type argument or unavailable quest-journal data) |
 
 Plus all methods from [eq2window](#eq2window)
 
@@ -2604,6 +2604,12 @@ Plus all methods from [eq2window](#eq2window)
 echo ${QuestJournalWindow.NumActiveQuests}
 echo ${QuestJournalWindow.ActiveQuest[1].Name}
 echo ${QuestJournalWindow.CurrentQuest.Name}
+
+; Bulk-retrieve the raw ID of every active quest (same idiom as EQ2:GetActors)
+declare Quests index:uint
+QuestJournalWindow:GetActiveQuestIDs[Quests]
+echo "Active quests: ${Quests.Used}"
+echo "First ID: ${Quests[1]}"
 ```
 
 ---

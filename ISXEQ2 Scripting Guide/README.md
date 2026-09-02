@@ -367,7 +367,7 @@ Found an error or have an improvement? This documentation was generated using ac
   - No new TLOs, no new datatypes, no new members or methods, no new commands, no removed APIs, no new events
 
 - **4.27** (2026-08-18) -- Fast bulk quest-ID retrieval on the quest journal window
-  - Documented two new `journalquestwindow` (`${QuestJournalWindow}`) methods for fast bulk ID retrieval: `GetActiveQuestIDs[index:uint]` and `GetCompletedQuestIDs[index:uint]`, each populating the passed uint index with the ID of every active / completed quest -- added to the `### journalquestwindow` Methods table in `03_API_Reference.md` and the journalquestwindow Methods list in `ISXEQ2_QuickReference.md`
+  - Documented two new `journalquestwindow` (`${QuestJournalWindow}`) methods for fast bulk ID retrieval: `GetActiveQuestIDs[index:uint]` and `GetCompletedQuestIDs[index:uint]`. Each is a method (same idiom as `EQ2:GetActors`) that clears a caller-declared `index:uint` container and fills it with the raw ID of every active / completed quest, returning bool (TRUE on success, even when empty; FALSE on missing/wrong-type argument or unavailable quest-journal data); `index:uint` is the parameter's datatype, not a position -- added to the `### journalquestwindow` Methods table in `03_API_Reference.md` and the journalquestwindow Methods list in `ISXEQ2_QuickReference.md`
   - No new TLOs, no new datatypes, no new members, no new commands, no removed APIs, no new events
 
 - **4.26** (2026-08-13) -- Internal efficiency/reliability only

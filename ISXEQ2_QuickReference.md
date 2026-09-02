@@ -1839,8 +1839,8 @@ Quest journal window. Inherits from [**eq2window**](#eq2window).
 **Methods:**
 - `GetActiveQuests[index]` - Populates index with active quests
 - `GetCompletedQuests[index]` - Populates index with completed quests
-- `GetActiveQuestIDs[index:uint]` - Fast bulk retrieval: populates a uint index with the ID of every active quest
-- `GetCompletedQuestIDs[index:uint]` - Fast bulk retrieval: populates a uint index with the ID of every completed quest
+- `GetActiveQuestIDs[index:uint]` - Method (same idiom as `EQ2:GetActors`): clears the caller-declared `index:uint` container and fills it with the raw ID of every active quest. `index:uint` is the parameter's datatype (an `index` of `uint`), not a position; `uint` because quest IDs routinely exceed 2^31. Returns bool: TRUE on success (empty container when there are no quests), FALSE on missing/wrong-type argument or unavailable quest-journal data. Read `${MyIndex.Used}`, enumerate 1-based `${MyIndex[1]}`...
+- `GetCompletedQuestIDs[index:uint]` - Method: fills the caller-declared `index:uint` container with the raw ID of every completed quest; identical contract to `GetActiveQuestIDs` (returns bool)
 
 ---
 
