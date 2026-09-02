@@ -205,6 +205,7 @@ Datatypes for inventory, equipment, and item information.
 - [packageditem](#packageditem) - Packaged item in reward/examine
 - [adornment](#adornment) - Adornment attached to item
 - [createditem](#createditem) - Item created by a recipe
+- [guildbankitem](#guildbankitem) - Item in the guild/coalition bank
 
 ### Ability DataTypes
 
@@ -444,7 +445,7 @@ EQ2:GetActors[Actors,Range,50,NPC]
 
 ; QueryActors with an optional sort mode (third argument)
 EQ2:QueryActors[Actors, Type =- "NPC" && Distance <= 50, "ByLevel"]
-EQ2:QueryActors[Actors, IsNPC == 1 && Distance <= 15, "NoSort"]
+EQ2:QueryActors[Actors, IsNPC && Distance <= 15, "NoSort"]
 
 EQ2:AcceptPendingQuest
 EQ2:OpenTravelMapWindow
@@ -466,6 +467,8 @@ for (i:Set[1] ; ${i} <= ${EQ2.AccountRosterCount} ; i:Inc)
 | `"NoSort"` | Do not sort at all |
 
 The value is case-insensitive; an unrecognized value falls back to `"ByDist"`. Omitting the argument entirely keeps the previous behavior (sorted by distance), so existing scripts are unaffected. `"NoSort"` is a worthwhile optimization when you only need to test or iterate the matches and do not care about their order — otherwise `QueryActors` sorts the ENTIRE actor list by distance on every call.
+
+> **Note (empty query):** The `sortmode` argument is **silently ignored when the query expression is empty**. An empty query is handled by a separate internal code path that takes no sort parameter and always sorts, so `EQ2:QueryActors[Actors, "", "NoSort"]` returns a sorted index anyway. The sort mode only has an effect when the query expression is non-empty — if you want an unsorted list of every actor, pass a query that matches everything rather than an empty string.
 
 **See Also:** [accountrosterrecord](#accountrosterrecord)
 
@@ -766,7 +769,7 @@ Base datatype for all actors (NPCs, PCs, objects) in the game world.
 | IsAPet | bool | TRUE if is a pet |
 | IsMyPet | bool | TRUE if is player's pet |
 | IsNamed | bool | TRUE if named NPC |
-| IsNPC | int | 1 if the actor is an NPC or NamedNPC, otherwise 0. A cheaper `QueryActors` filter than `(Type =- "NPC" \|\| Type =- "NamedNPC")` |
+| IsNPC | bool | TRUE if the actor is an NPC or NamedNPC, otherwise FALSE. A cheaper `QueryActors` filter than `(Type =- "NPC" \|\| Type =- "NamedNPC")`. In a query, test it by bare name for TRUE (`IsNPC`) or with a leading `!` for FALSE (`!IsNPC`), never `== 1` |
 | IsSwimming | bool | TRUE if swimming |
 | SwimmingSpeedMod | float | Swimming speed modifier |
 | InCombatMode | bool | TRUE if in combat stance |
@@ -799,6 +802,10 @@ Base datatype for all actors (NPCs, PCs, objects) in the game world.
 | OnMount | bool | TRUE while physically on any mount -- stays TRUE even when the mount model is hidden |
 | OnGriffon | bool | TRUE while on a griffon or other flight-path transport |
 | OnControllableMount | bool | TRUE while on a mount you steer yourself (i.e. mounted and not a griffon) |
+| OnJumpingMount | bool | TRUE while on a "jumping"/leaper mount (e.g. a Faydark Jumper) |
+| Starred | bool | TRUE if the actor shows the white AA-star (a discovery/collection star) |
+| QuestTarget | bool | TRUE if the actor shows the quest feather/quill icon (may provide a quest update). See `QuestTargetType` for which kind |
+| QuestTargetType | string | WHICH kind of quest update the actor provides, or `"None"`. One of: `None` (not flagged), `KillTarget` / `BaubleTarget` / `GenericTarget` (a kill / bauble-collection / other update for a quest in YOUR journal), or `AllyKillTarget` / `AllyBaubleTarget` / `AllyGenericTarget` (the same three for a quest in a GROUP MEMBER'S journal) |
 | UpdatesMyQuest | bool | TRUE if updates player's quest |
 | UpdatesGroupMemberQuest | bool | TRUE if updates group member quest |
 | ActiveStateExists["state"] | bool | TRUE if actor has the specified active state |
@@ -839,6 +846,9 @@ if ${Target.Type.Equal["NamedNPC"]}
 ; Distance check
 if ${Target.Distance} < 5
     Target:DoubleClick
+
+; Find nearby actors that may provide a quest update (feather/quill icon)
+EQ2:QueryActors[Actors, QuestTarget && Distance <= 30, "NoSort"]
 ```
 
 **Note (mount detection):** The `OnTransport` member is unreliable for your own character. Use `${Me.OnMount}` for a self-facing mount check (it stays TRUE even when the mount model is hidden). For finer-grained detection, `${Me.OnControllableMount}` is TRUE only on a mount you steer yourself, and `${Me.OnGriffon}` is TRUE on a griffon or other flight-path transport.
@@ -935,6 +945,8 @@ Player character datatype. Inherits all members and methods from [actor](#actor)
 | InventorySlotsFree | int | Number of free inventory slots |
 | BankSlotsFree | int | Number of free bank slots |
 | SharedBankSlotsFree | int | Number of free shared bank slots |
+| GuildBank | int | Number of items currently in the guild bank. Returns the integer `0` (not NULL) if the guild bank has not been opened this session |
+| GuildBank[#] / GuildBank[name] | [guildbankitem](#guildbankitem) | Guild-bank item by 1-based index (`#` is 1 to `${Me.GuildBank}`) or by name. Returns the integer `0` (not NULL) if the guild bank has not been opened this session |
 
 **Valid Equipment Slots:** primary, secondary, ranged, ammo, head, chest, shoulders, forearms, hands, legs, feet, finger1, finger2, ears1, ears2, neck, waist, primarycharm, secondarycharm, wrist1, wrist2, cloak
 
@@ -994,7 +1006,9 @@ Player character datatype. Inherits all members and methods from [actor](#actor)
 | IsDecliningGuildInvites | bool | TRUE if declining guilds |
 | IgnoringAll | bool | TRUE if ignoring all |
 | GuildPrivacyOn | bool | TRUE if guild privacy on |
-| CombatExpEnabled | bool | TRUE if combat XP enabled |
+| CombatXPEnabled | bool | TRUE if combat XP gain is enabled |
+| QuestXPEnabled | bool | TRUE if quest XP gain is enabled |
+| CombatExpEnabled | bool | TRUE if combat XP enabled (retained alias for `CombatXPEnabled`; both work) |
 
 #### Members - Afflictions
 
@@ -1091,7 +1105,9 @@ Player character datatype. Inherits all members and methods from [actor](#actor)
 | GuildBankWithdraw | amount | Withdraws from guild bank |
 | SharedBankDeposit | amount | Deposits to shared bank |
 | SharedBankWithdraw | amount | Withdraws from shared bank |
-| ResetZoneTimer | - | Resets zone timer |
+| ResetZoneTimer | ["all"] | Resets the selected zone reuse timer. Pass `"all"` to reset every timer at once (like the "Reset All" button; the GUI may not visually update) |
+| ToggleCombatXP | - | Toggles combat XP gain on/off (see `CombatXPEnabled`) |
+| ToggleQuestXP | - | Toggles quest XP gain on/off (see `QuestXPEnabled`) |
 | DepositIntoHouseEscrow | amount | Deposits to house escrow |
 | QueryInventory | query | Queries inventory (populates index with item objects) |
 | QueryEffects | query | Queries effects (populates index with effect objects) |
@@ -1232,7 +1248,9 @@ Item in inventory, equipment, or containers.
 
 | Member | Type | Description |
 |--------|------|-------------|
-| Name | string | Item name |
+| Name | string | Item name. For an inventory/equipment item with a very long name, ISXEQ2 now pulls the complete name from the item's examine info automatically the moment you read `.Name` -- so this usually returns the whole name. If the game does not have that item's info yet the name can still come back shortened (see `IsNameTruncated`); this is a game-side design limit, not an ISXEQ2 one, and affects only inventory/equipment items (names from examine, container, merchant and broker windows were never shortened) |
+| FullName | string | The item's complete name. Falls back to the same value as `.Name` in the rare case the examine info is not available, so it never returns empty |
+| IsNameTruncated | bool | TRUE only while the name you are reading right now is STILL shortened (answers "is what I'm reading right now still short?", not "was this name ever shortened?"). Check it before comparing `.Name` against a name you already know -- if TRUE, an equality test against the full name will fail |
 | ID | uint | Item unique ID |
 | LinkID | int | Link ID for chat links |
 | ToLink | string | Creates clickable chat link |
@@ -1247,9 +1265,9 @@ Item in inventory, equipment, or containers.
 | LocationID | int | Numeric location ID |
 | InContainerID | int | Container ID if item is inside a container |
 | ContainerID | int | Container ID if this item IS a container |
-| Slot | int | Slot number |
-| Bag | int | Bag slot if in inventory container |
-| Index | int | Index in inventory array |
+| Slot | int | Slot number within its bag, **1-based** (1 = first slot, 2 = second, etc.). Any negative value is passed straight through, so the `-1` "no bag" case can never be confused with a real slot index |
+| Bag | int | Bag number if in an inventory container, **1-based** (1 = first bag, 2 = second, etc.). Returns `-1` when the item is not in a bag (equipped items, top-level inventory/bank items, items on the cursor, etc.) |
+| Index | int | Raw index in the inventory array. **0-based** (unchanged) -- this is the raw array position used by the move/equip commands, not a slot number |
 
 #### Members - Properties
 
@@ -1270,9 +1288,9 @@ Item in inventory, equipment, or containers.
 | IsInventoryContainer | bool | TRUE if is inventory container |
 | IsBankContainer | bool | TRUE if is bank container |
 | IsSharedBankContainer | bool | TRUE if is shared bank container |
-| IsSlotOpen[slot] | bool | TRUE if slot is open (container) |
-| ItemInSlot[slot] | [item](#item) | Item in specified slot (container) |
-| NextSlotOpen | int | Next open slot index (container) |
+| IsSlotOpen[slot] | bool | TRUE if the given **1-based** slot is open (container). `IsSlotOpen[1]` tests the first slot |
+| ItemInSlot[slot] | [item](#item) | Item in the given **1-based** slot (container). `ItemInSlot[1]` returns the item in the first slot; a slot number below 1 matches nothing |
+| NextSlotOpen | int | Next open slot within the container, **1-based** (1 = first slot). Returns NULL when the container has no open slot (or the item is not a container) -- check `${...NextSlotOpen(exists)}` before using the value |
 
 #### Members - Item Type Checks
 
@@ -1309,7 +1327,9 @@ Item in inventory, equipment, or containers.
 |--------|-----------|-------------|
 | Destroy | - | Destroys item (no confirmation) |
 | DestroyWithConf | - | Destroys item with confirmation dialog |
-| Move | location,slot / "container",containerID,slot | Moves item to location |
+| Move | ToBagLoc#, ContainerID[, Quantity] | Moves item into a container. The FIRST argument (destination slot within the target container) is **1-based** -- pass `1` for the first slot (a value below 1 is rejected; `-1` means "auto-slot", let the server choose). The SECOND argument (destination ContainerID / region code) and the optional Quantity are NOT indices and are unchanged. Common pattern: `Item:Move[${Container.NextSlotOpen},${Container.ContainerID}]` |
+| MoveToBag | Region, Bag#, Quantity  /  GuildBank, Page#, Slot#, Quantity | Move this item into a specific bag of a region, or to a specific page/slot of the guild bank. **Inventory form:** Region = `Inventory`, `Bank`, or `SharedBank` (`Shared` is accepted as an alias for SharedBank); `Bag#` is 1-based. **Guild-bank form:** `Page#` is 1-based (1-4), `Slot#` is 1-80. `Quantity` is optional and defaults to 0 (move the entire stack) |
+| MoveAuto | Region[, Quantity] | Auto-deposit this item to a region's auto pad (same as dropping it on the "auto-inventory"/"auto-bank" pad). Region = `Inventory`, `Bank`, or `SharedBank` (`Shared` alias accepted). `Quantity` is optional and defaults to 0 (entire stack). Does NOT apply to the guild bank (it has no auto pad -- use `MoveToBag[GuildBank,...]`) |
 | Equip | - | Equips the item |
 | UnEquip | - | Unequips the item |
 | Consume | - | Consumes the item |
@@ -1718,6 +1738,55 @@ echo ${MyItem.ToItemInfo.CreatesItem[1].ToLink}
 ```
 
 **See Also:** [iteminfo](#iteminfo), [packageditem](#packageditem)
+
+---
+
+### guildbankitem
+
+An item in the guild (or coalition) bank. Returned by [character.GuildBank[#]](#character).
+
+**Access:** `${Me.GuildBank[#]}`, `${Me.GuildBank[name]}`
+
+#### Members
+
+| Member | Type | Description |
+|--------|------|-------------|
+| Page | int | Guild-bank page the item is on, **1-based** (1-4) |
+| Slot | int | Slot within the page, **1-based** (1-80) |
+| LinkID | uint | Link ID for chat links |
+| ExamineID | uint | Examine ID |
+| Quantity | int | Stack quantity |
+| IsCoalition | bool | TRUE if this is a coalition-bank item (rather than a guild-bank item); withdraw uses this automatically |
+| CanDeposit | bool | TRUE if you have permission to deposit into this slot |
+| IsItemInfoAvailable | bool | TRUE if detailed item info has resolved (see async note below) |
+| ToItemInfo | [iteminfo](#iteminfo) | Returns detailed item information |
+
+#### Methods
+
+| Method | Parameters | Description |
+|--------|-----------|-------------|
+| MoveToInventory | DestContainerID, DestSlot[, Quantity] | WITHDRAW this item from the guild/coalition bank into your inventory. `DestContainerID` is the target inventory slot's `InContainerID`; `DestSlot` is the slot index within that container (**1-based**); `Quantity` is optional (omit it to withdraw the entire stack). Guild vs. coalition is selected automatically from the item (see `IsCoalition`) |
+
+**Note (asynchronous info):** A guild-bank item's detailed info resolves ASYNCHRONOUSLY, exactly like the [item](#item) datatype. Open the guild-bank window, then read `${Me.GuildBank[#].IsItemInfoAvailable}` -- that read is what triggers the examine request to the server. Poll it until it returns TRUE, then read `${Me.GuildBank[#].ToItemInfo.Name}` (and any other iteminfo detail).
+
+**Example Usage:**
+```lavishscript
+; Open the guild bank window first, then:
+echo ${Me.GuildBank}                          ; number of items in the guild bank (0 if never opened)
+echo ${Me.GuildBank[1].Page}                  ; 1-based page
+echo ${Me.GuildBank[1].Slot}                  ; 1-based slot
+
+; Wait for async item info, then read details
+while !${Me.GuildBank[1].IsItemInfoAvailable}
+    waitframe
+echo ${Me.GuildBank[1].ToItemInfo.Name}
+
+; Withdraw the whole stack into the first slot of a destination bag
+; (DestContainerID is the InContainerID of the target inventory slot; DestSlot is 1-based)
+Me.GuildBank["Ethereal Coin"]:MoveToInventory[${Me.Inventory[Pack1].ContainerID},1]
+```
+
+**See Also:** [character](#character), [item](#item), [iteminfo](#iteminfo)
 
 ---
 
@@ -2146,6 +2215,7 @@ Broker/consignment item.
 | ToLink | string | Creates clickable chat link |
 | IsListed | bool | TRUE if listed for sale |
 | Market | string | Market name |
+| SellerName | string | Character name of the seller who listed this broker item |
 | SerialNumber | int64 | Item serial number |
 | IsItemInfoAvailable | bool | TRUE if item info available |
 | ToItemInfo | [iteminfo](#iteminfo) | Returns detailed item information |
@@ -2524,6 +2594,8 @@ Plus all members from [eq2window](#eq2window)
 |--------|-----------|-------------|
 | GetActiveQuests | index | Populates index with active quests |
 | GetCompletedQuests | index | Populates index with completed quests |
+| GetActiveQuestIDs | index:uint | Fast bulk retrieval of active quest IDs -- populates the passed uint index with the ID of every active quest |
+| GetCompletedQuestIDs | index:uint | Fast bulk retrieval of completed quest IDs -- populates the passed uint index with the ID of every completed quest |
 
 Plus all methods from [eq2window](#eq2window)
 

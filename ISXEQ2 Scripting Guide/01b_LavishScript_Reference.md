@@ -299,6 +299,40 @@ Documented under the `ISKernel:` namespace. Available in any Inner Space session
 | [HUDGroup](https://www.lavishsoft.com/wiki/index.php/ISKernel:HUDGroup_(Command)) | Hide or show a group of HUD elements. |
 | [HUDSet](https://www.lavishsoft.com/wiki/index.php/ISKernel:HUDSet_(Command)) | Modify a HUD element's properties. |
 
+**Syntax**
+
+```
+HUD -list | -remove <name> | -add <name> <#,#> <text>
+HUDSet <name|*> [-s <size>] [-c <color>] [-f <filter>] [-l #,#] [-t <text>]
+```
+
+`HUD -add` takes only a name, an `X,Y` position, and the text — **there is no size or color parameter on `-add`**.
+Appearance is applied afterwards with `HUDSet`:
+
+| `HUDSet` flag | Effect |
+|---|---|
+| `-s <size>` | Font size |
+| `-c <color>` | Color, hex (e.g. `FFFF00`) |
+| `-l #,#` | Move to an X,Y position |
+| `-t <text>` | Replace the element's text |
+| `-f <filter>` | Filter |
+
+```lavishscript
+; Create the element, then style it
+HUD -add MyStatus 230,200 "Status: \${Script[MyScript].Variable[StatusText]}"
+HUDSet MyStatus -s 24 -c FFFF00
+```
+
+Three things worth knowing:
+
+- **Default font size is 12.** It is not stated as a default in the command reference, but `HUD -list` reports
+  existing elements as `[Size:12]`. So `-s 24` is double size.
+- **`*` means every HUD element in the session**, not just your script's. `HUDSet * -s 24` will resize HUD elements
+  belonging to other running scripts too — name each of your own elements instead unless you genuinely intend that.
+- **Font size and line spacing are independent.** HUD elements are positioned by absolute `X,Y`, so enlarging the
+  font does not push the following lines down. If you scale the text you must scale the Y spacing between elements
+  by the same factor or the lines will overlap.
+
 #### Settings
 
 | Command | Purpose |
@@ -411,7 +445,7 @@ Members:
 | `Mid[pos,len]` | string | Substring of `len` chars starting at 1-based `pos`. |
 | `Left[#]` | string | Leftmost `#` chars. Negative `#` = leftmost (Length-#). |
 | `Right[#]` | string | Rightmost `#` chars. Negative `#` = rightmost (Length-#). |
-| `Find[text]` | int | 1-based position of substring, or NULL. |
+| `Find[text]` | int | 1-based position of substring (case-insensitive), or NULL. No case-sensitive `FindCS` variant exists. |
 | `Count[char]` | int | Number of occurrences of a single character. |
 | `Token[#,sep]` | string | The #th token after splitting on `sep`. |
 | `Compare[text]` | int | Case-insensitive dictionary compare. |
@@ -792,14 +826,24 @@ A shared key-value store visible across sessions, used heavily for multi-boxing 
 
 | Type | Description |
 |---|---|
-| [`input`](https://www.lavishsoft.com/wiki/index.php/ISKernel:input_(Object_Type)) | Top-level input subsystem. Accessed via `Input` TLO. |
+| [`input`](https://www.lavishsoft.com/wiki/index.php/ISKernel:input_(Object_Type)) | Top-level input subsystem. Accessed via `Input` TLO. Members: `Button[name]` / `Button[#]` (returns `button`), `Axis[name]` / `Axis[#]` (returns `axis`), `DPad[name]` / `DPad[#]` (returns `dpad`), `Bind[name]` (returns `bind`), `BindsEnabled` (bool). Methods: `Bind[name,combo,command]`, `EnableBinds`, `DisableBinds`, `GetButtonIterator[iterator]`. `Button[name].Pressed` is the READ side of key/button state (see note below). |
 | [`keyboard`](https://www.lavishsoft.com/wiki/index.php/ISKernel:keyboard_(Object_Type)) | Keyboard state. Accessed via `Keyboard` TLO. |
 | [`mouse`](https://www.lavishsoft.com/wiki/index.php/ISKernel:mouse_(Object_Type)) | Mouse state. Accessed via `Mouse` TLO. |
 | [`bind`](https://www.lavishsoft.com/wiki/index.php/ISKernel:bind_(Object_Type)) | A registered Bind. |
-| [`button`](https://www.lavishsoft.com/wiki/index.php/ISKernel:button_(Object_Type)) | A button (gamepad/joystick). |
+| [`button`](https://www.lavishsoft.com/wiki/index.php/ISKernel:button_(Object_Type)) | A single button -- a keyboard key, mouse button, or gamepad/joystick button. Obtained via `Input.Button[name]`. Members: `Name` (string), `Device` (string -- the input device hosting the button), `ID` (uint -- 255 and under are Windows-assigned, 256+ are Inner-Space-generated for non-keyboard buttons), `Pressed` (bool -- TRUE while the button/key is currently held). Methods: `Press`, `Hold`, `Release`. |
 | [`dpad`](https://www.lavishsoft.com/wiki/index.php/ISKernel:dpad_(Object_Type)) | A D-pad. |
 | [`axis`](https://www.lavishsoft.com/wiki/index.php/ISKernel:axis_(Object_Type)) | An analog axis. |
 | [`g15`](https://www.lavishsoft.com/wiki/index.php/ISKernel:g15_(Object_Type)) | Logitech G15-series keyboard hardware. |
+
+**Reading current key/button state (`Input.Button[name].Pressed`).** This is the READ side of input, complementary to the write-only `Press` command and the `keyboard`/`mouse` emulation objects (which only press/hold/release/bind). `${Input.Button[<name>].Pressed}` returns a bool that is TRUE while that key or button is currently held down:
+
+```lavishscript
+; Is the ALT key held right now?
+if ${Input.Button[alt].Pressed}
+    echo "ALT is currently held"
+```
+
+`<name>` is a key/button name such as `alt`, `shift`, `ctrl`, `space`, or a letter/number key. Left/right modifier variants (e.g. `lalt` / `ralt`, `lshift` / `rshift`, `lctrl` / `rctrl`) may be addressed where the platform distinguishes them; use `Press -keylist` to enumerate valid key names. This is a base Inner Space feature (game-agnostic) -- it does not require ISXEQ2 or any game extension.
 
 ### 3.19 Inner Space MIDI
 
@@ -969,7 +1013,7 @@ Source: [ISKernel:Top-Level Objects](https://www.lavishsoft.com/wiki/index.php/I
 
 | TLO | Returns | Purpose |
 |---|---|---|
-| [`Input`](https://www.lavishsoft.com/wiki/index.php/ISKernel:Input_(Top-Level_Object)) | input | Input subsystem root. |
+| [`Input`](https://www.lavishsoft.com/wiki/index.php/ISKernel:Input_(Top-Level_Object)) | input | Input subsystem root (binds, buttons, axes, dpads). Read current key/button state with `${Input.Button[<name>].Pressed}` -- e.g. `${Input.Button[alt].Pressed}`. See [3.18 Inner Space Input](#318-inner-space-input). |
 | [`Keyboard`](https://www.lavishsoft.com/wiki/index.php/ISKernel:Keyboard_(Top-Level_Object)) | keyboard | Keyboard state. |
 | [`Mouse`](https://www.lavishsoft.com/wiki/index.php/ISKernel:Mouse_(Top-Level_Object)) | mouse | Mouse state. |
 

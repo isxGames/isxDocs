@@ -566,6 +566,9 @@ variable string CharName
 CharName:Set[${UIElement[CharacterName].Text}]
 ```
 
+**Start typing without clicking first:** to put the caret in a text box when it appears — so the user can type
+straight away — use [SetFocus](#setfocus---give-an-element-keyboard-focus) after showing it.
+
 ### Tabs and TabControls
 
 Create tabbed interfaces.
@@ -1047,6 +1050,24 @@ UIElement[TargetList]:AddItem["Target 2"]
 UIElement[TargetList]:Sort
 ```
 
+#### SetFocus - Give an element keyboard focus
+
+`SetFocus` sets keyboard focus to an element, if that element can accept it. It works on any element, not just
+windows -- pointing it at a text-input element lets the user start typing immediately instead of clicking the box
+first.
+
+```lavishscript
+; Pop up an input window and put the caret straight into its text box
+UIElement[MyInputWindow]:Show
+UIElement[ValueEntry@MyInputWindow]:SetFocus
+```
+
+Two things to get right:
+
+- **Show the element first.** A hidden element cannot take focus, so `SetFocus` before `Show` silently does nothing.
+- **Focus is not guaranteed.** The element only takes it "if it can accept it", so check the `Focus` member
+  afterwards when it matters (see [Reading UI Element State](#reading-ui-element-state)).
+
 ### Reading UI Element State
 
 ```lavishscript
@@ -1070,6 +1091,25 @@ if ${UIElement[MyWindow].Visible}
 if ${UIElement[MyWindow].Minimized}
 {
     echo Window is minimized
+}
+
+; Check whether an element currently holds keyboard focus
+if ${UIElement[ValueEntry@MyInputWindow].Focus}
+{
+    echo The entry has focus -- typing goes here
+}
+```
+
+`Focus` (bool) pairs with the `SetFocus` method above. Because `SetFocus` only succeeds if the element can accept
+focus, reading `Focus` straight afterwards is the way to tell whether it actually took rather than assuming it did:
+
+```lavishscript
+UIElement[MyInputWindow]:Show
+UIElement[ValueEntry@MyInputWindow]:SetFocus
+
+if !${UIElement[ValueEntry@MyInputWindow].Focus}
+{
+    echo NOTE -- the box did not take focus; click it before typing
 }
 ```
 

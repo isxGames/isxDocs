@@ -667,7 +667,7 @@ UIElement[Craft Selection].FindUsableChild[Gauge Label,text]:Hide
     <Height>88</Height>
     <SelectMultiple>1</SelectMultiple>
     <OnSelect>
-        broker Name "${This.Item[${ID}].Text.Token[1,|]}" Sort ByPriceAsc MinTier Handcrafted MaxTier Treasured
+        broker Name "${This.Item[${ID}].Text.Token[1,|]}" Sort ByPriceAsc MinTier Handcrafted MaxTier Treasured SimpleSearch
     </OnSelect>
     <Sort>Text</Sort>
 </Listbox>
@@ -689,7 +689,9 @@ ${This.Item[${ID}].Text.Token[1,|]}  ; Name
 ${This.Item[${ID}].Text.Token[2,|]}  ; Value
 
 ; Execute command with item data
-broker Name "${This.Item[${ID}].Text.Token[1,|]}" Sort ByPriceAsc
+; NOTE: `Name` combined with other args (Sort, etc.) matches as a SUBSTRING. Append `SimpleSearch`
+; to force an exact-name match when the list item text is a full item name.
+broker Name "${This.Item[${ID}].Text.Token[1,|]}" Sort ByPriceAsc SimpleSearch
 ```
 
 ---
