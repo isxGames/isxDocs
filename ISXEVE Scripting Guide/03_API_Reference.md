@@ -109,25 +109,28 @@
 89. [UI State Validation](#ui-state-validation)
 90. [Common Patterns from Example Scripts (UI)](#common-patterns-from-example-scripts-3)
 
+### Planetary Interaction
+91. [Planetary Interaction (PI)](#planetary-interaction-pi)
+
 ### Fleet and Social
-91. [Fleet and Social Systems](#fleet-and-social-systems)
-92. [Fleet System Overview](#fleet-system-overview)
-93. [Fleet Membership](#fleet-membership)
-94. [Fleet Object and Members](#fleet-object-and-members)
-95. [Fleet Member Objects](#fleet-member-objects)
-96. [Fleet Commands](#fleet-commands)
-97. [Fleet Positions and Roles](#fleet-positions-and-roles)
-98. [Social Systems](#social-systems)
-99. [Local Chat and Pilot Monitoring](#local-chat-and-pilot-monitoring)
-100. [Relay Fleet Coordination (Yamfa Pattern)](#relay-fleet-coordination-yamfa-pattern)
-101. [Fleet Targeting Coordination](#fleet-targeting-coordination)
-102. [Common Patterns from Yamfa](#common-patterns-from-yamfa)
-103. [Multi-Boxing Patterns](#multi-boxing-patterns)
-104. [Critical Gotchas (Fleet)](#critical-gotchas-4)
-105. [Anti-Patterns (Fleet)](#anti-patterns-3)
+92. [Fleet and Social Systems](#fleet-and-social-systems)
+93. [Fleet System Overview](#fleet-system-overview)
+94. [Fleet Membership](#fleet-membership)
+95. [Fleet Object and Members](#fleet-object-and-members)
+96. [Fleet Member Objects](#fleet-member-objects)
+97. [Fleet Commands](#fleet-commands)
+98. [Fleet Positions and Roles](#fleet-positions-and-roles)
+99. [Social Systems](#social-systems)
+100. [Local Chat and Pilot Monitoring](#local-chat-and-pilot-monitoring)
+101. [Relay Fleet Coordination (Yamfa Pattern)](#relay-fleet-coordination-yamfa-pattern)
+102. [Fleet Targeting Coordination](#fleet-targeting-coordination)
+103. [Common Patterns from Yamfa](#common-patterns-from-yamfa)
+104. [Multi-Boxing Patterns](#multi-boxing-patterns)
+105. [Critical Gotchas (Fleet)](#critical-gotchas-4)
+106. [Anti-Patterns (Fleet)](#anti-patterns-3)
 
 ### Quick Reference
-106. [Quick Reference Tables](#quick-reference-tables)
+107. [Quick Reference Tables](#quick-reference-tables)
 
 ---
 
@@ -639,6 +642,25 @@ if ${EVEWindow[Inventory](exists)}
         echo "Ore stacks: ${OreItems.Used}"
     }
 }
+```
+
+**Generic hold enumeration -- `MyShip:GetHoldItems[<holdName>, index:item]`**:
+```lavish
+; GetHoldItems is a generic enumerator for ANY named ship hold. It covers
+; holds the dedicated getters (GetCargo / GetOreHoldCargo / etc.) do not,
+; and works for the standard holds too. Like GetCargo, it reads the
+; inventory's cached items, so the hold must have been opened/primed at
+; least once this session (open the inventory window and MakeActive the
+; corresponding child window first).
+;
+; Valid holdName values (case-insensitive):
+;   Cargo, DroneBay, ShipHangar, FuelBay, OreHold, GasHold, MineralHold,
+;   SalvageHold, ShipHold, SmallShipHold, MediumShipHold, LargeShipHold,
+;   IndustrialShipHold, AmmoHold, CommandCenterHold,
+;   PlanetaryCommoditiesHold, MaterialBay, FleetHangar
+variable index:item HoldItems
+MyShip:GetHoldItems[PlanetaryCommoditiesHold, HoldItems]
+echo "Planetary commodities stacks: ${HoldItems.Used}"
 ```
 
 **Common Pattern - Check Cargo Full (Modern API)**:
@@ -1206,6 +1228,7 @@ The `ISXEVE` TLO provides access to the ISXEVE extension itself and utility meth
 |--------|-------------|-------------|
 | `Version` | string | ISXEVE extension version |
 | `IsReady` | bool | TRUE if ISXEVE is fully loaded and ready to use |
+| `IsUnloading` | bool | TRUE once an extension unload has been requested (via `UnloadISXEVE` / `ext -unload`). Poll this in shutdown loops and stop issuing API calls while the extension drains in-flight calls. |
 | `IsNumeric[string]` | bool | TRUE if the string is a valid number (can include decimal point or negative sign) |
 
 **Examples:**
@@ -6001,6 +6024,50 @@ echo "Slot ID: ${cargoItem.SlotID}"
 ; See 06_Working_Examples.md for full module examples.
 ```
 
+### Blueprint Items
+
+The item datatype exposes two blueprint predicates plus a method to open the Industry window and install a blueprint into it. The two predicates are local, non-blocking reads; `UseBlueprint` is an asynchronous action (see below). See also the [eveindustrywindow Object](#eveindustrywindow-object) it drives.
+
+**Members**:
+```lavish
+variable item bp = ${MyShip.Cargo[1]}
+
+; IsBlueprint -- TRUE for ANY blueprint (category = Blueprint), covering
+; both originals (BPO) and copies (BPC).
+if ${bp.IsBlueprint}
+    echo "${bp.Name} is a blueprint"
+
+; IsBlueprintCopy -- TRUE only for a blueprint COPY. A BPC is a singleton
+; blueprint stacked at |quantity| == 2; a BPO is a singleton at
+; |quantity| == 1 and returns FALSE here.
+if ${bp.IsBlueprintCopy}
+    echo "${bp.Name} is a blueprint copy (BPC)"
+else
+    echo "${bp.Name} is a blueprint original (BPO) or not a blueprint"
+```
+
+**Method -- `UseBlueprint`** (open the Industry window and install this blueprint into it):
+```lavish
+; Mirrors the END-STATE of the client's right-click "Use Blueprint": it
+; opens the Industry window AND installs this blueprint into the
+; manufacturing pane, so the Start button becomes available (runs / ME / TE
+; populated). It does NOT submit/start the job. Fails (returns FALSE) if the
+; item is not a blueprint.
+;
+; The install is ASYNCHRONOUS -- the window opens, settles, then the
+; blueprint is shown on a later frame. Do NOT press Start immediately; poll
+; eveindustrywindow.IsStartEnabled instead of using a fixed wait.
+if ${bp.IsBlueprint}
+{
+    bp:UseBlueprint
+    variable int Timeout = 100
+    while !${EVEWindow["industryWnd"].IsStartEnabled} && ${Timeout:Dec[1]} > 0
+        wait 1
+    if ${EVEWindow["industryWnd"].IsStartEnabled}
+        EVEWindow["industryWnd"].Button["Start"]:Press
+}
+```
+
 ### Inventory Flags
 
 `Item.Flag` identifies which container or slot an item lives in. Use these constants when calling `Item:MoveTo[locationID, flag]`:
@@ -7026,6 +7093,42 @@ echo "Inventory: ${win.Name}"
 - Attempting to use non-existent window members/methods = script crash
 - Windows can close unexpectedly (player action, server disconnect, etc.)
 - Window names can change between EVE versions
+
+---
+
+### eveindustrywindow Object
+
+A specialized [evewindow](#evewindow-object) representing the Industry window. Obtain it from `${EVEWindow["industryWnd"]}`. The window is opened, and a blueprint installed into it, by [`item:UseBlueprint`](#blueprint-items).
+
+Every member is a pure, non-blocking LOCAL read off the already-populated window, so it is safe to poll each frame. When no blueprint is installed (the empty "Please install blueprint" state), `IsBlueprintInstalled` is FALSE, the numeric members return `-1`, and `Activity` returns `"None"`.
+
+**Members**:
+
+| Member | Return Type | Description |
+|--------|-------------|-------------|
+| `IsBlueprintInstalled` | bool | TRUE once a blueprint/job is loaded into the window. FALSE is the empty "Please install blueprint" state |
+| `IsStartEnabled` | bool | TRUE when the Start button is enabled/pressable right now (reflects job status and any job errors). Poll this before pressing Start |
+| `Runs` | int | Installed job runs (`-1` when no blueprint is installed) |
+| `MaterialEfficiency` | int | ME of the installed blueprint/job (`-1` when none) |
+| `TimeEfficiency` | int | TE of the installed blueprint/job (`-1` when none) |
+| `ActivityID` | int | Industry activity id: `1`=Manufacturing, `3`=Research Time, `4`=Research Material, `5`=Copying, `8`=Invention, `9`=Reaction (`-1` when none) |
+| `Activity` | string | Activity name for `ActivityID` (`"Manufacturing"`, `"Research Time"`, `"Research Material"`, `"Copying"`, `"Invention"`, `"Reaction"`); `"None"` when no blueprint is installed |
+
+**Poll-then-press pattern** (after `item:UseBlueprint` installs the blueprint asynchronously):
+
+```lavish
+; Install the blueprint, then wait for the Start button to become pressable
+; rather than using a fixed wait -- the install lands a few frames later.
+Item[...]:UseBlueprint
+variable int Timeout = 100
+while !${EVEWindow["industryWnd"].IsStartEnabled} && ${Timeout:Dec[1]} > 0
+    wait 1
+if ${EVEWindow["industryWnd"].IsStartEnabled}
+{
+    echo "${EVEWindow["industryWnd"].Activity} job: ${EVEWindow["industryWnd"].Runs} runs, ME ${EVEWindow["industryWnd"].MaterialEfficiency} / TE ${EVEWindow["industryWnd"].TimeEfficiency}"
+    EVEWindow["industryWnd"].Button["Start"]:Press
+}
+```
 
 ---
 
@@ -8413,6 +8516,210 @@ if ${EVEWindow[inventory](exists)}
 - After button click: 50ms wait
 - After warp/dock command: 100ms+ wait
 - Always add timeout to loops (10-20 second max)
+
+---
+
+## Planetary Interaction (PI)
+
+**Complete Guide to Colonies, Extractor Control Units, and Customs-Office Commodity Transfers**
+
+Planetary Interaction is exposed through four datatypes plus a handful of members/methods on the `EVE` object and the customs-office window:
+
+- **[colony](#colony-object)** -- one of the character's colonized planets, from `EVE:GetColonies`.
+- **[extractorcontrolunit](#extractorcontrolunit-object)** -- one Extractor Control Unit (ECU) pin of a colony.
+- **[evecustomsofficewindow](#evecustomsofficewindow-object)** -- the customs-office / launchpad import-export window (a specialized [evewindow](#evewindow-object)).
+- **[evecustomsofficeitem](#evecustomsofficeitem-object)** / **[pilaunchpad](#pilaunchpad-object)** -- commodity rows and launchpad endpoints listed by that window.
+
+To open the Planetary Industry window for a specific planet, use `EVE:ViewPlanetaryIndustry[planetID]`.
+
+### Colonies -- `EVE:GetColonies`
+
+`EVE:GetColonies[index:colony]` populates an index with the character's colonized planets. It is **headless-safe**: it auto-primes the colony service in the background and never opens a window. Because the prime is asynchronous, the **first** call may return an empty index -- read it again on a later pulse once the prime lands.
+
+```lavish
+variable index:colony Colonies
+EVE:GetColonies[Colonies]
+
+; First call can be empty while the colony service primes. Poll until populated.
+variable int tries = 0
+while ${Colonies.Used} == 0 && ${tries} < 10
+{
+    wait 10
+    EVE:GetColonies[Colonies]
+    tries:Inc
+}
+
+variable iterator ColonyIt
+Colonies:GetIterator[ColonyIt]
+if ${ColonyIt:First(exists)}
+{
+    do
+    {
+        echo "Colony on ${ColonyIt.Value.PlanetType} planet (ID ${ColonyIt.Value.PlanetID})"
+        echo "  Extractors: ${ColonyIt.Value.NumExtractors}  NeedsAttention: ${ColonyIt.Value.NeedsAttention}"
+    }
+    while ${ColonyIt:Next(exists)}
+}
+```
+
+### colony Object
+
+**Members**:
+
+| Member | Return Type | Description |
+|--------|-------------|-------------|
+| `PlanetID` | int64 | The planet's item ID |
+| `PlanetTypeID` | int | Planet type ID (Barren, Lava, etc.) |
+| `PlanetType` | string | Planet type name resolved from `PlanetTypeID` |
+| `SolarSystemID` | int64 | Solar system the planet is in |
+| `CelestialIndex` | int | The planet's celestial index within its system |
+| `IsEditing` | bool | TRUE if the colony currently has unsubmitted edits |
+| `NeedsRestart` | bool | TRUE if the colony's extractor control units can be restarted |
+| `NeedsAttention` | bool | TRUE if some pin on the colony needs attention (expired extractor, full storage, etc.) |
+| `NumExtractors` | int | Number of extractor control units (ECUs) on the colony |
+
+**Methods**:
+
+| Method | Description |
+|--------|-------------|
+| `GetExtractors[index:extractorcontrolunit]` | Populate the index with the colony's extractor control units |
+| `RestartExtractors` | Restart all of the colony's extractor programs (submits the change to the server; dispatched asynchronously) |
+
+```lavish
+variable index:extractorcontrolunit ECUs
+ColonyIt.Value:GetExtractors[ECUs]
+echo "This colony has ${ECUs.Used} ECU pin(s)"
+
+; Restart extractors on any colony flagged as needing it
+if ${ColonyIt.Value.NeedsRestart}
+    ColonyIt.Value:RestartExtractors
+```
+
+### extractorcontrolunit Object
+
+One Extractor Control Unit (ECU) pin of a colony, from `colony:GetExtractors`.
+
+| Member | Return Type | Description |
+|--------|-------------|-------------|
+| `ID` | int64 | The ECU pin's ID |
+| `TypeID` | int | The ECU pin's type ID |
+| `Name` | string | Human-readable ECU designator (e.g. `"Barren Extractor Control Unit 5W-ASF"`) |
+| `ProgramType` | int | Type ID of the raw resource the extractor program is harvesting (0 when no program is installed) |
+| `QtyPerCycle` | int | Units produced per extraction cycle |
+| `CycleTime` | int | Extraction cycle duration |
+| `InstallTime` | int64 | Program install timestamp (EVE time) |
+| `ExpiryTime` | int64 | Program expiry timestamp (EVE time) |
+| `TimeToExpiry` | int64 | Nanoseconds remaining until the program expires (0 when expired) |
+| `IsActive` | bool | TRUE if the extractor program is currently active |
+| `IsExpired` | bool | TRUE if the extractor program has expired |
+
+```lavish
+variable iterator ECUIt
+ECUs:GetIterator[ECUIt]
+if ${ECUIt:First(exists)}
+{
+    do
+    {
+        echo "${ECUIt.Value.Name}: active=${ECUIt.Value.IsActive} expired=${ECUIt.Value.IsExpired} qty/cycle=${ECUIt.Value.QtyPerCycle}"
+    }
+    while ${ECUIt:Next(exists)}
+}
+```
+
+### evecustomsofficewindow Object
+
+A specialized [evewindow](#evewindow-object) representing the customs-office / launchpad import-export window. Obtain it from `${EVEWindow[byName,PlanetaryImportExportUI]}` after opening a customs office / Skyhook (right-click the orbital structure -> Access Customs Office).
+
+**Identity Members**:
+
+| Member | Return Type | Description |
+|--------|-------------|-------------|
+| `TaxRate` | float | Effective import/export tax rate (live orbital-registry value when locally resolvable, else the cached value) |
+| `HeaderTitle` | string | Window header caption text |
+| `CustomsOfficeID` | int64 | The customs office (POCO/Skyhook) structure ID |
+| `SpaceportPinID` | int64 | The selected launchpad/spaceport pin ID, or `-1` for a plain POCO with no integrated launchpad (until one is chosen with `SelectLaunchpad`) |
+| `HasLaunchpad` | bool | TRUE if the office has a launchpad/spaceport pin |
+
+**Capacity Members** (m³):
+
+| Member | Return Type | Description |
+|--------|-------------|-------------|
+| `CustomsCapacityUsed` / `CustomsCapacityTotal` / `CustomsCapacityAvailable` | float | Customs-office (POCO side) storage volumes |
+| `SpaceportCapacityUsed` / `SpaceportCapacityTotal` / `SpaceportCapacityAvailable` | float | Launchpad/spaceport side storage volumes |
+
+**Contents and Staging Members**:
+
+| Member | Return Type | Description |
+|--------|-------------|-------------|
+| `NumCustomsOfficeItems` | int | Number of commodity rows on the customs-office (POCO) side |
+| `NumSpaceportItems` | int | Number of commodity rows on the launchpad/spaceport side |
+| `CustomsOfficeItem[#]` | evecustomsofficeitem | Customs-office commodity row by 1-based index |
+| `SpaceportItem[#]` | evecustomsofficeitem | Launchpad/spaceport commodity row by 1-based index |
+| `NumStagedImport` / `NumStagedExport` | int | Count of rows currently staged for import / export (0 until something is staged) |
+| `StagedImportItem[#]` / `StagedExportItem[#]` | evecustomsofficeitem | A staged import / export row by 1-based index |
+
+**Methods**:
+
+| Method | Description |
+|--------|-------------|
+| `AddToPOCO[itemID, fromLocationID, quantity]` | Move `quantity` of `itemID` from `fromLocationID` into the customs office |
+| `PullFromPOCO[itemID, holdName, quantity]` | Move `quantity` of `itemID` from the customs office into the named ship hold (same hold-name list as `MyShip:GetHoldItems`) |
+| `SelectLaunchpad[pinID]` | Set the destination launchpad/spaceport pin and rebuild the window's contents |
+| `GetLaunchpads[index:pilaunchpad]` | Populate the index with the valid launchpad/spaceport endpoints of this office's colony (the pins `SelectLaunchpad` accepts) |
+| `StageImport[itemID, quantity]` | Stage `quantity` of customs-office item `itemID` for import (POCO -> launchpad). Local; clamps to available quantity |
+| `StageExport[typeID, quantity]` | Stage `quantity` of launchpad commodity `typeID` for export (launchpad -> POCO). Local; requires the tax rate to be readable (standing/access check) |
+| `Transfer` | Commit all staged import/export moves in one transaction. Requires a selected launchpad and at least one staged row. Auto-handles the server-side tax-changed case (reads live tax and retries once) |
+
+```lavish
+; Assumes the customs-office window is already open.
+variable evecustomsofficewindow COW = ${EVEWindow[byName,PlanetaryImportExportUI]}
+if !${COW(exists)}
+    return
+
+echo "Customs office ${COW.CustomsOfficeID}  tax=${COW.TaxRate}"
+echo "Customs side: ${COW.CustomsCapacityUsed}/${COW.CustomsCapacityTotal} m3 (${COW.NumCustomsOfficeItems} rows)"
+
+; Pick a launchpad, stage an import, and commit.
+variable index:pilaunchpad Pads
+COW:GetLaunchpads[Pads]
+if ${Pads.Used} > 0
+{
+    COW:SelectLaunchpad[${Pads.Get[1].PinID}]
+    wait 10
+
+    ; Stage the first customs-office commodity row for import, then transfer.
+    if ${COW.NumCustomsOfficeItems} > 0
+    {
+        variable evecustomsofficeitem row = ${COW.CustomsOfficeItem[1]}
+        COW:StageImport[${row.ItemID}, ${row.Quantity}]
+        COW:Transfer
+    }
+}
+```
+
+### evecustomsofficeitem Object
+
+One commodity row of a customs office / launchpad window. Returned by the `evecustomsofficewindow` `CustomsOfficeItem` / `SpaceportItem` / `StagedImportItem` / `StagedExportItem` members.
+
+| Member | Return Type | Description |
+|--------|-------------|-------------|
+| `TypeID` | int | Commodity type ID |
+| `Quantity` | int64 | Quantity in the row |
+| `Name` | string | Commodity name |
+| `ItemID` | int64 | Item ID for customs-office rows; `-1` for launchpad/spaceport rows (which have no item ID) |
+
+### pilaunchpad Object
+
+One valid launchpad/spaceport endpoint of a colony. Returned by `evecustomsofficewindow:GetLaunchpads`; each `PinID` is a value `SelectLaunchpad` accepts.
+
+| Member | Return Type | Description |
+|--------|-------------|-------------|
+| `PinID` | int64 | Launchpad/spaceport pin ID |
+| `Name` | string | Human-readable pin designator (e.g. `"Barren Launchpad 5W-ASF"`) |
+| `Capacity` | float | Total pin storage capacity (m³) |
+| `CapacityUsed` | float | Used pin storage (m³) |
+
+> **Sample script:** a full Planetary Interaction test/sample script is available at https://www.isxgames.com/isxeq2/resources/TestPlanets.iss
 
 ---
 

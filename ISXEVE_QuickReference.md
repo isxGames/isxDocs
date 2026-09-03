@@ -116,7 +116,7 @@ Top-Level Objects (TLOs) are the entry points for accessing game data. Syntax: `
 
 ### EVEWindow TLO
 
-All variants return an [evewindow](#evewindow) (or a more specialized subtype when the window implies one, e.g. `evefittingwindow`, `eveinvwindow`, `evecustomsofficewindow`).
+All variants return an [evewindow](#evewindow) (or a more specialized subtype when the window implies one, e.g. `evefittingwindow`, `eveinvwindow`, `evecustomsofficewindow`, `eveindustrywindow`).
 
 | Syntax | Description |
 |---|---|
@@ -138,6 +138,7 @@ Specialized subtypes returned automatically by `EVEWindow`:
 - `MessageBox` / `Message Box` → [evemessageboxwindow](#evemessageboxwindow)
 - `directionalScannerWindow` → [evedirectionalscannerwindow](#evedirectionalscannerwindow)
 - Customs-office windows (e.g. `byName,PlanetaryImportExportUI`) → [evecustomsofficewindow](#evecustomsofficewindow)
+- `industryWnd` → [eveindustrywindow](#eveindustrywindow)
 - Agent dialog (`byCaption,Agent Conversation`) → [eveagentdialogwindow](#eveagentdialogwindow)
 
 ---
@@ -182,7 +183,8 @@ evewindow
   ├─ eveagentdialogwindow
   ├─ evemessageboxwindow
   ├─ evedirectionalscannerwindow
-  └─ evecustomsofficewindow
+  ├─ evecustomsofficewindow
+  └─ eveindustrywindow
 ```
 
 Inheritance means child types expose ALL members and methods of their parent(s). Casting between types uses explicit `To<Type>` members (e.g. `entity.ToFleetMember`, `pilot.ToEntity`, `module.ToItem`, `character.ToPilot`).
@@ -202,6 +204,7 @@ Access: `ISXEVE` TLO.
 | `Version` | string | Extension version string. |
 | `IsReady` | bool | TRUE when ISXEVE is fully loaded and safe to use. |
 | `IsLoading` | bool | TRUE while ISXEVE is initializing. |
+| `IsUnloading` | bool | TRUE once an extension unload has been requested (via `UnloadISXEVE` / `ext -unload`). Poll it in shutdown loops and stop issuing API calls while the extension drains in-flight calls. |
 | `IsSafe` | bool | TRUE if the loaded build is the "safe" (release) build. |
 | `IsBeta` | bool | TRUE if the loaded build is the beta build. |
 | `Debug1` | bool | Internal debug flag. |
@@ -293,6 +296,7 @@ Access: `EVE` TLO.
 | `RefreshStandings` | Refresh the standings cache. Call at least once after login; data is not immediately available. |
 | `EnterCriticalSection`, `LeaveCriticalSection` | Critical-section control. |
 | `ViewPlanetaryIndustry[planetID]` | Open the Planetary Industry window. |
+| `GetColonies[index:colony]` | Populate the index with the character's colonized planets (see [colony](#colony)). Headless-safe: it auto-primes the colony service in the background, so the first call may return an empty index — read it again on a later pulse once the prime lands. No window is opened. |
 
 ### evetime
 
@@ -551,6 +555,7 @@ if ${it:First(exists)}
 **Methods**
 
 - Module/equipment iteration: `GetModules[index:module]`, `GetRigs[index:item]`, `GetDrones[index:item]`.
+- Hold contents: `GetHoldItems[holdName, index:item]` — generic enumerator for ANY named ship hold (covers holds the dedicated `GetCargo` / `GetOreHoldCargo` / etc. getters do not). Valid `holdName` values: `Cargo`, `DroneBay`, `ShipHangar`, `FuelBay`, `OreHold`, `GasHold`, `MineralHold`, `SalvageHold`, `ShipHold`, `SmallShipHold`, `MediumShipHold`, `LargeShipHold`, `IndustrialShipHold`, `AmmoHold`, `CommandCenterHold`, `PlanetaryCommoditiesHold`, `MaterialBay`, `FleetHangar`. Like the other cargo getters, the hold must already have been opened/primed this session (it reads the inventory's cached items, not a blocking list).
 - Drone control: `LaunchAllDrones`.
 - Fitting: `StripFitting`.
 - Window: `Open` (opens unified inventory centered on ship).
@@ -725,6 +730,8 @@ Inherits from [iteminfo](#iteminfo).
 | `Quantity` | int | Stack quantity. |
 | `Slot` / `SlotID` | string / int | Slot name/ID (for fitted items). |
 | `IsRepackable` | bool | Can be repackaged. |
+| `IsBlueprint` | bool | TRUE if the item is a blueprint (category = Blueprint). Covers both originals (BPO) and copies (BPC). Local, non-blocking. |
+| `IsBlueprintCopy` | bool | TRUE only if the item is a blueprint COPY (a singleton blueprint stacked at `|quantity|` = 2). An original (BPO) is a singleton at `|quantity|` = 1 and returns FALSE. Local, non-blocking. |
 | `CargoCapacity` / `UsedCargoCapacity` | double | For containers/ships, requires cargo opened at least once. |
 
 **Missile/Charge Stats**
@@ -773,6 +780,7 @@ Inherits from [iteminfo](#iteminfo).
 | `GetContrabandFactions[index:iteminfolist]` | List factions that consider the item contraband. |
 | `GetRepairQuote` | Open the repair-shop window for this item. |
 | `UseAbyssalFilament` | Activate an abyssal filament. |
+| `UseBlueprint` | Open the Industry window AND install this blueprint into the manufacturing pane, so the Start button becomes available (mirrors the end-state of the client's right-click "Use Blueprint"). Fails if the item is not a blueprint. ASYNC — poll [`EVEWindow["industryWnd"].IsStartEnabled`](#eveindustrywindow) before pressing Start rather than using a fixed wait. Installs the job draft only; it does NOT submit/start the job. |
 
 Note: `FitToActiveShip` was REMOVED in Jan 2025. Use `EVEWindow[Fitting].Slot[slotName]:FitItem[itemID]`.
 
@@ -1375,12 +1383,94 @@ Inherits from [evewindow](#evewindow).
 
 ### evecustomsofficewindow
 
-Inherits from [evewindow](#evewindow). Returned by `EVEWindow[byName,PlanetaryImportExportUI]`.
+Inherits from [evewindow](#evewindow). The customs-office / launchpad import-export window. Returned by `EVEWindow[byName,PlanetaryImportExportUI]` (open it from an orbital customs office / Skyhook). This datatype drives Planetary Interaction commodity transfers — see also [colony](#colony), [evecustomsofficeitem](#evecustomsofficeitem), and [pilaunchpad](#pilaunchpad).
 
-| Member | Type |
+**Identity**
+
+| Member | Type | Notes |
+|---|---|---|
+| `TaxRate` | float | Effective import/export tax rate. Returns the LIVE orbital-registry tax when it can be resolved locally, else the window's cached value. |
+| `HeaderTitle` | string | Window header caption text. |
+| `CustomsOfficeID` | int64 | The customs office (POCO/Skyhook) structure ID. |
+| `SpaceportPinID` | int64 | The selected launchpad/spaceport pin ID, or `-1` for a plain POCO with no integrated launchpad (until one is chosen with `SelectLaunchpad`). |
+| `HasLaunchpad` | bool | TRUE if the office has a launchpad/spaceport pin (i.e. `SpaceportPinID` is set). |
+
+**Capacities** (m³)
+
+| Member | Type | Notes |
+|---|---|---|
+| `CustomsCapacityUsed` / `CustomsCapacityTotal` / `CustomsCapacityAvailable` | float | Customs-office (POCO side) storage volumes. |
+| `SpaceportCapacityUsed` / `SpaceportCapacityTotal` / `SpaceportCapacityAvailable` | float | Launchpad/spaceport side storage volumes. |
+
+**Contents and Staging**
+
+| Member | Type | Notes |
+|---|---|---|
+| `NumCustomsOfficeItems` | int | Number of commodity rows on the customs-office (POCO) side. |
+| `NumSpaceportItems` | int | Number of commodity rows on the launchpad/spaceport side. |
+| `CustomsOfficeItem[#]` | [evecustomsofficeitem](#evecustomsofficeitem) | Customs-office commodity row by 1-based index. |
+| `SpaceportItem[#]` | [evecustomsofficeitem](#evecustomsofficeitem) | Launchpad/spaceport commodity row by 1-based index. |
+| `NumStagedImport` / `NumStagedExport` | int | Count of rows currently staged for import / export (populated by `StageImport` / `StageExport`; 0 until something is staged). |
+| `StagedImportItem[#]` / `StagedExportItem[#]` | [evecustomsofficeitem](#evecustomsofficeitem) | A staged import / export row by 1-based index. |
+
+**Methods**
+
+| Method | Description |
 |---|---|
-| `TaxRate` | float |
-| `HeaderTitle` | string |
+| `AddToPOCO[itemID, fromLocationID, quantity]` | Move `quantity` of `itemID` from `fromLocationID` into the customs office. |
+| `PullFromPOCO[itemID, holdName, quantity]` | Move `quantity` of `itemID` from the customs office into the named ship hold (see the hold-name list under [ship](#ship) `GetHoldItems`). |
+| `SelectLaunchpad[pinID]` | Set the destination launchpad/spaceport pin and rebuild the window's contents. |
+| `GetLaunchpads[index:pilaunchpad]` | Populate the index with the valid launchpad/spaceport endpoints of this office's colony (the pins `SelectLaunchpad` accepts). See [pilaunchpad](#pilaunchpad). |
+| `StageImport[itemID, quantity]` | Stage `quantity` of customs-office item `itemID` for import (POCO -> launchpad). Local; clamps to the available quantity. |
+| `StageExport[typeID, quantity]` | Stage `quantity` of launchpad commodity `typeID` for export (launchpad -> POCO). Local; requires the tax rate to be readable (standing/access check). |
+| `Transfer` | Commit all staged import/export moves in one transaction. Requires a selected launchpad and at least one staged row. Auto-handles the server-side tax-changed case (reads live tax and retries once). |
+
+### evecustomsofficeitem
+
+One commodity row of a customs office / launchpad import-export window. Returned by `evecustomsofficewindow`'s `CustomsOfficeItem` / `SpaceportItem` / `StagedImportItem` / `StagedExportItem` members.
+
+| Member | Type | Notes |
+|---|---|---|
+| `TypeID` | int | Commodity type ID. |
+| `Quantity` | int64 | Quantity in the row. |
+| `Name` | string | Commodity name. |
+| `ItemID` | int64 | Item ID for customs-office rows; `-1` for launchpad/spaceport rows (which have no item ID). |
+
+### pilaunchpad
+
+One valid launchpad/spaceport endpoint of a colony. Returned by `evecustomsofficewindow:GetLaunchpads` (each is a pin ID accepted by `SelectLaunchpad`).
+
+| Member | Type | Notes |
+|---|---|---|
+| `PinID` | int64 | Launchpad/spaceport pin ID. |
+| `Name` | string | Human-readable pin designator (e.g. `"Barren Launchpad 5W-ASF"`). |
+| `Capacity` | float | Total pin storage capacity (m³). |
+| `CapacityUsed` | float | Used pin storage (m³). |
+
+### eveindustrywindow
+
+Inherits from [evewindow](#evewindow). The Industry window. Returned by `EVEWindow["industryWnd"]` (opened, and populated with a blueprint, by [`item:UseBlueprint`](#item)). Every member is a pure, non-blocking LOCAL read off the already-populated window — poll them freely. When no blueprint is installed (the empty "Please install blueprint" state), `IsBlueprintInstalled` is FALSE, the numeric members return `-1`, and `Activity` returns `"None"`.
+
+| Member | Type | Notes |
+|---|---|---|
+| `IsBlueprintInstalled` | bool | TRUE once a blueprint/job is loaded into the window. FALSE is the empty "Please install blueprint" state. |
+| `IsStartEnabled` | bool | TRUE when the Start button is enabled/pressable right now (reflects job status and any job errors). Poll this before pressing Start. |
+| `Runs` | int | Installed job runs. `-1` when no blueprint is installed. |
+| `MaterialEfficiency` | int | ME of the installed blueprint/job. `-1` when none. |
+| `TimeEfficiency` | int | TE of the installed blueprint/job. `-1` when none. |
+| `ActivityID` | int | Industry activity id: `1`=Manufacturing, `3`=Research Time, `4`=Research Material, `5`=Copying, `8`=Invention, `9`=Reaction. `-1` when none. |
+| `Activity` | string | Activity name for `ActivityID` (`"Manufacturing"`, `"Research Time"`, `"Research Material"`, `"Copying"`, `"Invention"`, `"Reaction"`). `"None"` when no blueprint is installed. |
+
+Poll-then-press pattern (after [`item:UseBlueprint`](#item) installs the blueprint asynchronously):
+
+```lavishscript
+Item[...]:UseBlueprint
+variable int Timeout = 100
+while !${EVEWindow["industryWnd"].IsStartEnabled} && ${Timeout:Dec[1]} > 0
+    wait 1
+if ${EVEWindow["industryWnd"].IsStartEnabled}
+    EVEWindow["industryWnd"].Button["Start"]:Press
+```
 
 ---
 
@@ -1811,6 +1901,49 @@ Note: drone-control methods (Mine/EngageMyTarget/etc.) live on the `entity` data
 ---
 
 ## Misc Datatypes
+
+### colony
+
+One of the character's colonized planets (Planetary Interaction). Returned by `EVE:GetColonies[index:colony]`. See also [extractorcontrolunit](#extractorcontrolunit) and [evecustomsofficewindow](#evecustomsofficewindow).
+
+**Members**
+
+| Member | Type | Notes |
+|---|---|---|
+| `PlanetID` | int64 | The planet's item ID. |
+| `PlanetTypeID` | int | Planet type ID (Barren, Lava, etc.). |
+| `PlanetType` | string | Planet type name resolved from `PlanetTypeID`. |
+| `SolarSystemID` | int64 | Solar system the planet is in. |
+| `CelestialIndex` | int | The planet's celestial index within its system. |
+| `IsEditing` | bool | TRUE if the colony is currently being edited (unsubmitted changes). |
+| `NeedsRestart` | bool | TRUE if the colony's extractor control units can be restarted. |
+| `NeedsAttention` | bool | TRUE if some pin on the colony needs attention (e.g. an expired extractor or full storage). |
+| `NumExtractors` | int | Number of extractor control units (ECUs) on the colony. |
+
+**Methods**
+
+| Method | Description |
+|---|---|
+| `GetExtractors[index:extractorcontrolunit]` | Populate the index with the colony's extractor control units. See [extractorcontrolunit](#extractorcontrolunit). |
+| `RestartExtractors` | Restart all of the colony's extractor programs (submits the change to the server). Dispatched asynchronously. |
+
+### extractorcontrolunit
+
+One Extractor Control Unit (ECU) pin of a [colony](#colony). Returned by `colony:GetExtractors[index:extractorcontrolunit]`.
+
+| Member | Type | Notes |
+|---|---|---|
+| `ID` | int64 | The ECU pin's ID. |
+| `TypeID` | int | The ECU pin's type ID. |
+| `Name` | string | Human-readable ECU designator (e.g. `"Barren Extractor Control Unit 5W-ASF"`). |
+| `ProgramType` | int | Type ID of the raw resource the extractor program is harvesting (0 when no program is installed). |
+| `QtyPerCycle` | int | Units produced per extraction cycle. |
+| `CycleTime` | int | Extraction cycle duration. |
+| `InstallTime` | int64 | Program install timestamp (EVE time, int64). |
+| `ExpiryTime` | int64 | Program expiry timestamp (EVE time, int64). |
+| `TimeToExpiry` | int64 | Nanoseconds remaining until the program expires (0 when expired). |
+| `IsActive` | bool | TRUE if the extractor program is currently active. |
+| `IsExpired` | bool | TRUE if the extractor program has expired. |
 
 ### charselect
 
