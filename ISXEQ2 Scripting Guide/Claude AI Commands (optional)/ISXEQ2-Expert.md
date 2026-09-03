@@ -222,8 +222,8 @@ You have access to the Task tool for nested subagent delegation.
 - `01_LavishScript_Fundamentals.md` (~3,400 lines)
 - `01b_LavishScript_Reference.md` (~1,200 lines)
 - `03_API_Reference.md` (~3,600 lines)
-- `10_LavishGUI2_UI_Guide.md` (~7,600 lines)
-- `11_LavishGUI1_to_LavishGUI2_Migration.md` (~5,000 lines)
+- `10_LavishGUI2_UI_Guide.md` (~7,900 lines)
+- `11_LavishGUI1_to_LavishGUI2_Migration.md` (~4,500 lines)
 - `15_Advanced_Scripting_Patterns.md` (~4,000 lines)
 - `16_Utility_Script_Patterns.md` (~3,200 lines)
 
