@@ -775,7 +775,7 @@ Inherits from [iteminfo](#iteminfo).
 | `ConsumeBooster` | Consume a booster item. |
 | `PluginImplant` | Insert an implant. |
 | `ApplyPilotLicense` | Apply a Pilot's License Extension. |
-| `GetInsuranceQuotes[index:iteminfolist]` | Get insurance quotes. |
+| `GetInsuranceQuotes[collection:float]` | Populate a pre-declared `collection:float` with this ship's insurance quotes — key = insurance level name (`Basic`/`Standard`/`Bronze`/`Silver`/`Gold`/`Platinum`), value = ISK cost. Ships only. Auto-primes the insurance data, so it works whenever docked — no insurance window needs to be open. |
 | `Insure[level, cost]` | Purchase insurance. |
 | `GetContrabandFactions[index:iteminfolist]` | List factions that consider the item contraband. |
 | `GetRepairQuote` | Open the repair-shop window for this item. |

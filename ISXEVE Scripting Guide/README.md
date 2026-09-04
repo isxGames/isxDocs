@@ -286,6 +286,10 @@ Found an error or have an improvement? This documentation was generated using ac
 
 ## Version History
 
+- **v5.1 (2026-09-04)**
+
+  - Corrected the `item:GetInsuranceQuotes` container signature in `ISXEVE_QuickReference.md` from the wrong `[index:iteminfolist]` to the authoritative `[collection:float]` — a `collection` keyed by insurance-level name (`Basic`/`Standard`/`Bronze`/`Silver`/`Gold`/`Platinum`) with the ISK cost as the value; also documented that the method now auto-primes the insurance data (works whenever docked; no insurance window need be open), per the ISXEVE insurance fix (issue #1215)
+
 - **v5.0 (2026-09-01)**
 
   - Documented the new Planetary Interaction (PI) API surface from ISXEVE build `[20260624.0042]` across `ISXEVE_QuickReference.md` and `03_API_Reference.md`
