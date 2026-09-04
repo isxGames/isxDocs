@@ -361,6 +361,10 @@ Found an error or have an improvement? This documentation was generated using ac
 <!-- CLAUDE_SKIP_START -->
 ## Version History
 
+- **4.29** (2026-09-04) -- Removed five unverifiable `actor` movement-state members
+  - Removed the `actor` members `IsBackingUp` (bool, moving backward), `IsStrafingLeft` (bool, strafing left), `IsStrafingRight` (bool, strafing right), `IsJumping` (bool, jumping), and `IsFalling` (bool, falling) -- these could not be reliably determined and have been removed. Deleted from the actor Members - State Checks table of `03_API_Reference.md` and the actor state-checks block of `ISXEQ2_QuickReference.md`. The related movement-state members `IsIdle`, `IsWalking`, `IsRunning`, and `IsSprinting` are retained and unchanged (issues #2155/#2262/#2267)
+  - No new TLOs, no new datatypes, no new members or methods, no new commands, no new events
+
 - **4.28** (2026-08-21) -- GetURL/PostURL HTTPS/TLS behavior
   - Documented that `GetURL` and `PostURL` now complete HTTPS requests to servers that require TLS 1.2/1.3, and that a connection error now includes the libcurl error name (e.g. `Error: CURLE_SSL_CONNECT_ERROR (35)` instead of `Error: 35`) -- added to the Notes of both the `#### GetURL` and `#### PostURL` command sections in `ISXEQ2_QuickReference.md` (these commands are documented only in the Quick Reference; the guide files carry no GetURL/PostURL command section)
   - Reliability (no scripter-facing surface): the bundled libcurl was updated to 8.21.0, which is what enables the TLS 1.2/1.3 completion above

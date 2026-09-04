@@ -779,13 +779,8 @@ Base datatype for all actors (NPCs, PCs, objects) in the game world.
 | IsRunning | bool | TRUE if running |
 | IsWalking | bool | TRUE if walking |
 | IsSprinting | bool | TRUE if sprinting |
-| IsBackingUp | bool | TRUE if moving backward |
-| IsStrafingLeft | bool | TRUE if strafing left |
-| IsStrafingRight | bool | TRUE if strafing right |
 | IsIdle | bool | TRUE if idle (not moving) |
 | IsClimbing | bool | TRUE if climbing |
-| IsJumping | bool | TRUE if jumping |
-| IsFalling | bool | TRUE if falling |
 | IsDead | bool | TRUE if dead |
 | IsInvis | bool | TRUE if invisible |
 | IsStealthed | bool | TRUE if stealthed |
