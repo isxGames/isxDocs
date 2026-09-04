@@ -2061,6 +2061,8 @@ Radial menu action.
 
 Broker search window. Inherits from [**eq2window**](#eq2window). **Access:** `${BrokerWindow}`
 
+Search results are populated asynchronously by the [`broker`](#broker) command (which does not print anything) and require an open broker window. After issuing a `broker` search, wait for `NumSearchResults` before reading `SearchResult[#]`.
+
 **Inheritance:**
 - All members and methods from [**eq2window**](#eq2window) are available
 
@@ -2880,9 +2882,16 @@ The `Name` parameter matches differently depending on what else you pass:
 **Rule:** Any time you search by name but also pass other arguments, append `SimpleSearch` to keep exact-name matching. When `Name` is the only argument, `SimpleSearch` is implicit and unnecessary.
 
 **Notes:**
-- Supports complex search criteria
-- Results displayed in broker window
-- After issuing a search, wait for results, e.g. `wait 30 ${BrokerWindow.NumSearchResults} > 0`
+- Supports complex search criteria.
+- The `broker` command does **not** print its results. It runs an **asynchronous** broker search; results are read from the [**BrokerWindow**](#brokerwindow) TLO -- `${BrokerWindow.NumSearchResults}` and `${BrokerWindow.SearchResult[#]}` (each a [consignment](#consignment)).
+- A broker window must be **open** (or you must be at / targeting a broker) for the search to run.
+- After issuing a search, wait for results before reading them, e.g. `wait 30 ${BrokerWindow.NumSearchResults} > 0`.
+
+```
+broker Name steel Sort ByPriceAsc
+wait 30 ${BrokerWindow.NumSearchResults} > 0
+echo ${BrokerWindow.NumSearchResults} results -- first: ${BrokerWindow.SearchResult[1].Name}
+```
 
 ---
 

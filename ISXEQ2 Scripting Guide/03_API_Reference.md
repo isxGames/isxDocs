@@ -3034,6 +3034,10 @@ Broker search window. Inherits from [eq2window](#eq2window).
 
 **Inherits From:** [eq2window](#eq2window)
 
+Search results are populated asynchronously by the `broker` command, which does **not** print anything -- read the results from this window instead. A broker window must be open (or you must be at / targeting a broker) for the search to run. After issuing a `broker` search, wait for `NumSearchResults` before reading `SearchResult[index]`.
+
+Note: `broker Name <text>` with no other argument is an **exact** name match, so a partial word returns nothing. To match a name as a **substring**, pass at least one other argument (e.g. `broker Name steel Sort ByPriceAsc`); appending the `SimpleSearch` keyword forces exact matching even when other arguments are present.
+
 #### Members
 
 | Member | Type | Description |
@@ -3045,6 +3049,8 @@ Plus all members from [eq2window](#eq2window)
 
 **Example Usage:**
 ```lavishscript
+broker Name steel Sort ByPriceAsc
+wait 30 ${BrokerWindow.NumSearchResults} > 0
 echo ${BrokerWindow.NumSearchResults}
 echo ${BrokerWindow.SearchResult[1].Name}
 ```
