@@ -1474,9 +1474,19 @@ Effect on another actor.
 
 Detailed effect information.
 
+**Note (asynchronous info):** Detailed effect info loads ASYNCHRONOUSLY, like the `item`/`iteminfo` pattern. A one-shot read (e.g. `echo ${Me.Effect[1].ToEffectInfo.NumEffectStrings}`) returns `0`/empty because the info has not loaded yet (a not-yet-available `ToEffectInfo` is NULL, and members read off NULL return `0`/empty). Prime the request (touch `ToEffectInfo`, or call `Me:RequestEffectsInfo` to prime all effects at once), poll `IsEffectInfoAvailable` until TRUE, THEN read the members. Main descriptive text is available via `Description`.
+
+```lavishscript
+variable int EffectID = ${Me.Effect[Detrimental,1].ID}
+Me.Effect[Detrimental,1]:ToEffectInfo
+while !${Me.Effect[ID,${EffectID}].IsEffectInfoAvailable}
+    wait 2
+echo ${Me.Effect[ID,${EffectID}].ToEffectInfo.NumEffectStrings}
+```
+
 **Members:**
 - `Name` - string: Effect name
-- `Description` - string: Effect description
+- `Description` - string: Effect description (main descriptive text)
 - `Type` - string: Effect type
 - `NumEffectStrings` - int: Number of effect strings
 - `EffectString[index]` - [effectstring](#effectstring): Effect string

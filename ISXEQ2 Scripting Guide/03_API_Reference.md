@@ -2035,14 +2035,14 @@ Detailed effect information.
 
 **Access:** `${Effect.ToEffectInfo}` or `${ActorEffect.ToEffectInfo}`
 
-**Important:** Always check `IsEffectInfoAvailable` before accessing ToEffectInfo.
+**Note (asynchronous info):** An effect's detailed info resolves ASYNCHRONOUSLY from the server, exactly like the [item](#item) / [iteminfo](#iteminfo) pattern. A one-shot read such as `echo ${Me.Effect[1].ToEffectInfo.NumEffectStrings}` returns `0` (or empty for string members) because the info has not loaded yet -- a not-yet-available `ToEffectInfo` is NULL, and members read off a NULL object return `0`/empty. Prime the request first (touch `ToEffectInfo`, or call `Me:RequestEffectsInfo` to prime every effect at once), poll `IsEffectInfoAvailable` until it returns TRUE, THEN read the effectinfo members. The main descriptive text is available via `Description`.
 
 #### Members
 
 | Member | Type | Description |
 |--------|------|-------------|
 | Name | string | Effect name |
-| Description | string | Effect description |
+| Description | string | Effect description (main descriptive text) |
 | Type | string | Effect type |
 | NumEffectStrings | int | Number of effect strings |
 | EffectString[index] | [effectstring](#effectstring) | Effect string by index |
@@ -2050,11 +2050,13 @@ Detailed effect information.
 
 **Example Usage:**
 ```lavishscript
-if ${Me.Effect[1].IsEffectInfoAvailable}
-{
-    echo ${Me.Effect[1].ToEffectInfo.Name}
-    echo ${Me.Effect[1].ToEffectInfo.Description}
-}
+; Prime the request, poll until available, THEN read (a one-shot read returns 0)
+variable int EffectID = ${Me.Effect[Detrimental,1].ID}
+Me.Effect[Detrimental,1]:ToEffectInfo
+while !${Me.Effect[ID,${EffectID}].IsEffectInfoAvailable}
+    wait 2
+echo ${Me.Effect[ID,${EffectID}].ToEffectInfo.NumEffectStrings}
+echo ${Me.Effect[ID,${EffectID}].ToEffectInfo.Description}
 ```
 
 **See Also:** [effect](#effect), [actoreffect](#actoreffect), [effectstring](#effectstring)
