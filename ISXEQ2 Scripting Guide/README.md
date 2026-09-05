@@ -361,6 +361,10 @@ Found an error or have an improvement? This documentation was generated using ac
 <!-- CLAUDE_SKIP_START -->
 ## Version History
 
+- **4.30** (2026-09-05) -- New `isxeq2` build-channel member
+  - Documented a new `isxeq2` (`${ISXEQ2}`) member `IsTestBuild` (bool, read-only): TRUE if the loaded ISXEQ2 is a test build, otherwise FALSE (it reflects the build channel/compile flag) -- added to the ISXEQ2 object Members table of `03_API_Reference.md` and the isxeq2 Members list of `ISXEQ2_QuickReference.md`
+  - No new TLOs, no new datatypes, no new methods, no new commands, no removed APIs, no new events
+
 - **4.29** (2026-09-04) -- Removed five unverifiable `actor` movement-state members
   - Removed the `actor` members `IsBackingUp` (bool, moving backward), `IsStrafingLeft` (bool, strafing left), `IsStrafingRight` (bool, strafing right), `IsJumping` (bool, jumping), and `IsFalling` (bool, falling) -- these could not be reliably determined and have been removed. Deleted from the actor Members - State Checks table of `03_API_Reference.md` and the actor state-checks block of `ISXEQ2_QuickReference.md`. The related movement-state members `IsIdle`, `IsWalking`, `IsRunning`, and `IsSprinting` are retained and unchanged (issues #2155/#2262/#2267)
   - No new TLOs, no new datatypes, no new members or methods, no new commands, no new events

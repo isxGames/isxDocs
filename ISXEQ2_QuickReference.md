@@ -231,6 +231,7 @@ Extension information and utilities.
 - `Version` - string: ISXEQ2 version
 - `APIVersion` - string: API version
 - `IsReady` - bool: Whether extension is ready
+- `IsTestBuild` - bool: Whether the loaded build is a test build
 - `EQ2LocsCount[allzones]` - int: Number of saved locations
 - `IsValidEQ2PressKey[keyname]` - bool: Whether key name is valid
 - `AfflictionEventsOn` - bool: Whether affliction events enabled
