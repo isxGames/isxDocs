@@ -439,9 +439,12 @@ echo ${Me.Name}    ; Works
 echo ${Me.name}    ; Works
 echo ${ME.NAME}    ; Works
 
-; But string comparisons ARE case-sensitive
-if ${Me.Name.Equal["Bob"]}    ; Only matches "Bob", not "bob"
-if ${Me.Name.Equal["bob"]}    ; Only matches "bob", not "Bob"
+; String comparisons are ALSO case-insensitive by default
+if ${Me.Name.Equal["Bob"]}    ; Matches "Bob", "bob", "BOB", ...
+if ${Me.Name.Find["bob"](exists)}    ; .Find is case-insensitive too (no .FindCS)
+
+; Use the CS variant only when you need a case-sensitive match
+if ${Me.Name.EqualCS["Bob"]}    ; Matches "Bob" exactly, not "bob"
 ```
 
 ### 3. Not Waiting for Async Data
