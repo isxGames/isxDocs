@@ -37,7 +37,7 @@ jobs:
           else commits="${count} commits"; fi
 
           payload=$(jq -n \
-            --arg title "🌙 ISXLUA Scripting Guide updated" \
+            --arg title "🌝 ISXLUA Scripting Guide updated" \
             --arg url "$compare" \
             --arg desc "$desc" \
             --arg actor "$ACTOR" \
