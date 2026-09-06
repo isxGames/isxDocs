@@ -2482,6 +2482,8 @@ UI page container. Inherits from [**eq2widget**](#eq2widget).
 **Methods:**
 - `SpewChildren` - Lists all children
 
+**Note (page-name form for enumeration):** A window can be referenced by its proper UI name (e.g. `HUD`, `MainHUD`, `Popup`) or by the global underscore name (e.g. `_HUD` -- leading underscore). These resolve to **different** underlying game page objects. The `_`-prefixed global name points at the live, instantiated window, so `NumChildren` returns the real count and by-number `Child[#]` works; the plain proper name can resolve to a page whose direct child list is empty, so `NumChildren` returns `0` and by-number `Child[#]` returns NULL. By-name access (`Child["name"]` / `Child[#, "name"]`) works with either form. Use the `_`-prefixed global name whenever you need `NumChildren` or by-number `Child[#]` enumeration on an EQ2UIPage -- this is the canonical form. This is game-side behavior, not an ISXEQ2 limitation.
+
 ---
 
 #### **eq2composite**

@@ -361,6 +361,10 @@ Found an error or have an improvement? This documentation was generated using ac
 <!-- CLAUDE_SKIP_START -->
 ## Version History
 
+- **4.31** (2026-09-06) -- Documented EQ2UIPage `_`-prefixed page-name behavior for enumeration
+  - Documented that an EQ2UIPage window can be referenced by its proper UI name (e.g. `HUD`, `MainHUD`, `Popup`) or by the global underscore name (e.g. `_HUD`), that these resolve to different underlying game page objects, and that scripters should use the `_`-prefixed global name when they need `NumChildren` or by-number `Child[#]` enumeration (the proper name can resolve to a page with an empty direct child list, returning `0`/NULL); by-name `Child` access works with either form. This is game-side behavior, not an ISXEQ2 limitation -- added as a Note in the `### eq2uipage` section of `03_API_Reference.md` (after the Example Usage block) and the `#### eq2uipage` section of `ISXEQ2_QuickReference.md` (after the Methods list). Documentation only; issue #2269 closed as works-as-designed
+  - No new TLOs, no new datatypes, no new members, no new methods, no new commands, no removed APIs, no new events
+
 - **4.30** (2026-09-05) -- New `isxeq2` build-channel member
   - Documented a new `isxeq2` (`${ISXEQ2}`) member `IsTestBuild` (bool, read-only): TRUE if the loaded ISXEQ2 is a test build, otherwise FALSE (it reflects the build channel/compile flag) -- added to the ISXEQ2 object Members table of `03_API_Reference.md` and the isxeq2 Members list of `ISXEQ2_QuickReference.md`
   - No new TLOs, no new datatypes, no new methods, no new commands, no removed APIs, no new events

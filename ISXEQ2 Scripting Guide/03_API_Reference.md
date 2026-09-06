@@ -3600,6 +3600,8 @@ EQ2UIPage[MainHUD]:SpewChildren
 echo ${EQ2UIPage[MainHUD].Child[button,MyButton].Text}
 ```
 
+> **Note (page-name form for enumeration):** A window can be referenced either by its proper UI name (e.g. `HUD`, `MainHUD`, `Popup`) or by the global underscore name (e.g. `_HUD` — leading underscore). These resolve to **different** underlying game page objects. The `_`-prefixed global name points at the live, instantiated window, so `NumChildren` returns the real count and by-number `Child[#]` enumeration works. The plain proper name can resolve to a page whose direct child list is empty, in which case `NumChildren` returns `0` and by-number `Child[#]` returns NULL. By-name access (`Child["name"]` / `Child[type,"dotted.name"]`) works with either form. **Use the `_`-prefixed global name whenever you need `NumChildren` or by-number `Child[#]` enumeration on an EQ2UIPage** — this is the canonical form (all EQ2UIPage examples above use it). This is game-side behavior, not an ISXEQ2 limitation.
+
 ---
 
 ### eq2composite
