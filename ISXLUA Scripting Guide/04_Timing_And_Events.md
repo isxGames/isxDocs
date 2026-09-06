@@ -41,6 +41,69 @@ nothing between iterations.
 values (which are native and safe to keep) before you wait. See
 `03_Object_Model.md`.
 
+## `waituntil(condfn, timeoutSeconds)` -- wait for a condition
+
+`waituntil` is the clean replacement for a hand-rolled polling loop. You give it a
+**condition function** and (optionally) a **timeout in seconds**. It yields your
+script and re-checks the condition every frame; it resumes the moment the condition
+returns a truthy value, or when the timeout elapses -- whichever comes first.
+
+It **returns `true` if the condition was met**, or **`false` if it timed out**, so
+you can branch on the outcome.
+
+```lua
+-- Wait up to 30 seconds for some condition to become true.
+if waituntil(function() return someReadyCheck() end, 30) then
+    echo("ready")
+else
+    echo("timed out")
+end
+```
+
+Compare that with the equivalent by hand -- `waituntil` replaces all of this:
+
+```lua
+local waited = 0
+while not someReadyCheck() do
+    if waited >= 30 then break end
+    wait(0.5)
+    waited = waited + 0.5
+end
+```
+
+The condition function takes no arguments and returns a value that is checked for
+truthiness (in Lua, everything except `false` and `nil` is truthy).
+
+**Omit the timeout to wait indefinitely:**
+
+```lua
+waituntil(function() return done end)   -- no timeout: waits until done is truthy
+```
+
+The condition is re-evaluated once per frame, so keep it cheap -- read a value and
+compare it, do not do heavy work inside it. If the condition function raises an
+error, it is reported to the console (with a traceback) and `waituntil` returns
+`false`.
+
+Because `waituntil` yields, the same rule as `wait()` applies: **you cannot call it
+inside an event handler** (handlers run atomically -- see below), and do not hold an
+object wrapper across it.
+
+### `wait(seconds, condfn)` -- a timed wait that can finish early
+
+`wait` also accepts an optional condition function as a second argument. This waits
+**up to** `seconds`, but resumes early the moment the condition becomes truthy. It
+is the same behavior as `waituntil` with the arguments in the order a LavishScript
+scripter tends to expect (time first). Like `waituntil`, it returns `true` if the
+condition was met and `false` if the full time elapsed:
+
+```lua
+-- Give it at most 5 seconds, but continue as soon as ready() is true.
+local met = wait(5, function() return ready() end)
+```
+
+Plain `wait(seconds)` with no condition returns nothing, exactly as before.
+
 ## Events
 
 An event lets you run a Lua function when something happens -- a chat line

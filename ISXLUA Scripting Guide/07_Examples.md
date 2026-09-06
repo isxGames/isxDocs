@@ -24,8 +24,9 @@ see `02_The_IS_Bridge.md`.
 
 Before you touch `Me`, `Actor`, or any game data, make sure the game extension is
 loaded **and** finished initializing. This is the idiomatic gate: load ISXEQ2 if
-it is not present, then poll -- first for the extension to appear, then for it to
-report ready -- giving each step up to about 30 seconds.
+it is not present, then use `waituntil` -- first for the extension to appear, then
+for it to report ready -- giving each step up to about 30 seconds. `waituntil`
+replaces the hand-rolled poll loops this used to need.
 
 ```lua
 -- whoami.lua
@@ -43,31 +44,17 @@ local function ensureISXEQ2()
     end
 
     -- Wait (up to ~30s) for the extension to appear.
-    local waited = 0
-    while not Exists(Extension("ISXEQ2")) do
-        if waited >= 30 then
-            echo("ERROR: ISXEQ2 failed to load within 30 seconds.")
-            return false
-        end
-        wait(0.5)
-        waited = waited + 0.5
+    if not waituntil(function() return Exists(Extension("ISXEQ2")) end, 30) then
+        echo("ERROR: ISXEQ2 failed to load within 30 seconds.")
+        return false
     end
 
     -- Wait (up to ~30s) for it to finish initializing. ISXEQ2 becomes a
     -- resolvable global only once it registers its TLO, so guard against
     -- indexing it before then.
-    waited = 0
-    while true do
-        local ext = ISXEQ2                 -- nil until the TLO is registered
-        if ext ~= nil and ext.IsReady then
-            break
-        end
-        if waited >= 30 then
-            echo("ERROR: ISXEQ2 did not become ready within 30 seconds.")
-            return false
-        end
-        wait(0.5)
-        waited = waited + 0.5
+    if not waituntil(function() local e = ISXEQ2; return e ~= nil and e.IsReady end, 30) then
+        echo("ERROR: ISXEQ2 did not become ready within 30 seconds.")
+        return false
     end
 
     return true
@@ -133,6 +120,28 @@ The handler auto-detaches when the script ends, so `endlua chatecho` cleans up f
 you. Handlers run atomically -- never call `wait()` inside one (see
 `04_Timing_And_Events.md`).
 
+### 5. Remembering state between runs
+
+`IS.SaveTable` / `IS.LoadTable` persist a table to disk, so a script can pick up
+where it left off. This one counts how many times it has been run.
+
+```lua
+-- runcount.lua
+-- Load a saved counter (or start fresh), bump it, save it back.
+
+local state = IS.LoadTable("runcount") or { runs = 0 }
+
+state.runs = state.runs + 1
+IS.SaveTable("runcount", state)
+
+echo("This script has now been run " .. state.runs .. " time(s).")
+```
+
+The first run prints `1` (there is no saved file yet, so `IS.LoadTable` returns
+`nil` and the `or { runs = 0 }` default kicks in); each later run increments and
+persists the count. The data lives in an `ISXLUAData` folder inside your Scripts
+directory -- see `02_The_IS_Bridge.md`.
+
 ---
 
 ## Complex
@@ -163,24 +172,14 @@ local function ensureISXEQ2()
         IS.Execute("ext isxeq2")
     end
 
-    local waited = 0
-    while not Exists(Extension("ISXEQ2")) do
-        if waited >= 30 then
-            echo("ERROR: ISXEQ2 failed to load within 30 seconds.")
-            return false
-        end
-        wait(0.5); waited = waited + 0.5
+    if not waituntil(function() return Exists(Extension("ISXEQ2")) end, 30) then
+        echo("ERROR: ISXEQ2 failed to load within 30 seconds.")
+        return false
     end
 
-    waited = 0
-    while true do
-        local ext = ISXEQ2
-        if ext ~= nil and ext.IsReady then break end
-        if waited >= 30 then
-            echo("ERROR: ISXEQ2 did not become ready within 30 seconds.")
-            return false
-        end
-        wait(0.5); waited = waited + 0.5
+    if not waituntil(function() local e = ISXEQ2; return e ~= nil and e.IsReady end, 30) then
+        echo("ERROR: ISXEQ2 did not become ready within 30 seconds.")
+        return false
     end
 
     return true

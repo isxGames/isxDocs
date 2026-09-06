@@ -44,6 +44,7 @@ replaces `print` and adds `echo` so both go to the InnerSpace console. See
 | Command | Effect |
 |---|---|
 | `lua <name> [args...]` | Run a `.lua` script. |
+| `lua -c "<chunk>"` | Run an inline one-liner (see below). |
 | `endlua <name>` | Stop one running script. |
 | `endlua all` (or `endlua *`) | Stop every running Lua script. |
 | `luas` | List the running Lua scripts and how long each has been running. |
@@ -78,6 +79,32 @@ running-script set, so `endlua`, `endscript`, and `luas` all see both.
 > does **not** show `.lua` scripts (its table is LavishScript-scoped). This is an
 > InnerSpace-side constraint, not something ISXLUA can change. **Use `luas` to
 > list running Lua scripts.**
+
+## One-liners: `lua -c "<chunk>"`
+
+To run a snippet of Lua straight from the console without creating a file, use the
+`-c` flag (`-e` works too):
+
+```
+lua -c "print(1 + 2)"
+lua -c "print(ISXLUA.Version)"
+```
+
+The chunk runs immediately, to completion, with the full ISXLUA environment
+available (the `IS` bridge, the object model, the bundled libraries). Quote the
+chunk so the console passes it through as a single argument.
+
+This is ideal for quickly testing an expression. A one-liner is **not** a scheduled
+script, so it **cannot** use `wait()` / `waitframe()` / `waituntil()` (an attempt is
+reported as an error). For anything that needs to wait, put it in a `.lua` file and
+run it with `lua <name>`.
+
+## When a script errors
+
+If your script (or an event handler) hits an uncaught error, ISXLUA prints a full
+Lua **traceback** to the console -- the message plus the call stack with file names
+and line numbers -- so you can see exactly where it happened. The error is confined
+to that script or handler; it never crashes the game or other scripts.
 
 ## Script arguments
 
@@ -125,10 +152,11 @@ if ISXLUA.IsReady then echo("ISXLUA is ready") end
   `io`, `coroutine`, `utf8`, `package`, ...). ISXLUA does not currently sandbox
   the standard library.
 - **`echo` / `print`** -- console output (see `02_The_IS_Bridge.md`).
-- **`wait(seconds)` / `waitframe()`** -- cooperative timing (see
+- **`wait(seconds)` / `waitframe()` / `waituntil(condfn, timeout)`** -- cooperative
+  timing and condition waits (see `04_Timing_And_Events.md`).
+- **The `IS` bridge** -- `IS.Execute`, `IS.Parse`, the event functions, and
+  `IS.SaveTable` / `IS.LoadTable` for persistent storage (`02_The_IS_Bridge.md`,
   `04_Timing_And_Events.md`).
-- **The `IS` bridge** -- `IS.Execute`, `IS.Parse`, the event functions
-  (`02_The_IS_Bridge.md`, `04_Timing_And_Events.md`).
 - **The object model** -- bare-global TLOs and generic member/method access
   (`03_Object_Model.md`).
 - **Bundled libraries** -- `require("cjson")`, `require("serpent")`, and more

@@ -83,6 +83,40 @@ IS.WarnUnknownGlobals(false)   -- silence the warning
 
 See `03_Object_Model.md` for how bare-global lookup works.
 
+## `IS.SaveTable(name, tbl)` / `IS.LoadTable(name)` -- persistent storage
+
+These let a script remember state between runs and sessions. `IS.SaveTable`
+serializes a Lua table to disk under a name of your choosing; `IS.LoadTable` reads
+it back.
+
+```lua
+-- Save some state:
+IS.SaveTable("mystate", { runs = 3, best = 128, names = { "a", "b" } })
+
+-- ...later, in another run:
+local state = IS.LoadTable("mystate") or {}   -- nil if never saved -> default to {}
+state.runs = (state.runs or 0) + 1
+IS.SaveTable("mystate", state)
+echo("run #" .. state.runs)
+```
+
+- **`name`** is a logical key, not a path. Files are stored together in an
+  `ISXLUAData` folder inside your InnerSpace **Scripts** directory, as
+  `<name>.lua`. The name is sanitized (only letters, digits, `_`, `-`, and `.` are
+  kept; anything else becomes `_`), so it can never point outside that folder.
+- **`IS.SaveTable`** returns `true` on success, or `false` plus an error message if
+  the file could not be written.
+- **`IS.LoadTable`** returns the restored table, or **`nil`** if the file does not
+  exist (or could not be parsed). The `... or {}` idiom above is the clean way to
+  load-with-a-default.
+- Only a **table** can be saved. Its contents must be serializable -- plain values
+  and nested tables are fine; functions, userdata, and object wrappers are not.
+  (Copy scalar values out of object wrappers before saving them.)
+
+Under the hood this uses the bundled `serpent` library, so a saved file is
+human-readable, loadable Lua. See `05_Bundled_Libraries.md` if you want to drive
+the serialization yourself (for example to persist as JSON instead).
+
 ## The event functions
 
 `IS.AttachEvent`, `IS.DetachEvent`, and `IS.FireEvent` also live on the `IS`
