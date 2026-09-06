@@ -1785,7 +1785,7 @@ String members:
 | `.NotEqual[text]` | Case-insensitive inequality. |
 | `.EqualCS[text]` | Case-sensitive equality. |
 | `.NotEqualCS[text]` | Case-sensitive inequality. |
-| `.Find[substring]` | Returns 1-based position of substring or NULL. Case-insensitive (there is no `.FindCS`). |
+| `.Find[substring]` | Returns 1-based position of substring (case-insensitive) or NULL. No case-sensitive `FindCS` variant exists. |
 | `.Compare[text]` | <0, 0, or >0 for case-insensitive lexicographic compare. |
 
 For complete operator and formula syntax, see [LavishScript:Mathematical Formulae](https://www.lavishsoft.com/wiki/index.php/LavishScript:Mathematical_Formulae).
@@ -2787,6 +2787,18 @@ MouseClick -hold left
 waitframe
 MouseClick -release left
 ```
+
+### Reading Current Key/Button State (Input.Button)
+
+Everything above is the *write* side -- emulating input. The `Input` TLO provides the *read* side: querying whether a key or button is currently held. `${Input.Button[<name>].Pressed}` returns a bool that is TRUE while that key/button is down:
+
+```lavishscript
+; Is the ALT key held right now?
+if ${Input.Button[alt].Pressed}
+    echo "ALT is currently held"
+```
+
+`<name>` is a key/button name (`alt`, `shift`, `ctrl`, `space`, a letter/number key, etc.); use `Press -keylist` to enumerate valid names. This is a base Inner Space feature (game-agnostic) -- unlike the write-only `Press` command and the `Keyboard`/`Mouse` objects (which only press/hold/release/bind), `Input.Button[name].Pressed` reads live state. See [01b §3.18 Inner Space Input](01b_LavishScript_Reference.md#318-inner-space-input) for the full `input` and `button` object members.
 
 ### Macros
 

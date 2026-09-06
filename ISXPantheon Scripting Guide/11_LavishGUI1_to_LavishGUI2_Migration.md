@@ -817,27 +817,6 @@ This pattern maintains backward compatibility with numeric configs while working
 }
 ```
 
-### Tab Control
-
-**LGUI1:**
-
-```xml
-<TabControl>
-    <TabPage Name="tab1">
-        <Title>Page 1</Title>
-        <Text>Content 1</Text>
-    </TabPage>
-    <TabPage Name="tab2">
-        <Title>Page 2</Title>
-        <Text>Content 2</Text>
-    </TabPage>
-</TabControl>
-```
-
-**LGUI2:**
-
-Use a combination of buttons and panel visibility, or use advanced itemview with templates. Full tab control documentation coming soon.
-
 ---
 
 ## Event Handler Migration

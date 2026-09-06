@@ -389,12 +389,23 @@ ISXEQ2 provides powerful query capabilities to filter and search collections.
 | `&&` | And | `Level == 120 && Type == "NPC"` |
 | `||` | Or | `Type == "NPC" || Type == "NamedNPC"` |
 
+**Boolean members in a query:** A boolean member is tested by BARE NAME for TRUE and with a leading `!` for FALSE -- never with a comparison operator. Write `IsNPC` to match actors where the member is TRUE and `!IsNPC` to match where it is FALSE. Do NOT write `IsNPC == 1`, `IsNPC == TRUE`, or `IsNPC == FALSE`: the query evaluator does not equate a bool with the integer `1` or with the `TRUE`/`FALSE` literals, so those forms match nothing. This applies to every bool member, e.g.:
+
+```lavishscript
+EQ2:QueryActors[Actors, IsNPC && Distance <= 15, "NoSort"]     ; actors that ARE NPCs
+EQ2:QueryActors[Actors, !IsNPC && Distance <= 15, "NoSort"]    ; actors that are NOT NPCs
+```
+
 ### Query Examples
 
 ```lavishscript
 ; Find actors within 50 meters at level 120
 variable index:actor NearbyActors
 EQ2:QueryActors[NearbyActors, Distance < 50 && Level == 120]
+
+; Find nearby NPCs with the cheap IsNPC filter, unsorted for speed
+variable index:actor Enemies
+EQ2:QueryActors[Enemies, IsNPC && Distance <= 15, "NoSort"]
 
 ; Find inventory items containing "Potion"
 variable index:item Potions
@@ -412,6 +423,19 @@ Me:QueryEffects[Detriments,"!IsBeneficial"]
 variable index:item Weapons
 Me:QueryInventory[Weapons,"Type =- \"Weapon\" && ToItemInfo.Level >= 100"]
 ```
+
+### QueryActors Sort Modes
+
+`EQ2:QueryActors` accepts an optional third argument that controls how the resulting index is ordered:
+
+| Value | Ordering |
+|-------|----------|
+| `"ByDist"` | Sort by distance (the default) |
+| `"ByLevel"` | Sort by actor level |
+| `"ByName"` | Sort by actor name |
+| `"NoSort"` | Do not sort at all |
+
+The value is case-insensitive and an unrecognized value falls back to `"ByDist"`. Omitting the argument keeps the legacy behavior (sorted by distance), so existing scripts are unaffected. Prefer `"NoSort"` when you only need to test or iterate the matches and do not care about their order — otherwise `QueryActors` sorts the ENTIRE actor list by distance on every call. Pair it with the `actor.IsNPC` member (a bool, TRUE if the actor is an NPC or NamedNPC) for a cheaper NPC filter than `(Type =- "NPC" || Type =- "NamedNPC")` -- test it by bare name (`IsNPC`) or negate it (`!IsNPC`), never `== 1`.
 
 ### Modern Actor Collection (EQ2:GetActors)
 

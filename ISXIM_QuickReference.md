@@ -209,10 +209,10 @@ Represents a single IRC client session (one connection to one server). Accessed 
 | ChangeNickTo[newnick] | NICK change |
 | Emote[to,message] | Send a CTCP ACTION to a nick or channel |
 | SendRaw[string] | Send a raw line to the server (no alterations; `\n` is appended automatically) |
-| Notice[to,message] | See [Known Issues and Gotchas](#known-issues-and-gotchas) — this method is registered but not functional in the current source. Use `SendRaw` to send raw `NOTICE` lines. |
+| Notice[to,message] | **Non-functional** — see [Known Issues and Gotchas](#known-issues-and-gotchas). Use `SendRaw` to send raw `NOTICE` lines instead. |
 
 **Connection Guard:**
-All methods on `ircuser` (except accessing members) silently no-op if the user is still connecting or is not yet connected — i.e., commands are ignored when `IsConnecting` is TRUE or `IsConnected` is FALSE. Always wait for connection to complete before issuing methods.
+All `ircuser` methods *except* `Disconnect` silently no-op if the user is still connecting or is not yet connected — i.e., commands are ignored while `IsConnecting` is TRUE or `IsConnected` is FALSE. `Disconnect` is exempt and may be called at any time (so you can abort an in-progress connection). Always wait for connection to complete before issuing the other methods.
 
 **Important: Join Latency:**
 The `Join` method requires server round-trips. After calling it, wait at least `wait 25` (or longer on high-latency links) before assuming the channel is populated. The channel object is created immediately when `Join` is called; it populates with nicks, topic, etc. as the server responds.
@@ -303,7 +303,7 @@ MyChannel:Leave
 ```
 
 **Note on Channel Mode Queries:**
-The C++ source additionally defines `IsSet[mode]`, `Limit`, and `Password` members in its internal enum, and the corresponding `GetMember` switch handles them. However, these members are **not registered** with LavishScript via `TypeMember` in the current source build and therefore **are not accessible from scripts**. To observe channel mode changes, subscribe to the [IRC_ChannelModeChange](#irc_channelmodechange) event. See [Known Issues and Gotchas](#known-issues-and-gotchas).
+The `channel` datatype does **not** expose script-accessible members for channel modes, user limit, or channel password. To observe channel mode changes (including password and limit changes), subscribe to the [IRC_ChannelModeChange](#irc_channelmodechange) event and maintain the state in your script. See [Known Issues and Gotchas](#known-issues-and-gotchas).
 
 **See Also:** [ircuser](#ircuser), [nick](#nick)
 
@@ -967,7 +967,7 @@ Since ISXIM-20120413.0024, `IRC:Connect[...]` behaves asynchronously:
 - The `ircuser` only goes invalid if the connection fails.
 
 **Method Guard:**
-All `ircuser` methods silently no-op while the user is still connecting or not yet connected. Your script must wait for connection to complete before issuing commands.
+All `ircuser` methods except `Disconnect` silently no-op while the user is still connecting or not yet connected. Your script must wait for connection to complete before issuing the other commands. (`Disconnect` may be called at any time to abort an in-progress connection.)
 
 **Recommended Pattern:**
 ```lavishscript
@@ -987,19 +987,19 @@ if !${IRCUser[MyNick](exists)} || !${IRCUser[MyNick].IsConnected}
 
 ### Known Issues and Gotchas
 
-These items are documented in `ISXIMChanges.txt` as available features, but inspection of the current source in `ISXIM\src` shows they are not fully wired up in the build. Scripts should work around them as noted.
+A few methods and members that appear in older ISXIM documentation are not functional in the current release. Scripts should work around them as noted.
 
 1. **`ircuser:Notice[to,message]` is non-functional.**
-   The `Notice` method is declared in the type's method table, but the current `IRCUserType::GetMethod` switch in `IRCDataTypes.cpp` does not include a `case Notice:` handler, so invoking it has no effect. Use `SendRaw` instead:
+   Invoking this method has no effect. Use `SendRaw` instead:
    ```lavishscript
    IRCUser[MyNick]:SendRaw[NOTICE SomeUser :Your notice text]
    ```
 
-2. **`channel.IsSet[mode]`, `channel.Limit`, `channel.Password` are not accessible.**
-   These members exist internally but are not registered with LavishScript, so they cannot be read from scripts. To track channel modes, subscribe to [IRC_ChannelModeChange](#irc_channelmodechange) and maintain state in your script.
+2. **The `channel` datatype does not expose mode, limit, or password members.**
+   There are no script-accessible members for channel modes, user limit, or channel password. To track channel modes, subscribe to [IRC_ChannelModeChange](#irc_channelmodechange) and maintain state in your script.
 
-3. **`IRC:QuietMode[...]` is not functional.**
-   The global `IRC` datatype declares a `QuietMode` method but it is not registered or implemented at runtime. Use [`IM:QuietMode[on|off]`](#im) instead, which controls the same global quiet-mode flag.
+3. **`IRC:QuietMode[...]` is non-functional.**
+   The global `IRC` datatype's `QuietMode` method has no effect. Use [`IM:QuietMode[on|off]`](#im) instead, which controls the same global quiet-mode flag.
 
 4. **`ircuser:Join` channel-name prefix.**
    ISXIM enforces that channel names begin with `#` or `&` (standard IRC prefixes). Attempting to join a name without one of these prefixes is rejected with an error message.

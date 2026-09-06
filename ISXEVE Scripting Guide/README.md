@@ -283,8 +283,31 @@ Found an error or have an improvement? This documentation was generated using ac
 ---
 
 <!-- CLAUDE_SKIP_START -->
+
 ## Version History
 
+- **v5.1 (2026-09-04)**
+
+  - Corrected the `item:GetInsuranceQuotes` container signature in `ISXEVE_QuickReference.md` from the wrong `[index:iteminfolist]` to the authoritative `[collection:float]` — a `collection` keyed by insurance-level name (`Basic`/`Standard`/`Bronze`/`Silver`/`Gold`/`Platinum`) with the ISK cost as the value; also documented that the method now auto-primes the insurance data (works whenever docked; no insurance window need be open), per the ISXEVE insurance fix (issue #1215)
+
+- **v5.0 (2026-09-01)**
+
+  - Documented the new Planetary Interaction (PI) API surface from ISXEVE build `[20260624.0042]` across `ISXEVE_QuickReference.md` and `03_API_Reference.md`
+  - Added four new datatypes: `colony` (a colonized planet, from `EVE:GetColonies`), `extractorcontrolunit` (an ECU pin of a colony, from `colony:GetExtractors`), `evecustomsofficeitem` (a commodity row of the customs-office window), and `pilaunchpad` (a launchpad/spaceport endpoint, from `evecustomsofficewindow:GetLaunchpads`) -- each with a full member/method reference entry in the Quick Reference (`colony`/`extractorcontrolunit` under Misc Datatypes; `evecustomsofficeitem`/`pilaunchpad` under Window Datatypes) and a matching object subsection in the new **Planetary Interaction (PI)** chapter of `03_API_Reference.md`
+  - Expanded the `evecustomsofficewindow` datatype from two members to the full PI import-export surface: members `CustomsOfficeID`, `SpaceportPinID`, `HasLaunchpad`, the six `Customs*`/`Spaceport*` capacity members, `NumCustomsOfficeItems`/`NumSpaceportItems`, `CustomsOfficeItem[#]`/`SpaceportItem[#]`, `NumStagedImport`/`NumStagedExport`, `StagedImportItem[#]`/`StagedExportItem[#]`; and methods `AddToPOCO`, `PullFromPOCO`, `SelectLaunchpad`, `GetLaunchpads`, `StageImport`, `StageExport`, `Transfer` (Quick Reference Window Datatypes + `03_API_Reference.md` PI chapter)
+  - Added `EVE:GetColonies[index:colony]` method to the `eve` datatype (Quick Reference `eve` entry + `03` PI chapter), noting its headless-safe background-prime behavior
+  - Added `ISXEVE.IsUnloading` (bool) member to the `isxeve` datatype (Quick Reference `isxeve` entry + `03` ISXEVE Object member table)
+  - Added `MyShip:GetHoldItems[<holdName>, index:item]` generic hold enumerator to the `ship` datatype, including the full valid-hold-name list (Quick Reference `ship` entry + `03` MyShip Cargo section)
+  - Added `item` datatype members `IsBlueprint` / `IsBlueprintCopy` (bool) and method `UseBlueprint` (Quick Reference `item` entry + new `03` Item Object "Blueprint Items" subsection)
+  - Refreshed the `item:UseBlueprint` documentation: it now opens the Industry window AND installs the blueprint into the manufacturing pane (so the Start button becomes available), and is asynchronous -- documented the poll-then-press pattern (`EVEWindow["industryWnd"].IsStartEnabled` before `Button["Start"]:Press`) in both the Quick Reference `item` entry and the `03` "Blueprint Items" subsection
+  - Added the `eveindustrywindow` datatype (a specialized `evewindow`, from `EVEWindow["industryWnd"]`) with pure non-blocking members `IsBlueprintInstalled`, `IsStartEnabled`, `Runs`, `MaterialEfficiency`, `TimeEfficiency`, `ActivityID`, and `Activity` -- a full entry in the Quick Reference Window Datatypes section (plus the EVEWindow subtype list and inheritance map) and a new `eveindustrywindow Object` subsection in the `03_API_Reference.md` UI Windows chapter
+  - Added a new **Planetary Interaction (PI)** chapter to `03_API_Reference.md` (between the UI Windows and Fleet chapters) with worked examples, and a pointer to the PI sample script `TestPlanets.iss`; updated the `03` table of contents accordingly
+
+- **4.2 (2026-06-20)**
+
+  - Updated ../ISXSQLite_QuickReference.md 
+  - Updated ../ISXIM_QuickReference.md
+  
 - **v4.1 (2026-04-28)**
 
   - Split `01_LavishScript_Fundamentals.md` into a tutorial-style file (now 30 sections, 3,373 lines, expanded from the original 23 sections / 3,060 lines) plus a new sibling reference file `01b_LavishScript_Reference.md` (1,221 lines) -- the reference is an exhaustive command/datatype/Top-Level-Object inventory with one canonical entry per feature linked to the Lavish Software wiki, while the tutorial keeps narrative onboarding for newcomers

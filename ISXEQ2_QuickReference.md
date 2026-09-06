@@ -160,6 +160,63 @@ Top-Level Objects (TLOs) are the entry points for accessing game data. They can 
 | **BeastlordWindow** | [beastlordwindow](#beastlordwindow) | Beastlord class window |
 | **InspectPlayerWindow** | [inspectplayerwindow](#inspectplayerwindow) | Inspect Player window |
 
+
+
+### Inner Space TLOs (Base / Game-Agnostic)
+
+These are base Inner Space / LavishScript TLOs (not ISXEQ2-specific), listed here for convenience.
+
+| TLO | DataType | Description |
+|-----|----------|-------------|
+| **Input** | input | Input subsystem root (binds, buttons, axes, dpads). Read current key/button state via `Button[name]` |
+| **Keyboard** | keyboard | Keyboard state (write-side emulation) |
+| **Mouse** | mouse | Mouse state (write-side emulation) |
+| **Math** | math | Math library -- formula evaluation, trig, distance |
+
+### Math
+
+`${Math.*}` is the LavishScript math library. Every member takes a *formula*, so expressions can be embedded directly (`${Math.Calc[${A}+${B}*2]}`).
+
+| Member | Returns | Description |
+|---|---|---|
+| `Calc[formula]` | float64ptr | Result of a given formula |
+| `Calc64[formula]` | int64ptr | Result of a given formula with 64-bit integer precision |
+| `Abs[formula]` | float | Absolute value of a given formula |
+| `Sqrt[formula]` | float | Square root of a given formula |
+| `Rand[formula]` | int | Random number from 0 to # - 1, where # is the result |
+| `Sin[formula]` / `Cos[formula]` / `Tan[formula]` | float | Sine / cosine / tangent of a given formula, in degrees |
+| `Asin[formula]` / `Acos[formula]` / `Atan[formula]` | float | Inverse trig of a given formula, in degrees |
+| `Atan[formula,formula]` | float | atan2 of two given formulae, in degrees |
+| `Distance[x1,x2]` | float | **1-dimensional** distance between `x1` and `x2` |
+| `Distance[x1,y1,x2,y2]` | float | **2-dimensional** distance between `x1,y1` and `x2,y2` |
+| `Distance[x1,y1,z1,x2,y2,z2]` | float | **3-dimensional** distance between `x1,y1,z1` and `x2,y2,z2` |
+| `DistancePointLine[x,y,ax,ay,bx,by]` | float | Distance from `x,y` to the nearest point on the line from `a` to `b` |
+| `Hex[#]` | string | Hexadecimal string equivalent to the # |
+| `Dec[hex]` | int | Decimal equivalent to the hexadecimal value given |
+| `Not[#]` | int | Bitwise NOT of the # |
+
+**`Distance` takes 2, 4, or 6 arguments.** The two-argument form is a valid 1-D distance and is the idiomatic way to test a single axis -- for example a vertical tolerance check comparing only the Y coordinates:
+
+```lavishscript
+; Ignore nodes more than 30 units above or below us -- 1-D distance on the Y axis alone
+if ${Math.Distance[${Actor[id,${NodeID}].Y},${Me.Y}]} < 30
+    echo "Node is on our level"
+```
+
+Do not mistake a two-argument `Math.Distance` for a bug or an incomplete 2-D call.
+
+> Note: the `math` object type is distinct from an actor's own `Distance` member. `${Actor[...].Distance}` and `${Me.Distance[x,y,z]}` are members of [actor](#actor); they measure from the player and are unrelated to `${Math.Distance[...]}`.
+
+**Reading current key/button state:** `${Input.Button[<name>].Pressed}` returns a bool that is TRUE while that key/button is held. This is the READ side of input, complementary to the write-only `Press` command and the `Keyboard`/`Mouse` objects.
+
+```lavishscript
+; Is the ALT key held right now?
+if ${Input.Button[alt].Pressed}
+    echo "ALT is currently held"
+```
+
+The `button` object (from `Input.Button[name]`) has members `Name` (string), `Device` (string), `ID` (uint), `Pressed` (bool), and methods `Press`, `Hold`, `Release`. Valid `<name>` values include `alt`, `shift`, `ctrl`, `space`, letter/number keys, and left/right modifier variants where the platform distinguishes them; use `Press -keylist` to enumerate valid names.
+
 ---
 
 ## DataTypes
@@ -250,7 +307,7 @@ Main game information and utilities.
 **Methods:**
 - `CreateCustomActorArray[sortby,range,type]` - Creates custom actor array (access via `CustomActor[index]` which returns [actor](#actor))
 - `GetActors[index,searchparams]` - Populates index with [actor](#actor) objects
-- `QueryActors[index,query]` - Populates index with [actor](#actor) objects matching query
+- `QueryActors[index,query,sortmode]` - Populates index with [actor](#actor) objects matching query. Optional `sortmode`: `"ByDist"` (default, sort by distance), `"ByLevel"` (sort by level), `"ByName"` (sort by name), or `"NoSort"` (no sorting). Case-insensitive; unrecognized value falls back to `"ByDist"`; omitting it keeps the legacy distance-sorted behavior. `"NoSort"` avoids a full distance-sort of the actor list when order does not matter. **`sortmode` is silently ignored when the query expression is empty** -- an empty query takes a separate code path that always sorts, so `EQ2:QueryActors[Actors, "", "NoSort"]` still sorts. Pass a non-empty query for the sort mode to take effect. Example: `EQ2:QueryActors[Actors, IsNPC && Distance <= 15, "NoSort"]`
 - `SetMasterVolume[volume]` - Sets master volume
 - `AcceptPendingQuest` - Accepts pending quest
 - `DeclinePendingQuest` - Declines pending quest
@@ -513,6 +570,7 @@ Base datatype for all actors (NPCs, PCs, objects) in the game world.
 - `IsAPet` - bool: Is a pet
 - `IsMyPet` - bool: Is player's pet
 - `IsNamed` - bool: Is named NPC
+- `IsNPC` - bool: TRUE if actor is an NPC or NamedNPC (cheaper `QueryActors` filter than `(Type =- "NPC" || Type =- "NamedNPC")`; test by bare name `IsNPC` or negate `!IsNPC`, never `== 1`)
 - `IsSwimming` - bool: Swimming
 - `SwimmingSpeedMod` - float: Swimming speed mod
 - `InCombatMode` - bool: Combat stance
@@ -540,8 +598,15 @@ Base datatype for all actors (NPCs, PCs, objects) in the game world.
 - `IsFD` - bool: Feign death
 - `Interactable` - bool: Highlights on hover
 - `HighlightOnMouseHover` - bool: Highlights on hover
-- `FlyingUsingMount` - bool: Flying with mount
+- `FlyingUsingMount` - bool: Flying in air with a visible flying mount (returns proper FALSE, never NULL, for non-predicted actors; unaffected by unrelated movement flags)
 - `OnFlyingMount` - bool: On flying mount
+- `OnMount` - bool: On any mount (stays TRUE even when mount model is hidden)
+- `OnGriffon` - bool: On a griffon or other flight-path transport
+- `OnControllableMount` - bool: On a mount you steer yourself (mounted and not a griffon)
+- `OnJumpingMount` - bool: On a "jumping"/leaper mount (e.g. a Faydark Jumper)
+- `Starred` - bool: TRUE if the actor shows the white AA-star
+- `QuestTarget` - bool: TRUE if the actor shows the quest feather/quill icon (may provide a quest update); see `QuestTargetType`
+- `QuestTargetType` - string: WHICH kind of quest update, or `"None"` -- one of `None`, `KillTarget`/`BaubleTarget`/`GenericTarget` (a kill/bauble/other update in YOUR journal), or `AllyKillTarget`/`AllyBaubleTarget`/`AllyGenericTarget` (the same for a GROUP MEMBER'S journal)
 - `UpdatesMyQuest` - bool: Updates player's quest
 - `UpdatesGroupMemberQuest` - bool: Updates group quest
 - `ActiveStateExists` - bool: Has active states
@@ -561,6 +626,8 @@ Base datatype for all actors (NPCs, PCs, objects) in the game world.
 - `Resize[scale]` - Resizes actor (visual)
 - `Move` - Picks up a moveable housing object for repositioning (no parameters)
 - `Set[actorID]` - Sets actor reference
+
+**Note (mount detection):** `OnTransport` is unreliable for your own character -- use `${Me.OnMount}` for a self-facing mount check. `${Me.OnControllableMount}` is TRUE only on a mount you steer yourself; `${Me.OnGriffon}` is TRUE on a griffon or other flight-path transport.
 
 ---
 
@@ -590,6 +657,14 @@ Player character. Inherits from [**actor**](#actor). (Internal datatype name: `c
 - `BaseAgility` - int: Base agility
 - `BaseWisdom` - int: Base wisdom
 - `BaseIntelligence` - int: Base intelligence
+
+*Combat Stats:*
+- `CritBonus` - float: Crit Bonus stat (percentage)
+- `CritBonusMax` - float: Crit Bonus cap (live value is clamped to <= this)
+- `WeaponDamage` - float: Weapon Damage (Bonus) stat (percentage)
+- `WeaponDamageMax` - float: Weapon Damage cap (live value is clamped to <= this)
+- `Fervor` - float: Fervor stat (percentage)
+- `FervorMax` - float: Fervor cap (live value is clamped to <= this)
 
 *Resistances:*
 - `ElementalResist` - int: Elemental resistance
@@ -629,6 +704,8 @@ Player character. Inherits from [**actor**](#actor). (Internal datatype name: `c
 - `InventorySlotsFree` - int: Free inventory slots
 - `BankSlotsFree` - int: Free bank slots
 - `SharedBankSlotsFree` - int: Free shared bank slots
+- `GuildBank` - int: Number of items currently in the guild bank (returns integer `0`, not NULL, if the guild bank has not been opened this session)
+- `GuildBank[#]` / `GuildBank[name]` - [guildbankitem](#guildbankitem): Guild-bank item by 1-based index (`#` is 1 to `${Me.GuildBank}`) or by name (also returns integer `0` if never opened this session)
 
 *Group & Raid:*
 - `Group[index]` - [groupmember](#groupmember): Group member
@@ -672,7 +749,9 @@ Player character. Inherits from [**actor**](#actor). (Internal datatype name: `c
 - `IsDecliningGuildInvites` - bool: Declining guilds
 - `IgnoringAll` - bool: Ignoring all
 - `GuildPrivacyOn` - bool: Guild privacy
-- `CombatExpEnabled` - bool: Combat XP enabled
+- `CombatXPEnabled` - bool: Combat XP gain enabled
+- `QuestXPEnabled` - bool: Quest XP gain enabled
+- `CombatExpEnabled` - bool: Combat XP enabled (retained alias for `CombatXPEnabled`; both work)
 
 *Afflictions:*
 - `Arcane` - int: Arcane afflictions
@@ -723,7 +802,9 @@ Player character. Inherits from [**actor**](#actor). (Internal datatype name: `c
 - `GuildBankWithdraw[amount]` - Withdraws from guild bank
 - `SharedBankDeposit[amount]` - Deposits to shared bank
 - `SharedBankWithdraw[amount]` - Withdraws from shared bank
-- `ResetZoneTimer` - Resets zone timer
+- `ResetZoneTimer["all"]` - Resets the selected zone reuse timer; pass `"all"` to reset every timer at once (like "Reset All"; the GUI may not visually update)
+- `ToggleCombatXP` - Toggles combat XP gain on/off (see `CombatXPEnabled`)
+- `ToggleQuestXP` - Toggles quest XP gain on/off (see `QuestXPEnabled`)
 - `DepositIntoHouseEscrow[amount]` - Deposits to house escrow
 - `QueryInventory[query]` - Queries inventory (populates index with [item](#item) objects)
 - `QueryEffects[query]` - Queries effects (populates index with [effect](#effect) objects)
@@ -890,7 +971,9 @@ Item in inventory, equipment, or containers.
 **Members:**
 
 *Identity:*
-- `Name` - string: Item name
+- `Name` - string: Item name. For a long-named inventory/equipment item, ISXEQ2 now pulls the complete name from examine info automatically when you read `.Name`, so this usually returns the whole name; if the game does not have the item's info yet it can still come back shortened (see `IsNameTruncated`). Game-side limit affecting only inventory/equipment items -- examine/container/merchant/broker names were never shortened
+- `FullName` - string: The item's complete name; falls back to `.Name` when examine info is unavailable, so it never returns empty
+- `IsNameTruncated` - bool: TRUE only while the name you are reading right now is STILL shortened (not "was it ever shortened"). Check before comparing `.Name` to a known name -- if TRUE, an equality test against the full name will fail
 - `ID` - uint: Item unique ID
 - `LinkID` - int: Link ID for chat links
 - `ToLink` - string: Creates chat link
@@ -902,9 +985,9 @@ Item in inventory, equipment, or containers.
 - `LocationID` - int: Numeric location ID
 - `InContainerID` - int: Container ID if in container
 - `ContainerID` - int: Container ID if this IS a container
-- `Slot` - int: Slot number
-- `Bag` - int: Bag slot if in inventory container
-- `Index` - int: Index in inventory array
+- `Slot` - int: Slot number within its bag, **1-based** (1 = first slot). Negative values pass straight through, so `-1` "no bag" can never be confused with a real slot
+- `Bag` - int: Bag number if in an inventory container, **1-based** (1 = first bag). Returns `-1` when not in a bag (equipped, top-level inventory/bank, cursor, etc.)
+- `Index` - int: Raw index in the inventory array. **0-based** (unchanged) -- the raw array position used by move/equip commands, not a slot number
 
 *Properties:*
 - `Quantity` - int: Stack quantity
@@ -919,9 +1002,9 @@ Item in inventory, equipment, or containers.
 - `IsInventoryContainer` - bool: Is inventory container
 - `IsBankContainer` - bool: Is bank container
 - `IsSharedBankContainer` - bool: Is shared bank container
-- `IsSlotOpen[slot]` - bool: Slot is open (container)
-- `ItemInSlot[slot]` - [item](#item): Item in slot (container)
-- `NextSlotOpen` - int: Next open slot (container)
+- `IsSlotOpen[slot]` - bool: Given **1-based** slot is open (container); `IsSlotOpen[1]` tests the first slot
+- `ItemInSlot[slot]` - [item](#item): Item in the given **1-based** slot (container); `ItemInSlot[1]` = first slot, a value below 1 matches nothing
+- `NextSlotOpen` - int: Next open slot, **1-based** (1 = first slot); NULL when no open slot (or not a container) -- check `${...NextSlotOpen(exists)}` first
 
 *Item Type Checks:*
 - `IsAutoConsumeable` - bool: Can auto-consume
@@ -946,7 +1029,9 @@ Item in inventory, equipment, or containers.
 **Methods:**
 - `Destroy` - Destroys item (no confirmation)
 - `DestroyWithConf` - Destroys with confirmation
-- `Move[location,slot|"container",containerID,slot]` - Moves item
+- `Move[ToBagLoc#,containerID,quantity]` - Moves item into a container. FIRST arg (destination slot) is **1-based** -- pass `1` for the first slot (below 1 rejected; `-1` = auto-slot). Second arg (ContainerID/region code) and optional Quantity are unchanged. Pattern: `Item:Move[${Container.NextSlotOpen},${Container.ContainerID}]`
+- `MoveToBag[Region,Bag#,Quantity]` / `MoveToBag[GuildBank,Page#,Slot#,Quantity]` - Move into a specific 1-based bag of a region (`Inventory`/`Bank`/`SharedBank`; `Shared` alias ok), or to a 1-based guild-bank page (1-4) and slot (1-80). `Quantity` optional, defaults to 0 = whole stack
+- `MoveAuto[Region,Quantity]` - Auto-deposit to a region's auto pad (`Inventory`/`Bank`/`SharedBank`; `Shared` alias ok). `Quantity` optional (0 = whole stack). Not for the guild bank (no auto pad)
 - `Equip` - Equips item
 - `UnEquip` - Unequips item
 - `Consume` - Consumes item
@@ -1175,6 +1260,9 @@ Adornment attached to item.
 - `SlotIndex` - int: Numeric slot index
 - `ToLink` - string: Chat link
 
+**Methods:**
+- `Examine` - Opens the examine window for the adornment
+
 ---
 
 #### **createditem**
@@ -1191,6 +1279,32 @@ Item created by a recipe. Returned by [iteminfo.CreatesItem[index]](#iteminfo).
 
 **Notes:**
 - `CreatesItem[index]` without a member returns the item name as a string, so legacy scripts that referenced it as a plain string continue to work without modification.
+
+---
+
+#### **guildbankitem**
+
+An item in the guild (or coalition) bank. Returned by [character.GuildBank[#]](#character) (`${Me.GuildBank[#]}` / `${Me.GuildBank[name]}`).
+
+**Members:**
+- `Page` - int: Guild-bank page, **1-based** (1-4)
+- `Slot` - int: Slot within the page, **1-based** (1-80)
+- `LinkID` - uint: Link ID for chat links
+- `ExamineID` - uint: Examine ID
+- `Quantity` - int: Stack quantity
+- `IsCoalition` - bool: TRUE if a coalition-bank item (vs. guild-bank); withdraw uses this automatically
+- `CanDeposit` - bool: TRUE if you may deposit into this slot
+- `IsItemInfoAvailable` - bool: TRUE once detailed info has resolved (async)
+- `ToItemInfo` - [iteminfo](#iteminfo): Detailed item information
+
+**Methods:**
+- `MoveToInventory[DestContainerID,DestSlot,Quantity]` - WITHDRAW into inventory. `DestContainerID` = the target inventory slot's `InContainerID`; `DestSlot` = slot within that container (**1-based**); `Quantity` optional (omit = whole stack). Guild vs. coalition chosen automatically from the item
+
+**Note (async info):** A guild-bank item's detailed info resolves ASYNCHRONOUSLY, exactly like `item`. Open the guild-bank window, then read `${Me.GuildBank[#].IsItemInfoAvailable}` (that read triggers the server examine request); poll until TRUE, then read `${Me.GuildBank[#].ToItemInfo.Name}`.
+
+**See Also:**
+- [character](#character) - Guild-bank access via `Me.GuildBank[#]`
+- [item](#item), [iteminfo](#iteminfo)
 
 ---
 
@@ -1360,9 +1474,19 @@ Effect on another actor.
 
 Detailed effect information.
 
+**Note (asynchronous info):** Detailed effect info loads ASYNCHRONOUSLY, like the `item`/`iteminfo` pattern. A one-shot read (e.g. `echo ${Me.Effect[1].ToEffectInfo.NumEffectStrings}`) returns `0`/empty because the info has not loaded yet (a not-yet-available `ToEffectInfo` is NULL, and members read off NULL return `0`/empty). Prime the request (touch `ToEffectInfo`, or call `Me:RequestEffectsInfo` to prime all effects at once), poll `IsEffectInfoAvailable` until TRUE, THEN read the members. Main descriptive text is available via `Description`.
+
+```lavishscript
+variable int EffectID = ${Me.Effect[Detrimental,1].ID}
+Me.Effect[Detrimental,1]:ToEffectInfo
+while !${Me.Effect[ID,${EffectID}].IsEffectInfoAvailable}
+    wait 2
+echo ${Me.Effect[ID,${EffectID}].ToEffectInfo.NumEffectStrings}
+```
+
 **Members:**
 - `Name` - string: Effect name
-- `Description` - string: Effect description
+- `Description` - string: Effect description (main descriptive text)
 - `Type` - string: Effect type
 - `NumEffectStrings` - int: Number of effect strings
 - `EffectString[index]` - [effectstring](#effectstring): Effect string
@@ -1473,6 +1597,7 @@ Broker/consignment item.
 - `ToLink` - string: Chat link
 - `IsListed` - bool: Is listed
 - `Market` - string: Market name
+- `SellerName` - string: Character name of the seller who listed this broker item
 - `SerialNumber` - int64: Serial number
 - `IsItemInfoAvailable` - bool: Info available
 - `ToItemInfo` - [iteminfo](#iteminfo): Detailed info
@@ -1724,6 +1849,8 @@ Quest journal window. Inherits from [**eq2window**](#eq2window).
 **Methods:**
 - `GetActiveQuests[index]` - Populates index with active quests
 - `GetCompletedQuests[index]` - Populates index with completed quests
+- `GetActiveQuestIDs[index:uint]` - Method (same idiom as `EQ2:GetActors`): clears the caller-declared `index:uint` container and fills it with the raw ID of every active quest. `index:uint` is the parameter's datatype (an `index` of `uint`), not a position; `uint` because quest IDs routinely exceed 2^31. Returns bool: TRUE on success (empty container when there are no quests), FALSE on missing/wrong-type argument or unavailable quest-journal data. Read `${MyIndex.Used}`, enumerate 1-based `${MyIndex[1]}`...
+- `GetCompletedQuestIDs[index:uint]` - Method: fills the caller-declared `index:uint` container with the raw ID of every completed quest; identical contract to `GetActiveQuestIDs` (returns bool)
 
 ---
 
@@ -1943,6 +2070,8 @@ Radial menu action.
 #### **brokerwindow**
 
 Broker search window. Inherits from [**eq2window**](#eq2window). **Access:** `${BrokerWindow}`
+
+Search results are populated asynchronously by the [`broker`](#broker) command (which does not print anything) and require an open broker window. After issuing a `broker` search, wait for `NumSearchResults` before reading `SearchResult[#]`.
 
 **Inheritance:**
 - All members and methods from [**eq2window**](#eq2window) are available
@@ -2541,6 +2670,8 @@ Where
 Where <ActorType>
 Where <ActorType> <level>
 Where <ActorType> <lowlevel> <highlevel>
+Where starred
+Where questtarget
 Where byLevel
 Where byType
 Where byName
@@ -2552,6 +2683,8 @@ Where byDist
 - `<ActorType>` - PC, NPC, NamedNPC, AggroNPC, Pet, MyPet, Chest, Door, Resource, etc.
 - `<level>` - Specific level
 - `<lowlevel> <highlevel>` - Level range
+- `starred` - Lists just the starred NPCs around you (those showing the white AA-star)
+- `questtarget` - Lists just the actors that may provide a quest update (same test as `${Actor.QuestTarget}`)
 - `byLevel`, `byType`, `byName`, `byDist` - Sorting options
 
 **Examples:**
@@ -2560,6 +2693,8 @@ Where                         ; List all actors
 Where NPC                     ; List all NPCs
 Where NPC 50                  ; List level 50 NPCs
 Where NPC 45 55               ; List NPCs level 45-55
+Where starred                 ; List just the starred NPCs
+Where questtarget             ; List just the quest-target actors
 Where byDist                  ; List all actors sorted by distance
 ```
 
@@ -2567,6 +2702,7 @@ Where byDist                  ; List all actors sorted by distance
 - Provides detailed information including location, heading, distance
 - Results can be sorted by various criteria
 - Useful for finding specific mobs or resources
+- EVERY listing (all modes) marks each starred actor with a bright-yellow `*` just before its name, and each quest-target actor with a green `/` in its own column right after the starred `*`
 
 ---
 
@@ -2608,6 +2744,9 @@ Manages saved locations for waypoints and navigation.
 ```
 eq2loc Add <label> <X> <Y> <Z> <zone> <roomID> [notes]
 eq2loc List [filter]
+eq2loc List dist
+eq2loc List <X> <Y> <Z>
+eq2loc Find <X> <Y> <Z>
 eq2loc Delete <label>
 eq2loc ListAll [filter]
 ```
@@ -2619,18 +2758,25 @@ eq2loc ListAll [filter]
 - `<roomID>` - Room/instance ID
 - `[notes]` - Optional description
 - `[filter]` - Filter results by label or notes
+- `dist` - Sort the list by distance from your current position (farthest first, so the closest are at the bottom)
 
 **Examples:**
 ```
 eq2loc Add Bank -123.45 67.89 -45.67 "Freeport" 0 "Main bank location"
-eq2loc List
+eq2loc List                            ; List with a Distance column (distance from you)
+eq2loc List dist                       ; List sorted by distance, farthest first
+eq2loc List 100 50 -25                 ; The 5 saved locations closest to that coordinate
+eq2loc Find 100 50 -25                 ; Same as "List <X> <Y> <Z>"
 eq2loc List bank
 eq2loc Delete Bank
 eq2loc ListAll
 ```
 
 **Notes:**
-- Locations are saved to XML file
+- `eq2loc List` now shows a Distance column indicating how far each saved location is from your current position
+- `eq2loc List <X> <Y> <Z>` (or `eq2loc Find <X> <Y> <Z>`) shows the 5 saved locations closest to the given coordinate (farthest of the five first, closest at the bottom)
+- Saved locations live in an `eq2locations` folder under your Extensions directory (auto-created and migrated on load). You may drop additional `.xml` location files there and ISXEQ2 will read them all; it only ever writes `isxeq2locations.xml`
+- When running multiple EQ2 instances at once, adding or removing a saved location updates all of your other running instances immediately -- no unload/reload needed, and instances no longer overwrite each other's changes
 - Supports filtering when listing
 - Locations are zone-specific
 
@@ -2722,22 +2868,40 @@ broker Cancel
 - `Seller <name>` - Seller name
 - `Effect <effect>` - Item effect/adornment
 - `Class <class>` - Class restriction
-- `SimpleSearch` - Use simple search mode
+- `SimpleSearch` - Force an exact-name (simple search) match even when other arguments are present (see Search Modes below)
 - `Cancel` - Cancel current broker search
 
 **Examples:**
 ```
-broker Name "rough opal"
-broker Name sword MinLevel 50 MaxLevel 60
+broker Name "rough opal"                                ; Name alone = exact match (simple search)
+broker Name "${ItemName}" Sort ByPriceAsc SimpleSearch  ; Name + other args: append SimpleSearch to keep an exact match
+broker Name sword MinLevel 50 MaxLevel 60               ; Name matched as a SUBSTRING (advanced search) - any item containing "sword"
 broker Tier Legendary Class Guardian
 broker MinPrice 1000 MaxPrice 50000
 broker Cancel
 ```
 
+**Search Modes (important):**
+
+The `Name` parameter matches differently depending on what else you pass:
+
+- **`Name` used alone** (the only argument) - ISXEQ2 performs a **simple search**, which is an **exact** name match. This is the same behavior as double-clicking an item in your own vending container.
+- **`Name` combined with ANY other argument** (e.g. `Sort ByPriceAsc`, `MinLevel`, `MaxLevel`, `MinPrice`, `Tier`, etc.) - ISXEQ2 silently switches to the **advanced search**, which matches `Name` as a **substring** rather than exact. This can return the wrong item.
+- Adding the **`SimpleSearch`** keyword forces the exact (simple-search) match even when other arguments are present.
+
+**Rule:** Any time you search by name but also pass other arguments, append `SimpleSearch` to keep exact-name matching. When `Name` is the only argument, `SimpleSearch` is implicit and unnecessary.
+
 **Notes:**
-- Supports complex search criteria
-- Simple search mode when using Name parameter only
-- Results displayed in broker window
+- Supports complex search criteria.
+- The `broker` command does **not** print its results. It runs an **asynchronous** broker search; results are read from the [**BrokerWindow**](#brokerwindow) TLO -- `${BrokerWindow.NumSearchResults}` and `${BrokerWindow.SearchResult[#]}` (each a [consignment](#consignment)).
+- A broker window must be **open** (or you must be at / targeting a broker) for the search to run.
+- After issuing a search, wait for results before reading them, e.g. `wait 30 ${BrokerWindow.NumSearchResults} > 0`.
+
+```
+broker Name steel Sort ByPriceAsc
+wait 30 ${BrokerWindow.NumSearchResults} > 0
+echo ${BrokerWindow.NumSearchResults} results -- first: ${BrokerWindow.SearchResult[1].Name}
+```
 
 ---
 
@@ -2796,7 +2960,8 @@ GetURL https://example.com/api/data "application/json"
 - Retrieves web content asynchronously (does not block script execution)
 - Response is accessible via the `isxGames_onHTTPResponse` event
 - Can be used for external data integration
-- Supports both HTTP and HTTPS
+- Supports both HTTP and HTTPS, including servers that require TLS 1.2/1.3
+- A connection error now includes the libcurl error name, e.g. `Error: CURLE_SSL_CONNECT_ERROR (35)` (previously just `Error: 35`)
 
 ---
 
@@ -2825,7 +2990,8 @@ PostURL https://example.com/submit "name=John&age=30" "application/x-www-form-ur
 - Sends HTTP POST request asynchronously (does not block script execution)
 - Response is accessible via the `isxGames_onHTTPResponse` event
 - Useful for web API integration, Discord webhooks, and external logging
-- Supports both HTTP and HTTPS
+- Supports both HTTP and HTTPS, including servers that require TLS 1.2/1.3
+- A connection error now includes the libcurl error name, e.g. `Error: CURLE_SSL_CONNECT_ERROR (35)` (previously just `Error: 35`)
 - For JSON data, ensure proper escaping of quotes
 
 **Event Example:**
@@ -4414,6 +4580,11 @@ Query strings support complex filtering with special operators:
 ; =- (contains, case-insensitive), !- (does not contain)
 ; =~ (regex match), !~ (regex does not match)
 ; && (and), || (or)
+; Boolean members: test by BARE NAME for TRUE and a leading ! for FALSE -- e.g. IsNPC (is an NPC),
+;   !IsNPC (is not an NPC). NEVER write == 1, == TRUE, or == FALSE for a bool member; the query
+;   evaluator does not equate a bool with 1/TRUE/FALSE, so those forms match nothing.
+;   EQ2:QueryActors[Actors, IsNPC && Distance <= 15, "NoSort"]     ; actors that ARE NPCs
+;   EQ2:QueryActors[Actors, !IsNPC && Distance <= 15, "NoSort"]    ; actors that are NOT NPCs
 
 ; Find actors within range using modern GetActors API
 variable index:actor NearbyMobs
@@ -4975,6 +5146,8 @@ Some members are marked as deprecated and should not be used in new scripts:
 LavishScript is case-insensitive for member and method names:
 - `${Me.Name}` and `${Me.name}` are equivalent
 - `Me:DoTarget` and `Me:dotarget` are equivalent
+
+The `string.Find[text]` member is a case-insensitive substring search — it returns the 1-based position of the substring (or NULL if not found) regardless of the case of either the substring or the text. There is no case-sensitive `FindCS` variant.
 
 ### NULL Checks
 
